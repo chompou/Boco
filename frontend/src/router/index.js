@@ -1,8 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ItemCreationPage from "@/views/Items/ItemCreationPage";
 import FrontPage from "../views/FrontPageView.vue";
-import About from "../views/AboutView.vue";
-import ItemPage from "@/views/Items/ItemPage";
 
 const routes = [
   {
@@ -11,20 +8,52 @@ const routes = [
     component: FrontPage,
   },
   {
-    path: "/about",
-    name: "about",
-    component: About,
+    path: "/login",
+    name: "login",
   },
   {
-    path: "/createItem",
-    name: "createItem",
-    component: ItemCreationPage,
+    path: "/register",
+    name: "register",
   },
   {
-    path: "/itemPage",
-    name: "itemPage",
-    component: ItemPage,
+    path: "/profile/:id",
+    name: "profile",
+    props: true,
   },
+  {
+    path: "/my",
+    children: [
+      {
+        path: "items",
+        name: "myItems"
+      },
+      {
+        path: "leases",
+        name: "myLeases"
+      },
+      {
+        path: "reviews",
+        name: "myReviews"
+      },
+      {
+        path: "settings",
+        name: "mySettings"
+      }
+    ]
+  }, 
+  {
+    path: "create",
+    name: "createItem"
+  },
+  {
+    path: "items",
+    name: "items",
+  },
+  {
+    path: "items/:id",
+    name: "item",
+    props: true,
+  }
 ];
 
 const router = createRouter({
