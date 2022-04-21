@@ -1,8 +1,9 @@
 package boco.controller.models;
 
 import boco.models.profile.Profile;
-import boco.service.ProfileService;
+import boco.service.profile.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +17,12 @@ public class ProfileController {
     }
 
     @GetMapping("/{profile_id}")
-    public Profile getProfile(@PathVariable(value = "profile_id") String profileId) {
-        return profileService.
+    public ResponseEntity<Profile> getProfile(@PathVariable(value = "profile_id") Long profileId) {
+        return profileService.getProfile(profileId);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Profile> createProfile(@RequestBody Profile profile) {
+        return profileService.createProfile(profile);
     }
 }
