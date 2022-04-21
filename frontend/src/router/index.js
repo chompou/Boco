@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import FrontPage from "../views/FrontPageView.vue";
+import LoginView from "@/views/LoginView";
+import ItemCreationPage from "@/views/Items/ItemCreationPage";
 
 const routes = [
   {
@@ -10,6 +12,7 @@ const routes = [
   {
     path: "/login",
     name: "login",
+    component: LoginView,
   },
   {
     path: "/register",
@@ -42,8 +45,9 @@ const routes = [
     ],
   },
   {
-    path: "/create",
+    path: "/createItem",
     name: "createItem",
+    component: ItemCreationPage,
   },
   {
     path: "/edit",

@@ -21,7 +21,7 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="#"
+              <router-link to="login"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
               <p>Login</p>
