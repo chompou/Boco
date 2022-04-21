@@ -21,8 +21,16 @@ public class ListingController {
     }
 
     @GetMapping("/")
-    public List<Listing> getNewLists(@RequestParam(name = "perPage") int perPage, @RequestParam(name = "page") int page){
-        return listingService.getListingsByPage(page, perPage).getContent();
+    public List<Listing> getLists(@RequestParam int perPage,
+                                  @RequestParam int page,
+                                  @RequestParam(defaultValue  = "") String search,
+                                  @RequestParam(defaultValue  = "id") String sort,
+                                  @RequestParam(defaultValue  =  "-1") double priceFrom,
+                                  @RequestParam(defaultValue  = "-1") double priceTo,
+                                  @RequestParam(defaultValue  = "") String priceType
+    ){
+
+        return listingService.getListings(page, perPage, search, sort, priceFrom, priceTo, priceType).getContent();
     }
 
 

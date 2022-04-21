@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,9 +34,14 @@ public class ListingService {
         return listingRepository.findAll();
     }
 
-    public Page<Listing> getListingsByPage(int page, int size){
-        Pageable pageable = PageRequest.of(page, size);
-        return listingRepository.findAll(pageable);
+    public Page<Listing> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort));
+
+        if (priceFrom == -1){
+            return listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable);
+        } else {
+            return null;
+        }
     }
 
 
