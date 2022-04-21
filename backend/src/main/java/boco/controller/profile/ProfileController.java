@@ -1,4 +1,4 @@
-package boco.controller;
+package boco.controller.profile;
 
 public class ProfileController {
 }
