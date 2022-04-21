@@ -25,25 +25,25 @@ const routes = [
     children: [
       {
         path: "items",
-        name: "myItems"
+        name: "myItems",
       },
       {
         path: "leases",
-        name: "myLeases"
+        name: "myLeases",
       },
       {
         path: "reviews",
-        name: "myReviews"
+        name: "myReviews",
       },
       {
         path: "settings",
-        name: "mySettings"
-      }
-    ]
-  }, 
+        name: "mySettings",
+      },
+    ],
+  },
   {
     path: "create",
-    name: "createItem"
+    name: "createItem",
   },
   {
     path: "items",
@@ -53,7 +53,7 @@ const routes = [
     path: "items/:id",
     name: "item",
     props: true,
-  }
+  },
 ];
 
 const router = createRouter({
