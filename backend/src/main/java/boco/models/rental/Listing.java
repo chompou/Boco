@@ -1,5 +1,8 @@
-package boco.models;
+package boco.models.rental;
 
+import boco.models.rental.CategoryType;
+import boco.models.rental.Image;
+import boco.models.rental.Lease;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

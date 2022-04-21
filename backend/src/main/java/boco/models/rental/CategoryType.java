@@ -1,4 +1,4 @@
-package boco.models;
+package boco.models.rental;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,14 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+
 @Getter @Setter @NoArgsConstructor
 @Entity
-public class Notification {
+public class CategoryType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String message;
-    private String url;
-    private Boolean isRead;
-
+    private String name;
 }

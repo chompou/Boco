@@ -1,4 +1,4 @@
-package boco.models;
+package boco.models.profile;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

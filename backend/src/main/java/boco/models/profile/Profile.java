@@ -1,5 +1,7 @@
-package boco.models;
+package boco.models.profile;
 
+import boco.models.rental.Lease;
+import boco.models.rental.Listing;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

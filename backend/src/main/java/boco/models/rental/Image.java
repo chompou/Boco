@@ -1,4 +1,4 @@
-package boco.models;
+package boco.models.rental;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,12 +9,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-public class Review {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double rating;
-    private String comment;
+    private byte[] image;
+    private String caption;
 }
