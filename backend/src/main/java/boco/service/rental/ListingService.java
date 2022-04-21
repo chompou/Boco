@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ListingService {
+    private final ListingRepository listingRepository;
+
     @Autowired
-    private ListingRepository listingRepository;
+    public ListingService(ListingRepository listingRepository) {
+        this.listingRepository = listingRepository;
+    }
 }
