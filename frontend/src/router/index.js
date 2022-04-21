@@ -47,7 +47,7 @@ const routes = [
   },
   {
     path: "edit",
-    name: "editItem"
+    name: "editItem",
   },
   {
     path: "items",
