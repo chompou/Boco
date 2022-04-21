@@ -4,11 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
@@ -28,4 +26,13 @@ public class Profile {
     private Double profile;
     private Double ratingGiven;
     private Timestamp deactivated;
+
+    @OneToMany
+    private List<Lease> rentals;
+
+    @OneToMany
+    private List<Listing> listings;
+
+    @OneToMany
+    private List<Notification> notifications;
 }

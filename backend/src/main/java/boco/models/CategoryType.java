@@ -12,7 +12,7 @@ import javax.persistence.Id;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
-public class CategoryTypes {
+public class CategoryType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

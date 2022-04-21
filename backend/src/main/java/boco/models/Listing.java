@@ -4,11 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
@@ -26,6 +24,16 @@ public class Listing {
     private String priceType;
     private Timestamp lastChanged;
     private double rating;
+
+    @OneToMany
+    private List<Lease> leases;
+
+    @OneToMany
+    private List<Image> images;
+
+    @ManyToMany
+    private List<CategoryType> categoryTypes;
+
 
 
 

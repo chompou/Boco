@@ -8,6 +8,6 @@ import javax.persistence.Entity;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
-public class Personal {
+public class  Personal extends Profile {
 
 }

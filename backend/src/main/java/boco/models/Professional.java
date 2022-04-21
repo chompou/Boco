@@ -8,5 +8,5 @@ import javax.persistence.Entity;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
-public class Professional {
+public class Professional extends Profile {
 }
