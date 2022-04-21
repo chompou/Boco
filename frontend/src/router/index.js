@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import ItemCreationPage from "@/views/Items/ItemCreationPage";
 import FrontPage from "../views/FrontPageView.vue";
 import About from "../views/AboutView.vue";
+import ItemPage from "@/views/Items/ItemPage";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: "/createItem",
     name: "createItem",
     component: ItemCreationPage,
+  },
+  {
+    path: "/itemPage",
+    name: "itemPage",
+    component: ItemPage,
   },
 ];
 
