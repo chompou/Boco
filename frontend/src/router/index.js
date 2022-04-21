@@ -46,6 +46,10 @@ const routes = [
     name: "createItem",
   },
   {
+    path: "edit",
+    name: "editItem"
+  },
+  {
     path: "items",
     name: "items",
   },
