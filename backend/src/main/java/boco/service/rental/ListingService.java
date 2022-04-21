@@ -1,10 +1,12 @@
 package boco.service.rental;
 
+import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import boco.models.rental.Review;
 import boco.repository.rental.ListingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +16,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ListingService {
     private final ListingRepository listingRepository;
+
+    Logger logger = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
     public ListingService(ListingRepository listingRepository) {
@@ -35,17 +40,22 @@ public class ListingService {
 
 
 
-    public ResponseEntity<List<Review>> getListingReviews(Long listingId) {
-        var listingData = listingRepository.findById(listingId);
+    public ResponseEntity<List<Review>> getListingReviews(Long listingId, int perPage, int page) {
+        Optional<Listing> listingData = listingRepository.findById(listingId);
 
-        if (!listingData.isPresent()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!listingData.isPresent()) {
+            logger.debug("listingId=" + listingId + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<Lease> listingLeases = listingData.get().getLeases();
 
         List<Review> reviews = new ArrayList<>();
-        var listingLeases = listingData.get().getLeases();
         for (int i = 0; i < listingLeases.size(); i++) {
             reviews.add(listingLeases.get(i).getLeaseeReview());
         }
-        return new ResponseEntity<List<Review>>(reviews, HttpStatus.OK);
 
+        List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
+        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 }
