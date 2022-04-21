@@ -42,19 +42,19 @@ const routes = [
     ],
   },
   {
-    path: "create",
+    path: "/create",
     name: "createItem",
   },
   {
-    path: "edit",
+    path: "/edit",
     name: "editItem",
   },
   {
-    path: "items",
+    path: "/items",
     name: "items",
   },
   {
-    path: "items/:id",
+    path: "/items/:id",
     name: "item",
     props: true,
   },
