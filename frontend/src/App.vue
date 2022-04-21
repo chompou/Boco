@@ -51,7 +51,7 @@
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/createItem"
+              <router-link to="/create"
                 ><font-awesome-icon icon="plus"
               /></router-link>
               <p>Create Item</p>

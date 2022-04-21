@@ -45,7 +45,7 @@ const routes = [
     ],
   },
   {
-    path: "/createItem",
+    path: "/create",
     name: "createItem",
     component: ItemCreationPage,
   },
