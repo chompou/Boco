@@ -16,7 +16,9 @@
             <button class="editButtons">Edit</button>
             <button class="editButtons">Delete</button>
           </div>
-          <button class="leaseButton" v-else>Book leasing</button>
+          <button class="leaseButton" v-else @click="leaseOverlay = true">
+            Book leasing
+          </button>
         </div>
         <div id="About">
           <div id="About11">
@@ -49,12 +51,18 @@
 import RatingComponent from "@/components/RatingComponent";
 import ProfileBoxComponent from "@/components/ProfileBoxComponent";
 import ReviewComponent from "@/components/ReviewComponent";
+import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 export default {
-  components: { ProfileBoxComponent, RatingComponent, ReviewComponent },
+  components: {
+    ProfileBoxComponent,
+    RatingComponent,
+    ReviewComponent,
+    LeaseRequestComponent,
+  },
   data() {
     return {
       leaseOverlay: false,
-      my: true,
+      my: false,
       id: 1234,
       title: "Wrench",
       category: ["tool", "electronic"],
