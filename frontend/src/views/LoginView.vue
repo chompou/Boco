@@ -21,8 +21,10 @@
         placeholder="Password"
         required
       />
+      <br />
       <input type="checkbox" @click="togglePassword()" />Show Password
       <br />
+      <p><a href="/ForgottenPwd">Forgotten password?</a></p>
       <button id="Login" type="submit">Login</button>
     </form>
   </div>
