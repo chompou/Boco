@@ -53,6 +53,7 @@ public class Profile {
 
         // Setting some default values
         this.isVerified = false;
+        this.deactivated = null;
 
     }
 
