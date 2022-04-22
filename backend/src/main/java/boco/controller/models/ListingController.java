@@ -20,21 +20,27 @@ public class ListingController {
 
     @GetMapping("/")
     public List<Listing> getListings(@RequestParam int perPage,
-                                  @RequestParam int page,
-                                  @RequestParam(defaultValue  = "") String search,
-                                  @RequestParam(defaultValue  = "id") String sort,
-                                  @RequestParam(defaultValue  =  "-1") double priceFrom,
-                                  @RequestParam(defaultValue  = "-1") double priceTo,
-                                  @RequestParam(defaultValue  = "") String priceType
+                                     @RequestParam int page,
+                                     @RequestParam(defaultValue  = "") String search,
+                                     @RequestParam(defaultValue  = "id") String sort,
+                                     @RequestParam(defaultValue  =  "-1") double priceFrom,
+                                     @RequestParam(defaultValue  = "-1") double priceTo,
+                                     @RequestParam(defaultValue  = "") String priceType,
+                                     @RequestParam(required = false) Long profileId
+
     ){
+        if (profileId != null){
+
+        }
 
         return listingService.getListings(page, perPage, search, sort, priceFrom, priceTo, priceType).getContent();
     }
 
-    @GetMapping("/profile/{profile_id}")
+    @GetMapping("/{listing_id}")
     public ResponseEntity<Listing> getListing(@PathVariable long id){
         return listingService.getListingById(id);
     }
+
 
 
 }
