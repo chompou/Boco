@@ -35,5 +35,6 @@ h2 {
   text-align: center;
   color: #2c3e50;
   padding: 20px 10px;
+  background: white;
 }
 </style>

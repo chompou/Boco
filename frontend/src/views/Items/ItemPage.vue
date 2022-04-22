@@ -1,38 +1,55 @@
 <template>
-  <div class="container">
-    <div>
+  <div class="mainContainer">
+    <div class="container">
       <div>
-        <img alt="Vue logo" src="@/assets/service.png" />
-        <button>Book leasing</button>
-      </div>
-      <div id="About">
-        <div id="About11">
-          <div id="About1">
-            <h2>{{ title }}</h2>
-            <p>Category: {{ category }}</p>
-            <p>Address: {{ address }}</p>
-            <p>Price: {{ price }}kr{{ leaseType }}</p>
+        <div class="imageButtons">
+          <img alt="Vue logo" src="@/assets/service.png" />
+          <div v-if="my">
+            <button class="editButtons">Set Active</button>
+            <button class="editButtons">Edit</button>
+            <button class="editButtons">Delete</button>
           </div>
-          <div id="About2">
-            <RatingComponent />
-          </div>
+          <button class="leaseButton" v-else>Book leasing</button>
         </div>
-        <h2>Description</h2>
-        <p>{{ description }}</p>
+        <div id="About">
+          <div id="About11">
+            <div id="About1">
+              <h2>{{ title }}</h2>
+              <div id="category">
+                <label>Category: </label>
+                <label v-for="item in category" :key="item">{{ item }}, </label>
+              </div>
+              <p>Address: {{ address }}</p>
+              <p>Price: {{ price }}kr{{ leaseType }}</p>
+            </div>
+            <div id="About2">
+              <RatingComponent />
+            </div>
+          </div>
+          <h2>Description</h2>
+          <p>{{ description }}</p>
+        </div>
       </div>
+    </div>
+    <div>
+      <ProfileBoxComponent />
+      <ReviewComponent />
     </div>
   </div>
 </template>
 
 <script>
 import RatingComponent from "@/components/RatingComponent";
+import ProfileBoxComponent from "@/components/ProfileBoxComponent";
+import ReviewComponent from "@/components/ReviewComponent";
 export default {
-  components: { RatingComponent },
+  components: { ProfileBoxComponent, RatingComponent, ReviewComponent },
   data() {
     return {
+      my: true,
       id: 1234,
       title: "Wrench",
-      category: "Tools",
+      category: ["tool", "electronic"],
       address: "Gløsveien 1",
       price: 50,
       leaseType: "/Day",
@@ -50,7 +67,12 @@ export default {
 </script>
 
 <style scoped>
+.mainContainer {
+  display: flex;
+}
+
 .container {
+  margin-top: 20px;
   width: 600px;
 }
 
@@ -61,9 +83,14 @@ img {
   border: 1px solid #39495c;
 }
 
-button {
+.imageButtons {
+  display: flex;
+}
+
+.leaseButton {
   border: 1px solid #39495c;
   width: 150px;
+  height: 50px;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -73,6 +100,21 @@ button {
   padding: 5px;
   background: white;
   margin: 50px;
+}
+
+.editButtons {
+  border: 1px solid #39495c;
+  width: 150px;
+  height: 50px;
+  font-size: 20px;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  padding: 5px;
+  background: white;
+  margin: 25px;
 }
 
 button:hover {
@@ -95,5 +137,9 @@ button:hover {
 
 #About2 {
   width: 100px;
+}
+
+#category label {
+  display: inline;
 }
 </style>

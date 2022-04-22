@@ -4,12 +4,16 @@ import LoginView from "@/views/LoginView";
 import ItemCreationPage from "@/views/Items/ItemCreationPage";
 import RegisterView from "@/views/RegisterView";
 import ItemPage from "@/views/Items/ItemPage";
+<<<<<<< Updated upstream
 import NotFoundView from "@/views/NotFoundView";
 import MyProfileView from "@/views/my/MyProfileView";
 import MyItemsView from "@/views/my/MyItemsView";
 import MyLeasesView from "@/views/my/MyLeasesView";
 import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
+=======
+import itemEditPage from "@/views/Items/ItemEditPage";
+>>>>>>> Stashed changes
 
 const routes = [
   {
@@ -66,6 +70,7 @@ const routes = [
   {
     path: "/edit",
     name: "editItem",
+    component: itemEditPage,
   },
   {
     path: "/items",
@@ -78,9 +83,15 @@ const routes = [
     props: true,
   },
   {
+<<<<<<< Updated upstream
     path: "/:catchAll(.*)",
     name: "NotFound",
     component: NotFoundView,
+=======
+    path: "/item",
+    name: "item",
+    component: ItemPage,
+>>>>>>> Stashed changes
   },
 ];
 
