@@ -8,10 +8,20 @@ import {
   faRightToBracket,
   faUserSecret,
   faSignOutAlt,
+  faPlus,
+  faHouse,
+  faInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faRightToBracket, faUserSecret, faSignOutAlt);
+library.add(
+  faRightToBracket,
+  faUserSecret,
+  faSignOutAlt,
+  faPlus,
+  faHouse,
+  faInfo
+);
 
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)

@@ -1,26 +1,70 @@
 import { createRouter, createWebHistory } from "vue-router";
+import FrontPage from "../views/FrontPageView.vue";
+import LoginView from "@/views/LoginView";
 import ItemCreationPage from "@/views/Items/ItemCreationPage";
-import HomeView from "../views/FrontPageView.vue";
+import RegisterView from "@/views/RegisterView";
+import ItemPage from "@/views/Items/ItemPage";
 
 const routes = [
   {
     path: "/",
     name: "home",
-    component: HomeView,
+    component: FrontPage,
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: "/login",
+    name: "login",
+    component: LoginView,
   },
   {
-    path: "/createItem",
+    path: "/register",
+    name: "register",
+    component: RegisterView,
+  },
+  {
+    path: "/profile/:id",
+    name: "profile",
+    props: true,
+  },
+  {
+    path: "/my",
+    children: [
+      {
+        path: "items",
+        name: "myItems",
+      },
+      {
+        path: "leases",
+        name: "myLeases",
+      },
+      {
+        path: "reviews",
+        name: "myReviews",
+      },
+      {
+        path: "settings",
+        name: "mySettings",
+      },
+    ],
+  },
+  {
+    path: "/create",
     name: "createItem",
     component: ItemCreationPage,
+  },
+  {
+    path: "/edit",
+    name: "editItem",
+  },
+  {
+    path: "/items",
+    name: "items",
+    component: ItemPage,
+  },
+  {
+    path: "/items/:id",
+    name: "item",
+    props: true,
   },
 ];
 

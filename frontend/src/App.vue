@@ -21,7 +21,7 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="#"
+              <router-link to="login"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
               <p>Login</p>
@@ -48,26 +48,43 @@
             </a>
           </li>
         </ul>
-        <!--<ul id="nav" class="navbar-nav mr-auto">
+        <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/">Home</router-link>
+              <router-link to="/create"
+                ><font-awesome-icon icon="plus"
+              /></router-link>
+              <p>Create Item</p>
             </a>
           </li>
+        </ul>
+        <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/about">About</router-link>
+              <router-link to="/"
+                ><font-awesome-icon icon="house"
+              /></router-link>
+              <p>Home</p>
             </a>
           </li>
-        </ul>-->
+        </ul>
+        <ul id="nav" class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link">
+              <router-link to="/about"
+                ><font-awesome-icon icon="info"
+              /></router-link>
+              <p>About</p>
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/createItem">CreateItem</router-link>
   </nav>
-  <router-view />
+  <div class="container">
+    <router-view />
+  </div>
+  <div class="longDiv"></div>
 </template>
 
 <style>
@@ -79,16 +96,66 @@
   color: #2c3e50;
 }
 
-nav {
-  padding: 30px;
+.longDiv {
+  height: 2000px;
 }
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+/* Navbar styling */
+li a {
+  text-decoration: none;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
+li a.router-link-exact-active {
+  color: gray;
+}
+
+li a.router-link-exact-active:hover {
+  color: #ffc370;
+}
+
+li a:hover {
+  color: lightgray;
+}
+
+.nav-item {
+  font-size: x-large;
+}
+
+.navbar {
+  /*background-color: #343a40;*/
+  background-color: white;
+}
+
+/* Navbar styling end*/
+
+/* Make navbar slide from left on small screens*/
+@media (max-width: 479px) {
+  .navbar-collapse {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+    width: 45%;
+    height: 100%;
+    /*background-color: #343a40;*/
+    background-color: gray;
+    margin-top: 35px;
+  }
+
+  .navbar-collapse.collapsing {
+    left: -75%;
+    transition: height 0s ease;
+  }
+
+  .navbar-collapse.show {
+    left: 0;
+    transition: left 300ms ease-in-out;
+  }
+
+  .navbar-toggler.collapsed ~ .navbar-collapse {
+    transition: left 500ms ease-in-out;
+  }
 }
 </style>
