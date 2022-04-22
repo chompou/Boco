@@ -31,14 +31,9 @@ public class LoginController {
     @CrossOrigin
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest)throws Exception{
-        System.out.println("data received");
-        System.out.println(loginRequest.getUsername());
-        System.out.println(loginRequest.getPassword());
-
         try {authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
-            System.out.println("nextStepOK");
         }catch (BadCredentialsException e){
             logger.info("bad login request denied");
         }
