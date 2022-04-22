@@ -12,6 +12,8 @@
         placeholder="example@gmail.com"
         required
       />
+      <br />
+      <button id="submit" type="submit">Submit</button>
     </form>
   </div>
 </template>
