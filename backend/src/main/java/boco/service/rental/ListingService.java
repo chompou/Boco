@@ -1,13 +1,15 @@
 package boco.service.rental;
 
+import boco.models.http.ListingRequest;
+import boco.models.profile.Profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import boco.models.rental.Review;
+import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.ListingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,13 +24,16 @@ import java.util.Optional;
 @Service
 public class ListingService {
     private final ListingRepository listingRepository;
+    private final ProfileRepository profileRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
-    public ListingService(ListingRepository listingRepository) {
+    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository) {
         this.listingRepository = listingRepository;
+        this.profileRepository = profileRepository;
     }
+
 
     public List<Listing> getAllListings(){
         return listingRepository.findAll();
@@ -74,5 +79,19 @@ public class ListingService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(listing.get(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Listing> createListing(ListingRequest listingRequest) {
+        try {
+            Profile profileOfRequest = profileRepository.getById(listingRequest.getProfileId());
+            Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
+                    listingRequest.getCategory(), listingRequest.getAddress(), listingRequest.isAvailable(),
+                    listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
+                    profileOfRequest);
+            Listing savedListing = listingRepository.save(newListing);
+            return new ResponseEntity<>(savedListing, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
