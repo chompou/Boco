@@ -32,6 +32,8 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest)throws Exception{
         System.out.println("data received");
+        System.out.println(loginRequest.getUsername());
+        System.out.println(loginRequest.getPassword());
 
         try {authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
@@ -43,5 +45,10 @@ public class LoginController {
         final UserDetails userDetails = profileDetailsService.loadUserByUsername(loginRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new LoginResponse(jwt));
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String hello(){
+        return "hello world";
     }
 }

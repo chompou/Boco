@@ -18,7 +18,7 @@ public class ProfileDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("user");
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_ADMIN");
         return Arrays.asList(authority);
     }
 
@@ -34,23 +34,23 @@ public class ProfileDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
         if (profile.getDeactivated() == null){
-            return false;
+            return true;
         }
         return profile.getDeactivated().toLocalDateTime().isBefore(LocalDateTime.now());
     }

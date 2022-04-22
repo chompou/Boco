@@ -18,14 +18,12 @@ public class ProfileDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        String username = "";
-        String email = "";
+        Optional<Profile> user;
         if (usernameOrEmail.contains("@")){
-            email = usernameOrEmail;
+            user = profileRepository.findProfileByEmail(usernameOrEmail);
         }else{
-            username = usernameOrEmail;
+            user = profileRepository.findProfileByUsername(usernameOrEmail);
         }
-        Optional<Profile> user = profileRepository.findProfileByUsernameOrEmail(username, email);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("Could not find user");
         }

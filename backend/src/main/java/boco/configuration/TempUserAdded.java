@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TempUserAdded {
 
-    @Bean
     CommandLineRunner simpleRunner(ProfileRepository profileRepository){
         return args ->{
             Profile profile = new Profile();
