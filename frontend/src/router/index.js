@@ -5,6 +5,11 @@ import ItemCreationPage from "@/views/Items/ItemCreationPage";
 import RegisterView from "@/views/RegisterView";
 import ItemPage from "@/views/Items/ItemPage";
 import NotFoundView from "@/views/NotFoundView";
+import MyProfileView from "@/views/my/MyProfileView";
+import MyItemsView from "@/views/my/MyItemsView";
+import MyLeasesView from "@/views/my/MyLeasesView";
+import MyReviewView from "@/views/my/MyReviewView";
+import MySettingsView from "@/views/my/MySettingsView";
 
 const routes = [
   {
@@ -29,22 +34,27 @@ const routes = [
   },
   {
     path: "/my",
+    component: MyProfileView,
     children: [
       {
         path: "items",
         name: "myItems",
+        component: MyItemsView,
       },
       {
         path: "leases",
         name: "myLeases",
+        component: MyLeasesView,
       },
       {
         path: "reviews",
         name: "myReviews",
+        component: MyReviewView,
       },
       {
         path: "settings",
         name: "mySettings",
+        component: MySettingsView,
       },
     ],
   },
@@ -78,5 +88,16 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+/**
+router.beforeEach(async (to, from) => {
+  const canUserAccess = this.$store.state.loggedIn;
+  const canAccess = await canUserAccess(to);
+  if (!canAccess) return "/login";
+});
+
+router.beforeResolve(async to => {
+  if (to.meta.requiresCamera)
+})*/
 
 export default router;
