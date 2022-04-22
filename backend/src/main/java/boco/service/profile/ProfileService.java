@@ -42,6 +42,24 @@ public class ProfileService {
     public ResponseEntity<Profile> getProfile(Long profileId) {
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
+            Profile profile = profileData.get();
+            if (profileHasContactWithProfile(1, 1)){
+                profile.setPasswordHash(null);
+                profile.setUsername(null);
+                profile.setAddress(null);
+                profile.setRatingProfile(null);
+                profile.setRatingListing(null);
+                profile.setRatingGiven(null);
+            } else {
+                profile.setUsername(null);
+                profile.setEmail(null);
+                profile.setPasswordHash(null);
+                profile.setAddress(null);
+                profile.setTlf(null);
+                profile.setRatingProfile(null);
+                profile.setRatingListing(null);
+                profile.setRatingGiven(null);
+            }
             return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -127,6 +145,11 @@ public class ProfileService {
      * @return True if profile is valid, else false
      */
     private boolean isProfileRequestValid(ProfileRequest profileRequest) {
+        // TODO: IMPLEMENT
+        return true;
+    }
+
+    private boolean profileHasContactWithProfile(int profileId1, int profileId2) {
         // TODO: IMPLEMENT
         return true;
     }

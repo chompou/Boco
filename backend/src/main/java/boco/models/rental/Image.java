@@ -1,13 +1,11 @@
 package boco.models.rental;
 
+import boco.models.profile.Profile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -19,4 +17,8 @@ public class Image {
     private Long id;
     private byte[] image;
     private String caption;
+
+    @ManyToOne
+    @JoinColumn(name = "listing_id")
+    private Listing listing;
 }
