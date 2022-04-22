@@ -4,6 +4,7 @@ import LoginView from "@/views/LoginView";
 import ItemCreationPage from "@/views/Items/ItemCreationPage";
 import RegisterView from "@/views/RegisterView";
 import ItemPage from "@/views/Items/ItemPage";
+import NotFoundView from "@/views/NotFoundView";
 
 const routes = [
   {
@@ -65,6 +66,11 @@ const routes = [
     path: "/items/:id",
     name: "item",
     props: true,
+  },
+  {
+    path: "/:catchAll(.*)",
+    name: "NotFound",
+    component: NotFoundView,
   },
 ];
 
