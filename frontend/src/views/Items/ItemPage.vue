@@ -1,7 +1,6 @@
 <template>
   <div class="mainContainer">
-
-     <Transition>
+    <Transition>
       <lease-request-component
         v-if="leaseOverlay"
         @close-overlay="leaseOverlay = false"
@@ -160,7 +159,6 @@ button:hover {
 
 #category label {
   display: inline;
-
 }
 
 .v-enter-active,
