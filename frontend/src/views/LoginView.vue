@@ -2,11 +2,24 @@
   <div class="login">
     <h1>Login</h1>
     <form @submit.prevent="submit" id="inputs">
-      <label for="username">Enter your username: </label>
-      <input type="text" name="username" id="username" />
+      <label for="username">Brukernavn </label>
+      <input
+        v-model="username"
+        type="text"
+        name="username"
+        id="username"
+        placeholder="Brukernavn"
+      />
       <br />
-      <label for="password">Enter your password: </label>
-      <input type="text" name="password" id="password" />
+      <label for="password">Passord </label>
+      <input
+        v-model="password"
+        type="password"
+        name="password"
+        id="password"
+        placeholder="Passord"
+      />
+      <input type="checkbox" @click="togglePassword()" />Show Password
       <br />
       <button id="Login" type="submit">Login</button>
     </form>
@@ -26,6 +39,14 @@ export default {
     };
   },
   methods: {
+    togglePassword() {
+      const x = document.getElementById("password");
+      if (x.type === "password") {
+        x.type = "text";
+      } else {
+        x.type = "password";
+      }
+    },
     submit() {
       console.log("nice");
       /*
