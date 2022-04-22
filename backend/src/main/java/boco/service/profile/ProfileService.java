@@ -48,39 +48,41 @@ public class ProfileService {
         }
     }
 
-    /*
     public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        Profile profile = new Profile(profileRequest.getUsername(), profileRequest.getEmail(),
-                profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
-                profileRequest.getAddress(), profileRequest.getTlf());
-
-        if (!isProfileValid(profile)) {
+        if (!isProfileRequestValid(profileRequest)) {
             logger.debug("Profile is invalid and could not be created: " + profileRequest);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         try {
             if (profileRequest.getIsPersonal()) {
-                //Profile savedProfile = personalRepository.save(p);
+                Personal p = new Personal(profileRequest.getUsername(), profileRequest.getEmail(),
+                        profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
+                        profileRequest.getAddress(), profileRequest.getTlf());
+                Personal savedProfile = personalRepository.save(p);
+
+                logger.debug("Personal profile was saved: " + p);
+                return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
             } else {
-                //Profile p = new Professional();
-                //Profile savedProfile = professionalRepository.save(p);
+                Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
+                        profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
+                        profileRequest.getAddress(), profileRequest.getTlf());
+                Professional savedProfile = professionalRepository.save(p);
+
+                logger.debug("Professional profile was saved: " + p);
+                return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
             }
-            Profile savedProfile = profileRepository.save(profile);
-            logger.debug("Profile was saved: " + profile);
-            return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
+
         } catch (Exception e) {
             logger.debug("Error when saving profile:\n" + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-     */
 
     public ResponseEntity<List<Listing>> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
@@ -121,10 +123,10 @@ public class ProfileService {
     }
 
     /**
-     * @param profile Profile to be verified
+     * @param profileRequest ProfileRequest to be verified
      * @return True if profile is valid, else false
      */
-    private boolean isProfileValid(Profile profile) {
+    private boolean isProfileRequestValid(ProfileRequest profileRequest) {
         // TODO: IMPLEMENT
         return true;
     }
