@@ -21,6 +21,7 @@
       </ul>
     </div>
     <div class="mt-5">
+      <router-link to="items">Items</router-link>
       <font-awesome-icon icon="car" class="icon" />
       <font-awesome-icon icon="wrench" class="icon" />
       <font-awesome-icon icon="umbrella" class="icon" />
