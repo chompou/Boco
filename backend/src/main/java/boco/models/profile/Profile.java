@@ -12,7 +12,8 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
-public class Profile {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +26,7 @@ public class Profile {
     private Boolean isVerified;
     private String tlf;
     private Double ratingListing;
-    private Double profile;
+    private Double ratingProfile;
     private Double ratingGiven;
     private Timestamp deactivated;
 
@@ -37,4 +38,43 @@ public class Profile {
 
     @OneToMany
     private List<Notification> notifications;
+
+    public Profile(String username, String email, String description, String displayName,
+                   String passwordHash, String address, String tlf) {
+        this.username = username;
+        this.email = email;
+        this.description = description;
+        this.displayName = displayName;
+        this.passwordHash = passwordHash;
+        this.address = address;
+        this.tlf = tlf;
+
+        // Setting some default values
+        this.isVerified = false;
+
+    }
+
+    /**
+     * toString method excluding the all properties of type list
+     *
+     * @return String representation of a profile instance
+     */
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", description='" + description + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", address='" + address + '\'' +
+                ", isVerified=" + isVerified +
+                ", tlf='" + tlf + '\'' +
+                ", ratingListing=" + ratingListing +
+                ", ratingProfile=" + ratingProfile +
+                ", ratingGiven=" + ratingGiven +
+                ", deactivated=" + deactivated +
+                '}';
+    }
 }
