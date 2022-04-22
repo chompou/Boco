@@ -2,22 +2,24 @@
   <div class="login">
     <h1>Login</h1>
     <form @submit.prevent="submit" id="inputs">
-      <label for="username">Brukernavn </label>
+      <label for="username">Username </label>
       <input
         v-model="username"
         type="text"
         name="username"
         id="username"
-        placeholder="Brukernavn"
+        placeholder="Username"
+        required
       />
       <br />
-      <label for="password">Passord </label>
+      <label for="password">Password </label>
       <input
         v-model="password"
         type="password"
         name="password"
         id="password"
-        placeholder="Passord"
+        placeholder="Password"
+        required
       />
       <input type="checkbox" @click="togglePassword()" />Show Password
       <br />
@@ -29,7 +31,6 @@
 <script>
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-//import axios from "axios";
 
 export default {
   data() {
@@ -49,41 +50,6 @@ export default {
     },
     submit() {
       console.log("nice");
-      /*
-      axios
-        .post(
-          "http://localhost:8087/api/users",
-          {
-            username: this.username,
-            password: this.password,
-          },
-          {
-            auth: {
-              username: this.username,
-              password: this.password,
-            },
-            "Content-type": "application/json; charset=UTF-8",
-          }
-        )
-        .then((response) => {
-          console.log(response.data);
-          if (response.data) {
-            this.$store.commit("LOGGED_IN", response.data);
-            this.$store.commit("SET_CURRENT_USER", this.username);
-            this.$store.commit("SET_CURRENT_PASSWORD", this.password);
-            console.log(this.$store.getters.username);
-            console.log(this.$store.getters.password);
-            this.$router.push("/Calculator").catch((error) => {
-              console.log(error);
-            });
-          } else {
-            this.wrongPassword = true;
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-   */
     },
   },
   setup: function () {
