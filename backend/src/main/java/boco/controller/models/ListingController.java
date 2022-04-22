@@ -3,10 +3,8 @@ package boco.controller.models;
 import boco.models.rental.Listing;
 import boco.service.rental.ListingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class ListingController {
     }
 
     @GetMapping("/")
-    public List<Listing> getLists(@RequestParam int perPage,
+    public List<Listing> getListings(@RequestParam int perPage,
                                   @RequestParam int page,
                                   @RequestParam(defaultValue  = "") String search,
                                   @RequestParam(defaultValue  = "id") String sort,
@@ -31,6 +29,11 @@ public class ListingController {
     ){
 
         return listingService.getListings(page, perPage, search, sort, priceFrom, priceTo, priceType).getContent();
+    }
+
+    @GetMapping("/profile/{profile_id}")
+    public ResponseEntity<Listing> getListing(@PathVariable long id){
+        return listingService.getListingById(id);
     }
 
 

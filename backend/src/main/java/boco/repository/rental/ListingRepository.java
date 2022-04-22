@@ -15,4 +15,6 @@ import java.util.List;
 public interface ListingRepository extends JpaRepository<Listing, Long> {
 
     Page<Listing> findByDescriptionContainingOrNameContaining(String description, String name, Pageable pageable);
+
+    Page<Listing> findByDescriptionContainingOrNameContainingAndPriceBetween(String description, String name, double minPrice, double maxPrice, Pageable pageable);
 }

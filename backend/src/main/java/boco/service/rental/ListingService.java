@@ -35,12 +35,12 @@ public class ListingService {
     }
 
     public Page<Listing> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
 
         if (priceFrom == -1){
             return listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable);
         } else {
-            return null;
+            return listingRepository.findByDescriptionContainingOrNameContainingAndPriceBetween(search, search, priceFrom, priceTo, pageable);
         }
     }
 
@@ -63,5 +63,14 @@ public class ListingService {
 
         List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Listing> getListingById(Long listingId){
+        Optional<Listing> listing = listingRepository.findById(listingId);
+        if (!listing.isPresent()) {
+            logger.debug("listingId=" + listingId + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(listing.get(), HttpStatus.OK);
     }
 }
