@@ -3,7 +3,9 @@ package boco.controller.models;
 import boco.models.rental.Review;
 import boco.service.profile.ProfileService;
 import boco.service.rental.ListingService;
+import boco.service.rental.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,19 +16,30 @@ import java.util.List;
 public class ReviewController {
     private final ProfileService profileService;
     private final ListingService listingService;
+    private final ReviewService reviewService;
 
     @Autowired
-    public ReviewController(ProfileService profileService, ListingService listingService) {
+    public ReviewController(ProfileService profileService, ListingService listingService, ReviewService reviewService) {
         this.profileService = profileService;
         this.listingService = listingService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listing_id", defaultValue  = null) Long listingId,
-                                                   @RequestParam(name = "profile_id", defaultValue  = null) Long profileId,
+    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listing_id", defaultValue  = "") Long listingId,
+                                                   @RequestParam(name = "profile_id", defaultValue  = "") Long profileId,
                                                    @RequestParam(name = "perPage") int perPage,
                                                    @RequestParam(name = "page") int page){
 
+        if (listingId != null && profileId != null){
+            //TODO
+        } else if(listingId != null){
+            return this.listingService.getListingReviews(listingId, perPage, page);
+        } else if(profileId != null){
+            return this.profileService.getProfileReviews(profileId, perPage, page);
+        } else{
+            return reviewService.getAllReviews();
+        }
 
         return null;
     }
