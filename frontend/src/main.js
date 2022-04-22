@@ -6,21 +6,33 @@ import store from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faRightToBracket,
-  faUserSecret,
+  faUser,
   faSignOutAlt,
   faPlus,
   faHouse,
   faInfo,
+  faCar,
+  faWrench,
+  faUmbrella,
+  faLemon,
+  faChildren,
+  faToiletPaper,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
   faRightToBracket,
-  faUserSecret,
+  faUser,
   faSignOutAlt,
   faPlus,
   faHouse,
-  faInfo
+  faInfo,
+  faCar,
+  faWrench,
+  faUmbrella,
+  faLemon,
+  faChildren,
+  faToiletPaper
 );
 
 createApp(App)

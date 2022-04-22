@@ -27,7 +27,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/user"
-                ><font-awesome-icon icon="user-secret"
+                ><font-awesome-icon icon="user"
               /></router-link>
             </a>
           </li>

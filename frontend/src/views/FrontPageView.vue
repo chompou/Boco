@@ -20,6 +20,14 @@
         <li><a class="dropdown-item" href="#">Hest</a></li>
       </ul>
     </div>
+    <div class="mt-5">
+      <font-awesome-icon icon="car" class="icon" />
+      <font-awesome-icon icon="wrench" class="icon" />
+      <font-awesome-icon icon="umbrella" class="icon" />
+      <font-awesome-icon icon="lemon" class="icon" />
+      <font-awesome-icon icon="children" class="icon" />
+      <font-awesome-icon icon="toilet-paper" class="icon" />
+    </div>
   </div>
 </template>
 
@@ -27,4 +35,9 @@
 /*div {
   border: solid 1px black;
 }*/
+
+.icon {
+  font-size: 4vw;
+  margin-left: 40px;
+}
 </style>
