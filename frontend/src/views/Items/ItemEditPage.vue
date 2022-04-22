@@ -1,19 +1,16 @@
 <template>
   <div id="container">
-    <h1>Create a new Item</h1>
+    <h1>Edit Item</h1>
     <div>
-      <div class="file-upload-form">
-        Upload image:
-        <input type="file" @change="previewImage" accept="image/*" />
-      </div>
-      <div class="image-preview" v-if="imageData.length > 0">
-        <img class="preview" :src="imageData" />
+      <div>
+        <img class="preview" alt="Vue logo" src="@/assets/service.png" />
       </div>
     </div>
     <div id="inputFields">
       <div class="ItemId">
         <p id="ItemNameHeader">Title:</p>
         <input
+          disabled
           class="baseInput"
           v-model="title"
           placeholder="Name"
@@ -88,8 +85,8 @@
         ></textarea>
       </div>
       <div id="CreateButtons" class="element">
-        <button class="CreateButton">Create</button>
-        <button id="Delete" class="CreateButton">Delete</button>
+        <button class="CreateButton">Update</button>
+        <button id="Delete" class="CreateButton">Dismiss</button>
       </div>
     </div>
   </div>
@@ -99,14 +96,16 @@
 export default {
   data() {
     return {
+      id: 1234,
+      title: "Wrench",
+      address: "Gløsveien 1",
+      category: ["tool"],
+      price: 50,
+      leaseType: "/Day",
+      description:
+        "In North American English, wrench is the standard term. The most common shapes are called open-end wrench and box-end wrench. In American English, spanner refers to a specialized wrench with a series of pins or tabs around the circumference. (These pins or tabs fit into the holes or notches cut into the object to be turned.) In American commerce, such a wrench may be called a spanner wrench to distinguish it from the British sense of spanner.",
       imageData: "",
-      title: "",
-      address: "",
-      price: "",
-      leaseType: "",
-      category: [],
       checked: false,
-      description: "",
     };
   },
   methods: {
@@ -132,12 +131,6 @@ export default {
 
 <style scoped>
 #container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#setImage {
   display: flex;
   flex-direction: column;
   align-items: center;
