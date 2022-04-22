@@ -30,13 +30,13 @@ public class Profile {
     private Double ratingGiven;
     private Timestamp deactivated;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<Lease> rentals;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<Listing> listings;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<Notification> notifications;
 
     public Profile(String username, String email, String description, String displayName,

@@ -1,5 +1,6 @@
 package boco.models.rental;
 
+import boco.models.profile.Profile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,4 +27,12 @@ public class Lease {
 
     @OneToOne
     private Review itemReview;
+
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
+    @ManyToOne
+    @JoinColumn(name = "listing_id")
+    private Listing listing;
 }
