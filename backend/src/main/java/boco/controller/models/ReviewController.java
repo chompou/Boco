@@ -22,7 +22,12 @@ public class ReviewController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Review>> getReviews(){
+    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listing_id", defaultValue  = null) Long listingId,
+                                                   @RequestParam(name = "profile_id", defaultValue  = null) Long profileId,
+                                                   @RequestParam(name = "perPage") int perPage,
+                                                   @RequestParam(name = "page") int page){
+
+
         return null;
     }
 
