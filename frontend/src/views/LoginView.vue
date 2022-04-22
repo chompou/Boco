@@ -51,3 +51,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.login {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+#Login {
+  display: flex;
+  margin: 10px auto 0;
+}
+</style>
