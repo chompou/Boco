@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
@@ -25,6 +26,25 @@ public class Listing {
     private String priceType;
     private Timestamp lastChanged;
     private double rating;
+
+    public Listing(String name, String description, String category,
+                   String address, boolean isAvailable, boolean isActive,
+                   double price, String priceType, Profile profile) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.address = address;
+        this.isAvailable = isAvailable;
+        this.isActive = isActive;
+        this.price = price;
+        this.priceType = priceType;
+        this.profile = profile;
+
+        // Setting lastChanged to creation time
+        Date date = new Date();
+        Timestamp createdTime = new Timestamp(date.getTime());
+        this.lastChanged = createdTime;
+    }
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
