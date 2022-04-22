@@ -17,7 +17,9 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String username;
+    @Column(unique = true)
     private String email;
     private String description;
     private String displayName;
@@ -30,13 +32,13 @@ public class Profile {
     private Double ratingGiven;
     private Timestamp deactivated;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<Lease> rentals;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<Listing> listings;
 
-    @OneToMany
+    @OneToMany(mappedBy = "profile")
     private List<Notification> notifications;
 
     public Profile(String username, String email, String description, String displayName,

@@ -21,6 +21,11 @@ public class ReviewController {
         this.listingService = listingService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<Review>> getReviews(){
+        return null;
+    }
+
     /**
      * Gets reviews given to a listing defined by listing_id
      *

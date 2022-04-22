@@ -1,16 +1,21 @@
 <template>
   <div id="container">
     <h1>Create a new Item</h1>
-    <div id="setImage" class="element">
-      <button class="CreateButton" id="imageButton">Import image</button>
-      <img id="newImage" src="@/assets/service.png" alt="logo" />
+    <div>
+      <div class="file-upload-form">
+        Upload image:
+        <input type="file" @change="previewImage" accept="image/*" />
+      </div>
+      <div class="image-preview" v-if="imageData.length > 0">
+        <img class="preview" :src="imageData" />
+      </div>
     </div>
     <div id="inputFields">
       <div class="ItemId">
-        <p id="ItemNameHeader">Name:</p>
+        <p id="ItemNameHeader">Title:</p>
         <input
           class="baseInput"
-          v-model="name"
+          v-model="title"
           placeholder="Name"
           id="ItemName"
         />
@@ -29,7 +34,7 @@
         <input
           v-model="price"
           placeholder="100"
-          id="price"
+          class="price"
           type="number"
           min="0"
         />
@@ -54,17 +59,12 @@
               type="checkbox"
               id="vehicle"
               value="vehicle"
-              v-model="categories"
+              v-model="category"
             />
             <label for="vehicle">Vehicle</label>
           </div>
           <div class="ItemId2">
-            <input
-              type="checkbox"
-              id="tool"
-              value="tool"
-              v-model="categories"
-            />
+            <input type="checkbox" id="tool" value="tool" v-model="category" />
             <label for="tool">Tool</label>
           </div>
           <div class="ItemId2">
@@ -72,7 +72,7 @@
               type="checkbox"
               id="electronic"
               value="electronic"
-              v-model="categories"
+              v-model="category"
             />
             <label for="electronic">Electronic</label>
           </div>
@@ -99,14 +99,33 @@
 export default {
   data() {
     return {
-      name: "",
+      imageData: "",
+      title: "",
       address: "",
       price: "",
       leaseType: "",
-      categories: [],
+      category: [],
       checked: false,
       description: "",
     };
+  },
+  methods: {
+    previewImage: function (event) {
+      // Reference to the DOM input element
+      var input = event.target;
+      // Ensure that you have a file before attempting to read it
+      if (input.files && input.files[0]) {
+        // create a new FileReader to read this image and convert to base64 format
+        var reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = (e) => {
+          // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+          // Read image as base64 and set to imageData
+          this.imageData = e.target.result;
+        }; // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+      }
+    },
   },
 };
 </script>
@@ -137,9 +156,9 @@ export default {
   height: 40px;
 }
 
-#price {
+.price {
   font-size: 16px;
-  width: 300px;
+  width: 100px;
   height: 34px;
 }
 
@@ -153,13 +172,9 @@ select {
   height: 40px;
 }
 
-#newImage {
-  height: 120px;
-  width: 120px;
-}
-
-#price {
-  width: 50px;
+.preview {
+  width: 300px;
+  height: 300px;
 }
 
 #inputFields {
