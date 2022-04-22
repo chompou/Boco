@@ -25,7 +25,7 @@ public class Profile {
     private Boolean isVerified;
     private String tlf;
     private Double ratingListing;
-    private Double profile;
+    private Double ratingProfile;
     private Double ratingGiven;
     private Timestamp deactivated;
 
@@ -37,4 +37,28 @@ public class Profile {
 
     @OneToMany
     private List<Notification> notifications;
+
+    /**
+     * toString method excluding the all properties of type list
+     *
+     * @return String representation of a profile instance
+     */
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", description='" + description + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", address='" + address + '\'' +
+                ", isVerified=" + isVerified +
+                ", tlf='" + tlf + '\'' +
+                ", ratingListing=" + ratingListing +
+                ", ratingProfile=" + ratingProfile +
+                ", ratingGiven=" + ratingGiven +
+                ", deactivated=" + deactivated +
+                '}';
+    }
 }
