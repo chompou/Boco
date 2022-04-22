@@ -12,7 +12,8 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 @Entity
-public class Profile {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
