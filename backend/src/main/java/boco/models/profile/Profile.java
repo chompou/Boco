@@ -38,6 +38,21 @@ public class Profile {
     @OneToMany
     private List<Notification> notifications;
 
+    public Profile(String username, String email, String description, String displayName,
+                   String passwordHash, String address, String tlf) {
+        this.username = username;
+        this.email = email;
+        this.description = description;
+        this.displayName = displayName;
+        this.passwordHash = passwordHash;
+        this.address = address;
+        this.tlf = tlf;
+
+        // Setting some default values
+        this.isVerified = false;
+
+    }
+
     /**
      * toString method excluding the all properties of type list
      *
