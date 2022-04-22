@@ -9,9 +9,17 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * The type Profile implemented from UserDetails from spring security
+ */
 public class ProfileDetails implements UserDetails {
-    private Profile profile;
+    private final Profile profile;
 
+    /**
+     * Default constructor with all params
+     *
+     * @param profile the profile
+     */
     public ProfileDetails(Profile profile) {
         this.profile = profile;
     }

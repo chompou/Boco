@@ -16,6 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * Login controller,
+ * login endpoints
+ */
 @RestController
 public class LoginController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -27,8 +31,15 @@ public class LoginController {
     private ProfileDetailsService profileDetailsService;
 
     @Autowired
-    JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
+    /**
+     * Responsentity and HTTP response status dependent on user credentials
+     *
+     * @param loginRequest Json object parsed into LoginRequest
+     * @return ResponseEntity with HTTP status code
+     * @throws Exception bad credentials entered (returns 403)
+     */
     @CrossOrigin
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest)throws Exception{
@@ -46,6 +57,11 @@ public class LoginController {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
+    /**
+     * open hello world string for server connection check
+     *
+     * @return hello world
+     */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String hello(){
         return "hello world";
