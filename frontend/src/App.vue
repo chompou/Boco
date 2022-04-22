@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar sticky-top navbar-expand-sm">
+  <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
     <div class="container-fluid">
       <button
         class="navbar-toggler"
@@ -10,13 +10,9 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-
-      <!--<a class="navbar-brand" href="/">
-        <img src="../src/assets/logo.png" alt="Logo" style="width: 50px"
-      /></a>-->
       <div
         id="collapsedNav"
-        class="collapse navbar-collapse justify-content-center"
+        class="collapse navbar-collapse justify-content-center bg-light"
       >
         <ul class="navbar-nav">
           <li class="nav-item">
@@ -24,27 +20,24 @@
               <router-link to="login"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <p>Login</p>
             </a>
           </li>
         </ul>
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="#"
+              <router-link to="/user"
                 ><font-awesome-icon icon="user-secret"
               /></router-link>
-              <p>User</p>
             </a>
           </li>
         </ul>
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="#"
+              <router-link to="/signout"
                 ><font-awesome-icon icon="sign-out-alt"
               /></router-link>
-              <p>Logout</p>
             </a>
           </li>
         </ul>
@@ -54,7 +47,6 @@
               <router-link to="/create"
                 ><font-awesome-icon icon="plus"
               /></router-link>
-              <p>Create Item</p>
             </a>
           </li>
         </ul>
@@ -64,17 +56,15 @@
               <router-link to="/"
                 ><font-awesome-icon icon="house"
               /></router-link>
-              <p>Home</p>
             </a>
           </li>
         </ul>
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/about"
+              <router-link to="/info"
                 ><font-awesome-icon icon="info"
               /></router-link>
-              <p>About</p>
             </a>
           </li>
         </ul>
@@ -106,11 +96,11 @@ li a {
 }
 
 li a.router-link-exact-active {
-  color: gray;
+  color: lightgray;
 }
 
 li a.router-link-exact-active:hover {
-  color: #ffc370;
+  color: lightgray;
 }
 
 li a:hover {
@@ -121,10 +111,10 @@ li a:hover {
   font-size: x-large;
 }
 
-.navbar {
-  /*background-color: #343a40;*/
-  background-color: white;
-}
+/*
+.navbar-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}*/
 
 /* Navbar styling end*/
 
@@ -132,7 +122,7 @@ li a:hover {
 @media (max-width: 479px) {
   .navbar-collapse {
     position: fixed;
-    top: 40px;
+    top: 20px;
     left: 0;
     padding-left: 15px;
     padding-right: 15px;
