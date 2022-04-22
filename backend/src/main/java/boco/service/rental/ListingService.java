@@ -34,14 +34,16 @@ public class ListingService {
         return listingRepository.findAll();
     }
 
-    public Page<Listing> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
+    public ResponseEntity<List<Listing>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
 
+        List<Listing> listings;
         if (priceFrom == -1){
-            return listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable);
+            listings = listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable).getContent();
         } else {
-            return listingRepository.findByDescriptionContainingOrNameContainingAndPriceBetween(search, search, priceFrom, priceTo, pageable);
+            listings = listingRepository.findByDescriptionContainingOrNameContainingAndPriceBetween(search, search, priceFrom, priceTo, pageable).getContent();
         }
+        return new ResponseEntity<>(listings, HttpStatus.OK);
     }
 
 

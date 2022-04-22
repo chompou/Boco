@@ -77,6 +77,20 @@ public class ProfileService {
         }
     }
 
+    public ResponseEntity<List<Listing>> getProfileListings(Long profileId, int perPage, int page){
+        Optional<Profile> profileData = profileRepository.findById(profileId);
+
+        if (!profileData.isPresent()){
+            logger.debug("profileId=" + profileId + "was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<Listing> listingsByProfile = profileData.get().getListings();
+        List<Listing> listings = new ArrayList<>(listingsByProfile).subList((page-1)*perPage, Math.min(page*perPage, listingsByProfile.size()));
+        return new ResponseEntity<>(listings, HttpStatus.OK);
+
+    }
+
     public ResponseEntity<List<Review>> getProfileReviews(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
