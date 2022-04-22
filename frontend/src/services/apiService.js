@@ -18,4 +18,8 @@ export default {
   getProfile(profileID) {
     return apiClient.get("/profile/" + profileID);
   },
+
+  login(username, password) {
+    return apiClient.post("/login", { username: username, password: password });
+  },
 };
