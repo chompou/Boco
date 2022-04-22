@@ -1,9 +1,16 @@
 <template>
   <div class="container">
+    <Transition>
+      <lease-request-component
+        v-if="leaseOverlay"
+        @close-overlay="leaseOverlay = false"
+      />
+    </Transition>
+
     <div>
       <div>
         <img alt="Vue logo" src="@/assets/service.png" />
-        <button>Book leasing</button>
+        <button @click="leaseOverlay = true">Book leasing</button>
       </div>
       <div id="About">
         <div id="About11">
@@ -26,10 +33,12 @@
 
 <script>
 import RatingComponent from "@/components/RatingComponent";
+import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 export default {
-  components: { RatingComponent },
+  components: { RatingComponent, LeaseRequestComponent },
   data() {
     return {
+      leaseOverlay: false,
       title: "Wrench",
       category: "Tools",
       address: "Gløsveien 1",
@@ -51,6 +60,16 @@ export default {
 <style scoped>
 .container {
   width: 600px;
+}
+
+.my-overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  cursor: pointer;
 }
 
 img {
@@ -94,5 +113,15 @@ button:hover {
 
 #About2 {
   width: 100px;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
