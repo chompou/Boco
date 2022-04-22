@@ -1,9 +1,13 @@
 package boco.service.profile;
 
+import boco.models.http.ProfileRequest;
+import boco.models.profile.Professional;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import boco.models.rental.Review;
+import boco.repository.profile.PersonalRepository;
+import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.service.rental.ListingService;
 import org.slf4j.Logger;
@@ -20,12 +24,18 @@ import java.util.Optional;
 @Service
 public class ProfileService {
     private final ProfileRepository profileRepository;
+    private final PersonalRepository personalRepository;
+    private final ProfessionalRepository professionalRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
-    public ProfileService(ProfileRepository profileRepository) {
+    public ProfileService(ProfileRepository profileRepository,
+                          PersonalRepository personalRepository,
+                          ProfessionalRepository professionalRepository) {
         this.profileRepository = profileRepository;
+        this.personalRepository = personalRepository;
+        this.professionalRepository = professionalRepository;
     }
 
     public ResponseEntity<Profile> getProfile(Long profileId) {
@@ -37,14 +47,32 @@ public class ProfileService {
         }
     }
 
-    public ResponseEntity<Profile> createProfile(Profile profile) {
-        if (!isProfileValid(profile)) {
+    public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
+        if (profileRequest == null) {
+            logger.debug("Profile is null and could not be created");
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
+
+        Profile profile = new Profile(profileRequest.getUsername(), profileRequest.getEmail(),
+                profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
+                profileRequest.getAddress(), profileRequest.getTlf());
+
+        if (!isProfileValid(profile)) {
+            logger.debug("Profile is invalid and could not be created: " + profileRequest);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
         try {
+            if (profileRequest.getIsPersonal()) {
+                Profile savedProfile = profileRepository.save(profile);
+            } else {
+                Profile savedProfile = profileRepository.save(profile);
+            }
             Profile savedProfile = profileRepository.save(profile);
+            logger.debug("Profile was saved: " + profile);
             return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
         } catch (Exception e) {
+            logger.debug("Error when saving profile:\n" + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -79,7 +107,6 @@ public class ProfileService {
      */
     private boolean isProfileValid(Profile profile) {
         // TODO: IMPLEMENT
-        if (profile == null) return false;
         return true;
     }
 }

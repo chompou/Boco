@@ -1,5 +1,6 @@
 package boco.controller.models;
 
+import boco.models.http.ProfileRequest;
 import boco.models.profile.Profile;
 import boco.service.profile.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ProfileController {
     }
 
     @PostMapping()
-    public ResponseEntity<Profile> createProfile(@RequestBody Profile profile) {
-        return profileService.createProfile(profile);
+    public ResponseEntity<Profile> createProfile(@RequestBody ProfileRequest profileRequest) {
+        return profileService.createProfile(profileRequest);
     }
 }
