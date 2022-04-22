@@ -1,5 +1,13 @@
 <template>
   <div class="mainContainer">
+
+     <Transition>
+      <lease-request-component
+        v-if="leaseOverlay"
+        @close-overlay="leaseOverlay = false"
+      />
+    </Transition>
+
     <div class="container">
       <div>
         <div class="imageButtons">
@@ -46,6 +54,7 @@ export default {
   components: { ProfileBoxComponent, RatingComponent, ReviewComponent },
   data() {
     return {
+      leaseOverlay: false,
       my: true,
       id: 1234,
       title: "Wrench",
@@ -74,6 +83,16 @@ export default {
 .container {
   margin-top: 20px;
   width: 600px;
+}
+
+.my-overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  cursor: pointer;
 }
 
 img {
@@ -141,5 +160,16 @@ button:hover {
 
 #category label {
   display: inline;
+
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
