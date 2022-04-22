@@ -1,3 +1,4 @@
+import router from "@/router";
 import axios from "axios";
 import storageService from "./storageService";
 
@@ -11,7 +12,14 @@ const apiClient = axios.create({
 });
 
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = storageService.getToken();
+  config.headers.Authorization = "Bearer " + storageService.getToken();
+});
+
+axios.interceptors.response.use((config) => {
+  if (config.status.toString() == "403") {
+    storageService.clearToken();
+    router.push("/login");
+  }
 });
 
 export default {
