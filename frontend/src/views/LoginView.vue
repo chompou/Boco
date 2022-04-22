@@ -63,4 +63,10 @@ export default {
   display: flex;
   margin: 10px auto 0;
 }
+label,
+input {
+  display: block;
+  margin: auto;
+  padding: 10px;
+}
 </style>
