@@ -73,8 +73,8 @@
   </nav>
   <div class="container">
     <router-view />
+    <div class="longDiv"></div>
   </div>
-  <div class="longDiv"></div>
 </template>
 
 <style>
