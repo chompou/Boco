@@ -7,6 +7,7 @@ import boco.service.security.ProfileDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,20 +32,18 @@ public class LoginController {
     @CrossOrigin
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest)throws Exception{
-        System.out.println("data received");
-        System.out.println(loginRequest.getUsername());
-        System.out.println(loginRequest.getPassword());
-
         try {authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
-            System.out.println("nextStepOK");
         }catch (BadCredentialsException e){
             logger.info("bad login request denied");
         }
         final UserDetails userDetails = profileDetailsService.loadUserByUsername(loginRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new LoginResponse(jwt));
+        if (userDetails.getPassword().equals(loginRequest.getPassword())){
+            final String jwt = jwtUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new LoginResponse(jwt));
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

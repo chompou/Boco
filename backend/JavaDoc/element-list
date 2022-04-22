@@ -1,0 +1,13 @@
+boco
+boco.configuration
+boco.controller.models
+boco.controller.security
+boco.models.http
+boco.models.profile
+boco.models.rental
+boco.models.security
+boco.repository.profile
+boco.repository.rental
+boco.service.profile
+boco.service.rental
+boco.service.security

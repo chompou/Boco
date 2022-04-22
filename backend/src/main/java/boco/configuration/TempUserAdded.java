@@ -6,15 +6,21 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Temporary fill for database
+ */
 @Configuration
 public class TempUserAdded {
 
+    /**
+     * Simple runner command line runner.
+     *
+     * @param profileRepository the profile repository
+     * @return the command line runner
+     */
     CommandLineRunner simpleRunner(ProfileRepository profileRepository){
         return args ->{
             Profile profile = new Profile();
-            profile.setUsername("hello");
-            profile.setPasswordHash("goodbye");
-            profile.setEmail("hello@123.no");
 
             profileRepository.save(profile);
         };
