@@ -1,6 +1,7 @@
 package boco.service.rental;
 
 import boco.models.http.ListingRequest;
+import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
@@ -93,5 +94,27 @@ public class ListingService {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public ResponseEntity<Listing> updateListing(UpdateListingRequest updateListingRequest) {
+        Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getListingId());
+        if (!listingData.isPresent()) {
+            logger.debug("listingId=" + updateListingRequest.getListingId() + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Setting the new data
+        Listing listing = listingData.get();
+        listing.setDescription(updateListingRequest.getDescription());
+        listing.setCategory(updateListingRequest.getCategory());
+        listing.setAddress(updateListingRequest.getAddress());
+        listing.setAvailable(updateListingRequest.isAvailable());
+        listing.setActive(updateListingRequest.isActive());
+        listing.setPrice(updateListingRequest.getPrice());
+        listing.setPriceType(updateListingRequest.getPriceType());
+
+        Listing savedListing = listingRepository.save(listing);
+        logger.debug("listingId=" + updateListingRequest.getListingId() + " was updated to:\n" + savedListing);
+        return new ResponseEntity<>(savedListing, HttpStatus.OK);
     }
 }
