@@ -29,14 +29,11 @@
 </template>
 
 <script>
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-
 export default {
   data() {
     return {
-      wrongPassword: false,
-      notRegistered: false,
+      username: "",
+      password: "",
     };
   },
   methods: {
@@ -51,27 +48,6 @@ export default {
     submit() {
       console.log("nice");
     },
-  },
-  setup: function () {
-    const validation = yup.object({
-      username: yup.string().required(),
-    });
-    const { errors } = useForm({
-      validationSchema: validation,
-      initialValues: {
-        username: "",
-        password: "",
-      },
-    });
-
-    const { value: username } = useField("username");
-    const { value: password } = useField("password");
-
-    return {
-      username,
-      password,
-      errors,
-    };
   },
 };
 </script>
