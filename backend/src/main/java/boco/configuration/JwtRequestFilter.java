@@ -16,6 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Java web token request filter.
+ * Extends OncePerRequestFilter.
+ * Internal filter for spring security
+ */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
