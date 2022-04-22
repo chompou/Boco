@@ -1,8 +1,6 @@
 package boco.models.rental;
 
-import boco.models.rental.CategoryType;
-import boco.models.rental.Image;
-import boco.models.rental.Lease;
+import boco.models.profile.Profile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,16 +26,37 @@ public class Listing {
     private Timestamp lastChanged;
     private double rating;
 
-    @OneToMany
+    @ManyToOne
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
+    @OneToMany(mappedBy = "listing")
     private List<Lease> leases;
 
-    @OneToMany
+    @OneToMany(mappedBy = "listing")
     private List<Image> images;
 
     @ManyToMany
     private List<CategoryType> categoryTypes;
 
-
-
-
+    @Override
+    public String toString() {
+        return "Listing{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", address='" + address + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", isActive=" + isActive +
+                ", price=" + price +
+                ", priceType='" + priceType + '\'' +
+                ", lastChanged=" + lastChanged +
+                ", rating=" + rating +
+                ", profile=" + profile +
+                ", leases=" + leases +
+                ", images=" + images +
+                ", categoryTypes=" + categoryTypes +
+                '}';
+    }
 }
