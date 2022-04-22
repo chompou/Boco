@@ -1,6 +1,7 @@
 package boco.service.profile;
 
 import boco.models.http.ProfileRequest;
+import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
@@ -47,6 +48,7 @@ public class ProfileService {
         }
     }
 
+    /*
     public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
@@ -64,9 +66,10 @@ public class ProfileService {
 
         try {
             if (profileRequest.getIsPersonal()) {
-                Profile savedProfile = profileRepository.save(profile);
+                //Profile savedProfile = personalRepository.save(p);
             } else {
-                Profile savedProfile = profileRepository.save(profile);
+                //Profile p = new Professional();
+                //Profile savedProfile = professionalRepository.save(p);
             }
             Profile savedProfile = profileRepository.save(profile);
             logger.debug("Profile was saved: " + profile);
@@ -76,6 +79,8 @@ public class ProfileService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+     */
 
     public ResponseEntity<List<Listing>> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
