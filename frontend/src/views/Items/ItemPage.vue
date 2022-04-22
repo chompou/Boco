@@ -30,6 +30,7 @@ export default {
   components: { RatingComponent },
   data() {
     return {
+      id: 1234,
       title: "Wrench",
       category: "Tools",
       address: "Gløsveien 1",
