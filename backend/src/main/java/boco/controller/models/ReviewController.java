@@ -36,9 +36,9 @@ public class ReviewController {
      * @param page The page number we are on
      * @return A responseEntity containg a list of reviews.
      */
-    @GetMapping("/")
-    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listing_id", defaultValue  = "") Long listingId,
-                                                   @RequestParam(name = "profile_id", defaultValue  = "") Long profileId,
+    @GetMapping("")
+    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listingId", defaultValue  = "") Long listingId,
+                                                   @RequestParam(name = "profileId", defaultValue  = "") Long profileId,
                                                    @RequestParam(name = "perPage") int perPage,
                                                    @RequestParam(name = "page") int page){
 
