@@ -163,6 +163,7 @@ button:hover {
 
 #About2 {
   width: 100px;
+  margin-left: 50px;
 }
 
 #category label {
