@@ -12,6 +12,7 @@ import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
 import itemEditPage from "@/views/Items/ItemEditPage";
 import forgottenPwdView from "@/views/ForgottenPwdView";
+import ItemsPage from "@/views/Items/ItemsPage";
 
 const routes = [
   {
@@ -78,7 +79,7 @@ const routes = [
   {
     path: "/items",
     name: "items",
-    component: ItemPage,
+    component: ItemsPage,
   },
   {
     path: "/items/:id",
