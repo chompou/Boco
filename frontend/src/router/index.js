@@ -12,6 +12,7 @@ import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
 import itemEditPage from "@/views/Items/ItemEditPage";
 import forgottenPwdView from "@/views/ForgottenPwdView";
+import itemsPage from "@/views/Items/ItemsPage";
 
 const routerGuard = {
   beforeEnter: (to, from) => {
@@ -90,6 +91,7 @@ const routes = [
   {
     path: "/items",
     name: "items",
+    component: itemsPage,
   },
   {
     path: "/items/:id",
