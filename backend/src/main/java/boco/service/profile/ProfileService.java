@@ -14,6 +14,7 @@ import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.service.rental.ListingService;
+import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +34,21 @@ public class ProfileService {
     private final ProfessionalRepository professionalRepository;
     private final LeaseRepository leaseRepository;
 
+    private final JwtUtil jwtUtil;
+
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository,
                           PersonalRepository personalRepository,
                           ProfessionalRepository professionalRepository,
-                          LeaseRepository leaseRepository) {
+                          LeaseRepository leaseRepository,
+                          JwtUtil jwtUtil) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
         this.leaseRepository = leaseRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public ResponseEntity<Profile> getProfile(Long profileId, Long profileId2) {
@@ -142,9 +147,19 @@ public class ProfileService {
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Review>> getMyProfileReviews(Long profileId, int perPage, int page) {
-        List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
+    public ResponseEntity<List<Review>> getMyProfileReviews(String token, int perPage, int page) {
 
+       String username = jwtUtil.extractUsername(token.substring(7));
+       Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+        if (!profile.isPresent()) {
+            logger.debug("profile of token not found found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+       Long profileId = profile.get().getId();
+
+        List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leases.size(); i++) {

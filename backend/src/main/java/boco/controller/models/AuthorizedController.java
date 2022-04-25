@@ -4,6 +4,8 @@ import boco.models.http.ListingRequest;
 import boco.models.http.ListingResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.rental.Listing;
+import boco.models.rental.Review;
+import boco.service.profile.ProfileService;
 import boco.service.rental.ListingService;
 import boco.service.security.JwtUtil;
 import io.jsonwebtoken.JwtParser;
@@ -13,17 +15,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/my")
 public class AuthorizedController {
     private final ListingService listingService;
+    private final ProfileService profileService;
     @Autowired
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public AuthorizedController(ListingService listingService, JwtUtil jwtUtil) {
+    public AuthorizedController(ListingService listingService, ProfileService profileService, JwtUtil jwtUtil) {
         this.listingService = listingService;
+        this.profileService = profileService;
         this.jwtUtil = null;
     }
 
@@ -43,6 +48,14 @@ public class AuthorizedController {
     @DeleteMapping("/listing/{listing_id}")
     public ResponseEntity<HttpStatus> deleteListing(@PathVariable("listing_id") Long listingId) {
         return listingService.deleteListing(listingId);
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<List<Review>> getMyReviews(
+            @RequestParam int perPage,
+            @RequestParam int page,
+            @RequestHeader(name="Authorization") String token) {
+        return profileService.getMyProfileReviews(token, perPage, page);
     }
 
 }

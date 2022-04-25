@@ -17,4 +17,9 @@ public class Review {
     private Long id;
     private Double rating;
     private String comment;
+
+    public Review(Double rating, String comment) {
+        this.rating = rating;
+        this.comment = comment;
+    }
 }
