@@ -148,4 +148,8 @@ public class ProfileService {
         Optional<Profile> profile = profileRepository.getIfContact(profileId1, profileId2);
         return profile.isPresent();
     }
+
+    public Long getProfileIdByUsername(String username){
+        return profileRepository.findProfileByUsername(username).get().getId();
+    }
 }

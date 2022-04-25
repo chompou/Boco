@@ -1,7 +1,11 @@
 package boco.component;
 
+import boco.repository.profile.NotificationRepository;
+import boco.service.profile.NotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
-
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -16,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @ServerEndpoint("/websocket/{userId}")
 public class BocoSocket {
     private Session session;
-    private CopyOnWriteArraySet<BocoSocket> webSockets = new CopyOnWriteArraySet<>();
+    private static CopyOnWriteArraySet<BocoSocket> webSockets = new CopyOnWriteArraySet<>();
     private static Map<String, Session> sessionPool = new HashMap<String, Session>();
 
     @OnOpen

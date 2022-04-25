@@ -183,11 +183,21 @@ public class TempUserAdded {
                 notification.setUrl("path");
                 notification.setProfile(profile7);
 
+                ArrayList<Notification> notifyList = new ArrayList<>();
+
+                for (int i = 0; i < 10; i++) {
+                    Notification notification1 = new Notification();
+                    notification1.setIsRead(i%2==0);
+                    notification1.setMessage("HEIIII");
+                    notification1.setUrl("path");
+                    notification1.setProfile(profile1);
+                    notifyList.add(notification1);
+                }
                 notificationRepository.save(notification);
+                notificationRepository.saveAll(notifyList);
             }catch (Exception e){
                 System.out.println("Db already populated");
             }
-
         };
     }
 
