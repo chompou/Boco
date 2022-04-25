@@ -12,6 +12,7 @@ import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
 import itemEditPage from "@/views/Items/ItemEditPage";
 import forgottenPwdView from "@/views/ForgottenPwdView";
+import SupportFormView from "@/views/SupportFormView";
 import itemsPage from "@/views/Items/ItemsPage";
 
 const routerGuard = {
@@ -38,6 +39,11 @@ const routes = [
     path: "/forgottenPwd",
     name: "forgottenPwd",
     component: forgottenPwdView,
+  },
+  {
+    path: "/support",
+    name: "support",
+    component: SupportFormView,
   },
   {
     path: "/register",

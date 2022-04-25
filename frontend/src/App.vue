@@ -91,6 +91,24 @@
   height: 2000px;
 }
 
+/*Front page style*/
+#frontPageSearchField {
+  width: 200px;
+}
+
+.icon {
+  font-size: 2vw;
+}
+
+/*Support form style*/
+.textArea {
+  height: 150px;
+}
+
+.errorMessage {
+  color: red;
+}
+
 /* Navbar styling */
 li a {
   text-decoration: none;
