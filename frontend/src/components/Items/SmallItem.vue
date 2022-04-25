@@ -2,19 +2,18 @@
   <router-link class="link" :to="{ path: '/items/' + id, params: { id: id } }">
     <div>
       <img alt="Vue logo" src="@/assets/service.png" />
-      <h3 v-if="title.length < 8">{{ title }}</h3>
-      <h3 v-else>{{ title.substring(0, 16) + ".." }}</h3>
+      <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
+      <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
     </div>
   </router-link>
 </template>
 
 <script>
 export default {
+  props: ["item"],
+
   data() {
-    return {
-      id: "1234",
-      title: "Wrench",
-    };
+    return {};
   },
 };
 </script>

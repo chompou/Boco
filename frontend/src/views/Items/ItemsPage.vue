@@ -19,76 +19,19 @@ export default {
     return {
       items: [
         {
-          leaseOverlay: false,
-          my: false,
-          id: 1234,
-          title: "Wrench",
-          category: ["tool", "electronic"],
-          address: "Gløsveien 1",
-          price: 50,
-          leaseType: "/Day",
-          description:
-            "In North American English, wrench is the standard term. The most\n" +
-            "          common shapes are called open-end wrench and box-end wrench. In\n" +
-            "          American English, spanner refers to a specialized wrench with a series\n" +
-            "          of pins or tabs around the circumference. (These pins or tabs fit into\n" +
-            "          the holes or notches cut into the object to be turned.) In American\n" +
-            "          commerce, such a wrench may be called a spanner wrench to distinguish\n" +
-            "          it from the British sense of spanner.",
+          id: 1,
         },
         {
-          leaseOverlay: false,
-          my: false,
-          id: 1234,
-          title: "Wrench",
-          category: ["tool", "electronic"],
-          address: "Gløsveien 1",
-          price: 50,
-          leaseType: "/Day",
-          description:
-            "In North American English, wrench is the standard term. The most\n" +
-            "          common shapes are called open-end wrench and box-end wrench. In\n" +
-            "          American English, spanner refers to a specialized wrench with a series\n" +
-            "          of pins or tabs around the circumference. (These pins or tabs fit into\n" +
-            "          the holes or notches cut into the object to be turned.) In American\n" +
-            "          commerce, such a wrench may be called a spanner wrench to distinguish\n" +
-            "          it from the British sense of spanner.",
+          id: 1,
         },
         {
-          leaseOverlay: false,
-          my: false,
-          id: 1234,
-          title: "Wrench",
-          category: ["tool", "electronic"],
-          address: "Gløsveien 1",
-          price: 50,
-          leaseType: "/Day",
-          description:
-            "In North American English, wrench is the standard term. The most\n" +
-            "          common shapes are called open-end wrench and box-end wrench. In\n" +
-            "          American English, spanner refers to a specialized wrench with a series\n" +
-            "          of pins or tabs around the circumference. (These pins or tabs fit into\n" +
-            "          the holes or notches cut into the object to be turned.) In American\n" +
-            "          commerce, such a wrench may be called a spanner wrench to distinguish\n" +
-            "          it from the British sense of spanner.",
+          id: 1,
         },
         {
-          leaseOverlay: false,
-          my: false,
-          id: 1234,
-          title: "Wrench",
-          category: ["tool", "electronic"],
-          address: "Gløsveien 1",
-          price: 50,
-          leaseType: "/Day",
-          description:
-            "In North American English, wrench is the standard term. The most\n" +
-            "          common shapes are called open-end wrench and box-end wrench. In\n" +
-            "          American English, spanner refers to a specialized wrench with a series\n" +
-            "          of pins or tabs around the circumference. (These pins or tabs fit into\n" +
-            "          the holes or notches cut into the object to be turned.) In American\n" +
-            "          commerce, such a wrench may be called a spanner wrench to distinguish\n" +
-            "          it from the British sense of spanner.",
+          id: 1,
+        },
+        {
+          id: 1,
         },
       ],
     };

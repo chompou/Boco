@@ -32,24 +32,67 @@
       </ul>
     </div>
     <div class="mt-5">
-      <router-link to="items">Items</router-link>
-      <font-awesome-icon icon="car" class="icon" />
-      <font-awesome-icon icon="wrench" class="icon" />
-      <font-awesome-icon icon="umbrella" class="icon" />
-      <font-awesome-icon icon="lemon" class="icon" />
-      <font-awesome-icon icon="children" class="icon" />
-      <font-awesome-icon icon="toilet-paper" class="icon" />
+      <router-link to="items">
+        <font-awesome-icon icon="car" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="wrench" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="umbrella" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="lemon" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="children" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="toilet-paper" class="icon" />
+      </router-link>
+    </div>
+    <div class="items">
+      <SmallItem v-for="item in items" :key="item" :item="item" />
     </div>
   </div>
 </template>
 
 <style scoped>
-/*div {
-  border: solid 1px black;
-}*/
-
 .icon {
   font-size: 2vw;
   margin-left: 40px;
+}
+</style>
+<script>
+import SmallItem from "@/components/Items/SmallItem.vue";
+import apiService from "@/services/apiService";
+export default {
+  components: { SmallItem },
+  data() {
+    return {
+      items: [],
+    };
+  },
+
+  created() {
+    apiService
+      .getItems({}, 0, 15)
+      .then((response) => {
+        this.items = response.data;
+      })
+      .catch((error) => console.log(error));
+  },
+};
+</script>
+
+<style scoped>
+.items {
+  justify-content: center;
+  margin-top: 30px;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 </style>

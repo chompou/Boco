@@ -1,13 +1,27 @@
 <template>
   <h3>Reviews</h3>
-  <div v-for="user in users" :key="user">
+  <div v-for="user in users" :key="user" id="container">
     <b id="name">{{ user.name }}</b>
-    <p>{{ user.rating }}/5 - {{ user.description }}</p>
+    <br />
+    <div style="display: inline-block">
+      <star-rating
+        :inline="true"
+        :star-size="20"
+        :read-only="true"
+        :show-rating="false"
+        :rating="user.rating"
+      ></star-rating>
+      {{ user.description }}
+    </div>
   </div>
 </template>
 
 <script>
+import StarRating from "vue-star-rating";
 export default {
+  components: {
+    StarRating,
+  },
   data() {
     return {
       users: [
@@ -26,3 +40,9 @@ export default {
   },
 };
 </script>
+
+<style>
+#container {
+  margin-top: 20px;
+}
+</style>
