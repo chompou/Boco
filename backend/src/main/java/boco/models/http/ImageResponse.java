@@ -1,4 +1,4 @@
-package boco.controller.models;
+package boco.models.http;
 
 import boco.models.rental.Image;
 import boco.models.rental.Listing;
