@@ -10,12 +10,36 @@
     </div>
     <div class="container">
       <div class="all-buttons">
-        <button id="items-button" class="buttons" type="submit">Items</button>
-        <button id="leases-button" class="buttons" type="submit">Leases</button>
-        <button id="reviews-button" class="buttons" type="submit">
+        <button
+          id="items-button"
+          class="buttons"
+          @click="this.$router.push('/my/items')"
+          type="submit"
+        >
+          Items
+        </button>
+        <button
+          id="leases-button"
+          class="buttons"
+          @click="this.$router.push('/my/leases')"
+          type="submit"
+        >
+          Leases
+        </button>
+        <button
+          id="reviews-button"
+          class="buttons"
+          @click="this.$router.push('/my/reviews')"
+          type="submit"
+        >
           Reviews
         </button>
-        <button id="settings-button" class="buttons" type="submit">
+        <button
+          id="settings-button"
+          class="buttons"
+          @click="this.$router.push('/my/settings')"
+          type="submit"
+        >
           Settings
         </button>
       </div>
