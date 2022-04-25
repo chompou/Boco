@@ -40,7 +40,7 @@ public class ProfileService {
         this.professionalRepository = professionalRepository;
     }
 
-    public ResponseEntity<Profile> getProfile(Long profileId) {
+    public ResponseEntity<Profile> getProfile(Long profileId, Long profileId2) {
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
             Profile profile = profileData.get();
@@ -51,14 +51,15 @@ public class ProfileService {
             profile.setRatingProfile(null);
             profile.setRatingListing(null);
             profile.setRatingGiven(null);
-            if (!profileHasContactWithProfile(1, 1)){
+            if (!profileHasContactWithProfile(profileId, profileId2)){
                 profile.setEmail(null);
                 profile.setTlf(null);
             }
-            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+            return new ResponseEntity<>(profile, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
     }
 
     public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {

@@ -2,6 +2,8 @@ package boco.models.profile;
 
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,12 +35,15 @@ public class Profile {
     private Timestamp deactivated;
 
     @OneToMany(mappedBy = "profile")
+    @JsonBackReference
     private List<Lease> rentals;
 
     @OneToMany(mappedBy = "profile")
+    @JsonBackReference
     private List<Listing> listings;
 
     @OneToMany(mappedBy = "profile")
+    @JsonBackReference
     private List<Notification> notifications;
 
     public Profile(String username, String email, String description, String displayName,
