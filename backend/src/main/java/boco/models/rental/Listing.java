@@ -18,7 +18,6 @@ public class Listing {
     private Long id;
     private String name;
     private String description;
-    private String category;
     private String address;
     private boolean isAvailable;
     private boolean isActive;
@@ -32,7 +31,6 @@ public class Listing {
                    double price, String priceType, Profile profile) {
         this.name = name;
         this.description = description;
-        this.category = category;
         this.address = address;
         this.isAvailable = isAvailable;
         this.isActive = isActive;
@@ -65,7 +63,6 @@ public class Listing {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", category='" + category + '\'' +
                 ", address='" + address + '\'' +
                 ", isAvailable=" + isAvailable +
                 ", isActive=" + isActive +
