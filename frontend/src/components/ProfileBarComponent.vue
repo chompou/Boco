@@ -1,8 +1,8 @@
 <template>
-  <div class="profileBar">
-    <div class="profileBarText">
+  <div class="profile-bar">
+    <div class="profile-bar-text">
       <h3 id="username">{{ username }}</h3>
-      <p id="phoneNumber">Phone nr: {{ phoneNumber }}</p>
+      <p id="phone-number">Phone nr: {{ phoneNumber }}</p>
       <p id="email">Email: {{ email }}</p>
     </div>
     <div id="rating">
@@ -10,10 +10,18 @@
     </div>
     <div class="container">
       <div class="buttons">
-        <button id="profile" type="submit">Profile</button>
-        <button id="myItems" type="submit">My items</button>
-        <button id="leasing" type="submit">Leasing</button>
-        <button id="rating" type="submit">Rating/Reviews</button>
+        <button id="profile-button" class="buttons" type="submit">
+          Profile
+        </button>
+        <button id="my-items-button" class="buttons" type="submit">
+          My items
+        </button>
+        <button id="leasing-button" class="buttons" type="submit">
+          Leasing
+        </button>
+        <button id="rating-button" class="buttons" type="submit">
+          Rating/Reviews
+        </button>
       </div>
     </div>
   </div>
@@ -33,23 +41,22 @@ export default {
 </script>
 
 <style scoped>
-.profileBar {
+.profile-bar {
   border-radius: 20px;
   display: flex;
   border: 1px solid #39495c;
-  font-size: 17px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
-  height: 300px;
+  height: 200px;
   color: #2c3e50;
   padding: 10px 28px;
   background: #e0f2fe;
   margin: 20px;
+  flex-wrap: wrap;
 }
 
-.profileBarText {
+.profile-bar-text {
   text-align: left;
 }
 
@@ -59,24 +66,18 @@ export default {
 }
 
 #email {
-  margin-top: -10px;
+  margin-top: -5px;
 }
 
-#phoneNumber {
-  margin-bottom: -10px;
+#phone-number {
+  margin-bottom: -5px;
 }
 
 .buttons {
-  align-self: auto;
-  height: 100%;
+  margin-right: 60px;
+  margin-left: 60px;
 }
 
 .container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-around;
-  background-color: black;
-  height: 35px;
 }
 </style>
