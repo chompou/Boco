@@ -75,27 +75,24 @@ export default {
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
-      })
-      .then(
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
             this.profile = response.data;
           })
-          .then(
-            apiService
-              .getReviews({ listingId: this.id }, 0, 15)
-              .then((response) => {
-                this.reviews = response.data;
-              })
-              .catch((error) => {
-                console.log(error);
-              })
-          )
           .catch((error) => {
             console.log(error);
-          })
-      )
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    apiService
+      .getReviews({ listingId: this.id }, 0, 15)
+      .then((response) => {
+        this.reviews = response.data;
+      })
       .catch((error) => {
         console.log(error);
       });

@@ -11,7 +11,7 @@
         :show-rating="false"
         :rating="review.rating"
       ></star-rating>
-      {{ review.description }}
+      {{ review.comment }}
     </div>
   </div>
 </template>

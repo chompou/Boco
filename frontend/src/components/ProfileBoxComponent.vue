@@ -1,13 +1,13 @@
 <template>
   <div class="profileBox">
     <div class="profileBoxText">
-      <h3>{{ username }}</h3>
-      <p>Phone nr: {{ phoneNumber }}</p>
-      <p>Email: {{ email }}</p>
+      <h3>{{ profile.displayName }}</h3>
+      <p>Phone nr: {{ profile.tlf }}</p>
+      <p>Email: {{ profile.email }}</p>
       <h3>MAP</h3>
     </div>
     <div id="rating">
-      <RatingComponent />
+      <RatingComponent :rating="profile.ratingProfile" />
     </div>
   </div>
 </template>

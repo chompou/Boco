@@ -6,6 +6,7 @@
 
 <script>
 import LargeItem from "@/components/Items/LargeItem.vue";
+import apiService from "@/services/apiService";
 
 export default {
   components: { LargeItem },
@@ -14,6 +15,17 @@ export default {
     return {
       items: [],
     };
+  },
+
+  created() {
+    apiService
+      .getItems({ profileId: this.$store.state.loggedInuser }, 0, 15)
+      .then((response) => {
+        this.items = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>
