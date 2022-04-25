@@ -20,12 +20,6 @@
               <router-link to="login" v-show="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
               <button class="log-out-button" v-show="$store.state.loggedIn">
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
