@@ -67,4 +67,11 @@ public class LoginController {
     public String hello(){
         return "hello world";
     }
+
+    @RequestMapping(value = "/my/login", method = RequestMethod.GET)
+    public String authHello(){
+        return "hello authenticated user";
+    }
+
+
 }
