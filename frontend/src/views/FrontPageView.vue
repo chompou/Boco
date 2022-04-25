@@ -52,7 +52,7 @@
       </router-link>
     </div>
     <div class="items">
-      <SmallItem v-for="item in items" :key="item" />
+      <SmallItem v-for="item in items" :key="item" :item="item" />
     </div>
   </div>
 </template>
@@ -64,41 +64,23 @@
 }
 </style>
 <script>
-import SmallItem from "@/components/Items/SmallItem";
+import SmallItem from "@/components/Items/SmallItem.vue";
+import apiService from "@/services/apiService";
 export default {
   components: { SmallItem },
   data() {
     return {
-      items: [
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-      ],
+      items: [],
     };
+  },
+
+  created() {
+    apiService
+      .getItems({}, 0, 15)
+      .then((response) => {
+        this.items = response.data;
+      })
+      .catch((error) => console.log(error));
   },
 };
 </script>
