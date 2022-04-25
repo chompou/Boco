@@ -31,7 +31,6 @@ public class Listing {
                    double price, String priceType, Profile profile) {
         this.name = name;
         this.description = description;
-        this.category = category;
         this.address = address;
         this.isAvailable = isAvailable;
         this.isActive = isActive;
