@@ -64,12 +64,13 @@ export default {
 .profile-bar {
   border-radius: 20px;
   display: flex;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  border: 1px solid #39495c;
+  font-size: 17px;
   width: 100%;
   height: 200px;
   color: #2c3e50;
   padding: 10px 28px;
+  background: #e0f2fe;
   background: #a1d7ff;
   margin: 20px;
   flex-wrap: wrap;

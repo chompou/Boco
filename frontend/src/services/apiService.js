@@ -27,6 +27,10 @@ export default {
     return apiClient.get("/listing/" + itemId);
   },
 
+  createItem(item) {
+    return apiClient.post("/listing", item);
+  },
+
   getItems(filters, page, perPage) {
     return apiClient.get("/listing", {
       params: { ...filters, page: page, perPage: perPage },
@@ -34,7 +38,7 @@ export default {
   },
 
   getReviews(filters, page, perPage) {
-    return apiClient.get("/reviews", {
+    return apiClient.get("/review", {
       params: { ...filters, page: page, perPage: perPage },
     });
   },

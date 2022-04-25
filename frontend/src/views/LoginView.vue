@@ -42,11 +42,11 @@ export default {
   },
   methods: {
     togglePassword() {
-      const x = document.getElementById("password");
-      if (x.type === "password") {
-        x.type = "text";
+      const checkbox = document.getElementById("password");
+      if (checkbox.type === "password") {
+        checkbox.type = "text";
       } else {
-        x.type = "password";
+        checkbox.type = "password";
       }
     },
     submit() {

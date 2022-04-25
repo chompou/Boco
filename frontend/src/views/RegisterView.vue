@@ -51,11 +51,12 @@
       required
     />
     <br />
-    <button type="submit" class="registerbutton">Submit</button>
+    <button class="registerbutton" @click="onSubmit">Submit</button>
   </div>
 </template>
 
 <script>
+import apiService from "@/services/apiService";
 export default {
   data() {
     return {
@@ -65,6 +66,21 @@ export default {
       password: "",
       verifyPassword: "",
     };
+  },
+
+  methods: {
+    onSubmit() {
+      apiService
+        .createProfile({
+          username: this.username,
+          email: this.email,
+          tlf: this.phoneNumber,
+          password: this.password,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>
