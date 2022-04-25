@@ -9,7 +9,7 @@
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="buttons">
+      <div class="all-buttons">
         <button id="profile-button" class="buttons" type="submit">
           Profile
         </button>
@@ -44,14 +44,13 @@ export default {
 .profile-bar {
   border-radius: 20px;
   display: flex;
-  border: 1px solid #39495c;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
   height: 200px;
   color: #2c3e50;
   padding: 10px 28px;
-  background: #e0f2fe;
+  background: #a1d7ff;
   margin: 20px;
   flex-wrap: wrap;
 }
@@ -74,10 +73,56 @@ export default {
 }
 
 .buttons {
-  margin-right: 60px;
-  margin-left: 60px;
+  align-items: center;
+  background-color: #0a66c2;
+  border: 0;
+  border-radius: 100px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
+    "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 20px;
+  max-width: 480px;
+  min-height: 40px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  text-align: center;
+  touch-action: manipulation;
+  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
 }
 
-.container {
+.buttons:hover,
+.buttons:focus {
+  background-color: #16437e;
+  color: #ffffff;
+}
+
+.buttons:active {
+  background: #09223b;
+  color: rgb(255, 255, 255, 0.7);
+}
+
+.buttons:disabled {
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.all-buttons {
+  display: flex;
+  justify-content: space-evenly;
 }
 </style>
