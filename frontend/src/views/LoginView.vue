@@ -21,8 +21,10 @@
         placeholder="Password"
         required
       />
+      <br />
       <input type="checkbox" @click="togglePassword()" />Show Password
       <br />
+      <p><a href="/ForgottenPwd">Forgotten password?</a></p>
       <button id="Login" type="submit">Login</button>
     </form>
   </div>
@@ -52,6 +54,7 @@ export default {
         .login(this.username, this.password)
         .then((response) => {
           storageService.setToken(response.data);
+          storageService.setUser(this.username);
           this.$router.push("/");
         })
         .catch((error) => console.error(error));

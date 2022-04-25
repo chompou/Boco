@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       id: "1234",
-      title: "jsalkjfkldsajflakdsjfløajsfløa",
+      title: "Wrench",
     };
   },
 };
