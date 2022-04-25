@@ -14,6 +14,7 @@ import itemEditPage from "@/views/Items/ItemEditPage";
 import forgottenPwdView from "@/views/ForgottenPwdView";
 import SupportFormView from "@/views/SupportFormView";
 import itemsPage from "@/views/Items/ItemsPage";
+import ItemPage from "@/views/Items/ItemPage";
 
 const routerGuard = {
   beforeEnter: (to, from) => {
@@ -103,6 +104,7 @@ const routes = [
     path: "/items/:id",
     name: "item",
     props: true,
+    component: ItemPage,
   },
   {
     path: "/:catchAll(.*)",

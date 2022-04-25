@@ -15,6 +15,7 @@
 <script>
 import RatingComponent from "@/components/RatingComponent";
 export default {
+  props: ["profile"],
   components: { RatingComponent },
   data() {
     return {
