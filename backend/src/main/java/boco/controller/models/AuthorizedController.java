@@ -1,6 +1,7 @@
 package boco.controller.models;
 
 import boco.models.http.ListingRequest;
+import boco.models.http.ListingResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.rental.Listing;
 import boco.service.rental.ListingService;
@@ -27,7 +28,7 @@ public class AuthorizedController {
     }
 
     @PutMapping("/listing")
-    public ResponseEntity<Listing> updateListing(@RequestBody UpdateListingRequest updateListingRequest) {
+    public ResponseEntity<ListingResponse> updateListing(@RequestBody UpdateListingRequest updateListingRequest) {
         return listingService.updateListing(updateListingRequest);
     }
 
