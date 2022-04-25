@@ -5,7 +5,7 @@
   <router-view></router-view>
 </template>
 <script>
-import ProfileBarComponent from "@/components/ProfileBarComponent";
+import ProfileBarComponent from "@/components/ProfileBarComponent.vue";
 export default {
   components: { ProfileBarComponent },
 };

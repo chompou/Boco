@@ -38,15 +38,11 @@ export default {
   display: flex;
   border: 1px solid #39495c;
   font-size: 17px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   width: 100%;
   height: 300px;
   color: #2c3e50;
   padding: 10px 28px;
   background: #e0f2fe;
-  margin: 20px;
 }
 
 .profileBarText {
