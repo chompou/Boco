@@ -2,6 +2,7 @@ package boco.service.profile;
 
 import boco.models.http.ListingResponse;
 import boco.models.http.ProfileRequest;
+import boco.models.http.ProfileResponse;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
@@ -67,7 +68,7 @@ public class ProfileService {
 
     }
 
-    public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
+    public ResponseEntity<ProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -86,7 +87,7 @@ public class ProfileService {
                 Personal savedProfile = personalRepository.save(p);
 
                 logger.debug("Personal profile was saved: " + p);
-                return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
+                return new ResponseEntity<>(new ProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
                 Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
@@ -94,7 +95,7 @@ public class ProfileService {
                 Professional savedProfile = professionalRepository.save(p);
 
                 logger.debug("Professional profile was saved: " + p);
-                return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
+                return new ResponseEntity<>(new ProfileResponse(savedProfile), HttpStatus.CREATED);
             }
 
         } catch (Exception e) {
@@ -141,6 +142,18 @@ public class ProfileService {
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 
+    public ResponseEntity<List<Review>> getMyProfileReviews(Long profileId, int perPage, int page) {
+        List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
+
+
+        List<Review> reviews = new ArrayList<>();
+        for (int i = 0; i < leases.size(); i++) {
+            reviews.add(leases.get(i).getLeaseeReview());
+        }
+
+        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
+        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+    }
     /**
      * @param profileRequest ProfileRequest to be verified
      * @return True if profile is valid, else false
