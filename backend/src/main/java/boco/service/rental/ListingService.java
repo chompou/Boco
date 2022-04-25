@@ -67,10 +67,10 @@ public class ListingService {
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
-            reviews.add(listingLeases.get(i).getLeaseeReview());
+            reviews.add(listingLeases.get(i).getItemReview());
         }
 
-        List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
+        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 

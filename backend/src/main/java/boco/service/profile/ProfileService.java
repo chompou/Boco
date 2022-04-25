@@ -11,6 +11,7 @@ import boco.models.rental.Review;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
+import boco.repository.rental.LeaseRepository;
 import boco.service.rental.ListingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +30,19 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final PersonalRepository personalRepository;
     private final ProfessionalRepository professionalRepository;
+    private final LeaseRepository leaseRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository,
                           PersonalRepository personalRepository,
-                          ProfessionalRepository professionalRepository) {
+                          ProfessionalRepository professionalRepository,
+                          LeaseRepository leaseRepository) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
+        this.leaseRepository = leaseRepository;
     }
 
     public ResponseEntity<Profile> getProfile(Long profileId, Long profileId2) {
@@ -108,7 +112,7 @@ public class ProfileService {
         }
 
         List<Listing> listingsByProfile = profileData.get().getListings();
-        List<Listing> listings = new ArrayList<>(listingsByProfile).subList((page-1)*perPage, Math.min(page*perPage, listingsByProfile.size()));
+        List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
         return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
 
     }
@@ -133,7 +137,7 @@ public class ProfileService {
             reviews.add(leasesFromProfile.get(i).getOwnerReview());
         }
 
-        List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
+        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 
