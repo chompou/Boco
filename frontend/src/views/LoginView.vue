@@ -54,6 +54,7 @@ export default {
         .login(this.username, this.password)
         .then((response) => {
           storageService.setToken(response.data);
+          storageService.setUser(this.username);
           this.$router.push("/");
         })
         .catch((error) => console.error(error));

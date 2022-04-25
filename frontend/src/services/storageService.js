@@ -1,6 +1,5 @@
 function setStorage(key, value, ttl) {
-  var now = Date.now();
-  const item = { value: value, expiry: now + ttl };
+  const item = { value: value, expiry: Date.now() + ttl };
   localStorage.setItem(key, JSON.stringify(item));
 }
 
