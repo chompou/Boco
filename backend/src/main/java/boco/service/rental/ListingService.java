@@ -105,6 +105,7 @@ public class ListingService {
 
         // Setting the new data
         Listing listing = listingData.get();
+        // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
         listing.setCategory(updateListingRequest.getCategory());
         listing.setAddress(updateListingRequest.getAddress());
@@ -116,5 +117,14 @@ public class ListingService {
         Listing savedListing = listingRepository.save(listing);
         logger.debug("listingId=" + updateListingRequest.getListingId() + " was updated to:\n" + savedListing);
         return new ResponseEntity<>(savedListing, HttpStatus.OK);
+    }
+
+    public ResponseEntity<HttpStatus> deleteListing(Long listingId) {
+        try {
+            listingRepository.deleteById(listingId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

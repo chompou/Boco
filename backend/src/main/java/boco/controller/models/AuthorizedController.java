@@ -5,6 +5,7 @@ import boco.models.http.UpdateListingRequest;
 import boco.models.rental.Listing;
 import boco.service.rental.ListingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,4 +30,10 @@ public class AuthorizedController {
     public ResponseEntity<Listing> updateListing(@RequestBody UpdateListingRequest updateListingRequest) {
         return listingService.updateListing(updateListingRequest);
     }
+
+    @DeleteMapping("/listing/{listing_id}")
+    public ResponseEntity<HttpStatus> deleteListing(@PathVariable("listing_id") Long listingId) {
+        return listingService.deleteListing(listingId);
+    }
+
 }
