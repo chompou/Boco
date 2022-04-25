@@ -23,26 +23,26 @@
         <div id="About">
           <div id="About11">
             <div id="About1">
-              <h2>{{ title }}</h2>
+              <h2>{{ item.name }}</h2>
               <div id="category">
                 <label>Category: </label>
-                <label v-for="item in category" :key="item">{{ item }}, </label>
+                <!-- <label v-for="item in category" :key="item">{{ item }}, </label> -->
               </div>
-              <p>Address: {{ address }}</p>
-              <p>Price: {{ price }}kr{{ leaseType }}</p>
+              <p>Address: {{ item.address }}</p>
+              <p>Price: {{ item.price }}kr{{ item.priceType }}</p>
             </div>
             <div id="About2">
-              <RatingComponent />
+              <RatingComponent :rating="item.rating" />
             </div>
           </div>
           <h2>Description</h2>
-          <p>{{ description }}</p>
+          <p>{{ item.description }}</p>
         </div>
       </div>
     </div>
     <div>
-      <ProfileBoxComponent />
-      <ReviewComponent />
+      <ProfileBoxComponent :profile="profile" />
+      <ReviewComponent :reviews="reviews" />
     </div>
   </div>
 </template>
@@ -52,7 +52,10 @@ import RatingComponent from "@/components/RatingComponent";
 import ProfileBoxComponent from "@/components/ProfileBoxComponent";
 import ReviewComponent from "@/components/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
+import apiService from "@/services/apiService";
 export default {
+  props: ["id"],
+
   components: {
     ProfileBoxComponent,
     RatingComponent,
@@ -61,23 +64,38 @@ export default {
   },
   data() {
     return {
-      leaseOverlay: false,
-      my: false,
-      id: 1234,
-      title: "Wrench",
-      category: ["tool", "electronic"],
-      address: "Gløsveien 1",
-      price: 50,
-      leaseType: "/Day",
-      description:
-        "In North American English, wrench is the standard term. The most\n" +
-        "          common shapes are called open-end wrench and box-end wrench. In\n" +
-        "          American English, spanner refers to a specialized wrench with a series\n" +
-        "          of pins or tabs around the circumference. (These pins or tabs fit into\n" +
-        "          the holes or notches cut into the object to be turned.) In American\n" +
-        "          commerce, such a wrench may be called a spanner wrench to distinguish\n" +
-        "          it from the British sense of spanner.",
+      item: { id: null, profileId: null },
+      profile: {},
+      reviews: [],
     };
+  },
+
+  created() {
+    apiService
+      .getItem(this.id)
+      .then((response) => {
+        this.item = response.data;
+        apiService
+          .getProfile(this.item.profileId)
+          .then((response) => {
+            this.profile = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    apiService
+      .getReviews({ listingId: this.id }, 0, 15)
+      .then((response) => {
+        this.reviews = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>

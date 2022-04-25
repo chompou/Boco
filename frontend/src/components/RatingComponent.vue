@@ -16,13 +16,12 @@
 <script>
 import StarRating from "vue-star-rating";
 export default {
+  props: ["rating"],
   components: {
     StarRating,
   },
   data() {
-    return {
-      rating: 4,
-    };
+    return {};
   },
 };
 </script>

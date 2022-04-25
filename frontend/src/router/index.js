@@ -12,7 +12,9 @@ import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
 import itemEditPage from "@/views/Items/ItemEditPage";
 import forgottenPwdView from "@/views/ForgottenPwdView";
+import SupportFormView from "@/views/SupportFormView";
 import itemsPage from "@/views/Items/ItemsPage";
+import ItemPage from "@/views/Items/ItemPage";
 
 const routerGuard = {
   beforeEnter: (to, from) => {
@@ -38,6 +40,11 @@ const routes = [
     path: "/forgottenPwd",
     name: "forgottenPwd",
     component: forgottenPwdView,
+  },
+  {
+    path: "/support",
+    name: "support",
+    component: SupportFormView,
   },
   {
     path: "/register",
@@ -97,6 +104,7 @@ const routes = [
     path: "/items/:id",
     name: "item",
     props: true,
+    component: ItemPage,
   },
   {
     path: "/:catchAll(.*)",

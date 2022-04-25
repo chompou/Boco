@@ -22,7 +22,7 @@ public class ListingController {
         this.profileService = profileService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<ListingResponse>> getListings(@RequestParam int perPage,
                                      @RequestParam int page,
                                      @RequestParam(defaultValue  = "") String search,

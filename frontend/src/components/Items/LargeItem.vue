@@ -1,15 +1,15 @@
 <template>
-  <router-link class="link" :to="{ path: '/items/' + id, params: { id: id } }">
+  <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
       <img alt="Vue logo" src="@/assets/service.png" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
-            <h3 v-if="title.length < 8">{{ title }}</h3>
-            <h3 v-else>{{ title.substring(0, 16) + ".." }}</h3>
-            <p>Category: {{ category }}</p>
-            <p>Address: {{ address }}</p>
-            <p>Price: {{ price }}kr{{ leaseType }}</p>
+            <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
+            <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
+            <p>Category: category</p>
+            <p>Address: {{ item.address }}</p>
+            <p>Price: {{ item.price }}kr{{ item.priceType }}</p>
           </div>
           <div id="About2">
             <RatingComponent />
@@ -24,6 +24,7 @@
 import RatingComponent from "@/components/RatingComponent";
 
 export default {
+  props: ["item"],
   components: { RatingComponent },
   data() {
     return {

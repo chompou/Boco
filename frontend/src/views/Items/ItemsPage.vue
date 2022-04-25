@@ -3,7 +3,7 @@
     <Sidebar />
     <transition>
       <div id="items" :style="{ 'margin-left': sidebarWidth }">
-        <LargeItem v-for="item in items" :key="item" />
+        <LargeItem v-for="item in items" :key="item" :item="item" />
       </div>
     </transition>
   </div>
@@ -12,32 +12,26 @@
 <script>
 import Sidebar from "@/components/Sidebar/SidebarComponent";
 import { sidebarWidth } from "@/components/Sidebar/state";
-import LargeItem from "@/components/Items/LargeItem";
+import LargeItem from "@/components/Items/LargeItem.vue";
+import apiService from "@/services/apiService";
 export default {
   components: { LargeItem, Sidebar },
   data() {
     return {
-      items: [
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-        {
-          id: 1,
-        },
-      ],
+      items: [],
     };
   },
   setup() {
     return { sidebarWidth };
+  },
+
+  created() {
+    apiService
+      .getItems({}, 0, 15)
+      .then((response) => {
+        this.items = response.data;
+      })
+      .catch((error) => console.log(error));
   },
 };
 </script>

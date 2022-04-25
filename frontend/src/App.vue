@@ -29,7 +29,7 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/user"
+              <router-link to="/my/items"
                 ><font-awesome-icon icon="user"
               /></router-link>
             </a>
@@ -83,6 +83,24 @@
 
 .longDiv {
   height: 2000px;
+}
+
+/*Front page style*/
+#frontPageSearchField {
+  width: 200px;
+}
+
+.icon {
+  font-size: 2vw;
+}
+
+/*Support form style*/
+.textArea {
+  height: 150px;
+}
+
+.errorMessage {
+  color: red;
 }
 
 /* Navbar styling */
