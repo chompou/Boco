@@ -3,6 +3,7 @@ package boco.service.profile;
 import boco.models.http.ListingResponse;
 import boco.models.http.ProfileRequest;
 import boco.models.http.ProfileResponse;
+import boco.models.http.ReviewResponse;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
@@ -14,6 +15,7 @@ import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.service.rental.ListingService;
+import boco.service.rental.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +120,7 @@ public class ProfileService {
 
     }
 
-    public ResponseEntity<List<Review>> getProfileReviews(Long profileId, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getProfileReviews(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()) {
@@ -139,7 +141,7 @@ public class ProfileService {
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
-        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
     public ResponseEntity<List<Review>> getMyProfileReviews(Long profileId, int perPage, int page) {

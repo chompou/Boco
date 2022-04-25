@@ -24,7 +24,7 @@ public class AuthorizedController {
     @Autowired
     public AuthorizedController(ListingService listingService, JwtUtil jwtUtil) {
         this.listingService = listingService;
-        this.jwtUtil = null;
+        this.jwtUtil = jwtUtil;
     }
 
 
