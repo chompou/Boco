@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,22 +44,16 @@ public class ProfileService {
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
             Profile profile = profileData.get();
-            if (profileHasContactWithProfile(1, 1)){
-                profile.setPasswordHash(null);
-                profile.setUsername(null);
-                profile.setAddress(null);
-                profile.setRatingProfile(null);
-                profile.setRatingListing(null);
-                profile.setRatingGiven(null);
-            } else {
-                profile.setUsername(null);
+            profile.setPasswordHash(null);
+            profile.setUsername(null);
+            profile.setAddress(null);
+
+            profile.setRatingProfile(null);
+            profile.setRatingListing(null);
+            profile.setRatingGiven(null);
+            if (!profileHasContactWithProfile(1, 1)){
                 profile.setEmail(null);
-                profile.setPasswordHash(null);
-                profile.setAddress(null);
                 profile.setTlf(null);
-                profile.setRatingProfile(null);
-                profile.setRatingListing(null);
-                profile.setRatingGiven(null);
             }
             return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
         } else {
@@ -149,8 +144,8 @@ public class ProfileService {
         return true;
     }
 
-    private boolean profileHasContactWithProfile(int profileId1, int profileId2) {
-        // TODO: IMPLEMENT
-        return true;
+    private boolean profileHasContactWithProfile(long profileId1, long profileId2) {
+        Optional<Profile> profile = profileRepository.getIfContact(profileId1, profileId2);
+        return profile.isPresent();
     }
 }
