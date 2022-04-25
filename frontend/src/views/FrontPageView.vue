@@ -57,12 +57,6 @@
   </div>
 </template>
 
-<style scoped>
-.icon {
-  font-size: 2vw;
-  margin-left: 40px;
-}
-</style>
 <script>
 import SmallItem from "@/components/Items/SmallItem.vue";
 import apiService from "@/services/apiService";
@@ -94,5 +88,10 @@ export default {
   -webkit-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+}
+
+.icon {
+  font-size: 2vw;
+  margin-left: 40px;
 }
 </style>
