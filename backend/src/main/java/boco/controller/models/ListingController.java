@@ -40,8 +40,8 @@ public class ListingController {
     }
 
     @GetMapping("/{listing_id}")
-    public ResponseEntity<Listing> getListing(@PathVariable long id){
-        return listingService.getListingById(id);
+    public ResponseEntity<Listing> getListing(@PathVariable(value = "listing_id") Long listingId){
+        return listingService.getListingById(listingId);
     }
 
 
