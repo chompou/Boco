@@ -10,17 +10,13 @@
     </div>
     <div class="container">
       <div class="all-buttons">
-        <button id="profile-button" class="buttons" type="submit">
-          Profile
+        <button id="items-button" class="buttons" type="submit">Items</button>
+        <button id="leases-button" class="buttons" type="submit">Leases</button>
+        <button id="reviews-button" class="buttons" type="submit">
+          Reviews
         </button>
-        <button id="my-items-button" class="buttons" type="submit">
-          My items
-        </button>
-        <button id="leasing-button" class="buttons" type="submit">
-          Leasing
-        </button>
-        <button id="rating-button" class="buttons" type="submit">
-          Rating/Reviews
+        <button id="settings-button" class="buttons" type="submit">
+          Settings
         </button>
       </div>
     </div>
