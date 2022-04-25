@@ -18,7 +18,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="login"
-                ><font-awesome-icon icon="right-to-bracket"
+                ><font-awesome-icon icon="right-to-bracket" class="icon"
               /></router-link>
             </a>
           </li>
@@ -27,7 +27,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/user"
-                ><font-awesome-icon icon="user"
+                ><font-awesome-icon icon="user" class="icon"
               /></router-link>
             </a>
           </li>
@@ -36,7 +36,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/signout"
-                ><font-awesome-icon icon="sign-out-alt"
+                ><font-awesome-icon icon="sign-out-alt" class="icon"
               /></router-link>
             </a>
           </li>
@@ -45,7 +45,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/create"
-                ><font-awesome-icon icon="plus"
+                ><font-awesome-icon icon="plus" class="icon"
               /></router-link>
             </a>
           </li>
@@ -54,7 +54,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/"
-                ><font-awesome-icon icon="house"
+                ><font-awesome-icon icon="house" class="icon"
               /></router-link>
             </a>
           </li>
@@ -63,7 +63,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/info"
-                ><font-awesome-icon icon="info"
+                ><font-awesome-icon icon="info" class="icon"
               /></router-link>
             </a>
           </li>
@@ -88,6 +88,14 @@
 
 .longDiv {
   height: 2000px;
+}
+
+#frontPageSearchField {
+  width: 200px;
+}
+
+.icon {
+  font-size: 2vw;
 }
 
 /* Navbar styling */

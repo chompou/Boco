@@ -11,9 +11,7 @@ import MyLeasesView from "@/views/my/MyLeasesView";
 import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
 import itemEditPage from "@/views/Items/ItemEditPage";
-<<<<<<< Updated upstream
 import forgottenPwdView from "@/views/ForgottenPwdView";
-=======
 
 const routes = [
   {
