@@ -86,7 +86,7 @@ public class ListingService {
         try {
             Profile profileOfRequest = profileRepository.getById(listingRequest.getProfileId());
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
-                    listingRequest.getCategory(), listingRequest.getAddress(), listingRequest.isAvailable(),
+                    listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profileOfRequest);
             Listing savedListing = listingRepository.save(newListing);
@@ -107,7 +107,6 @@ public class ListingService {
         Listing listing = listingData.get();
         // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
-        listing.setCategory(updateListingRequest.getCategory());
         listing.setAddress(updateListingRequest.getAddress());
         listing.setAvailable(updateListingRequest.isAvailable());
         listing.setActive(updateListingRequest.isActive());

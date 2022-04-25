@@ -26,7 +26,7 @@ public class Listing {
     private Timestamp lastChanged;
     private double rating;
 
-    public Listing(String name, String description, String category,
+    public Listing(String name, String description,
                    String address, boolean isAvailable, boolean isActive,
                    double price, String priceType, Profile profile) {
         this.name = name;
