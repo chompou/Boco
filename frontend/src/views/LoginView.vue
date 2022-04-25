@@ -21,14 +21,18 @@
         placeholder="Password"
         required
       />
+      <br />
       <input type="checkbox" @click="togglePassword()" />Show Password
       <br />
+      <p><a href="/ForgottenPwd">Forgotten password?</a></p>
       <button id="Login" type="submit">Login</button>
     </form>
   </div>
 </template>
 
 <script>
+import apiService from "@/services/apiService";
+import storageService from "@/services/storageService";
 export default {
   data() {
     return {
@@ -46,7 +50,13 @@ export default {
       }
     },
     submit() {
-      console.log("nice");
+      apiService
+        .login(this.username, this.password)
+        .then((response) => {
+          storageService.setToken(response.data);
+          this.$router.push("/");
+        })
+        .catch((error) => console.error(error));
     },
   },
 };
