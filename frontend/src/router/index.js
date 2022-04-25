@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "@/store/index.js";
 import FrontPage from "../views/FrontPageView.vue";
 import LoginView from "@/views/LoginView";
 import ItemCreationPage from "@/views/Items/ItemCreationPage";
 import RegisterView from "@/views/RegisterView";
-import ItemPage from "@/views/Items/ItemPage";
 import NotFoundView from "@/views/NotFoundView";
 import MyProfileView from "@/views/my/MyProfileView";
 import MyItemsView from "@/views/my/MyItemsView";
@@ -12,6 +12,16 @@ import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
 import itemEditPage from "@/views/Items/ItemEditPage";
 import forgottenPwdView from "@/views/ForgottenPwdView";
+import itemsPage from "@/views/Items/ItemsPage";
+
+const routerGuard = {
+  beforeEnter: (to, from) => {
+    console.log(from.name);
+    if (!store.state.loggedIn && to.name !== "login") {
+      return { name: "login" };
+    }
+  },
+};
 
 const routes = [
   {
@@ -40,6 +50,7 @@ const routes = [
     props: true,
   },
   {
+    ...routerGuard,
     path: "/my",
     component: MyProfileView,
     children: [
@@ -66,11 +77,13 @@ const routes = [
     ],
   },
   {
+    ...routerGuard,
     path: "/create",
     name: "createItem",
     component: ItemCreationPage,
   },
   {
+    ...routerGuard,
     path: "/edit",
     name: "editItem",
     component: itemEditPage,
@@ -78,6 +91,7 @@ const routes = [
   {
     path: "/items",
     name: "items",
+    component: itemsPage,
   },
   {
     path: "/items/:id",
@@ -89,27 +103,11 @@ const routes = [
     name: "NotFound",
     component: NotFoundView,
   },
-  {
-    path: "/item",
-    name: "item",
-    component: ItemPage,
-  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-
-/**
-router.beforeEach(async (to, from) => {
-  const canUserAccess = this.$store.state.loggedIn;
-  const canAccess = await canUserAccess(to);
-  if (!canAccess) return "/login";
-});
-
-router.beforeResolve(async to => {
-  if (to.meta.requiresCamera)
-})*/
 
 export default router;

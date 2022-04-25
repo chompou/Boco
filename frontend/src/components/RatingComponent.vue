@@ -1,15 +1,27 @@
 <template>
   <div id="items">
     <p>Rating:</p>
-    <h2>{{ rating }}/5</h2>
+    <star-rating
+      :rating="rating"
+      :read-only="true"
+      v-bind:max-rating="5"
+      inactive-color="#d8d8d8"
+      active-color="#ffd055"
+      v-bind:star-size="20"
+    >
+    </star-rating>
   </div>
 </template>
 
 <script>
+import StarRating from "vue-star-rating";
 export default {
+  components: {
+    StarRating,
+  },
   data() {
     return {
-      rating: "4.2",
+      rating: 4,
     };
   },
 };
@@ -17,6 +29,7 @@ export default {
 
 <style scoped>
 #items {
+  margin-right: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,17 +37,5 @@ export default {
 
 p {
   font-size: 20px;
-}
-
-h2 {
-  border: 1px solid #39495c;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  padding: 20px 10px;
-  background: white;
 }
 </style>
