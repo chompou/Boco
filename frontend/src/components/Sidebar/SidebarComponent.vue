@@ -26,16 +26,36 @@
         <h4 class="Header">Lease type</h4>
         <transition>
           <div class="wrapper" v-if="collapsed === false">
-            <input type="radio" name="select" id="option-1" checked />
-            <input type="radio" name="select" id="option-2" />
-            <label for="option-1" class="option option-1">
-              <div class="dot"></div>
-              <span>Student</span>
-            </label>
-            <label for="option-2" class="option option-2">
-              <div class="dot"></div>
-              <span>Teacher</span>
-            </label>
+            <input
+              type="radio"
+              class="btn-check"
+              name="options"
+              id="option1"
+              autocomplete="off"
+              v-model="leaseType"
+              checked
+            />
+            <label class="btn btn-secondary" for="option1">Hour</label>
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="options"
+              id="option2"
+              v-model="leaseType"
+              autocomplete="off"
+            />
+            <label class="btn btn-secondary" for="option2">Day</label>
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="options"
+              id="option3"
+              v-model="leaseType"
+              autocomplete="off"
+            />
+            <label class="btn btn-secondary" for="option3">Week</label>
           </div>
         </transition>
       </div>
@@ -52,6 +72,11 @@
           </div>
         </transition>
       </div>
+      <transition>
+        <div class="Header" v-if="collapsed === false">
+          <input type="submit" id="submit" value="Search" />
+        </div>
+      </transition>
     </div>
     <span
       class="collapse-icon"
@@ -84,7 +109,7 @@ export default {
 
 <style>
 :root {
-  --sidebar-bg-color: #008b8b;
+  --sidebar-bg-color: #4f91f8;
   --sidebar-item-hover: #006c6c;
   --sidebar-item-active: #00a5a5;
 }
