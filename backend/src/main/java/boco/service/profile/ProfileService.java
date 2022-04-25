@@ -1,5 +1,6 @@
 package boco.service.profile;
 
+import boco.models.http.ListingResponse;
 import boco.models.http.ProfileRequest;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,31 +42,26 @@ public class ProfileService {
         this.professionalRepository = professionalRepository;
     }
 
-    public ResponseEntity<Profile> getProfile(Long profileId) {
+    public ResponseEntity<Profile> getProfile(Long profileId, Long profileId2) {
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
             Profile profile = profileData.get();
-            if (profileHasContactWithProfile(1, 1)){
-                profile.setPasswordHash(null);
-                profile.setUsername(null);
-                profile.setAddress(null);
-                profile.setRatingProfile(null);
-                profile.setRatingListing(null);
-                profile.setRatingGiven(null);
-            } else {
-                profile.setUsername(null);
+            profile.setPasswordHash(null);
+            profile.setUsername(null);
+            profile.setAddress(null);
+
+            profile.setRatingProfile(null);
+            profile.setRatingListing(null);
+            profile.setRatingGiven(null);
+            if (!profileHasContactWithProfile(profileId, profileId2)){
                 profile.setEmail(null);
-                profile.setPasswordHash(null);
-                profile.setAddress(null);
                 profile.setTlf(null);
-                profile.setRatingProfile(null);
-                profile.setRatingListing(null);
-                profile.setRatingGiven(null);
             }
-            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+            return new ResponseEntity<>(profile, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
     }
 
     public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
@@ -103,7 +100,7 @@ public class ProfileService {
         }
     }
 
-    public ResponseEntity<List<Listing>> getProfileListings(Long profileId, int perPage, int page){
+    public ResponseEntity<List<ListingResponse>> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()){
@@ -113,7 +110,7 @@ public class ProfileService {
 
         List<Listing> listingsByProfile = profileData.get().getListings();
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList((page-1)*perPage, Math.min(page*perPage, listingsByProfile.size()));
-        return new ResponseEntity<>(listings, HttpStatus.OK);
+        return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
 
     }
 
@@ -160,8 +157,8 @@ public class ProfileService {
         return true;
     }
 
-    private boolean profileHasContactWithProfile(int profileId1, int profileId2) {
-        // TODO: IMPLEMENT
-        return true;
+    private boolean profileHasContactWithProfile(long profileId1, long profileId2) {
+        Optional<Profile> profile = profileRepository.getIfContact(profileId1, profileId2);
+        return profile.isPresent();
     }
 }

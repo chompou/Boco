@@ -1,6 +1,7 @@
 package boco.models.rental;
 
 import boco.models.profile.Profile;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,9 +31,11 @@ public class Lease {
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
+    @JsonManagedReference
     private Profile profile;
 
     @ManyToOne
     @JoinColumn(name = "listing_id")
+    @JsonManagedReference
     private Listing listing;
 }

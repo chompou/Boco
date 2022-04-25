@@ -25,6 +25,17 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    /**
+     * Gets the reviews of a listing or profile.
+     * Params listing_id or profile_id can be added to find reviews for a given
+     * listing or profile, but not both at once.
+     *
+     * @param listingId The optional id of the listing we are serching for reviews for.
+     * @param profileId The optional id of the profile we are serching for reviews for
+     * @param perPage The number of reviews to be returned
+     * @param page The page number we are on
+     * @return A responseEntity containg a list of reviews.
+     */
     @GetMapping("/")
     public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listing_id", defaultValue  = "") Long listingId,
                                                    @RequestParam(name = "profile_id", defaultValue  = "") Long profileId,
@@ -32,7 +43,7 @@ public class ReviewController {
                                                    @RequestParam(name = "page") int page){
 
         if (listingId != null && profileId != null){
-            //TODO
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else if(listingId != null){
             return this.listingService.getListingReviews(listingId, perPage, page);
         } else if(profileId != null){
@@ -40,39 +51,6 @@ public class ReviewController {
         } else{
             return reviewService.getAllReviews();
         }
-
-        return null;
     }
 
-    /**
-     * Gets reviews given to a listing defined by listing_id
-     *
-     * @param listingId ID of the listing
-     * @param perPage Number of reviews per page (one page is returned for each request)
-     * @param page The page to be returned. Example: page=1 would return the first perPage reviews
-     * @return List of reviews
-     */
-    @GetMapping("/listing/{listing_id}")
-    public ResponseEntity<List<Review>> getListingReviews(@PathVariable(value = "listing_id") Long listingId,
-                                                          @RequestParam(name = "perPage") int perPage,
-                                                          @RequestParam(name = "page") int page) {
-
-        return this.listingService.getListingReviews(listingId, perPage, page);
-    }
-
-    /**
-     * Gets reviews given to a profile defined by profile_id.
-     *
-     * @param profileId ID of the profile
-     * @param perPage Number of reviews per page (one page is returned for each request)
-     * @param page The page to be returned. Example: page=1 would return the first perPage reviews
-     * @return List of reviews
-     */
-    @GetMapping("/profile/{profile_id}")
-    public ResponseEntity<List<Review>> getProfileReviews(@PathVariable(value = "profile_id") Long profileId,
-                                                          @RequestParam(name = "perPage") int perPage,
-                                                          @RequestParam(name = "page") int page) {
-
-        return this.profileService.getProfileReviews(profileId, perPage, page);
-    }
 }

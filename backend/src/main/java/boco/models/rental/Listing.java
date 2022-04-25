@@ -1,6 +1,8 @@
 package boco.models.rental;
 
 import boco.models.profile.Profile;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +28,7 @@ public class Listing {
     private Timestamp lastChanged;
     private double rating;
 
-    public Listing(String name, String description, String category,
+    public Listing(String name, String description,
                    String address, boolean isAvailable, boolean isActive,
                    double price, String priceType, Profile profile) {
         this.name = name;
@@ -46,12 +48,15 @@ public class Listing {
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
+    @JsonManagedReference
     private Profile profile;
 
     @OneToMany(mappedBy = "listing")
+    @JsonBackReference
     private List<Lease> leases;
 
     @OneToMany(mappedBy = "listing")
+    @JsonBackReference
     private List<Image> images;
 
     @ManyToMany

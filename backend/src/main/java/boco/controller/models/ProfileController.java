@@ -25,10 +25,10 @@ public class ProfileController {
 
     @GetMapping("/{profile_id}")
     public ResponseEntity<Profile> getProfile(@PathVariable(value = "profile_id") Long profileId) {
-        return profileService.getProfile(profileId);
+        return profileService.getProfile(profileId, (long) 1);
     }
 
-    @PostMapping()
+    @PostMapping("/")
     public ResponseEntity<Profile> createProfile(@RequestBody ProfileRequest profileRequest) {
         return profileService.createProfile(profileRequest);
     }

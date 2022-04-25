@@ -8,7 +8,6 @@ import lombok.Setter;
 public class ListingRequest {
     private String name;
     private String description;
-    private String category;
     private String address;
     private boolean isAvailable;
     private boolean isActive;
@@ -22,7 +21,6 @@ public class ListingRequest {
         return "ListingRequest{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", category='" + category + '\'' +
                 ", address='" + address + '\'' +
                 ", isAvailable=" + isAvailable +
                 ", isActive=" + isActive +
