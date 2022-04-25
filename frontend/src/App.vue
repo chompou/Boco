@@ -17,10 +17,10 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="login" v-show="!$store.state.loggedIn"
+              <router-link to="login" v-if="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <button class="log-out-button" v-show="$store.state.loggedIn">
+              <button class="log-out-button" v-if="$store.state.loggedIn">
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
             </a>
