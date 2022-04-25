@@ -17,9 +17,18 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="login"
+              <router-link to="login" v-show="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link">
+              <button class="log-out-button" v-show="$store.state.loggedIn">
+                <font-awesome-icon icon="sign-out-alt" />
+              </button>
             </a>
           </li>
         </ul>
@@ -32,15 +41,7 @@
             </a>
           </li>
         </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/signout"
-                ><font-awesome-icon icon="sign-out-alt"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
+
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
@@ -147,5 +148,15 @@ li a:hover {
   .navbar-toggler.collapsed ~ .navbar-collapse {
     transition: left 500ms ease-in-out;
   }
+}
+
+button {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 </style>
