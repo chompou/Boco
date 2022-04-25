@@ -138,14 +138,12 @@ public class ProfileService {
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 
-    public Profile verifyProfile(Long profileId){
+    public void verifyProfile(Long profileId){
         Optional<Profile> profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()){
             profileData.get().setIsVerified(true);
             profileRepository.save(profileData.get());
-            return profileData.get();
         }
-        return null;
     }
 
     /**
