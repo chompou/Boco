@@ -22,7 +22,7 @@ public class ProfileController {
         return profileService.getProfile(profileId);
     }
 
-    @PostMapping()
+    @PostMapping("/")
     public ResponseEntity<Profile> createProfile(@RequestBody ProfileRequest profileRequest) {
         return profileService.createProfile(profileRequest);
     }
