@@ -1,6 +1,7 @@
 package boco.models.rental;
 
 import boco.models.profile.Profile;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,5 +21,6 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "listing_id")
+    @JsonManagedReference
     private Listing listing;
 }

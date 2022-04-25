@@ -1,5 +1,6 @@
 package boco.controller.models;
 
+import boco.models.http.ListingResponse;
 import boco.models.rental.Listing;
 import boco.service.profile.ProfileService;
 import boco.service.rental.ListingService;
@@ -22,7 +23,7 @@ public class ListingController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Listing>> getListings(@RequestParam int perPage,
+    public ResponseEntity<List<ListingResponse>> getListings(@RequestParam int perPage,
                                      @RequestParam int page,
                                      @RequestParam(defaultValue  = "") String search,
                                      @RequestParam(defaultValue  = "id") String sort,
@@ -40,8 +41,8 @@ public class ListingController {
     }
 
     @GetMapping("/{listing_id}")
-    public ResponseEntity<Listing> getListing(@PathVariable long id){
-        return listingService.getListingById(id);
+    public ResponseEntity<ListingResponse> getListing(@PathVariable(value = "listing_id") Long listingId){
+        return listingService.getListingById(listingId);
     }
 
 

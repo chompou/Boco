@@ -1,5 +1,6 @@
 package boco.service.profile;
 
+import boco.models.http.ListingResponse;
 import boco.models.http.ProfileRequest;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
@@ -40,7 +41,7 @@ public class ProfileService {
         this.professionalRepository = professionalRepository;
     }
 
-    public ResponseEntity<Profile> getProfile(Long profileId) {
+    public ResponseEntity<Profile> getProfile(Long profileId, Long profileId2) {
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
             Profile profile = profileData.get();
@@ -51,14 +52,15 @@ public class ProfileService {
             profile.setRatingProfile(null);
             profile.setRatingListing(null);
             profile.setRatingGiven(null);
-            if (!profileHasContactWithProfile(1, 1)){
+            if (!profileHasContactWithProfile(profileId, profileId2)){
                 profile.setEmail(null);
                 profile.setTlf(null);
             }
-            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+            return new ResponseEntity<>(profile, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
     }
 
     public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
@@ -97,7 +99,7 @@ public class ProfileService {
         }
     }
 
-    public ResponseEntity<List<Listing>> getProfileListings(Long profileId, int perPage, int page){
+    public ResponseEntity<List<ListingResponse>> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()){
@@ -107,7 +109,7 @@ public class ProfileService {
 
         List<Listing> listingsByProfile = profileData.get().getListings();
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList((page-1)*perPage, Math.min(page*perPage, listingsByProfile.size()));
-        return new ResponseEntity<>(listings, HttpStatus.OK);
+        return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
 
     }
 

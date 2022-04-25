@@ -1,6 +1,7 @@
 package boco.service.rental;
 
 import boco.models.http.ListingRequest;
+import boco.models.http.ListingResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
@@ -36,11 +37,11 @@ public class ListingService {
     }
 
 
-    public List<Listing> getAllListings(){
-        return listingRepository.findAll();
+    public List<ListingResponse> getAllListings(){
+        return convertListings(listingRepository.findAll());
     }
 
-    public ResponseEntity<List<Listing>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
 
         List<Listing> listings;
@@ -49,7 +50,7 @@ public class ListingService {
         } else {
             listings = listingRepository.findByDescriptionContainingOrNameContainingAndPriceBetween(search, search, priceFrom, priceTo, pageable).getContent();
         }
-        return new ResponseEntity<>(listings, HttpStatus.OK);
+        return new ResponseEntity<>(convertListings(listings), HttpStatus.OK);
     }
 
 
@@ -73,16 +74,16 @@ public class ListingService {
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 
-    public ResponseEntity<Listing> getListingById(Long listingId){
+    public ResponseEntity<ListingResponse> getListingById(Long listingId){
         Optional<Listing> listing = listingRepository.findById(listingId);
         if (!listing.isPresent()) {
             logger.debug("listingId=" + listingId + " was not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(listing.get(), HttpStatus.OK);
+        return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<Listing> createListing(ListingRequest listingRequest) {
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest) {
         try {
             Profile profileOfRequest = profileRepository.getById(listingRequest.getProfileId());
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
@@ -90,13 +91,13 @@ public class ListingService {
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profileOfRequest);
             Listing savedListing = listingRepository.save(newListing);
-            return new ResponseEntity<>(savedListing, HttpStatus.CREATED);
+            return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<Listing> updateListing(UpdateListingRequest updateListingRequest) {
+    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest) {
         Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getListingId());
         if (!listingData.isPresent()) {
             logger.debug("listingId=" + updateListingRequest.getListingId() + " was not found.");
@@ -115,7 +116,7 @@ public class ListingService {
 
         Listing savedListing = listingRepository.save(listing);
         logger.debug("listingId=" + updateListingRequest.getListingId() + " was updated to:\n" + savedListing);
-        return new ResponseEntity<>(savedListing, HttpStatus.OK);
+        return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
     public ResponseEntity<HttpStatus> deleteListing(Long listingId) {
@@ -125,5 +126,14 @@ public class ListingService {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public static List<ListingResponse> convertListings(List<Listing> listings){
+        List<ListingResponse> listingResponses = new ArrayList<>();
+        for (Listing listing :
+                listings) {
+            listingResponses.add(new ListingResponse(listing));
+        }
+        return listingResponses;
     }
 }
