@@ -72,7 +72,7 @@ public class TempUserAdded {
                 categoryTypeRepository.save(categoryType1);
                 categoryTypeRepository.save(categoryType2);
 
-                Personal profile = new Personal("emilgl", "emil@gmail.com", "Test",
+                Personal profile = new Personal("emilgl", "gluckemil@gmail.com", "Test",
                         "Emil", "letmepass","Baerum", "12345678");
                 Personal profile1 = new Personal("olavdei", "olav@gmail.com", "Test1",
                         "Olav", "letmepass","Baerum", "12345677");

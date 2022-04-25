@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -138,6 +139,16 @@ public class ProfileService {
 
         List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+    }
+
+    public Profile verifyProfile(Long profileId){
+        Optional<Profile> profileData = profileRepository.findById(profileId);
+        if (profileData.isPresent()){
+            profileData.get().setIsVerified(true);
+            profileRepository.save(profileData.get());
+            return profileData.get();
+        }
+        return null;
     }
 
     /**
