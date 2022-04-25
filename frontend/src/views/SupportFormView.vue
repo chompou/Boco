@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <h1>Support</h1>
+    <h1 class="text-center">Support</h1>
     <div class="col-6 mx-auto">
       <form @submit="submit">
         <div class="mb-3">
