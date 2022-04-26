@@ -2,6 +2,7 @@ package boco.controller.models;
 
 import boco.models.http.ListingRequest;
 import boco.models.http.ListingResponse;
+import boco.models.http.PrivateProfileResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.rental.Listing;
 import boco.models.rental.Review;
@@ -55,6 +56,11 @@ public class AuthorizedController {
             @RequestParam int page,
             @RequestHeader(name="Authorization") String token) {
         return profileService.getMyProfileReviews(token, perPage, page);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<PrivateProfileResponse> getMyProfile(@RequestHeader(name="Authorization") String token){
+        return profileService.getPrivateProfile(token);
     }
 
 }

@@ -25,7 +25,7 @@ public class ProfileController {
 
     @GetMapping("/{profile_id}")
     public ResponseEntity<PublicProfileResponse> getProfile(@PathVariable(value = "profile_id") Long profileId) {
-        return profileService.getProfile(profileId, (long) 1);
+        return profileService.getPublicProfile(profileId, (long) 1);
     }
 
     @PostMapping("")
