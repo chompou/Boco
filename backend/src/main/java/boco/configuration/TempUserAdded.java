@@ -210,6 +210,7 @@ public class TempUserAdded {
                 lease.setCompleted(false);
                 lease.setProfile(profile2);
                 lease.setListing(listing1);
+                lease.setOwner(lease.getListing().getProfile());
 
                 Lease lease1 = new Lease();
                 lease1.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 15, 0)));
@@ -221,6 +222,7 @@ public class TempUserAdded {
                 lease1.setOwnerReview(review1);
                 lease1.setProfile(profile7);
                 lease1.setListing(listing);
+                lease1.setOwner(lease1.getListing().getProfile());
 
                 leaseRepository.save(lease);
                 leaseRepository.save(lease1);

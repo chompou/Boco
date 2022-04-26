@@ -14,21 +14,21 @@ import java.util.List;
 
 @Service
 public class NotificationService {
-    private final NotificationRepository notificatioRepository;
+    private final NotificationRepository notificationRepository;
     private final ProfileRepository profileRepository;
     private final BocoSocket webSocket;
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public NotificationService(NotificationRepository notificatioRepository, ProfileRepository profileRepository, JwtUtil jwtUtil, BocoSocket webSocket) {
+    public NotificationService(NotificationRepository notificationRepository, ProfileRepository profileRepository, JwtUtil jwtUtil, BocoSocket webSocket) {
         this.profileRepository = profileRepository;
-        this.notificatioRepository = notificatioRepository;
+        this.notificationRepository = notificationRepository;
         this.jwtUtil = jwtUtil;
         this.webSocket = webSocket;
     }
 
     public int unreadForUser(Long userId){
-        return notificatioRepository.countByProfileIdAndIsReadFalse(userId);
+        return this.notificationRepository.countByProfileIdAndIsReadFalse(userId);
     }
 
     public int pushNotificationsFromJWT(String jwt){
@@ -51,7 +51,7 @@ public class NotificationService {
 
     public void addNewNotification(Notification notification){
         try{
-            notificatioRepository.save(notification);
+            this.notificationRepository.save(notification);
             pushToProfile(notification.getId());
         }catch (Exception ignored){
 

@@ -1,15 +1,14 @@
 package boco.controller.models;
 
 import boco.models.http.ProfileRequest;
-import boco.models.http.ProfileResponse;
-import boco.models.profile.Profile;
+import boco.models.http.PrivateProfileResponse;
+import boco.models.http.PublicProfileResponse;
 import boco.service.profile.ProfileService;
 import boco.service.security.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 
 @RestController
@@ -25,12 +24,12 @@ public class ProfileController {
     }
 
     @GetMapping("/{profile_id}")
-    public ResponseEntity<Profile> getProfile(@PathVariable(value = "profile_id") Long profileId) {
+    public ResponseEntity<PublicProfileResponse> getProfile(@PathVariable(value = "profile_id") Long profileId) {
         return profileService.getProfile(profileId, (long) 1);
     }
 
     @PostMapping("")
-    public ResponseEntity<ProfileResponse> createProfile(@RequestBody ProfileRequest profileRequest) {
+    public ResponseEntity<PrivateProfileResponse> createProfile(@RequestBody ProfileRequest profileRequest) {
         return profileService.createProfile(profileRequest);
     }
 

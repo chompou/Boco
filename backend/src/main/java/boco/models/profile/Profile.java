@@ -40,6 +40,10 @@ public class Profile {
 
     @OneToMany(mappedBy = "profile")
     @JsonBackReference
+    private List<Lease> owned;
+
+    @OneToMany(mappedBy = "profile")
+    @JsonBackReference
     private List<Listing> listings;
 
     @OneToMany(mappedBy = "profile")
