@@ -73,6 +73,14 @@
 </template>
 
 <style>
+:root {
+  --main-color: #008b8b;
+  --button-hover: #006c6c;
+  --button-color: #00a5a5;
+  --text-color: #2c3e50;
+  --text-color2: white;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -54,7 +54,7 @@ img {
   -moz-osx-font-smoothing: grayscale;
   width: 650px;
   height: 225px;
-  color: #2c3e50;
+  color: var(--text-color);
   padding: 10px 28px;
   background: white;
   margin: 20px;
@@ -92,7 +92,7 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: var(--text-color);
   padding: 5px;
   background: white;
   margin: 20px;
