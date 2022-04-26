@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 
 @Configuration
 public class TempUserAdded {
@@ -54,7 +54,7 @@ public class TempUserAdded {
             categoryTypeRepository.save(categoryType2);
 
 
-            //Customs
+            //Customs (autoGen)
             try {
 
                 List<Profile> profileList = new ArrayList<>();
@@ -90,12 +90,13 @@ public class TempUserAdded {
                     listing.setPriceType("Hour");
                     listing.setRating(i/magnitude);
                     listing.setCategoryTypes(categoryTypes);
-                    listing.setProfile(profileRepository.getOne(1l));
+                    listing.setProfile(profileRepository.getOne(Long.getLong(Math.random()*magnitude+"")));
                 }
                 listingRepository.saveAll(listings);
 
 
 
+                //Customs (ManualGen)
                 Review review = new Review();
                 review.setComment("Perfect");
                 review.setRating(5.0);
