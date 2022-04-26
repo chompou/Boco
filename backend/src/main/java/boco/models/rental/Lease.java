@@ -2,6 +2,7 @@ package boco.models.rental;
 
 import boco.models.profile.Profile;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Entity
 public class Lease {
     @Id
