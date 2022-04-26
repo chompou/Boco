@@ -20,7 +20,7 @@ public class LeaseService {
         this.leaseRepository = leaseRepository;
     }
 
-    public static List<LeaseResponse> convertNotifications(List<Lease> leases){
+    public static List<LeaseResponse> convertLease(List<Lease> leases){
         List<LeaseResponse> leaseResponses = new ArrayList<>();
         for (Lease lease :
                 leases) {

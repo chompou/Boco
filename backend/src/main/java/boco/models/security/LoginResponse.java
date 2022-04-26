@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class LoginResponse {
     private String JWT;
+    private String userID;
 
     /**
      * Default contructor with all params
@@ -18,5 +19,19 @@ public class LoginResponse {
      */
     public LoginResponse(String JWT) {
         this.JWT = JWT;
+    }
+    public LoginResponse(String JWT, Long userId) {
+        this.JWT = JWT;
+        this.userID = userId +"";
+    }
+
+    public LoginResponse(String JWT, int userId) {
+        this.JWT = JWT;
+        this.userID = userId +"";
+    }
+
+    public LoginResponse(String JWT, String userId) {
+        this.JWT = JWT;
+        this.userID = userId;
     }
 }

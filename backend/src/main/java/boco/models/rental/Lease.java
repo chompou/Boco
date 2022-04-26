@@ -20,13 +20,13 @@ public class Lease {
     private Timestamp toDatetime;
     private boolean isCompleted;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lease")
     private Review ownerReview;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lease")
     private Review leaseeReview;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lease")
     private Review itemReview;
 
     @ManyToOne
@@ -38,4 +38,9 @@ public class Lease {
     @JoinColumn(name = "listing_id")
     @JsonManagedReference
     private Listing listing;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    @JsonManagedReference
+    private Profile owner;
 }
