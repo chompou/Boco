@@ -48,6 +48,7 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
+
 export default {
   components: { RatingComponent },
   data() {
@@ -56,6 +57,11 @@ export default {
       phoneNumber: "48420178",
       email: "ØyvindBjørn@gmail.com",
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.loggedInUser === 1;
+    },
   },
 };
 </script>
@@ -91,12 +97,43 @@ export default {
   margin-bottom: -5px;
 }
 
-.buttons:hover,
-.buttons:focus {
+.boco-btn {
+  align-items: center;
+  background-color: var(--button-color);
+  border: 0;
+  border-radius: 100px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
+    "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 20px;
+  max-width: 480px;
+  min-height: 40px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 20px;
+  text-align: center;
+  touch-action: manipulation;
+  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+}
+
+.boco-btn:hover,
+.boco-btn:focus {
   background-color: var(--button-hover);
 }
 
-.buttons:disabled {
+.boco-btn:disabled {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);
