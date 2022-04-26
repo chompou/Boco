@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -172,6 +173,15 @@ public class ProfileService {
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
+
+    public void verifyProfile(Long profileId){
+        Optional<Profile> profileData = profileRepository.findById(profileId);
+        if (profileData.isPresent()){
+            profileData.get().setIsVerified(true);
+            profileRepository.save(profileData.get());
+        }
+    }
+
     /**
      * @param profileRequest ProfileRequest to be verified
      * @return True if profile is valid, else false
