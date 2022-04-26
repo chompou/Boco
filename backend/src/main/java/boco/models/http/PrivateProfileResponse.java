@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 
 @Getter @Setter @NoArgsConstructor
-public class ProfileResponse {
+public class PrivateProfileResponse {
     private Long id;
     private String username;
     private String email;
@@ -22,7 +22,7 @@ public class ProfileResponse {
     private Double ratingGiven;
     private Timestamp deactivated;
 
-    public ProfileResponse(Profile profile) {
+    public PrivateProfileResponse(Profile profile) {
         this.id = profile.getId();
         this.username = profile.getUsername();
         this.email = profile.getEmail();
