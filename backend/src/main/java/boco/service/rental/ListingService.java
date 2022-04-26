@@ -2,6 +2,7 @@ package boco.service.rental;
 
 import boco.models.http.ListingRequest;
 import boco.models.http.ListingResponse;
+import boco.models.http.ReviewResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
@@ -9,6 +10,7 @@ import boco.models.rental.Listing;
 import boco.models.rental.Review;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.ListingRepository;
+import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class ListingService {
     private final ProfileRepository profileRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository) {
@@ -55,7 +60,7 @@ public class ListingService {
 
 
 
-    public ResponseEntity<List<Review>> getListingReviews(Long listingId, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
         Optional<Listing> listingData = listingRepository.findById(listingId);
 
         if (!listingData.isPresent()) {
@@ -71,7 +76,7 @@ public class ListingService {
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
-        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
     public ResponseEntity<ListingResponse> getListingById(Long listingId){
@@ -83,13 +88,18 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest) {
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, String token) {
         try {
-            Profile profileOfRequest = profileRepository.getById(listingRequest.getProfileId());
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+            if (!profile.isPresent()) {
+                logger.debug("profile of token not found found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
                     listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
-                    profileOfRequest);
+                    profile.get());
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -97,12 +107,28 @@ public class ListingService {
         }
     }
 
-    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest) {
+    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+        if (!profile.isPresent()){
+            logger.debug("profileId=" + profile.get().getId() + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getListingId());
+
         if (!listingData.isPresent()) {
             logger.debug("listingId=" + updateListingRequest.getListingId() + " was not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        if (listingData.get().getProfile().getId() != profile.get().getId()){
+            logger.debug("UserId is not the owner of listing.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
 
         // Setting the new data
         Listing listing = listingData.get();
@@ -119,8 +145,27 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
-    public ResponseEntity<HttpStatus> deleteListing(Long listingId) {
+    public ResponseEntity<HttpStatus> deleteListing(Long listingId, String token) {
         try {
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+            if (!profile.isPresent()){
+                logger.debug("profileId=" + profile.get().getId() + " was not found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            Optional<Listing> listingData = listingRepository.findById(listingId);
+
+            if (!listingData.isPresent()) {
+                logger.debug("listingId=" + listingId + " was not found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            if (listingData.get().getProfile().getId() != profile.get().getId()){
+                logger.debug("UserId is not the owner of listing.");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
             listingRepository.deleteById(listingId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

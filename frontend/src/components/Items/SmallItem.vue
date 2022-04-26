@@ -1,5 +1,8 @@
 <template>
-  <router-link class="link" :to="{ path: '/items/' + id, params: { id: id } }">
+  <router-link
+    class="link"
+    :to="{ path: '/items/' + item.id, params: { id: item.id } }"
+  >
     <div>
       <img alt="Vue logo" src="@/assets/service.png" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
@@ -27,6 +30,7 @@ export default {
 img {
   width: 200px;
   height: 200px;
+  margin: 8px;
   border: 1px solid #39495c;
 }
 
@@ -39,8 +43,7 @@ div {
   width: 250px;
   height: 250px;
   text-align: center;
-  color: #2c3e50;
-  padding: 10px 28px;
+  color: var(--text-color);
   background: white;
   margin: 20px;
 }

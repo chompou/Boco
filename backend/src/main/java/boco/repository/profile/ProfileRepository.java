@@ -68,4 +68,5 @@ public interface ProfileRepository extends JpaRepository <Profile, Long> {
     Page<Profile> getAllByContact(long id, Pageable page);
 
 
+    Optional<Profile> findProfileById(Long id);
 }

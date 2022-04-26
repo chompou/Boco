@@ -9,10 +9,10 @@
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="all-buttons">
+      <div class="all-buttons" v-if="isLoggedIn">
         <button
           id="items-button"
-          class="buttons"
+          class="boco-btn"
           @click="this.$router.push('/my/items')"
           type="submit"
         >
@@ -20,7 +20,7 @@
         </button>
         <button
           id="leases-button"
-          class="buttons"
+          class="boco-btn"
           @click="this.$router.push('/my/leases')"
           type="submit"
         >
@@ -28,7 +28,7 @@
         </button>
         <button
           id="reviews-button"
-          class="buttons"
+          class="boco-btn"
           @click="this.$router.push('/my/reviews')"
           type="submit"
         >
@@ -36,7 +36,7 @@
         </button>
         <button
           id="settings-button"
-          class="buttons"
+          class="boco-btn"
           @click="this.$router.push('/my/settings')"
           type="submit"
         >
@@ -48,6 +48,7 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
+
 export default {
   components: { RatingComponent },
   data() {
@@ -57,21 +58,24 @@ export default {
       email: "ØyvindBjørn@gmail.com",
     };
   },
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.loggedInUser === 1;
+    },
+  },
 };
 </script>
 
 <style scoped>
 .profile-bar {
+  color: white;
   border-radius: 20px;
   display: flex;
-  border: 1px solid #39495c;
   font-size: 17px;
   width: 100%;
   height: 200px;
-  color: #2c3e50;
   padding: 10px 28px;
-  background: #e0f2fe;
-  background: #a1d7ff;
+  background: var(--main-color);
   margin: 20px;
   flex-wrap: wrap;
 }
@@ -93,13 +97,12 @@ export default {
   margin-bottom: -5px;
 }
 
-.buttons {
+.boco-btn {
   align-items: center;
-  background-color: #0a66c2;
+  background-color: var(--button-color);
   border: 0;
   border-radius: 100px;
   box-sizing: border-box;
-  color: #ffffff;
   cursor: pointer;
   display: inline-flex;
   font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
@@ -125,18 +128,12 @@ export default {
   vertical-align: middle;
 }
 
-.buttons:hover,
-.buttons:focus {
-  background-color: #16437e;
-  color: #ffffff;
+.boco-btn:hover,
+.boco-btn:focus {
+  background-color: var(--button-hover);
 }
 
-.buttons:active {
-  background: #09223b;
-  color: rgb(255, 255, 255, 0.7);
-}
-
-.buttons:disabled {
+.boco-btn:disabled {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);

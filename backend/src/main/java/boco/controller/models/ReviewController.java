@@ -1,5 +1,6 @@
 package boco.controller.models;
 
+import boco.models.http.ReviewResponse;
 import boco.models.rental.Review;
 import boco.service.profile.ProfileService;
 import boco.service.rental.ListingService;
@@ -37,10 +38,10 @@ public class ReviewController {
      * @return A responseEntity containg a list of reviews.
      */
     @GetMapping("")
-    public ResponseEntity<List<Review>> getReviews(@RequestParam(name = "listingId", defaultValue  = "") Long listingId,
-                                                   @RequestParam(name = "profileId", defaultValue  = "") Long profileId,
-                                                   @RequestParam(name = "perPage") int perPage,
-                                                   @RequestParam(name = "page") int page){
+    public ResponseEntity<List<ReviewResponse>> getReviews(@RequestParam(name = "listingId", defaultValue  = "") Long listingId,
+                                                           @RequestParam(name = "profileId", defaultValue  = "") Long profileId,
+                                                           @RequestParam(name = "perPage") int perPage,
+                                                           @RequestParam(name = "page") int page){
 
         if (listingId != null && profileId != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
