@@ -20,7 +20,7 @@
               <router-link to="login" v-if="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <button class="log-out-button" v-if="$store.state.loggedIn">
+              <button id="log-out-button" v-if="$store.state.loggedIn">
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
             </a>
@@ -93,7 +93,6 @@
 .icon {
   font-size: 2vw;
 }
-
 /*Support form style*/
 .textArea {
   height: 150px;
@@ -162,7 +161,7 @@ li a:hover {
   }
 }
 
-button {
+#log-out-button {
   background: none;
   color: inherit;
   border: none;
