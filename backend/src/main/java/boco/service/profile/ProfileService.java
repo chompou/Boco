@@ -55,13 +55,24 @@ public class ProfileService {
         this.jwtUtil = jwtUtil;
     }
 
-    public ResponseEntity<PublicProfileResponse> getProfile(Long profileId, Long profileId2) {
+    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String token) {
+        Long userId = null;
+        if (token != null){
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+            if (!profile.isPresent()) {
+                logger.debug("profile of token not found found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            userId = profile.get().getId();
+        }
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
             Profile profile = profileData.get();
             PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
 
-            if (!profileHasContactWithProfile(profileId, profileId2)){
+            if (userId != null && !profileHasContactWithProfile(profileId, userId)){
                 publicProfile.setEmail(null);
                 publicProfile.setTlf(null);
             }
@@ -69,7 +80,28 @@ public class ProfileService {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
 
+    public ResponseEntity<PrivateProfileResponse> getPrivateProfile(String token){
+        String username = jwtUtil.extractUsername(token.substring(7));
+        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+        if (!profile.isPresent()) {
+            logger.debug("profile of token not found found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        PrivateProfileResponse profileResponse = new PrivateProfileResponse(profile.get());
+        return new ResponseEntity<>(profileResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> getEmail(Long id){
+        Optional<Profile> profile = profileRepository.findProfileById(id);
+
+        if (!profile.isPresent()) {
+            logger.debug("profile of token not found found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(profile.get().getEmail(), HttpStatus.OK);
     }
 
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
@@ -121,6 +153,12 @@ public class ProfileService {
         }
 
         List<Listing> listingsByProfile = profileData.get().getListings();
+
+        if (listingsByProfile == null) {
+            logger.debug("listings is null for profileId=" + profileId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
         return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
 
@@ -143,7 +181,8 @@ public class ProfileService {
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leasesFromProfile.size(); i++) {
-            reviews.add(leasesFromProfile.get(i).getOwnerReview());
+            Review newReview = leasesFromProfile.get(i).getOwnerReview();
+            if (newReview != null) reviews.add(newReview);
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
@@ -164,10 +203,16 @@ public class ProfileService {
 
         List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
 
+        if (leases == null) {
+            logger.debug("leases is null");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leases.size(); i++) {
-            reviews.add(leases.get(i).getLeaseeReview());
+            Review newReview = leases.get(i).getLeaseeReview();
+            if (newReview != null) reviews.add(newReview);
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
