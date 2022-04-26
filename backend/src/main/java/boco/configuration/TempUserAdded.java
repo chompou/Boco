@@ -268,7 +268,6 @@ public class TempUserAdded {
 
 
             }catch (Exception e){
-                e.printStackTrace();
                 System.out.println("Db already populated");
             }
         };
