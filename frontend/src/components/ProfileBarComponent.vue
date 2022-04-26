@@ -9,7 +9,7 @@
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="all-buttons">
+      <div class="all-buttons" v-if="this.isLoggedIn">
         <button
           id="items-button"
           class="boco-btn"
@@ -48,6 +48,7 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
+
 export default {
   components: { RatingComponent },
   data() {
@@ -56,6 +57,11 @@ export default {
       phoneNumber: "48420178",
       email: "ØyvindBjørn@gmail.com",
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.loggedInUser === 1;
+    },
   },
 };
 </script>
@@ -89,17 +95,6 @@ export default {
 
 #phone-number {
   margin-bottom: -5px;
-}
-
-.buttons:hover,
-.buttons:focus {
-  background-color: var(--button-hover);
-}
-
-.buttons:disabled {
-  cursor: not-allowed;
-  background: rgba(0, 0, 0, 0.08);
-  color: rgba(0, 0, 0, 0.3);
 }
 
 .all-buttons {
