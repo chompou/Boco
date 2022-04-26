@@ -17,10 +17,10 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="login" v-if="!$store.state.loggedIn"
+              <router-link to="login" v-if="!loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <button id="log-out-button" v-if="$store.state.loggedIn">
+              <button id="log-out-button" v-if="loggedIn">
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
             </a>
@@ -70,6 +70,17 @@
     <router-view />
   </div>
 </template>
+
+<script>
+import store from "@/store/index.js";
+export default {
+  computed: {
+    loggedIn() {
+      return store.state.loggedIn;
+    },
+  },
+};
+</script>
 
 <style>
 :root {

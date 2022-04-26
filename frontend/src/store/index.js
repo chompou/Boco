@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    loggedIn: true,
+    loggedIn: false,
     loggedInUser: null,
   },
   getters: {},
