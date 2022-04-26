@@ -25,7 +25,7 @@ public class VerificationController {
     }
 
     @GetMapping("/verification/{profile_id}")
-    public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) throws MalformedURLException {
+    public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) {
         String url = "http://localhost:8080/api/verification/getVerified/"+ profileId;
         //TODO secure this endpoint better, (ask Elias)
         try {
