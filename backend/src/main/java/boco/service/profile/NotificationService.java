@@ -34,11 +34,28 @@ public class NotificationService {
     public int pushNotificationsFromJWT(String jwt){
         try {
             Long id = profileRepository.findProfileByUsername(jwtUtil.extractUsername(jwt)).get().getId();
-            webSocket.sendOneMessage(id +"", notificatioRepository.countByProfileIdAndIsReadFalse(id) + "");
+            pushToProfile(id);
         }catch (Exception e){
             return 500;
         }
         return 200;
+    }
+
+    public void pushToProfile(Long userId){
+        try {
+            webSocket.sendOneMessage(userId +"", unreadForUser(userId) + "");
+        }catch (Exception ignored){
+
+        }
+    }
+
+    public void addNewNotification(Notification notification){
+        try{
+            notificatioRepository.save(notification);
+            pushToProfile(notification.getId());
+        }catch (Exception ignored){
+
+        }
     }
 
     public static List<NotificationResponse> convertNotifications(List<Notification> notifications){

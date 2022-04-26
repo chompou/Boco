@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Configuration
 public class TempUserAdded {
@@ -31,7 +32,70 @@ public class TempUserAdded {
                                    ){
 
         return args ->{
+            int magnitude = 10;
+
+            //Defaults
+            CategoryType categoryType = new CategoryType();
+            categoryType.setName("Sport");
+            CategoryType categoryType1 = new CategoryType();
+            categoryType1.setName("Electronic");
+            CategoryType categoryType2 = new CategoryType();
+            categoryType2.setName("Car");
+
+            ArrayList<CategoryType> categoryTypes = new ArrayList<>();
+            categoryTypes.add(categoryType);
+            categoryTypes.add(categoryType2);
+            ArrayList<CategoryType> categoryTypes1 = new ArrayList<>();
+            categoryTypes1.add(categoryType1);
+            categoryTypes1.add(categoryType2);
+
+            categoryTypeRepository.save(categoryType);
+            categoryTypeRepository.save(categoryType1);
+            categoryTypeRepository.save(categoryType2);
+
+
+            //Customs
             try {
+
+                List<Profile> profileList = new ArrayList<>();
+                for (int i = 0; i < magnitude; i++) {
+                    if (i%2==0){
+                        Profile p = new Personal(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
+                        profileList.add(p);
+                    }else {
+                        Profile p = new Professional(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
+                        profileList.add(p);
+                    }
+                }
+                profileRepository.saveAll(profileList);
+
+                List<Review> reviews = new ArrayList<>();
+                for (int i = 0; i < magnitude*5; i++) {
+                    Review rev = new Review();
+                    rev.setComment("Lorem");
+                    rev.setRating(Math.random()*5.0);
+                }
+                reviewRepository.saveAll(reviews);
+
+                List<Listing> listings = new ArrayList<>();
+                for (int i = 0; i < magnitude*5; i++) {
+                    Listing listing = new Listing();
+                    listing.setName("Lorem");
+                    listing.setAddress("Ipsum");
+                    listing.setDescription("Kyrie eleison");
+                    listing.setActive(i%2==0);
+                    listing.setAvailable(i%3==0);
+                    listing.setLastChanged(Timestamp.valueOf(LocalDateTime.now()));
+                    listing.setPrice(i*10);
+                    listing.setPriceType("Hour");
+                    listing.setRating(i/magnitude);
+                    listing.setCategoryTypes(categoryTypes);
+                    listing.setProfile(profileRepository.getOne(1l));
+                }
+                listingRepository.saveAll(listings);
+
+
+
                 Review review = new Review();
                 review.setComment("Perfect");
                 review.setRating(5.0);
@@ -54,23 +118,6 @@ public class TempUserAdded {
                 reviewRepository.save(review3);
                 reviewRepository.save(review4);
 
-                CategoryType categoryType = new CategoryType();
-                categoryType.setName("Sport");
-                CategoryType categoryType1 = new CategoryType();
-                categoryType1.setName("Electronic");
-                CategoryType categoryType2 = new CategoryType();
-                categoryType2.setName("Car");
-
-                ArrayList<CategoryType> categoryTypes = new ArrayList<>();
-                categoryTypes.add(categoryType);
-                categoryTypes.add(categoryType2);
-                ArrayList<CategoryType> categoryTypes1 = new ArrayList<>();
-                categoryTypes1.add(categoryType1);
-                categoryTypes1.add(categoryType2);
-
-                categoryTypeRepository.save(categoryType);
-                categoryTypeRepository.save(categoryType1);
-                categoryTypeRepository.save(categoryType2);
 
                 Personal profile = new Personal("emilgl", "gluckemil@gmail.com", "Test",
                         "Emil", "letmepass","Baerum", "12345678");
