@@ -9,7 +9,7 @@
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="all-buttons">
+      <div class="all-buttons" v-if="isLoggedIn">
         <button
           id="items-button"
           class="boco-btn"
