@@ -38,4 +38,9 @@ public class Lease {
     @JoinColumn(name = "listing_id")
     @JsonManagedReference
     private Listing listing;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    @JsonManagedReference
+    private Profile owner;
 }
