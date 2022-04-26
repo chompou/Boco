@@ -29,7 +29,7 @@
     </div>
     <div class="w-100"></div>
     <div class="col-12 mt-3 text-center">
-      <button id="resetButton" @click="reset">Clear All</button>
+      <button id="resetButton" @click="reset">Clear</button>
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -160,6 +160,7 @@ export default {
   created() {
     apiService
       .createItem({
+        images: this.image_list,
         title: this.title,
         address: this.address,
         price: this.price,
@@ -175,12 +176,6 @@ export default {
 
 <style scoped>
 #container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#setImage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -269,28 +264,48 @@ select {
   width: 100px;
 }
 
-#imageButton {
-  width: 150px;
-}
-
 .CreateButton,
 #resetButton {
-  border: 1px solid #39495c;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: white;
+  align-items: center;
+  background-color: var(--button-color);
+  border: 0;
+  border-radius: 100px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
+    "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 20px;
+  max-width: 480px;
+  min-height: 40px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 20px;
   text-align: center;
-  color: #2c3e50;
-  padding: 5px;
-  background: white;
-  margin: 20px;
+  touch-action: manipulation;
+  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
 }
 
 .CreateButton:hover,
 #resetButton:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
+  background-color: var(--button-hover);
+}
+
+#CreateButtons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 #Delete {
