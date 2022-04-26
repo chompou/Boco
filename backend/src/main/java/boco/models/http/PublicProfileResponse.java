@@ -1,18 +1,16 @@
 package boco.models.http;
 
 import boco.models.profile.Profile;
-import boco.models.rental.Listing;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 // Profile without passwordHash, address, rating statistics,
 
 /**
- * Profile entity without the fields: username, passwordHash, address, ratings, rentals, notifications
+ * Profile entity without the fields: username, passwordHash, address, ratings, rentals, listings, notifications
  */
 @Getter @Setter @NoArgsConstructor
 public class PublicProfileResponse {
@@ -23,7 +21,6 @@ public class PublicProfileResponse {
     private Boolean isVerified;
     private String tlf; // TLF ?
     private Timestamp deactivated;
-    private List<Listing> listings;
 
     public PublicProfileResponse(Profile profile) {
         this.id = profile.getId();
@@ -33,6 +30,5 @@ public class PublicProfileResponse {
         this.isVerified = profile.getIsVerified();
         this.tlf = profile.getTlf();
         this.deactivated = profile.getDeactivated();
-        this.listings = profile.getListings();
     }
 }
