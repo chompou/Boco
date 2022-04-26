@@ -70,9 +70,15 @@ public class ListingService {
 
         List<Lease> listingLeases = listingData.get().getLeases();
 
+        if (listingLeases == null) {
+            logger.debug("leases is null for listingId=" + listingId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
-            reviews.add(listingLeases.get(i).getItemReview());
+            Review  newReview = listingLeases.get(i).getItemReview();
+            if (newReview != null)  reviews.add(newReview);
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));

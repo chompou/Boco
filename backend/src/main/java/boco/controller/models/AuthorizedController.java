@@ -56,7 +56,6 @@ public class AuthorizedController {
     public ResponseEntity<List<ReviewResponse>> getGivenReviews(@RequestParam(name = "perPage") int perPage,
                                                                 @RequestParam(name = "page") int page,
                                                                 @RequestHeader(name="Authorization") String token){
-
         return reviewService.getMyWrittenReviews(token, perPage, page);
     }
 
