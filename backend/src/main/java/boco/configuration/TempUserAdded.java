@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 
 @Configuration
 public class TempUserAdded {
@@ -33,69 +33,29 @@ public class TempUserAdded {
 
         return args ->{
             int magnitude = 10;
-
-            //Defaults
-            CategoryType categoryType = new CategoryType();
-            categoryType.setName("Sport");
-            CategoryType categoryType1 = new CategoryType();
-            categoryType1.setName("Electronic");
-            CategoryType categoryType2 = new CategoryType();
-            categoryType2.setName("Car");
-
-            ArrayList<CategoryType> categoryTypes = new ArrayList<>();
-            categoryTypes.add(categoryType);
-            categoryTypes.add(categoryType2);
-            ArrayList<CategoryType> categoryTypes1 = new ArrayList<>();
-            categoryTypes1.add(categoryType1);
-            categoryTypes1.add(categoryType2);
-
-            categoryTypeRepository.save(categoryType);
-            categoryTypeRepository.save(categoryType1);
-            categoryTypeRepository.save(categoryType2);
-
-
-            //Customs
             try {
+                //Defaults
+                CategoryType categoryType = new CategoryType();
+                categoryType.setName("Sport");
+                CategoryType categoryType1 = new CategoryType();
+                categoryType1.setName("Electronic");
+                CategoryType categoryType2 = new CategoryType();
+                categoryType2.setName("Car");
 
-                List<Profile> profileList = new ArrayList<>();
-                for (int i = 0; i < magnitude; i++) {
-                    if (i%2==0){
-                        Profile p = new Personal(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
-                        profileList.add(p);
-                    }else {
-                        Profile p = new Professional(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
-                        profileList.add(p);
-                    }
-                }
-                profileRepository.saveAll(profileList);
+                ArrayList<CategoryType> categoryTypes = new ArrayList<>();
+                categoryTypes.add(categoryType);
+                categoryTypes.add(categoryType2);
+                ArrayList<CategoryType> categoryTypes1 = new ArrayList<>();
+                categoryTypes1.add(categoryType1);
+                categoryTypes1.add(categoryType2);
 
-                List<Review> reviews = new ArrayList<>();
-                for (int i = 0; i < magnitude*5; i++) {
-                    Review rev = new Review();
-                    rev.setComment("Lorem");
-                    rev.setRating(Math.random()*5.0);
-                }
-                reviewRepository.saveAll(reviews);
-
-                List<Listing> listings = new ArrayList<>();
-                for (int i = 0; i < magnitude*5; i++) {
-                    Listing listing = new Listing();
-                    listing.setName("Lorem");
-                    listing.setAddress("Ipsum");
-                    listing.setDescription("Kyrie eleison");
-                    listing.setActive(i%2==0);
-                    listing.setAvailable(i%3==0);
-                    listing.setLastChanged(Timestamp.valueOf(LocalDateTime.now()));
-                    listing.setPrice(i*10);
-                    listing.setPriceType("Hour");
-                    listing.setRating(i/magnitude);
-                    listing.setCategoryTypes(categoryTypes);
-                    listing.setProfile(profileRepository.getOne(1l));
-                }
-                listingRepository.saveAll(listings);
+                categoryTypeRepository.save(categoryType);
+                categoryTypeRepository.save(categoryType1);
+                categoryTypeRepository.save(categoryType2);
 
 
 
+                //Customs (ManualGen)
                 Review review = new Review();
                 review.setComment("Perfect");
                 review.setRating(5.0);
@@ -232,6 +192,66 @@ public class TempUserAdded {
                 notification.setUrl("path");
                 notification.setProfile(profile7);
 
+
+                //Customs (autoGen)
+                List<Profile> profileList = new ArrayList<>();
+                for (int i = 0; i < magnitude; i++) {
+                    if (i%2==0){
+                        Profile p = new Personal(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
+                        profileList.add(p);
+                    }else {
+                        Profile p = new Professional(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
+                        profileList.add(p);
+                    }
+                }
+                profileRepository.saveAll(profileList);
+
+                List<Review> reviews = new ArrayList<>();
+                for (int i = 0; i < magnitude*5; i++) {
+                    Review rev = new Review();
+                    rev.setComment("Lorem");
+                    rev.setRating(Math.random()*5.0);
+                }
+                reviewRepository.saveAll(reviews);
+
+                List<Listing> listings = new ArrayList<>();
+                for (int i = 0; i < magnitude*5; i++) {
+                    Listing l = new Listing();
+                    l.setName("Lorem");
+                    l.setAddress("Ipsum");
+                    l.setDescription("Kyrie eleison");
+                    l.setActive(i%2==0);
+                    l.setAvailable(i%3==0);
+                    l.setLastChanged(Timestamp.valueOf(LocalDateTime.now()));
+                    l.setPrice(i*10);
+                    l.setPriceType("Hour");
+                    l.setRating(i/magnitude);
+                    l.setCategoryTypes(categoryTypes);
+                    l.setProfile(profileRepository.getOne((long) (Math.random() * 10) +1));
+                    listings.add(l);
+                }
+                listingRepository.saveAll(listings);
+
+
+                List<Lease> leases = new ArrayList<>();
+                for (int i = 0; i < magnitude*5; i++) {
+                    Lease lea = new Lease();
+                    lea.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)));
+                    lea.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)));
+                    lea.setApproved(i%2==0);
+                    lea.setCompleted(i%3==0);
+                    lease1.setItemReview(reviewRepository.getOne((long) (i/magnitude)+1));
+                    lease1.setLeaseeReview(reviewRepository.getOne((long) (i/magnitude)+2));
+                    lease1.setOwnerReview(reviewRepository.getOne((long) (i/magnitude)+3));
+
+                    lea.setProfile(profileRepository.getOne((long) (i/magnitude)+1));
+                    Listing curr = listingRepository.findById((long) (i/magnitude)+2).get();
+                    lea.setListing(curr);
+                    lea.setOwner(lea.getListing().getProfile());
+                    leases.add(lea);
+                }
+                leaseRepository.saveAll(leases);
+
                 ArrayList<Notification> notifyList = new ArrayList<>();
 
                 for (int i = 0; i < 10; i++) {
@@ -244,6 +264,9 @@ public class TempUserAdded {
                 }
                 notificationRepository.save(notification);
                 notificationRepository.saveAll(notifyList);
+
+
+
             }catch (Exception e){
                 System.out.println("Db already populated");
             }
