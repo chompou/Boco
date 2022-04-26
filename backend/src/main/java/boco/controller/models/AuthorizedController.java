@@ -29,7 +29,7 @@ public class AuthorizedController {
     public AuthorizedController(ListingService listingService, ProfileService profileService, JwtUtil jwtUtil) {
         this.listingService = listingService;
         this.profileService = profileService;
-        this.jwtUtil = null;
+        this.jwtUtil = jwtUtil;
     }
 
 

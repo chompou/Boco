@@ -20,13 +20,13 @@ public class Lease {
     private Timestamp toDatetime;
     private boolean isCompleted;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lease")
     private Review ownerReview;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lease")
     private Review leaseeReview;
 
-    @OneToOne
+    @OneToOne(mappedBy = "lease")
     private Review itemReview;
 
     @ManyToOne

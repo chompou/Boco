@@ -1,6 +1,6 @@
 <template>
   <label class="form-label">{{ label }}</label>
-  <input
+  <textarea
     v-bind="$attrs"
     :placeholder="label"
     :value="modelValue"
@@ -8,7 +8,7 @@
     :aria-describedby="error ? error : null"
     :aria-invalid="error ? true : false"
     :class="{ error }"
-  />
+  ></textarea>
   <BaseErrorMessage v-if="error" :id="error">
     {{ error }}
   </BaseErrorMessage>
@@ -16,7 +16,6 @@
 
 <script>
 import BaseErrorMessage from "@/components/base/BaseErrorMessage";
-
 export default {
   components: {
     BaseErrorMessage,

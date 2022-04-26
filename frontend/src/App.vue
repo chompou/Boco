@@ -17,35 +17,30 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="login"
-                ><font-awesome-icon icon="right-to-bracket" class="icon"
+              <router-link to="login" v-show="!$store.state.loggedIn"
+                ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
+              <button class="log-out-button" v-show="$store.state.loggedIn">
+                <font-awesome-icon icon="sign-out-alt" />
+              </button>
             </a>
           </li>
         </ul>
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/user"
-                ><font-awesome-icon icon="user" class="icon"
+              <router-link to="/my/items"
+                ><font-awesome-icon icon="user"
               /></router-link>
             </a>
           </li>
         </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/signout"
-                ><font-awesome-icon icon="sign-out-alt" class="icon"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
+
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/create"
-                ><font-awesome-icon icon="plus" class="icon"
+                ><font-awesome-icon icon="plus"
               /></router-link>
             </a>
           </li>
@@ -54,7 +49,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/"
-                ><font-awesome-icon icon="house" class="icon"
+                ><font-awesome-icon icon="house"
               /></router-link>
             </a>
           </li>
@@ -63,7 +58,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/info"
-                ><font-awesome-icon icon="info" class="icon"
+                ><font-awesome-icon icon="info"
               /></router-link>
             </a>
           </li>
@@ -90,12 +85,22 @@
   height: 2000px;
 }
 
+/*Front page style*/
 #frontPageSearchField {
   width: 200px;
 }
 
 .icon {
   font-size: 2vw;
+}
+
+/*Support form style*/
+.textArea {
+  height: 150px;
+}
+
+.errorMessage {
+  color: red;
 }
 
 /* Navbar styling */
@@ -155,5 +160,15 @@ li a:hover {
   .navbar-toggler.collapsed ~ .navbar-collapse {
     transition: left 500ms ease-in-out;
   }
+}
+
+button {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 </style>
