@@ -2,6 +2,7 @@ package boco.controller.security;
 
 import boco.models.security.LoginRequest;
 import boco.models.security.LoginResponse;
+import boco.service.profile.ProfileService;
 import boco.service.security.JwtUtil;
 import boco.service.security.ProfileDetailsService;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class LoginController {
     private ProfileDetailsService profileDetailsService;
 
     @Autowired
+    private ProfileService profileService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     /**
@@ -53,7 +57,7 @@ public class LoginController {
         final UserDetails userDetails = profileDetailsService.loadUserByUsername(loginRequest.getUsername());
         if (userDetails.getPassword().equals(loginRequest.getPassword())){
             final String jwt = jwtUtil.generateToken(userDetails);
-            return ResponseEntity.ok(new LoginResponse(jwt));
+            return ResponseEntity.ok(new LoginResponse(jwt, profileService.getProfileIdByUsername(loginRequest.getUsername())));
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
