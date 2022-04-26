@@ -1,0 +1,37 @@
+package boco.controller.models;
+
+import boco.models.profile.Profile;
+import boco.service.profile.ProfileService;
+import boco.service.security.EmailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.MalformedURLException;
+@RestController
+@RequestMapping("/api")
+public class VerificationController {
+    private final ProfileService profileService;
+    private final EmailService emailService;
+
+    @Autowired
+    public VerificationController(ProfileService profileService, EmailService emailService) {
+        this.profileService = profileService;
+        this.emailService = emailService;
+    }
+    @GetMapping("/verification/getVerified/{profile_id}")
+    public ResponseEntity<Profile> verifyProfile(@PathVariable(value = "profile_id") Long profileId){
+        return profileService.verifyProfile(profileId);
+    }
+
+    @GetMapping("/verification/{profile_id}")
+    public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) throws MalformedURLException {
+        String url = "http://localhost:8080/api/verification/getVerified/"+ profileId;
+        try {
+            emailService.sendVerificationMessage(profileService.getProfile(profileId, (long) 1).getBody().getEmail(), url);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+}
