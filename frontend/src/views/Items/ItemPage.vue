@@ -1,6 +1,6 @@
 <template>
   <div class="mainContainer">
-    <Transition>
+    <Transition name="overlay">
       <lease-request-component
         v-if="leaseOverlay"
         @close-overlay="leaseOverlay = false"
@@ -191,13 +191,13 @@ button:hover {
   display: inline;
 }
 
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.2s ease, top 0.2s ease;
+.overlay-enter-active,
+.overlay-leave-active {
+  transition: all 0.2s ease;
 }
 
-.v-enter-from,
-.v-leave-to {
+.overlay-enter-from,
+.overlay-leave-to {
   opacity: 0;
   top: 20%;
 }
