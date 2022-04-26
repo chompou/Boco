@@ -24,8 +24,9 @@ public class ProfileController {
     }
 
     @GetMapping("/{profile_id}")
-    public ResponseEntity<PublicProfileResponse> getProfile(@PathVariable(value = "profile_id") Long profileId) {
-        return profileService.getPublicProfile(profileId, (long) 1);
+    public ResponseEntity<PublicProfileResponse> getProfile(@PathVariable(value = "profile_id") Long profileId,
+            @RequestHeader(name="Authorization", required = false) String token) {
+        return profileService.getPublicProfile(profileId, token);
     }
 
     @PostMapping("")

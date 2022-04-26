@@ -53,13 +53,24 @@ public class ProfileService {
         this.jwtUtil = jwtUtil;
     }
 
-    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, Long profileId2) {
+    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String token) {
+        Long userId = null;
+        if (token != null){
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+            if (!profile.isPresent()) {
+                logger.debug("profile of token not found found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            userId = profile.get().getId();
+        }
         var profileData = profileRepository.findById(profileId);
         if (profileData.isPresent()) {
             Profile profile = profileData.get();
             PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
 
-            if (!profileHasContactWithProfile(profileId, profileId2)){
+            if (userId != null && !profileHasContactWithProfile(profileId, userId)){
                 publicProfile.setEmail(null);
                 publicProfile.setTlf(null);
             }
