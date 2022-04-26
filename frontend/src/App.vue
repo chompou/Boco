@@ -10,6 +10,7 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+      <img id="logo" src="@/assets/mainLogo.png" alt="logo" />
       <div
         id="collapsedNav"
         class="collapse navbar-collapse justify-content-center bg-light"
@@ -221,5 +222,10 @@ li a:hover {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);
+}
+
+#logo {
+  height: 70px;
+  width: auto;
 }
 </style>
