@@ -44,8 +44,9 @@ public class AuthorizedController {
     }
 
     @DeleteMapping("/listing/{listing_id}")
-    public ResponseEntity<HttpStatus> deleteListing(@PathVariable("listing_id") Long listingId) {
-        return listingService.deleteListing(listingId);
+    public ResponseEntity<HttpStatus> deleteListing(@PathVariable("listing_id") Long listingId,
+                                                    @RequestHeader(name="Authorization") String token) {
+        return listingService.deleteListing(listingId, token);
     }
 
     @GetMapping("/reviews")

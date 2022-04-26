@@ -145,8 +145,27 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
-    public ResponseEntity<HttpStatus> deleteListing(Long listingId) {
+    public ResponseEntity<HttpStatus> deleteListing(Long listingId, String token) {
         try {
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+            if (!profile.isPresent()){
+                logger.debug("profileId=" + profile.get().getId() + " was not found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            Optional<Listing> listingData = listingRepository.findById(listingId);
+
+            if (!listingData.isPresent()) {
+                logger.debug("listingId=" + listingId + " was not found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            if (listingData.get().getProfile().getId() != profile.get().getId()){
+                logger.debug("UserId is not the owner of listing.");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
             listingRepository.deleteById(listingId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

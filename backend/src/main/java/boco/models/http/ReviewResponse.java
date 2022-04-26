@@ -22,8 +22,8 @@ public class ReviewResponse {
             this.displayName = review.getLease().getProfile().getDisplayName();
 
         } else {
-            this.profile_id = review.getLease().getListing().getProfile().getId();
-            this.displayName = review.getLease().getListing().getProfile().getDisplayName();
+            this.profile_id = review.getLease().getOwner().getId();
+            this.displayName = review.getLease().getOwner().getDisplayName();
         }
     }
 }
