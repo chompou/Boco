@@ -34,15 +34,13 @@ public class AuthorizedController {
 
 
     @PostMapping("/listing")
-    public void createListing(@RequestBody ListingRequest listingRequest, HttpServletRequest request) {
-        String username = jwtUtil.extractUsername(request.getHeader("Authorization").substring(7));
-        // TODO: Not allow users to create listings for each other (can be done through JWT token)
-        listingService.createListing(listingRequest);
+    public void createListing(@RequestBody ListingRequest listingRequest, @RequestHeader(name="Authorization") String token) {
+        listingService.createListing(listingRequest, token);
     }
 
     @PutMapping("/listing")
-    public ResponseEntity<ListingResponse> updateListing(@RequestBody UpdateListingRequest updateListingRequest) {
-        return listingService.updateListing(updateListingRequest);
+    public ResponseEntity<ListingResponse> updateListing(@RequestBody UpdateListingRequest updateListingRequest, @RequestHeader(name="Authorization") String token) {
+        return listingService.updateListing(updateListingRequest, token);
     }
 
     @DeleteMapping("/listing/{listing_id}")

@@ -13,11 +13,11 @@ import java.util.List;
 
 @Service
 public class NotificationService {
-    private final NotificationRepository notificatioRepository;
+    private final NotificationRepository notificationRepository;
 
     @Autowired
-    public NotificationService(NotificationRepository notificatioRepository) {
-        this.notificatioRepository = notificatioRepository;
+    public NotificationService(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
     }
 
     public static List<NotificationResponse> convertNotifications(List<Notification> notifications){
