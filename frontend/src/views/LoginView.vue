@@ -53,8 +53,9 @@ export default {
       apiService
         .login(this.username, this.password)
         .then((response) => {
-          storageService.setToken(response.data);
+          storageService.setToken(response.data["jwt"]);
           storageService.setUser(this.username);
+          this.$store.state.loggedInUser = response.data["userId"];
           this.$router.push("/");
         })
         .catch((error) => console.error(error));

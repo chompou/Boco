@@ -26,10 +26,12 @@
               <h2>{{ item.name }}</h2>
               <div id="category">
                 <label>Category: </label>
-                <!-- <label v-for="item in category" :key="item">{{ item }}, </label> -->
+                <label v-for="item in item.category" :key="item"
+                  >{{ item }},
+                </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ item.price }}kr{{ item.priceType }}</p>
+              <p>Price: {{ item.price }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
               <RatingComponent :rating="item.rating" />
