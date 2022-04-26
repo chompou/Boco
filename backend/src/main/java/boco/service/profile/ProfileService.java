@@ -220,7 +220,7 @@ public class ProfileService {
     }
 
     public ResponseEntity<Profile> verifyProfile(Long profileId){
-        Optional<Profile> profileData = profileRepository.findById(profileId);
+        Optional<Profile> profileData = profileRepository.findProfileById(profileId);
         if (profileData.isPresent()){
             profileData.get().setIsVerified(true);
             Profile profile = profileRepository.save(profileData.get());
