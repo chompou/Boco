@@ -2,7 +2,7 @@ package boco.controller.models;
 
 import boco.models.profile.Profile;
 import boco.service.profile.ProfileService;
-import boco.service.security.EmailService;
+import boco.service.profile.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
