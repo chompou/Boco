@@ -117,7 +117,6 @@
 </template>
 
 <script>
-import apiService from "@/services/apiService";
 export default {
   data() {
     return {
@@ -158,18 +157,18 @@ export default {
     },
   },
   created() {
-    apiService
-      .createItem({
-        images: this.image_list,
-        title: this.title,
-        address: this.address,
-        price: this.price,
-        priceType: this.leaseType,
-        description: this.description,
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // apiService
+    //   .createItem({
+    //     images: this.image_list,
+    //     title: this.title,
+    //     address: this.address,
+    //     price: this.price,
+    //     priceType: this.leaseType,
+    //     description: this.description,
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   },
 };
 </script>
