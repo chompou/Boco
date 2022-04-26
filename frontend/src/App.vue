@@ -68,7 +68,6 @@
   </nav>
   <div class="container">
     <router-view />
-    <div class="longDiv"></div>
   </div>
 </template>
 
@@ -87,10 +86,6 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-.longDiv {
-  height: 2000px;
 }
 
 /*Front page style*/
