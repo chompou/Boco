@@ -47,7 +47,7 @@
 .input-container {
   display: grid;
   grid-template-columns: 40% 40%;
-  justify-content: center;
+  justify-content: space-around;
   grid-template-areas:
     "info pass"
     "info button";
