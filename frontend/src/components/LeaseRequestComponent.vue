@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay">
+  <div class="request-overlay request-modal">
     <p class="cross" @click="$emit('close-overlay')">X</p>
     <h1>Book lease</h1>
     <form class="lease-form">
@@ -34,15 +34,18 @@ export default {
   cursor: default;
 }
 
-.overlay {
+.request-modal {
   position: fixed;
   z-index: 9999;
   border: solid 5px;
   top: 15%;
   left: 50%;
   transform: translateX(-50%);
+  padding: 25px;
+}
+
+.request-overlay {
   background-color: white;
   box-shadow: 50px 50px 50px 1000vmax rgba(0, 0, 0, 0.5);
-  padding: 25px;
 }
 </style>
