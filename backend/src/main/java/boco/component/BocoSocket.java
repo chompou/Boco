@@ -1,10 +1,5 @@
 package boco.component;
 
-import boco.repository.profile.NotificationRepository;
-import boco.service.profile.NotificationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -16,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * Notification websocket for the BocoWebsite
+ */
 @Component
 @ServerEndpoint("/websocket/{userId}")
 public class BocoSocket {
@@ -23,6 +21,12 @@ public class BocoSocket {
     private static CopyOnWriteArraySet<BocoSocket> webSockets = new CopyOnWriteArraySet<>();
     private static Map<String, Session> sessionPool = new HashMap<String, Session>();
 
+    /**
+     * On open.
+     *
+     * @param session current session
+     * @param userId  the user id
+     */
     @OnOpen
     public void onOpen(Session session, @PathParam(value = "userId") String userId){
         this.session = session;
@@ -31,17 +35,30 @@ public class BocoSocket {
         System.out.println ("[websocket message] has new connections, total: "+webSockets.size());
     }
 
+    /**
+     * End session
+     */
     @OnClose
     public void closeSession(){
         webSockets.remove(this);
         System. out. println ("[websocket message] disconnected, total: "+webSockets.size());
     }
 
+    /**
+     * On message prints message on server.
+     *
+     * @param message message
+     */
     @OnMessage
     public void onMessage(String message){
         System.out.println ("[websocket message] receives client message: "+message);
     }
 
+    /**
+     * Send message to every active session
+     *
+     * @param message the message
+     */
     public void sendAllMessage(String message){
         for (BocoSocket socket:webSockets){
             System.out.println ("[websocket message] broadcast message:"+message);
@@ -53,6 +70,12 @@ public class BocoSocket {
         }
     }
 
+    /**
+     * Send message to specific user
+     *
+     * @param userId  the user id
+     * @param message the message
+     */
     public void sendOneMessage(String userId, String message){
         Session session = sessionPool.get(userId);
         if (session != null){
