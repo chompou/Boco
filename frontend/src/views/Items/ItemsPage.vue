@@ -1,11 +1,9 @@
 <template>
   <div class="container">
     <Sidebar />
-    <transition>
-      <div id="items" :style="{ 'margin-left': sidebarWidth }">
-        <LargeItem v-for="item in items" :key="item" :item="item" />
-      </div>
-    </transition>
+    <div id="items" :style="{ 'margin-left': sidebarWidth }">
+      <LargeItem v-for="item in items" :key="item" :item="item" />
+    </div>
   </div>
 </template>
 
@@ -18,6 +16,8 @@ export default {
   components: { LargeItem, Sidebar },
   data() {
     return {
+      page: 0,
+      lastUpdate: Date.now(),
       items: [],
     };
   },
@@ -25,13 +25,42 @@ export default {
     return { sidebarWidth };
   },
 
+  methods: {
+    fetchItems() {
+      apiService
+        .getItems({}, this.page, 15)
+        .then((response) => {
+          this.items.push(...response.data);
+        })
+        .catch((error) => console.log(error));
+    },
+
+    handleScroll() {
+      let bottom =
+        document.documentElement.scrollTop + window.innerHeight >=
+        document.documentElement.offsetHeight;
+      if (bottom && Date.now() - this.lastUpdate > 1000) {
+        this.page += 1;
+        this.fetchItems();
+        this.lastUpdate = Date.now();
+      }
+    },
+
+    onBeforeEnter(el) {
+      el.style.opacity = 0;
+    },
+  },
+
   created() {
-    apiService
-      .getItems({}, 0, 15)
-      .then((response) => {
-        this.items = response.data;
-      })
-      .catch((error) => console.log(error));
+    this.fetchItems();
+  },
+
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll);
+  },
+
+  unmounted() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
 };
 </script>

@@ -9,10 +9,10 @@
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
             <p>Category: category</p>
             <p>Address: {{ item.address }}</p>
-            <p>Price: {{ item.price }}kr{{ item.priceType }}</p>
+            <p>Price: {{ item.price }}/kr{{ item.priceType }}</p>
           </div>
           <div id="About2">
-            <RatingComponent />
+            <RatingComponent :rating="item.rating" />
           </div>
         </div>
       </div>
@@ -26,10 +26,6 @@ import RatingComponent from "@/components/RatingComponent";
 export default {
   props: ["item"],
   components: { RatingComponent },
-
-  created() {
-    console.log(this.item);
-  },
 };
 </script>
 
