@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+      leaseOverlay: false,
       item: { id: null, profileId: null },
       profile: {},
       reviews: [],
