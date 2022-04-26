@@ -31,7 +31,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/my/items"
-                ><font-awesome-icon icon="user"
+                ><font-awesome-icon class="icons" icon="user"
               /></router-link>
             </a>
           </li>
@@ -41,7 +41,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/create"
-                ><font-awesome-icon icon="plus"
+                ><font-awesome-icon class="icons" icon="plus"
               /></router-link>
             </a>
           </li>
@@ -50,7 +50,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/"
-                ><font-awesome-icon icon="house"
+                ><font-awesome-icon class="icons" icon="house"
               /></router-link>
             </a>
           </li>
@@ -59,7 +59,7 @@
           <li class="nav-item">
             <a class="nav-link">
               <router-link to="/info"
-                ><font-awesome-icon icon="info"
+                ><font-awesome-icon class="icons" icon="info"
               /></router-link>
             </a>
           </li>
@@ -227,5 +227,13 @@ li a:hover {
 #logo {
   height: 70px;
   width: auto;
+}
+
+.icons {
+  color: var(--main-color);
+}
+
+.icons:hover {
+  color: gray;
 }
 </style>
