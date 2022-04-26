@@ -2,6 +2,7 @@ package boco.service.rental;
 
 import boco.models.http.ListingRequest;
 import boco.models.http.ListingResponse;
+import boco.models.http.ReviewResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
@@ -55,7 +56,7 @@ public class ListingService {
 
 
 
-    public ResponseEntity<List<Review>> getListingReviews(Long listingId, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
         Optional<Listing> listingData = listingRepository.findById(listingId);
 
         if (!listingData.isPresent()) {
@@ -67,11 +68,11 @@ public class ListingService {
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
-            reviews.add(listingLeases.get(i).getLeaseeReview());
+            reviews.add(listingLeases.get(i).getItemReview());
         }
 
-        List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
-        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
+        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
     public ResponseEntity<ListingResponse> getListingById(Long listingId){

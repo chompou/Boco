@@ -2,6 +2,8 @@ package boco.service.profile;
 
 import boco.models.http.ListingResponse;
 import boco.models.http.ProfileRequest;
+import boco.models.http.ProfileResponse;
+import boco.models.http.ReviewResponse;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
@@ -11,7 +13,10 @@ import boco.models.rental.Review;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
+import boco.repository.rental.LeaseRepository;
 import boco.service.rental.ListingService;
+import boco.service.rental.ReviewService;
+import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +35,23 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final PersonalRepository personalRepository;
     private final ProfessionalRepository professionalRepository;
+    private final LeaseRepository leaseRepository;
+
+    private final JwtUtil jwtUtil;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository,
                           PersonalRepository personalRepository,
-                          ProfessionalRepository professionalRepository) {
+                          ProfessionalRepository professionalRepository,
+                          LeaseRepository leaseRepository,
+                          JwtUtil jwtUtil) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
+        this.leaseRepository = leaseRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public ResponseEntity<Profile> getProfile(Long profileId, Long profileId2) {
@@ -64,7 +76,7 @@ public class ProfileService {
 
     }
 
-    public ResponseEntity<Profile> createProfile(ProfileRequest profileRequest) {
+    public ResponseEntity<ProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -83,7 +95,7 @@ public class ProfileService {
                 Personal savedProfile = personalRepository.save(p);
 
                 logger.debug("Personal profile was saved: " + p);
-                return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
+                return new ResponseEntity<>(new ProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
                 Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
@@ -91,7 +103,7 @@ public class ProfileService {
                 Professional savedProfile = professionalRepository.save(p);
 
                 logger.debug("Professional profile was saved: " + p);
-                return new ResponseEntity<>(savedProfile, HttpStatus.CREATED);
+                return new ResponseEntity<>(new ProfileResponse(savedProfile), HttpStatus.CREATED);
             }
 
         } catch (Exception e) {
@@ -109,12 +121,12 @@ public class ProfileService {
         }
 
         List<Listing> listingsByProfile = profileData.get().getListings();
-        List<Listing> listings = new ArrayList<>(listingsByProfile).subList((page-1)*perPage, Math.min(page*perPage, listingsByProfile.size()));
+        List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
         return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
 
     }
 
-    public ResponseEntity<List<Review>> getProfileReviews(Long profileId, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getProfileReviews(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()) {
@@ -134,7 +146,31 @@ public class ProfileService {
             reviews.add(leasesFromProfile.get(i).getOwnerReview());
         }
 
-        List<Review> reviewsSublist = reviews.subList((page-1)*perPage, Math.min(page*perPage, reviews.size()));
+        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
+        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<Review>> getMyProfileReviews(String token, int perPage, int page) {
+
+       String username = jwtUtil.extractUsername(token.substring(7));
+       Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+
+        if (!profile.isPresent()) {
+            logger.debug("profile of token not found found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+       Long profileId = profile.get().getId();
+
+        List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
+
+
+        List<Review> reviews = new ArrayList<>();
+        for (int i = 0; i < leases.size(); i++) {
+            reviews.add(leases.get(i).getLeaseeReview());
+        }
+
+        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
     }
 

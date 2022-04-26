@@ -1,6 +1,7 @@
 package boco.controller.models;
 
 import boco.models.http.ProfileRequest;
+import boco.models.http.ProfileResponse;
 import boco.models.profile.Profile;
 import boco.service.profile.ProfileService;
 import boco.service.security.VerificationService;
@@ -28,8 +29,8 @@ public class ProfileController {
         return profileService.getProfile(profileId, (long) 1);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Profile> createProfile(@RequestBody ProfileRequest profileRequest) {
+    @PostMapping("")
+    public ResponseEntity<ProfileResponse> createProfile(@RequestBody ProfileRequest profileRequest) {
         return profileService.createProfile(profileRequest);
     }
 

@@ -96,6 +96,7 @@
 </template>
 
 <script>
+import apiService from "@/services/apiService";
 export default {
   data() {
     return {
@@ -126,6 +127,20 @@ export default {
         reader.readAsDataURL(input.files[0]);
       }
     },
+  },
+
+  created() {
+    apiService
+      .createItem({
+        title: this.title,
+        address: this.address,
+        price: this.price,
+        priceType: this.leaseType,
+        description: this.description,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>
