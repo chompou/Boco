@@ -26,15 +26,9 @@ import RatingComponent from "@/components/RatingComponent";
 export default {
   props: ["item"],
   components: { RatingComponent },
-  data() {
-    return {
-      id: 1234,
-      title: "Wrench",
-      category: "Tools",
-      address: "Gløsveien 1",
-      price: 50,
-      leaseType: "/Day",
-    };
+
+  created() {
+    console.log(this.item);
   },
 };
 </script>
