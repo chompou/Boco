@@ -82,7 +82,10 @@ public class ProfileService {
             logger.debug("Profile is invalid and could not be created: " + profileRequest);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if (checkIfProfileEmailExists(profileRequest.getEmail()) != null || checkIfProfileUsernameExists(profileRequest.getUsername()) != null){
+        if (checkIfProfileEmailExists(profileRequest.getEmail()) != null){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        if (checkIfProfileUsernameExists(profileRequest.getUsername()) != null){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
