@@ -68,6 +68,7 @@
   </nav>
   <div class="container">
     <router-view />
+    <div style="height: 20px" />
   </div>
 </template>
 
