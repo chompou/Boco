@@ -182,7 +182,7 @@ button {
 
 .boco-btn {
   align-items: center;
-  background-color: #0a66c2;
+  background-color: var(--button-color);
   border: 0;
   border-radius: 100px;
   box-sizing: border-box;
@@ -214,8 +214,7 @@ button {
 
 .boco-btn:hover,
 .boco-btn:focus {
-  background-color: #16437e;
-  color: #ffffff;
+  background-color: var(--button-hover);
 }
 
 .boco-btn:active {
