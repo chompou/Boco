@@ -31,7 +31,7 @@
       />
       Show Password
       <br />
-      <button id="login-button" type="submit">Login</button>
+      <button id="login-button" class="boco-btn" type="submit">Login</button>
       <p>
         <a id="forgotten-pwd-link" class="hyperlink" href="/ForgottenPwd"
           >Forgotten password?</a
@@ -81,24 +81,21 @@ export default {
 </script>
 
 <style scoped>
-.login {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-  justify-content: space-evenly;
-}
-#login-button {
+.boco-btn {
   align-items: center;
-  background-color: #0a66c2;
+  background-color: var(--button-color);
   border: 0;
   border-radius: 100px;
   box-sizing: border-box;
-  color: #ffffff;
   cursor: pointer;
   display: inline-flex;
+  font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
+    "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Lucida Grande", Helvetica, Arial, sans-serif;
   font-size: 16px;
   font-weight: 600;
+  justify-content: center;
   line-height: 20px;
   max-width: 480px;
   min-height: 40px;
@@ -113,13 +110,19 @@ export default {
   user-select: none;
   -webkit-user-select: none;
   vertical-align: middle;
-  justify-content: space-evenly;
 }
 
-#login-button:hover,
-#login-button:focus {
-  background-color: #16437e;
-  color: #ffffff;
+.boco-btn:hover,
+.boco-btn:focus {
+  background-color: var(--button-hover);
+}
+
+.login {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  justify-content: space-evenly;
 }
 
 label,
@@ -127,9 +130,13 @@ label,
   display: flex;
   margin: auto;
   padding: 10px;
-  border-color: #0a66c2;
+  border-color: var(--button-color);
   border-radius: 5px;
   justify-content: space-evenly;
+}
+.input-field:hover,
+.input-field:focus {
+  border-color: var(--button-hover);
 }
 
 .hyperlink {
