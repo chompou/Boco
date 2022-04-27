@@ -107,18 +107,10 @@ export default {
 };
 </script>
 
-<style>
-:root {
-  --sidebar-bg-color: #4f91f8;
-  --sidebar-item-hover: #006c6c;
-  --sidebar-item-active: #00a5a5;
-}
-</style>
-
 <style scoped>
 .sidebar {
+  background-color: var(--main-color);
   color: white;
-  background-color: var(--sidebar-bg-color);
 
   float: left;
   position: fixed;
