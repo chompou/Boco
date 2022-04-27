@@ -102,7 +102,7 @@
         ></textarea>
       </div>
       <div id="CreateButtons" class="element">
-        <button class="CreateButton" v-on:click="create">Create</button>
+        <button class="CreateButton" v-on:click="submit">Create</button>
         <button id="Delete" class="CreateButton">Delete</button>
       </div>
     </div>
@@ -138,15 +138,17 @@ export default {
         reader.readAsDataURL(input.files[0]);
       }
     },
-    create() {
-      console.log(this.leasePrice);
+    submit() {
+      console.log(this.image);
+      console.log(this.leaseType);
       apiService
         .createItem({
           image: this.image,
+          name: this.title,
           title: this.title,
           address: this.address,
-          price: this.price,
-          priceType: this.leasePrice,
+          price: this.leasePrice,
+          priceType: this.leaseType,
           description: this.description,
         })
         .catch((error) => {
