@@ -89,6 +89,16 @@ class ProfileServiceTest {
         Assertions.assertEquals(null, profileService.checkIfProfileEmailExists("emil@mail.fr"));
 
     }
+    @Test
+    public void testCheckIfProfileUsernameExists(){
+        var res = profileService.checkIfProfileUsernameExists("messi");
+        Assertions.assertNotEquals(null, res);
+        Assertions.assertEquals("messi", res.getBody().getUsername());
+
+        Assertions.assertEquals(null, profileService.checkIfProfileUsernameExists("emil"));
+    }
+
+
 
 
 }
