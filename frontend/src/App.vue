@@ -70,7 +70,9 @@
         </ul>
       </div>
     </div>
+    <NotificationComponent />
   </nav>
+
   <div class="container">
     <router-view />
     <div style="height: 20px" />
@@ -79,7 +81,12 @@
 
 <script>
 import storageService from "./services/storageService";
+import NotificationComponent from "@/components/NotificationComponent";
 export default {
+  components: {
+    NotificationComponent,
+  },
+
   methods: {
     logout() {
       storageService.clearToken();
