@@ -1,16 +1,11 @@
 package boco.service.rental;
 
-import boco.models.http.ListingRequest;
-import boco.models.http.ListingResponse;
-import boco.models.http.ReviewResponse;
-import boco.models.http.UpdateListingRequest;
+import boco.models.http.*;
 import boco.models.profile.Profile;
-import boco.models.rental.CategoryType;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
+import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ListingRepository;
 import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
@@ -32,6 +27,7 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final ProfileRepository profileRepository;
     private final CategoryTypeRepository categoryTypeRepository;
+    private final ImageRepository imageRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
@@ -39,10 +35,12 @@ public class ListingService {
     private JwtUtil jwtUtil;
 
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository) {
+    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository,
+                          CategoryTypeRepository categoryTypeRepository, ImageRepository imageRepository) {
         this.listingRepository = listingRepository;
         this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
+        this.imageRepository = imageRepository;
     }
 
 
@@ -127,9 +125,14 @@ public class ListingService {
                     listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
+            listingRepository.save(newListing);
+            Image image = new Image(listingRequest.getImage(), listingRequest.getCaption(), newListing);
+            imageRepository.save(image);
+            newListing.getImages().add(image);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -213,4 +216,5 @@ public class ListingService {
         }
         return listingResponses;
     }
+
 }
