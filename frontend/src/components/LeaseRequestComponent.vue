@@ -1,7 +1,7 @@
 <template>
   <div class="request-overlay request-modal">
     <p class="cross" @click="$emit('close-overlay')">X</p>
-    <h1>Book lease</h1>
+    <h1>Book</h1>
     <form class="lease-form">
       <input type="datetime-local" />
       <input type="datetime-local" />

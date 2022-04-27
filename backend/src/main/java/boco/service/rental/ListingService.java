@@ -5,12 +5,11 @@ import boco.models.http.ListingResponse;
 import boco.models.http.ReviewResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
-import boco.models.rental.CategoryType;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
+import boco.repository.rental.ImageRepository;
+import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
 import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
@@ -32,6 +31,8 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final ProfileRepository profileRepository;
     private final CategoryTypeRepository categoryTypeRepository;
+    private final LeaseRepository leaseRepository;
+    private final ImageRepository imageRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
@@ -39,10 +40,12 @@ public class ListingService {
     private JwtUtil jwtUtil;
 
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository) {
+    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository) {
         this.listingRepository = listingRepository;
         this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
+        this.leaseRepository = leaseRepository;
+        this.imageRepository = imageRepository;
     }
 
 
@@ -196,13 +199,37 @@ public class ListingService {
 
 
             System.out.println("Your id: " + profile.get().getId() + ", database id: " + listingData.get().getProfile().getId());
+
+            Optional<Listing> emptyListing = listingRepository.findById(1L);
+            if (!emptyListing.isPresent()){
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            setListingWhenDeleted(listingId, emptyListing.get());
             //TODO fix
-            System.out.println("Updated stuff" + listingRepository.updateLeaseWhenListingDeleted(listingId));
             listingRepository.deleteById(listingId);
+            System.out.println("Updated stuff" );
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public void setListingWhenDeleted(Long listingId, Listing emptyListing){
+        List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
+
+        for (Lease lease :
+                leases) {
+            lease.setListing(emptyListing);
+        }
+        leaseRepository.saveAll(leases);
+
+        List<Image> images = imageRepository.getImageByListing_Id(listingId);
+
+        for (Image image :
+                images) {
+            image.setListing(emptyListing);
+        }
+        imageRepository.saveAll(images);
     }
 
     public static List<ListingResponse> convertListings(List<Listing> listings){
