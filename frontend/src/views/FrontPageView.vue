@@ -124,6 +124,8 @@ export default {
 .btn-success:hover,
 .btn-success:focus {
   background-color: var(--button-hover);
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 .btn-success:disabled {
