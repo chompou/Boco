@@ -5,10 +5,12 @@ import boco.models.http.ListingResponse;
 import boco.models.http.ReviewResponse;
 import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
+import boco.models.rental.CategoryType;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import boco.models.rental.Review;
 import boco.repository.profile.ProfileRepository;
+import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ListingRepository;
 import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import java.util.Optional;
 public class ListingService {
     private final ListingRepository listingRepository;
     private final ProfileRepository profileRepository;
+    private final CategoryTypeRepository categoryTypeRepository;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
@@ -36,9 +39,10 @@ public class ListingService {
     private JwtUtil jwtUtil;
 
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository) {
+    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository) {
         this.listingRepository = listingRepository;
         this.profileRepository = profileRepository;
+        this.categoryTypeRepository = categoryTypeRepository;
     }
 
 
@@ -46,14 +50,31 @@ public class ListingService {
         return convertListings(listingRepository.findAll());
     }
 
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType){
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String priceType, String category){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
+        CategoryType catType = null;
+        if (!category.equals("")){
+            Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
+            if (!catTypeData.isPresent()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            catType = catTypeData.get();
+        }
 
         List<Listing> listings;
-        if (priceFrom == -1){
-            listings = listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable).getContent();
+        if (priceFrom == -1) {
+            if (category.equals("")){
+                listings = listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable).getContent();
+            } else {
+                listings = listingRepository.findByDescriptionContainingAndCategoryTypesContainingOrNameContainingAndCategoryTypesContaining(search, catType, search, catType, pageable).getContent();
+            }
         } else {
-            listings = listingRepository.findByDescriptionContainingOrNameContainingAndPriceBetween(search, search, priceFrom, priceTo, pageable).getContent();
+            if (category.equals("")){
+                listings = listingRepository.findByPriceBetweenAndDescriptionContainingOrPriceBetweenAndNameContaining(priceFrom, priceTo, search, priceFrom, priceTo,  search,  pageable).getContent();
+            } else {
+                listings = listingRepository.findByPriceBetweenAndDescriptionContainingAndCategoryTypesContainingOrPriceBetweenAndNameContainingAndCategoryTypesContaining(priceFrom, priceTo, search, catType, priceFrom, priceTo, search, catType, pageable).getContent();
+            }
+            System.out.println("Testing");
         }
         return new ResponseEntity<>(convertListings(listings), HttpStatus.OK);
     }
