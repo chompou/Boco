@@ -98,6 +98,21 @@ class ProfileServiceTest {
         Assertions.assertEquals(null, profileService.checkIfProfileUsernameExists("emil"));
     }
 
+    @Test
+    public void testChangePassword(){
+        UpdatePasswordRequest goodRequest = new UpdatePasswordRequest("letmepass", "letmepass");
+        var res = profileService.changePassword(goodRequest, "leo@psg.fr");
+        Assertions.assertEquals("letmepass", res.getBody().getPasswordHash());
+
+        UpdatePasswordRequest badRequest = new UpdatePasswordRequest("letmepass", "dontletmepass");
+        var res1 = profileService.changePassword(badRequest, "leo@psg.fr");
+        Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.NOT_ACCEPTABLE), res1);
+
+        UpdatePasswordRequest forbiddenRequest = new UpdatePasswordRequest("letmepass", "letmepass");
+        var res2 = profileService.changePassword(forbiddenRequest, "emil@mail.fr");
+        Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.FORBIDDEN), res2);
+    }
+
 
 
 
