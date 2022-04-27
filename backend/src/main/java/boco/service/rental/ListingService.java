@@ -172,6 +172,11 @@ public class ListingService {
                 logger.debug("UserId is not the owner of listing.");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+
+
+            System.out.println("Your id: " + profile.get().getId() + ", database id: " + listingData.get().getProfile().getId());
+            //TODO fix
+            System.out.println("Updated stuff" + listingRepository.updateLeaseWhenListingDeleted(listingId));
             listingRepository.deleteById(listingId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
