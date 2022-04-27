@@ -16,8 +16,12 @@
             <button class="editButtons">Edit</button>
             <button class="editButtons">Delete</button>
           </div>
-          <button class="leaseButton" v-else @click="leaseOverlay = true">
-            Book leasing
+          <button
+            class="leaseButton boco-btn"
+            v-else
+            @click="leaseOverlay = true"
+          >
+            Book
           </button>
         </div>
         <div id="About">
@@ -138,14 +142,10 @@ img {
   border: 1px solid #39495c;
   width: 150px;
   height: 50px;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   padding: 5px;
-  background: white;
   margin: 50px;
 }
 
