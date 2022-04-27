@@ -148,6 +148,12 @@ public class ProfileService {
         }
 
         List<Listing> listingsByProfile = profileData.get().getListings();
+
+        if (listingsByProfile == null) {
+            logger.debug("listings is null for profileId=" + profileId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
         return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
 
@@ -170,7 +176,8 @@ public class ProfileService {
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leasesFromProfile.size(); i++) {
-            reviews.add(leasesFromProfile.get(i).getOwnerReview());
+            Review newReview = leasesFromProfile.get(i).getOwnerReview();
+            if (newReview != null) reviews.add(newReview);
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
@@ -191,10 +198,16 @@ public class ProfileService {
 
         List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
 
+        if (leases == null) {
+            logger.debug("leases is null");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leases.size(); i++) {
-            reviews.add(leases.get(i).getLeaseeReview());
+            Review newReview = leases.get(i).getLeaseeReview();
+            if (newReview != null) reviews.add(newReview);
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));

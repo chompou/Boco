@@ -79,6 +79,8 @@ public class TempUserAdded {
                 reviewRepository.save(review4);
 
 
+                Personal emptyProfile = new Personal("", "", "This user does not exist",
+                        "Deleted user", "donothashthispassword", "", "");
                 Personal profile = new Personal("emilgl", "gluckemil@gmail.com", "Test",
                         "Emil", "letmepass","Baerum", "12345678");
                 Personal profile1 = new Personal("olavdei", "olav@gmail.com", "Test1",
@@ -98,6 +100,7 @@ public class TempUserAdded {
                 Professional profile8 = new Professional("oyvibjo", "oyvind@gmail.com", "Test8",
                         "Oyvind", "letmepass","Ottestad", "11777777");
 
+                profileRepository.save(emptyProfile);
                 profileRepository.save(profile);
                 profileRepository.save(profile1);
                 profileRepository.save(profile2);
@@ -107,6 +110,19 @@ public class TempUserAdded {
                 profileRepository.save(profile6);
                 profileRepository.save(profile7);
                 profileRepository.save(profile8);
+
+                Listing emptyListing = new Listing();
+                emptyListing.setName("Deleted Item");
+                emptyListing.setAddress("");
+                emptyListing.setDescription("This item does not exist");
+                emptyListing.setActive(false);
+                emptyListing.setAvailable(false);
+                emptyListing.setLastChanged(Timestamp.valueOf(LocalDateTime.now()));
+                emptyListing.setPrice(0);
+                emptyListing.setPriceType("");
+                emptyListing.setRating(0);
+                emptyListing.setCategoryTypes(new ArrayList<>());
+                listingRepository.save(emptyListing);
 
                 Listing listing = new Listing();
                 listing.setName("Lemon");
