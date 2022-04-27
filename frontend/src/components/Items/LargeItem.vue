@@ -9,10 +9,10 @@
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
             <p>Category: category</p>
             <p>Address: {{ item.address }}</p>
-            <p>Price: {{ item.price }}kr{{ item.priceType }}</p>
+            <p>Price: {{ item.price }}kr/{{ item.priceType }}</p>
           </div>
           <div id="About2">
-            <RatingComponent />
+            <RatingComponent :rating="item.rating" />
           </div>
         </div>
       </div>
@@ -26,16 +26,6 @@ import RatingComponent from "@/components/RatingComponent";
 export default {
   props: ["item"],
   components: { RatingComponent },
-  data() {
-    return {
-      id: 1234,
-      title: "Wrench",
-      category: "Tools",
-      address: "Gløsveien 1",
-      price: 50,
-      leaseType: "/Day",
-    };
-  },
 };
 </script>
 
@@ -60,7 +50,7 @@ img {
   -moz-osx-font-smoothing: grayscale;
   width: 650px;
   height: 225px;
-  color: #2c3e50;
+  color: var(--text-color);
   padding: 10px 28px;
   background: white;
   margin: 20px;
@@ -98,7 +88,7 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: var(--text-color);
   padding: 5px;
   background: white;
   margin: 20px;

@@ -1,6 +1,6 @@
 <template>
   <div class="item-list-container">
-    <large-item class="item" v-for="i in 5" :key="i" />
+    <large-item class="item" v-for="item in items" :key="item" :item="item" />
   </div>
 </template>
 
@@ -16,12 +16,12 @@ export default {
       items: [],
     };
   },
-
   created() {
     apiService
-      .getItems({ profileId: this.$store.state.loggedInuser }, 0, 15)
+      .getItems({ profileId: 1 }, 0, 15)
       .then((response) => {
         this.items = response.data;
+        console.log(this.items);
       })
       .catch((error) => {
         console.log(error);

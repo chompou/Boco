@@ -1,14 +1,28 @@
 <template>
   <div id="container">
     <h1>Create a new Item</h1>
-    <div>
-      <div class="file-upload-form">
-        Upload image:
-        <input type="file" @change="previewImage" accept="image/*" />
-      </div>
-      <div class="image-preview" v-if="imageData.length > 0">
-        <img class="preview" :src="imageData" />
-      </div>
+    <div class="col-md-5">
+      <form>
+        <div class="form-group">
+          <label for="my-file">Select Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            @change="previewImage"
+            class="form-control-file"
+            id="my-file"
+          />
+
+          <div class="border p-2 mt-3">
+            <p>Preview Here:</p>
+            <template v-if="preview">
+              <img alt="image" :src="preview" class="img-fluid" />
+              <p class="mb-0">file name: {{ image.name }}</p>
+              <p class="mb-0">size: {{ image.size / 1024 }}KB</p>
+            </template>
+          </div>
+        </div>
+      </form>
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -97,10 +111,12 @@
 
 <script>
 import apiService from "@/services/apiService";
+
 export default {
   data() {
     return {
-      imageData: "",
+      preview: null,
+      image: null,
       title: "",
       address: "",
       price: "",
@@ -112,26 +128,21 @@ export default {
   },
   methods: {
     previewImage: function (event) {
-      // Reference to the DOM input element
-      var input = event.target;
-      // Ensure that you have a file before attempting to read it
-      if (input.files && input.files[0]) {
-        // create a new FileReader to read this image and convert to base64 format
-        var reader = new FileReader();
-        // Define a callback function to run, when FileReader finishes its job
+      let input = event.target;
+      if (input.files) {
+        let reader = new FileReader();
         reader.onload = (e) => {
-          // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
-          // Read image as base64 and set to imageData
-          this.imageData = e.target.result;
-        }; // Start the reader job - read file as a data url (base64 format)
+          this.preview = e.target.result;
+        };
+        this.image = input.files[0];
         reader.readAsDataURL(input.files[0]);
       }
     },
   },
-
   created() {
     apiService
       .createItem({
+        image: this.image,
         title: this.title,
         address: this.address,
         price: this.price,
@@ -147,12 +158,6 @@ export default {
 
 <style scoped>
 #container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#setImage {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -187,7 +192,7 @@ select {
   height: 40px;
 }
 
-.preview {
+.img-fluid {
   width: 300px;
   height: 300px;
 }
@@ -241,26 +246,42 @@ select {
   width: 100px;
 }
 
-#imageButton {
-  width: 150px;
-}
-
 .CreateButton {
-  border: 1px solid #39495c;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: white;
+  align-items: center;
+  background-color: var(--button-color);
+  border: 0;
+  border-radius: 100px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
+    "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 20px;
+  max-width: 480px;
+  min-height: 40px;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 20px;
   text-align: center;
-  color: #2c3e50;
-  padding: 5px;
-  background: white;
-  margin: 20px;
+  touch-action: manipulation;
+  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
 }
 
-.CreateButton:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
+#CreateButtons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 #Delete {

@@ -1,11 +1,11 @@
 <template>
-  <div class="overlay">
+  <div class="request-overlay request-modal">
     <p class="cross" @click="$emit('close-overlay')">X</p>
     <h1>Book lease</h1>
     <form class="lease-form">
       <input type="datetime-local" />
       <input type="datetime-local" />
-      <button @click="$emit('close-overlay')">Submit</button>
+      <button class="boco-btn" @click="$emit('close-overlay')">Submit</button>
     </form>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
 .lease-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 25px;
 }
 
 .cross {
@@ -34,15 +34,16 @@ export default {
   cursor: default;
 }
 
-.overlay {
+.request-modal {
   position: fixed;
   z-index: 9999;
-  border: solid 5px;
+  border: solid 2px;
+  border-radius: 10px;
   top: 15%;
   left: 50%;
   transform: translateX(-50%);
+  padding: 35px;
   background-color: white;
   box-shadow: 50px 50px 50px 1000vmax rgba(0, 0, 0, 0.5);
-  padding: 25px;
 }
 </style>
