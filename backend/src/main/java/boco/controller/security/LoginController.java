@@ -57,7 +57,7 @@ public class LoginController {
         final UserDetails userDetails = profileDetailsService.loadUserByUsername(loginRequest.getUsername());
         if (userDetails.getPassword().equals(loginRequest.getPassword())){
             final String jwt = jwtUtil.generateToken(userDetails);
-            return ResponseEntity.ok(new LoginResponse(jwt, profileService.getProfileIdByUsername(loginRequest.getUsername())));
+            return ResponseEntity.ok(new LoginResponse(jwt, profileService.getProfileIdByUsername(jwtUtil.extractUsername(jwt))));
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
