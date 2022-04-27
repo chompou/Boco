@@ -7,7 +7,7 @@
           <div id="About1">
             <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
-            <p>Category: category</p>
+            <p>Category: {{ categoryString }}</p>
             <p>Address: {{ item.address }}</p>
             <p>Price: {{ price }}kr/{{ item.priceType }}</p>
           </div>
@@ -36,6 +36,10 @@ export default {
         actuallyPrice = this.item.price * 24;
       }
       return actuallyPrice;
+    },
+
+    categoryString() {
+      return this.item.categoryTypes.map((c) => c.name).join(", ");
     },
   },
 };
