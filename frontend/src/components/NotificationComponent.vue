@@ -7,24 +7,22 @@ import { onMounted } from "vue";
 import store from "@/store";
 export default {
   setup() {
-    const webSocket = new WebSocket("ws://localhost:8080/websocket/2");
-    //const test = ref("");
-    let numberNotifications = 0;
+    const id = store.state.loggedInUser;
+    const wsURL = "ws://localhost:8080/websocket/" + id;
+
+    const webSocket = new WebSocket(wsURL);
 
     onMounted(() => {
       webSocket.addEventListener("open", () => {
-        console.log("Conn ok");
+        console.log("WebSocket connected");
         webSocket.send("Hei from Vue");
       });
       webSocket.addEventListener("message", (event) => {
         console.log("Incoming data");
         console.log(event.data);
-        numberNotifications++;
         store.dispatch("UPDATE_COUNT_NOTIFICATION");
-        console.log(numberNotifications);
       });
     });
-    return { numberNotifications };
   },
 };
 </script>

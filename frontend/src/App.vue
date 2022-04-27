@@ -70,7 +70,7 @@
         </ul>
       </div>
     </div>
-    <NotificationComponent />
+    <NotificationComponent v-if="$store.state.loggedIn" />
   </nav>
 
   <div class="container">
