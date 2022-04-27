@@ -56,7 +56,6 @@
         name="password"
         id="verifyPassword"
         :error="errors.verifyPassword"
-        @change="handleChange"
       />
       <br />
       <button type="submit" class="boco-btn" @click="submit">Submit</button>
@@ -70,6 +69,7 @@ import BaseInput from "@/components/base/BaseInput";
 import { object, string } from "yup";
 import { useField, useForm } from "vee-validate";
 import * as Yup from "yup";
+import router from "@/router";
 
 export default {
   components: {
@@ -107,22 +107,19 @@ export default {
     const handleChange = (event) => {
       setFieldValue("email", event.target.value);
     };
-
-    //Handle submit, do something other than logging
     const submit = handleSubmit(() => {
-      console.log("pog");
       apiService
         .createProfile({
-          username: this.username,
-          email: this.email,
-          tlf: this.phoneNumber,
-          password: this.password,
+          username: username.value.value,
+          email: email.value.value,
+          tlf: phoneNumber.value.value,
+          password: password.value.value,
         })
         .catch((error) => {
           console.log(error);
         });
       alert("successfully created user (this is a placeholder");
-      this.$router.push("/Login");
+      router.push("/Login");
     });
 
     return {
