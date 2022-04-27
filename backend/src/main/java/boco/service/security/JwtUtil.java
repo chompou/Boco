@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * The java web token
+ * The java web token utility
  */
 @Service
 public class JwtUtil {
@@ -29,11 +29,11 @@ public class JwtUtil {
     }
 
     /**
-     * Validate token boolean.
+     * Validates a java web token
      *
-     * @param token       the token
-     * @param userDetails the user details
-     * @return the boolean
+     * @param token       JWT, java web token
+     * @param userDetails user detail extracted from profileDetailsServive
+     * @return boolean token valid or not
      */
     public Boolean validateToken(String token, UserDetails userDetails){
         final String username = extractUsername(token);
@@ -60,12 +60,12 @@ public class JwtUtil {
     }
 
     /**
-     * Extract claim t.
+     * Extract claims
      *
      * @param <T>            the type parameter
      * @param token          the token
      * @param claimsResolver the claims resolver
-     * @return the t
+     * @return the type parameter
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
         final Claims claims = extractAllClaims(token);
@@ -83,7 +83,7 @@ public class JwtUtil {
     }
 
     /**
-     * Extract username string.
+     * Extract username.
      *
      * @param token the token
      * @return the string

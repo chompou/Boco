@@ -230,6 +230,11 @@ public class TempUserAdded {
                 }
                 reviewRepository.saveAll(reviews);
 
+                List<String> priceTypes = new ArrayList<>();
+                priceTypes.add("Hour");
+                priceTypes.add("Day");
+                priceTypes.add("Week");
+
                 List<Listing> listings = new ArrayList<>();
                 for (int i = 0; i < magnitude*5; i++) {
                     Listing l = new Listing();
@@ -240,7 +245,7 @@ public class TempUserAdded {
                     l.setAvailable(i%3==0);
                     l.setLastChanged(Timestamp.valueOf(LocalDateTime.now()));
                     l.setPrice(i*10);
-                    l.setPriceType("Hour");
+                    l.setPriceType(priceTypes.get(i%3));
                     l.setRating(i/magnitude);
                     l.setCategoryTypes(categoryTypes);
                     l.setProfile(profileRepository.getOne((long) (Math.random() * 10) +1));

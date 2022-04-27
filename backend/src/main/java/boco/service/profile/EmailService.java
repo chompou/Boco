@@ -1,4 +1,4 @@
-package boco.service.security;
+package boco.service.profile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -33,6 +33,15 @@ public class EmailService extends SimpleMailMessage {
         URL myUrl = new URL(url);
         message.setText("To reset your password, click the link below:\n" + myUrl + "\nIf you don't want to reset " +
                 "your password, you can ignore this message");
+        emailSender.send(message);
+    }
+
+    public void sendCreatedAccountMessage(String to){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("idatt2106.4@gmail.com");
+        message.setTo(to);
+        message.setSubject("New Account at Boco");
+        message.setText("Thank you for opening an account with us \n\nBest regards Boco");
         emailSender.send(message);
     }
 }
