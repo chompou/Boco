@@ -69,7 +69,7 @@ class ReviewServiceTest {
     }
 
     @Test
-    public void getAlReviewsReturnsCorrectReviewData() {
+    public void getAllReviewsReturnsCorrectReviewData() {
         var res = service.getAllReviews();
         ReviewResponse r1 = res.getBody().get(0);
         ReviewResponse r2 = res.getBody().get(1);
@@ -78,8 +78,8 @@ class ReviewServiceTest {
         Assertions.assertEquals(r1.getId(), 1L);
         Assertions.assertEquals(r1.getRating(), 4.5);
         Assertions.assertEquals(r1.getComment(), "good!");
-        Assertions.assertEquals(r1.getProfile_id(), 2L);
-        Assertions.assertEquals(r1.getDisplayName(), "Olav");
+        Assertions.assertEquals(r1.getProfile_id(), 1L);
+        Assertions.assertEquals(r1.getDisplayName(), "Emil");
 
         Assertions.assertEquals(r2.getId(), 2L);
         Assertions.assertEquals(r2.getRating(), 4.2);
@@ -90,7 +90,7 @@ class ReviewServiceTest {
         Assertions.assertEquals(r3.getId(), 3L);
         Assertions.assertEquals(r3.getRating(), 2.2);
         Assertions.assertEquals(r3.getComment(), "...");
-        Assertions.assertEquals(r3.getProfile_id(), 1L);
-        Assertions.assertEquals(r3.getDisplayName(), "Emil");
+        Assertions.assertEquals(r3.getProfile_id(), 2L);
+        Assertions.assertEquals(r3.getDisplayName(), "Olav");
     }
 }

@@ -92,7 +92,7 @@ export default {
 
 .btn-success {
   align-items: center;
-  background-color: var(--button-color);
+  background-color: var(--main-color);
   border: 0;
   border-radius: 100px;
   box-sizing: border-box;
@@ -133,7 +133,12 @@ export default {
 }
 
 .icon {
+  color: var(--main-color);
   font-size: 2vw;
   margin-left: 40px;
+}
+
+.icon:hover {
+  color: gray;
 }
 </style>

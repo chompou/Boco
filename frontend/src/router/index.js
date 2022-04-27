@@ -15,6 +15,8 @@ import forgottenPwdView from "@/views/ForgottenPwdView";
 import SupportFormView from "@/views/SupportFormView";
 import itemsPage from "@/views/Items/ItemsPage";
 import ItemPage from "@/views/Items/ItemPage";
+import storageService from "@/services/storageService";
+import apiService from "@/services/apiService";
 
 const routerGuard = {
   beforeEnter: (to, from) => {
@@ -116,6 +118,22 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(() => {
+  console.log("gloal guard");
+  if (!store.state.loggedIn) {
+    let token = storageService.getToken();
+    if (token != null) {
+      apiService
+        .getMyProfile()
+        .then((response) => {
+          store.state.loggedInUser = response.data.id;
+          store.state.loggedIn = true;
+        })
+        .catch((error) => console.error(error));
+    }
+  }
 });
 
 export default router;
