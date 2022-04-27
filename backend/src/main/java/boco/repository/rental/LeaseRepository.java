@@ -10,4 +10,5 @@ import java.util.List;
 public interface LeaseRepository extends JpaRepository<Lease, Long> {
 
     List<Lease> getLeasesByProfile_Id(Long profileId);
+    List<Lease> getLeasesByIsApprovedIsTrueAndIsCompletedIsTrue();
 }

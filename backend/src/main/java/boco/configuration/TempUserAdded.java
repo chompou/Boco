@@ -288,8 +288,52 @@ public class TempUserAdded {
 
 
 
+                //reviews
+                List<Lease> finishesLeases = leaseRepository.getLeasesByIsApprovedIsTrueAndIsCompletedIsTrue();
+                for (Lease l:finishesLeases) {
+                    Review ownerRev = new Review(Math.random()*5, "Lorem owner");
+                    ownerRev.setLease(l);
+                    Review customerRev = new Review(Math.random()*5, "Lorem customer");
+                    customerRev.setLease(l);
+                    Review itemRev = new Review(Math.random()*5, "Lorem item");
+                    itemRev.setLease(l);
+
+                    reviewRepository.save(ownerRev);
+                    reviewRepository.save(customerRev);
+                    reviewRepository.save(itemRev);
+
+                    l.setLeaseeReview(customerRev);
+                    l.setOwnerReview(ownerRev);
+                    l.setItemReview(itemRev);
+
+                    //leasee review
+                    Profile leasee = l.getProfile();
+                    Double lVal = reviewRepository.getProfileRating(leasee.getId());
+                    if (lVal != null){
+                        leasee.setRatingProfile(lVal);
+                        profileRepository.save(leasee);
+                    }
+
+                    //owner review
+                    Profile owner = l.getOwner();
+                    Double oVal = reviewRepository.getOwnerRating(owner.getId());
+                    if (oVal != null){
+                        owner.setRatingProfile(oVal);
+                        profileRepository.save(owner);
+                    }
+
+                    //item review
+                    Listing item = l.getListing();
+                    Double iVal = reviewRepository.getItemRating(item.getId());
+                    if (iVal != null){
+                        item.setRating(iVal);
+                        listingRepository.save(item);
+                    }
+                }
+
             }catch (Exception e){
                 System.out.println("Db already populated");
+                e.printStackTrace();
             }
         };
     }
