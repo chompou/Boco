@@ -62,7 +62,7 @@
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/info"
+              <router-link to="/support"
                 ><font-awesome-icon class="icons" icon="info"
               /></router-link>
             </a>
