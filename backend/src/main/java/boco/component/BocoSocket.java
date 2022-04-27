@@ -25,7 +25,7 @@ public class BocoSocket {
     private static Map<String, List<Session>> sessionPool = new HashMap<String, List<Session>>();
 
     /**
-     * On open.
+     * Adds new session to session pool
      *
      * @param session current session
      * @param userId  the user id
@@ -46,7 +46,7 @@ public class BocoSocket {
     }
 
     /**
-     * End session
+     * End session, removes disconected session
      */
     @OnClose
     public void closeSession(){
