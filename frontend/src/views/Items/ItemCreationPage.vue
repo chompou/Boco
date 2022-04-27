@@ -52,12 +52,12 @@
           type="number"
           min="0"
         />
-        <label id="valuta">kr</label>
+        <label id="valuta">kr/</label>
         <select v-model="leaseType">
-          <option disabled value="">/Hour</option>
-          <option>/Hour</option>
-          <option>/Day</option>
-          <option>/Week</option>
+          <option disabled value="">Hour</option>
+          <option>Hour</option>
+          <option>Day</option>
+          <option>Week</option>
         </select>
       </div>
       <div id="category">
@@ -102,7 +102,7 @@
         ></textarea>
       </div>
       <div id="CreateButtons" class="element">
-        <button class="CreateButton">Create</button>
+        <button class="CreateButton" v-on:click="create">Create</button>
         <button id="Delete" class="CreateButton">Delete</button>
       </div>
     </div>
@@ -138,20 +138,33 @@ export default {
         reader.readAsDataURL(input.files[0]);
       }
     },
+    create() {
+      console.log(this.leasePrice);
+      apiService
+        .createItem({
+          image: this.image,
+          title: this.title,
+          address: this.address,
+          price: this.price,
+          priceType: this.leasePrice,
+          description: this.description,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
-  created() {
-    apiService
-      .createItem({
-        image: this.image,
-        title: this.title,
-        address: this.address,
-        price: this.price,
-        priceType: this.leaseType,
-        description: this.description,
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  computed: {
+    leasePrice() {
+      let priceInHours = this.price;
+      if (this.leaseType === "Week") {
+        priceInHours = this.price / (7 * 24);
+      }
+      if (this.leaseType === "Day") {
+        priceInHours = this.price / 24;
+      }
+      return priceInHours;
+    },
   },
 };
 </script>
