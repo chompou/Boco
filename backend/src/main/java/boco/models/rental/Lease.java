@@ -1,5 +1,6 @@
 package boco.models.rental;
 
+import boco.models.http.LeaseRequest;
 import boco.models.profile.Profile;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
@@ -43,5 +44,16 @@ public class Lease {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     @JsonManagedReference
-    private Profile owner;
+    private Profile owner; // The owner of the listing
+
+    public Lease(Timestamp fromDatetime, Timestamp toDatetime, Profile profile, Listing listing, Profile owner) {
+        this.fromDatetime = fromDatetime;
+        this.toDatetime = toDatetime;
+        this.profile = profile;
+        this.listing = listing;
+        this.owner = owner;
+
+        this.isApproved = false;
+        this.isCompleted = false;
+    }
 }
