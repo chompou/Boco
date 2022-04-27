@@ -1,7 +1,9 @@
 package boco.controller.models;
 
 import boco.models.http.*;
+import boco.models.rental.Lease;
 import boco.service.profile.ProfileService;
+import boco.service.rental.LeaseService;
 import boco.service.rental.ListingService;
 import boco.service.rental.ReviewService;
 import boco.service.security.JwtUtil;
@@ -18,25 +20,27 @@ public class AuthorizedController {
     private final ListingService listingService;
     private final ProfileService profileService;
     private final ReviewService reviewService;
-    @Autowired
-    private final JwtUtil jwtUtil;
+    private final LeaseService leaseService;
 
     @Autowired
-    public AuthorizedController(ListingService listingService, ProfileService profileService, ReviewService reviewService, JwtUtil jwtUtil) {
+    public AuthorizedController(ListingService listingService, ProfileService profileService,
+                                ReviewService reviewService, LeaseService leaseService) {
         this.listingService = listingService;
         this.profileService = profileService;
         this.reviewService = reviewService;
-        this.jwtUtil = jwtUtil;
+        this.leaseService = leaseService;
     }
 
 
     @PostMapping("/listing")
-    public void createListing(@RequestBody ListingRequest listingRequest, @RequestHeader(name="Authorization") String token) {
-        listingService.createListing(listingRequest, token);
+    public ResponseEntity<ListingResponse> createListing(@RequestBody ListingRequest listingRequest,
+                                                         @RequestHeader(name="Authorization") String token) {
+        return listingService.createListing(listingRequest, token);
     }
 
     @PutMapping("/listing")
-    public ResponseEntity<ListingResponse> updateListing(@RequestBody UpdateListingRequest updateListingRequest, @RequestHeader(name="Authorization") String token) {
+    public ResponseEntity<ListingResponse> updateListing(@RequestBody UpdateListingRequest updateListingRequest,
+                                                         @RequestHeader(name="Authorization") String token) {
         return listingService.updateListing(updateListingRequest, token);
     }
 
@@ -57,6 +61,29 @@ public class AuthorizedController {
                                                                 @RequestParam(name = "page") int page,
                                                                 @RequestHeader(name="Authorization") String token){
         return reviewService.getMyWrittenReviews(token, perPage, page);
+    }
+
+    @GetMapping("/lease")
+    public ResponseEntity<List<LeaseResponse>> getMyLeases(@RequestHeader(name="Authorization") String token) {
+        return leaseService.getMyLeases(token);
+    }
+
+    @PostMapping("/lease")
+    public ResponseEntity<LeaseResponse> createLease(@RequestBody LeaseRequest leaseRequest,
+                                             @RequestHeader(name="Authorization") String token) {
+        return leaseService.createLease(leaseRequest, token);
+    }
+
+    @PutMapping("/lease")
+    public ResponseEntity<LeaseResponse> updateLease(@RequestBody UpdateLeaseRequest updateLeaseRequest,
+                                                     @RequestHeader(name="Authorization") String token) {
+        return leaseService.updateLease(updateLeaseRequest, token);
+    }
+
+    @DeleteMapping("/lease/{lease_id}")
+    public ResponseEntity<HttpStatus> deleteLease(@PathVariable(value = "lease_id") Long leaseId,
+                                                  @RequestHeader(name="Authorization") String token) {
+        return leaseService.deleteLease(leaseId, token);
     }
 
 

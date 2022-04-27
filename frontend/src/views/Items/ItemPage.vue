@@ -1,6 +1,6 @@
 <template>
   <div class="mainContainer">
-    <Transition>
+    <Transition name="overlay">
       <lease-request-component
         v-if="leaseOverlay"
         @close-overlay="leaseOverlay = false"
@@ -16,8 +16,12 @@
             <button class="editButtons">Edit</button>
             <button class="editButtons">Delete</button>
           </div>
-          <button class="leaseButton" v-else @click="leaseOverlay = true">
-            Book leasing
+          <button
+            class="leaseButton boco-btn"
+            v-else
+            @click="leaseOverlay = true"
+          >
+            Book
           </button>
         </div>
         <div id="About">
@@ -26,10 +30,12 @@
               <h2>{{ item.name }}</h2>
               <div id="category">
                 <label>Category: </label>
-                <!-- <label v-for="item in category" :key="item">{{ item }}, </label> -->
+                <label v-for="item in item.category" :key="item"
+                  >{{ item }},
+                </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ item.price }}kr{{ item.priceType }}</p>
+              <p>Price: {{ item.price }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
               <RatingComponent :rating="item.rating" />
@@ -64,6 +70,7 @@ export default {
   },
   data() {
     return {
+      leaseOverlay: false,
       item: { id: null, profileId: null },
       profile: {},
       reviews: [],
@@ -135,14 +142,10 @@ img {
   border: 1px solid #39495c;
   width: 150px;
   height: 50px;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   padding: 5px;
-  background: white;
   margin: 50px;
 }
 
@@ -188,13 +191,14 @@ button:hover {
   display: inline;
 }
 
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.2s ease;
+.overlay-enter-active,
+.overlay-leave-active {
+  transition: all 0.2s ease;
 }
 
-.v-enter-from,
-.v-leave-to {
+.overlay-enter-from,
+.overlay-leave-to {
   opacity: 0;
+  top: 20%;
 }
 </style>

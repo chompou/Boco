@@ -1,11 +1,11 @@
 <template>
   <div class="lease-list-container">
     <div>
-      <h2>Lease in</h2>
+      <h2>Owned</h2>
       <lease-list-component class="lease-list-component" :personal="true" />
     </div>
     <div>
-      <h2>Lease out</h2>
+      <h2>Leases</h2>
       <lease-list-component class="lease-list-component" :personal="false" />
     </div>
   </div>
@@ -18,7 +18,7 @@ export default {
 
   data() {
     return {
-      ingoing: [
+      owned: [
         {
           id: 1,
           title: "MyItem",
@@ -34,7 +34,7 @@ export default {
           to: "2022-05-20",
         },
       ],
-      outgoing: [
+      leased: [
         {
           id: 3,
           title: "MyItem",

@@ -37,6 +37,7 @@ public class ProfileService {
     private final ProfessionalRepository professionalRepository;
     private final LeaseRepository leaseRepository;
 
+
     private final JwtUtil jwtUtil;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
@@ -113,6 +114,12 @@ public class ProfileService {
             logger.debug("Profile is invalid and could not be created: " + profileRequest);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
+        if (checkIfProfileEmailExists(profileRequest.getEmail()) != null){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        if (checkIfProfileUsernameExists(profileRequest.getUsername()) != null){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
 
         try {
             if (profileRequest.getIsPersonal()) {
@@ -120,7 +127,6 @@ public class ProfileService {
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
                         profileRequest.getAddress(), profileRequest.getTlf());
                 Personal savedProfile = personalRepository.save(p);
-
                 logger.debug("Personal profile was saved: " + p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
@@ -128,7 +134,6 @@ public class ProfileService {
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
                         profileRequest.getAddress(), profileRequest.getTlf());
                 Professional savedProfile = professionalRepository.save(p);
-
                 logger.debug("Professional profile was saved: " + p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             }
@@ -215,7 +220,7 @@ public class ProfileService {
     }
 
     public ResponseEntity<Profile> verifyProfile(Long profileId){
-        Optional<Profile> profileData = profileRepository.findById(profileId);
+        Optional<Profile> profileData = profileRepository.findProfileById(profileId);
         if (profileData.isPresent()){
             profileData.get().setIsVerified(true);
             Profile profile = profileRepository.save(profileData.get());
@@ -227,6 +232,13 @@ public class ProfileService {
         Optional<Profile> profileData = profileRepository.findProfileByEmail(email);
         if (profileData.isPresent()){
              return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+        }
+        return null;
+    }
+    public ResponseEntity<Profile> checkIfProfileUsernameExists(String username){
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+        if (profileData.isPresent()){
+            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
         }
         return null;
     }
