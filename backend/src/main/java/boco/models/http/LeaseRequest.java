@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class LeaseRequest {
-    private Timestamp fromDatetime;
-    private Timestamp toDatetime;
+    private String fromDatetime; // format: yyyy-[m]m-[d]d hh:mm:ss[.f...]
+    private String toDatetime; // format: yyyy-[m]m-[d]d hh:mm:ss[.f...]
     private Long listingId;
 }

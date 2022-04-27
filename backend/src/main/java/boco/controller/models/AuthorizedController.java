@@ -63,10 +63,27 @@ public class AuthorizedController {
         return reviewService.getMyWrittenReviews(token, perPage, page);
     }
 
+    @GetMapping("/lease")
+    public ResponseEntity<List<LeaseResponse>> getMyLeases(@RequestHeader(name="Authorization") String token) {
+        return leaseService.getMyLeases(token);
+    }
+
     @PostMapping("/lease")
     public ResponseEntity<LeaseResponse> createLease(@RequestBody LeaseRequest leaseRequest,
                                              @RequestHeader(name="Authorization") String token) {
         return leaseService.createLease(leaseRequest, token);
+    }
+
+    @PutMapping("/lease")
+    public ResponseEntity<LeaseResponse> updateLease(@RequestBody UpdateLeaseRequest updateLeaseRequest,
+                                                     @RequestHeader(name="Authorization") String token) {
+        return leaseService.updateLease(updateLeaseRequest, token);
+    }
+
+    @DeleteMapping("/lease/{lease_id}")
+    public ResponseEntity<HttpStatus> deleteLease(@PathVariable(value = "lease_id") Long leaseId,
+                                                  @RequestHeader(name="Authorization") String token) {
+        return leaseService.deleteLease(leaseId, token);
     }
 
 
