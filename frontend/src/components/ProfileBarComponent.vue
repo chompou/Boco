@@ -1,9 +1,9 @@
 <template>
   <div class="profile-bar">
     <div class="profile-bar-text">
-      <h3 id="username">{{ username }}</h3>
-      <p id="phone-number">Phone nr: {{ phoneNumber }}</p>
-      <p id="email">Email: {{ email }}</p>
+      <h3 id="username">{{}}</h3>
+      <p id="phone-number">Phone nr: {{}}</p>
+      <p id="email">Email: {{}}</p>
     </div>
     <div id="rating">
       <RatingComponent />
@@ -48,20 +48,28 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
+import apiService from "@/services/apiService";
 
 export default {
   components: { RatingComponent },
   data() {
     return {
-      username: "Øyvind Bjøntegaard",
-      phoneNumber: "48420178",
-      email: "ØyvindBjørn@gmail.com",
+      profile: null,
+      dataReady: false,
     };
   },
+
   computed: {
     isLoggedIn() {
-      return this.$store.state.loggedInUser === 1;
+      return this.$store.state.loggedInUser != null;
     },
+  },
+
+  created() {
+    apiService.getMyProfile().then((response) => {
+      this.profile = response.data;
+      this.dataReady = true;
+    });
   },
 };
 </script>
@@ -131,6 +139,8 @@ export default {
 .boco-btn:hover,
 .boco-btn:focus {
   background-color: var(--button-hover);
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 .boco-btn:disabled {
