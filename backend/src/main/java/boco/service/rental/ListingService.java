@@ -207,7 +207,6 @@ public class ListingService {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
             setListingWhenDeleted(listingId, emptyListing.get());
-            //TODO fix
             listingRepository.deleteById(listingId);
             System.out.println("Updated stuff" );
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

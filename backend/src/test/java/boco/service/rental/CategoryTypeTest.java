@@ -37,10 +37,15 @@ public class CategoryTypeTest {
     }
 
     @Test
-    public void getAllCategories(){
+    public void testGetAllCategories(){
         List<CategoryType> categoryTypes = categoryTypeService.getAll();
         Assertions.assertEquals(categoryTypes.size(), 3);
+        Assertions.assertEquals(categoryTypes.get(0).getId(), 1L);
         Assertions.assertEquals(categoryTypes.get(0).getName(), "Car");
+        Assertions.assertEquals(categoryTypes.get(1).getId(), 2L);
+        Assertions.assertEquals(categoryTypes.get(1).getName(), "Sport");
+        Assertions.assertEquals(categoryTypes.get(2).getId(), 3L);
+        Assertions.assertEquals(categoryTypes.get(2).getName(), "Tool");
     }
 
 }
