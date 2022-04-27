@@ -18,12 +18,17 @@ public class ReviewResponse {
         this.id = review.getId();
         this.rating = review.getRating();
         this.comment = review.getComment();
-        if (this.id == review.getLease().getLeaseeReview().getId()){ // Review skrevet av eier av lease
-            this.profile_id = review.getLease().getOwner().getId();
-            this.displayName = review.getLease().getOwner().getDisplayName();
-        } else {
-            this.profile_id = review.getLease().getProfile().getId();
-            this.displayName = review.getLease().getProfile().getDisplayName();
+
+        try {
+            if (this.id == review.getLease().getLeaseeReview().getId()) {
+                this.profile_id = review.getLease().getOwner().getId();
+                this.displayName = review.getLease().getOwner().getDisplayName();
+            } else {
+                this.profile_id = review.getLease().getProfile().getId();
+                this.displayName = review.getLease().getProfile().getDisplayName();
+            }
+        } catch (NullPointerException e) {
+            // handle
         }
     }
 }
