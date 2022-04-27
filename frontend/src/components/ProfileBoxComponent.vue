@@ -14,7 +14,6 @@
 
 <script>
 import RatingComponent from "@/components/RatingComponent";
-import apiService from "@/services/apiService";
 export default {
   props: ["profile"],
   components: { RatingComponent },
@@ -25,9 +24,7 @@ export default {
       email: "ØyvindBjørn@gmail.com",
     };
   },
-  created() {
-    apiService.getProfile();
-  },
+  created() {},
 };
 </script>
 
