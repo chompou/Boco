@@ -125,9 +125,12 @@ export default {
         .createProfile({
           username: username.value.value,
           email: email.value.value,
+          description: "",
+          displayName: username.value.value,
+          passwordHash: password.value.value,
           address: address.value.value,
           tlf: phoneNumber.value.value,
-          password: password.value.value,
+          isPersonal: true,
         })
         .catch((error) => {
           console.log(error);
