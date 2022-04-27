@@ -18,10 +18,10 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="login" v-if="!loggedIn"
+              <router-link to="login" v-if="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <button id="log-out-button" v-if="loggedIn">
+              <button id="log-out-button" v-if="$store.state.loggedIn">
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
             </a>
@@ -66,24 +66,23 @@
         </ul>
       </div>
     </div>
+    <NotificationComponent />
   </nav>
+
   <div class="container">
     <router-view />
     <div style="height: 20px" />
   </div>
 </template>
-
 <script>
-import store from "@/store/index.js";
+import NotificationComponent from "@/components/NotificationComponent";
+
 export default {
-  computed: {
-    loggedIn() {
-      return store.state.loggedIn;
-    },
+  components: {
+    NotificationComponent,
   },
 };
 </script>
-
 <style>
 :root {
   --main-color: #008b8b;
