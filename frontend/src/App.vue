@@ -249,6 +249,20 @@ li a:hover {
   color: rgba(0, 0, 0, 0.3);
 }
 
+label,
+.input-field {
+  display: flex;
+  margin: auto;
+  padding: 8px;
+  border-color: var(--button-color);
+  border-radius: 5px;
+  justify-content: space-evenly;
+}
+.input-field:hover,
+.input-field:focus {
+  border-color: var(--button-hover);
+}
+
 #logo {
   height: 70px;
   width: auto;
