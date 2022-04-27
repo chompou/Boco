@@ -1,5 +1,6 @@
 package boco.models.http;
 
+import boco.models.rental.Image;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,8 @@ public class ListingRequest {
     private boolean isActive;
     private double price;
     private String priceType;
+    private byte[] image;
+    private String caption;
 
     private Long profileId; // ID of the profile listing the request
 
