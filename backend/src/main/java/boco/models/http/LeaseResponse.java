@@ -11,10 +11,10 @@ import java.sql.Timestamp;
 @Getter @Setter @NoArgsConstructor
 public class LeaseResponse {
     private Long id;
-    private boolean isApproved;
+    private Boolean isApproved;
     private Timestamp fromDatetime;
     private Timestamp toDatetime;
-    private boolean isCompleted;
+    private Boolean isCompleted;
     private Review ownerReview;
     private Review leaseeReview;
     private Review itemReview;
