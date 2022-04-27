@@ -7,7 +7,9 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -17,9 +19,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Component
 @ServerEndpoint("/websocket/{userId}")
 public class BocoSocket {
+    private String sessionId;
     private Session session;
     private static CopyOnWriteArraySet<BocoSocket> webSockets = new CopyOnWriteArraySet<>();
-    private static Map<String, Session> sessionPool = new HashMap<String, Session>();
+    private static Map<String, List<Session>> sessionPool = new HashMap<String, List<Session>>();
 
     /**
      * On open.
@@ -29,10 +32,17 @@ public class BocoSocket {
      */
     @OnOpen
     public void onOpen(Session session, @PathParam(value = "userId") String userId){
+        this.sessionId = userId;
         this.session = session;
+        if (sessionPool.get(userId)==null){
+            List<Session> sList = new ArrayList<>();
+            sList.add(session);
+            sessionPool.put(userId, sList);
+        }else {
+            sessionPool.get(userId).add(session);
+        }
         webSockets.add(this);
-        sessionPool.put(userId, session);
-        System.out.println ("[websocket message] has new connections, total: "+webSockets.size());
+        System.out.println ("[websocket message] has new connections, total unique: "+webSockets.size());
     }
 
     /**
@@ -40,8 +50,9 @@ public class BocoSocket {
      */
     @OnClose
     public void closeSession(){
+        sessionPool.get(sessionId).remove(session);
         webSockets.remove(this);
-        System. out. println ("[websocket message] disconnected, total: "+webSockets.size());
+        System. out. println ("[websocket message] disconnected, total unique: "+webSockets.size());
     }
 
     /**
@@ -77,12 +88,14 @@ public class BocoSocket {
      * @param message the message
      */
     public void sendOneMessage(String userId, String message){
-        Session session = sessionPool.get(userId);
-        if (session != null){
-            try {
-                session.getAsyncRemote().sendText(message);
-            }catch (Exception e){
-                e.printStackTrace();
+        List<Session> sessionList = sessionPool.get(userId);
+        for (Session session:sessionList) {
+            if (session != null){
+                try {
+                    session.getAsyncRemote().sendText(message);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     }
