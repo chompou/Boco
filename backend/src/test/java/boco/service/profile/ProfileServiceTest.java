@@ -1,8 +1,10 @@
 package boco.service.profile;
 
 import boco.models.http.ProfileRequest;
+import boco.models.http.UpdatePasswordRequest;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
+import boco.models.profile.Profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import boco.models.rental.Review;
@@ -21,6 +23,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +60,12 @@ class ProfileServiceTest {
         Professional professional = new Professional("ronaldo", "cr7@manu.uk", "x", "CR7", "x", "Portugal", "12345678");
         professional.setId((long) 1);
 
-        //lenient().when(personalRepository.save(same("messi"))).thenReturn(personal));
         lenient().when(professionalRepository.save(professional)).thenReturn(professional);
+        lenient().when(profileRepository.save(personal)).thenReturn(personal);
         lenient().when(profileRepository.save(professional)).thenReturn(professional);
-        lenient().when(profileRepository.findProfileById((long) 1)).thenReturn(Optional.of(professional));
+        lenient().when(profileRepository.findProfileById((long) 2)).thenReturn(Optional.of(professional));
+        lenient().when(profileRepository.findProfileByEmail("leo@psg.fr")).thenReturn(Optional.of(personal));
+        lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(Optional.of(personal));
     }
 
     @Test
@@ -69,9 +75,20 @@ class ProfileServiceTest {
     }
 
     @Test
-    public void TestVerifyProfile(){
-        var res = profileService.verifyProfile((long) 1);
+    public void testVerifyProfile(){
+        var res = profileService.verifyProfile((long) 2);
         Assertions.assertEquals(true, res.getBody().getIsVerified());
     }
+
+    @Test
+    public void testCheckIfProfileEmailExists(){
+        var res = profileService.checkIfProfileEmailExists("leo@psg.fr");
+        Assertions.assertNotEquals(null, res);
+        Assertions.assertEquals("leo@psg.fr", res.getBody().getEmail());
+
+        Assertions.assertEquals(null, profileService.checkIfProfileEmailExists("emil@mail.fr"));
+
+    }
+
 
 }
