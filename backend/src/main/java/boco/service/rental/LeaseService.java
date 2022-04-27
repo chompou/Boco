@@ -87,6 +87,8 @@ public class LeaseService {
         }
     }
 
+
+
     public ResponseEntity<HttpStatus> deleteLease(Long leaseId, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
