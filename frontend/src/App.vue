@@ -66,13 +66,23 @@
         </ul>
       </div>
     </div>
+    <NotificationComponent />
   </nav>
+
   <div class="container">
     <router-view />
     <div style="height: 20px" />
   </div>
 </template>
+<script>
+import NotificationComponent from "@/components/NotificationComponent";
 
+export default {
+  components: {
+    NotificationComponent,
+  },
+};
+</script>
 <style>
 :root {
   --main-color: #008b8b;

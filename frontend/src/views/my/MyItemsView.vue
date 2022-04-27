@@ -16,7 +16,6 @@ export default {
       items: [],
     };
   },
-
   created() {
     apiService
       .getItems({ profileId: 1 }, 0, 15)
