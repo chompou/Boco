@@ -7,13 +7,14 @@
       <h3>MAP</h3>
     </div>
     <div id="rating">
-      <RatingComponent :rating="profile.ratingProfile" />
+      <RatingComponent :rating="profile.rating" />
     </div>
   </div>
 </template>
 
 <script>
 import RatingComponent from "@/components/RatingComponent";
+import apiService from "@/services/apiService";
 export default {
   props: ["profile"],
   components: { RatingComponent },
@@ -23,6 +24,9 @@ export default {
       phoneNumber: "48420178",
       email: "ØyvindBjørn@gmail.com",
     };
+  },
+  created() {
+    apiService.getProfile();
   },
 };
 </script>
@@ -39,7 +43,7 @@ export default {
   height: 400px;
   color: #2c3e50;
   padding: 10px 28px;
-  background: #e0f2fe;
+  background: var(--button-color);
   margin: 20px;
 }
 
