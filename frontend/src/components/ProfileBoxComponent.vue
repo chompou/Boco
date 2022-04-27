@@ -17,14 +17,6 @@ import RatingComponent from "@/components/RatingComponent";
 export default {
   props: ["profile"],
   components: { RatingComponent },
-  data() {
-    return {
-      username: "Øyvind Bjøntegaard",
-      phoneNumber: "48420178",
-      email: "ØyvindBjørn@gmail.com",
-    };
-  },
-  created() {},
 };
 </script>
 
