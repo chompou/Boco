@@ -70,6 +70,10 @@
       />
       <br />
       <button type="submit" class="boco-btn" @click="submit">Submit</button>
+      <br />
+      <input id="is-personal-box" type="checkbox" @click="isPersonal()" />
+      This is a personal account
+      <br />
     </form>
   </div>
 </template>
@@ -116,6 +120,7 @@ export default {
     const phoneNumber = useField("phoneNumber");
     const password = useField("password");
     const verifyPassword = useField("verifyPassword");
+    const isPersonal = useField("is-personal-box");
 
     const handleChange = (event) => {
       setFieldValue("email", event.target.value);
@@ -130,7 +135,7 @@ export default {
           passwordHash: password.value.value,
           address: address.value.value,
           tlf: phoneNumber.value.value,
-          isPersonal: true,
+          isPersonal: isPersonal.value.value,
         })
         .catch((error) => {
           console.log(error);
@@ -150,6 +155,12 @@ export default {
       errors,
       handleChange,
     };
+  },
+  methods: {
+    isPersonal() {
+      const checkbox = document.getElementById("is-personal-box");
+      return !!checkbox.checked;
+    },
   },
 };
 </script>
