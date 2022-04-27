@@ -25,6 +25,17 @@
         @change="handleChange"
       />
       <br />
+      <label>Address</label>
+      <BaseInput
+        class="input-field"
+        v-model="address"
+        type="text"
+        placeholder="Enter address"
+        name="address"
+        id="address"
+        :error="errors.address"
+      />
+      <br />
       <label>Phone number</label>
       <BaseInput
         class="input-field"
@@ -80,6 +91,7 @@ export default {
       /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
     const validationSchema = object({
       username: string().required("This field is required!"),
+      address: string().required("This field is required!"),
       email: string()
         .required("This field is required!")
         .email("Please provide a valid email"),
@@ -100,6 +112,7 @@ export default {
 
     const username = useField("username");
     const email = useField("email");
+    const address = useField("address");
     const phoneNumber = useField("phoneNumber");
     const password = useField("password");
     const verifyPassword = useField("verifyPassword");
@@ -112,6 +125,7 @@ export default {
         .createProfile({
           username: username.value.value,
           email: email.value.value,
+          address: address.value.value,
           tlf: phoneNumber.value.value,
           password: password.value.value,
         })
@@ -127,6 +141,7 @@ export default {
       phoneNumber: phoneNumber.value,
       verifyPassword: verifyPassword.value,
       password: password.value,
+      address: address.value,
       email: email.value,
       username: username.value,
       errors,
