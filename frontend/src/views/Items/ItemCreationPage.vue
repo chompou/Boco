@@ -299,7 +299,19 @@ select {
   justify-content: space-evenly;
 }
 
+.CreateButton:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
 #Delete {
   background: #ff6565;
+}
+
+#Delete:hover {
+  background: #b74646;
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 </style>

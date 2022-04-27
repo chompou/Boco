@@ -18,40 +18,12 @@ export default {
 
   data() {
     return {
-      owned: [
-        {
-          id: 1,
-          title: "MyItem",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-        {
-          id: 2,
-          title: "MyItem",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-      ],
-      leased: [
-        {
-          id: 3,
-          title: "MyItem",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-        {
-          id: 4,
-          title: "MyItem",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-      ],
+      owned: [],
+      leased: [],
     };
   },
+
+  created() {},
 };
 </script>
 

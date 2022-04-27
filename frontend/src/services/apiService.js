@@ -37,6 +37,10 @@ export default {
     });
   },
 
+  getCategories() {
+    return apiClient.get("/category");
+  },
+
   getProfile(profileId) {
     return apiClient.get("/profile/" + profileId);
   },
