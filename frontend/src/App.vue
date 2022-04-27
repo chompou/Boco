@@ -21,7 +21,11 @@
               <router-link to="login" v-if="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <button id="log-out-button" v-if="$store.state.loggedIn">
+              <button
+                id="log-out-button"
+                v-if="$store.state.loggedIn"
+                @click="logout"
+              >
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
             </a>
@@ -74,15 +78,26 @@
     <div style="height: 20px" />
   </div>
 </template>
-<script>
-import NotificationComponent from "@/components/NotificationComponent";
 
+<script>
+import storageService from "./services/storageService";
+import NotificationComponent from "@/components/NotificationComponent";
 export default {
   components: {
     NotificationComponent,
   },
+
+  methods: {
+    logout() {
+      storageService.clearToken();
+      this.$store.state.loggedIn = false;
+      this.$store.state.loggedInUser = null;
+      this.$router.push("/");
+    },
+  },
 };
 </script>
+
 <style>
 :root {
   --main-color: #008b8b;

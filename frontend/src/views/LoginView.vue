@@ -65,17 +65,24 @@ export default {
         checkbox.type = "password";
       }
     },
+
     submit() {
       apiService
         .login(this.username, this.password)
         .then((response) => {
           storageService.setToken(response.data["jwt"]);
           storageService.setUser(this.username);
-          this.$store.state.loggedInUser = response.data["userId"];
           this.$router.push("/");
         })
         .catch((error) => console.error(error));
     },
+  },
+
+  created() {
+    let user = storageService.getUser();
+    if (user != null) {
+      this.username = user;
+    }
   },
 };
 </script>
