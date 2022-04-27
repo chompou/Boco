@@ -1,9 +1,9 @@
 <template>
   <div class="profile-bar">
     <div class="profile-bar-text">
-      <h3 id="username">{{ profile.displayName }}</h3>
-      <p id="phone-number">Phone nr: {{ phoneNumber }}</p>
-      <p id="email">Email: {{ email }}</p>
+      <h3 id="username">{{}}</h3>
+      <p id="phone-number">Phone nr: {{}}</p>
+      <p id="email">Email: {{}}</p>
     </div>
     <div id="rating">
       <RatingComponent />
