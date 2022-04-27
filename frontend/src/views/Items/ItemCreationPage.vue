@@ -8,28 +8,21 @@
           <input
             type="file"
             accept="image/*"
-            multiple="multiple"
-            @change="previewMultiImage"
+            @change="previewImage"
             class="form-control-file"
             id="my-file"
           />
 
           <div class="border p-2 mt-3">
             <p>Preview Here:</p>
-            <template v-if="preview_list.length">
-              <div v-for="(item, index) in preview_list" :key="index">
-                <img :src="item" class="img-fluid" />
-                <p class="mb-0">file name: {{ image_list[index].name }}</p>
-                <p>size: {{ image_list[index].size / 1024 }}KB</p>
-              </div>
+            <template v-if="preview">
+              <img alt="image" :src="preview" class="img-fluid" />
+              <p class="mb-0">file name: {{ image.name }}</p>
+              <p class="mb-0">size: {{ image.size / 1024 }}KB</p>
             </template>
           </div>
         </div>
       </form>
-    </div>
-    <div class="w-100"></div>
-    <div class="col-12 mt-3 text-center">
-      <button id="resetButton" @click="reset">Clear</button>
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -117,11 +110,13 @@
 </template>
 
 <script>
+import apiService from "@/services/apiService";
+
 export default {
   data() {
     return {
-      preview_list: [],
-      image_list: [],
+      preview: null,
+      image: null,
       title: "",
       address: "",
       price: "",
@@ -132,43 +127,31 @@ export default {
     };
   },
   methods: {
-    previewMultiImage: function (event) {
+    previewImage: function (event) {
       let input = event.target;
-      let count = input.files.length;
-      let index = 0;
       if (input.files) {
-        while (count--) {
-          let reader = new FileReader();
-          reader.onload = (e) => {
-            this.preview_list.push(e.target.result);
-          };
-          this.image_list.push(input.files[index]);
-          reader.readAsDataURL(input.files[index]);
-          index++;
-        }
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.preview = e.target.result;
+        };
+        this.image = input.files[0];
+        reader.readAsDataURL(input.files[0]);
       }
-    },
-    reset: function () {
-      console.log(this.image_list);
-      this.image = null;
-      this.preview = null;
-      this.image_list = [];
-      this.preview_list = [];
     },
   },
   created() {
-    // apiService
-    //   .createItem({
-    //     images: this.image_list,
-    //     title: this.title,
-    //     address: this.address,
-    //     price: this.price,
-    //     priceType: this.leaseType,
-    //     description: this.description,
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    apiService
+      .createItem({
+        image: this.image,
+        title: this.title,
+        address: this.address,
+        price: this.price,
+        priceType: this.leaseType,
+        description: this.description,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>
@@ -263,8 +246,7 @@ select {
   width: 100px;
 }
 
-.CreateButton,
-#resetButton {
+.CreateButton {
   color: white;
   align-items: center;
   background-color: var(--button-color);
@@ -294,11 +276,6 @@ select {
   user-select: none;
   -webkit-user-select: none;
   vertical-align: middle;
-}
-
-.CreateButton:hover,
-#resetButton:hover {
-  background-color: var(--button-hover);
 }
 
 #CreateButtons {
