@@ -65,13 +65,23 @@
         </ul>
       </div>
     </div>
+    <NotificationComponent />
   </nav>
+
   <div class="container">
     <router-view />
     <div class="longDiv"></div>
   </div>
 </template>
+<script>
+import NotificationComponent from "@/components/NotificationComponent";
 
+export default {
+  components: {
+    NotificationComponent,
+  },
+};
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
