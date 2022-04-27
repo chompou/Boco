@@ -30,8 +30,8 @@
               <h2>{{ item.name }}</h2>
               <div id="category">
                 <label>Category: </label>
-                <label v-for="item in item.category" :key="item"
-                  >{{ item }},
+                <label v-for="category in item.categoryTypes" :key="category"
+                  >{{ category.name }},
                 </label>
               </div>
               <p>Address: {{ item.address }}</p>
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       leaseOverlay: false,
-      item: { id: null, profileId: null },
+      item: { id: null, profileId: null, price: 0, priceType: null },
       profile: {},
       reviews: [],
     };

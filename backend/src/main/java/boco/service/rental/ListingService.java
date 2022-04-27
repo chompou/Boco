@@ -1,13 +1,11 @@
 package boco.service.rental;
 
-import boco.models.http.ListingRequest;
-import boco.models.http.ListingResponse;
-import boco.models.http.ReviewResponse;
-import boco.models.http.UpdateListingRequest;
+import boco.models.http.*;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
+import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -130,6 +128,10 @@ public class ListingService {
                     listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
+            listingRepository.save(newListing);
+            Image image = new Image(listingRequest.getImage(), listingRequest.getCaption(), newListing);
+            imageRepository.save(image);
+            newListing.getImages().add(image);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -240,4 +242,5 @@ public class ListingService {
         }
         return listingResponses;
     }
+
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class Listing {
         Date date = new Date();
         Timestamp createdTime = new Timestamp(date.getTime());
         this.lastChanged = createdTime;
+        images = new ArrayList<>();
     }
 
     @ManyToOne

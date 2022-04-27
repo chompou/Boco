@@ -1,15 +1,15 @@
 <template>
   <div class="profile-bar">
     <div class="profile-bar-text">
-      <h3 id="username">{{}}</h3>
-      <p id="phone-number">Phone nr: {{}}</p>
-      <p id="email">Email: {{}}</p>
+      <h3 id="username">{{ profile.displayName }}</h3>
+      <p id="phone-number">Phone nr: {{ profile.tlf }}</p>
+      <p id="email">Email: {{ profile.email }}</p>
     </div>
     <div id="rating">
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="all-buttons" v-if="isLoggedIn">
+      <div class="all-buttons" v-if="isMe">
         <button
           id="items-button"
           class="boco-btn"
@@ -48,28 +48,15 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
-import apiService from "@/services/apiService";
 
 export default {
   components: { RatingComponent },
-  data() {
-    return {
-      profile: null,
-      dataReady: false,
-    };
-  },
+  props: ["profile"],
 
   computed: {
-    isLoggedIn() {
-      return this.$store.state.loggedInUser != null;
+    isMe() {
+      return this.$store.state.loggedInUser == this.profile.id;
     },
-  },
-
-  created() {
-    apiService.getMyProfile().then((response) => {
-      this.profile = response.data;
-      this.dataReady = true;
-    });
   },
 };
 </script>
