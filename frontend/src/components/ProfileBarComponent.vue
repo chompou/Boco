@@ -1,7 +1,7 @@
 <template>
   <div class="profile-bar">
     <div class="profile-bar-text">
-      <h3 id="username">{{ username }}</h3>
+      <h3 id="username">{{ profile.displayName }}</h3>
       <p id="phone-number">Phone nr: {{ phoneNumber }}</p>
       <p id="email">Email: {{ email }}</p>
     </div>
@@ -48,20 +48,28 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
+import apiService from "@/services/apiService";
 
 export default {
   components: { RatingComponent },
   data() {
     return {
-      username: "Øyvind Bjøntegaard",
-      phoneNumber: "48420178",
-      email: "ØyvindBjørn@gmail.com",
+      profile: null,
+      dataReady: false,
     };
   },
+
   computed: {
     isLoggedIn() {
-      return this.$store.state.loggedInUser === 1;
+      return this.$store.state.loggedInUser != null;
     },
+  },
+
+  created() {
+    apiService.getMyProfile().then((response) => {
+      this.profile = response.data;
+      this.dataReady = true;
+    });
   },
 };
 </script>
