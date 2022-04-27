@@ -333,7 +333,6 @@ public class TempUserAdded {
 
             }catch (Exception e){
                 System.out.println("Db already populated");
-                e.printStackTrace();
             }
         };
     }
