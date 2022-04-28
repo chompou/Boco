@@ -1,4 +1,7 @@
 <template>
+  <div class="container-fluid text-center">
+    <img src="@/assets/NyLogoBoCo1.png" alt="Logo" />
+  </div>
   <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
     <div class="container-fluid">
       <button
@@ -257,7 +260,7 @@ label,
 }
 
 #logo {
-  height: 70px;
+  height: 50px;
   width: auto;
 }
 
