@@ -15,7 +15,6 @@ const apiClientImage = axios.create({
   timeout: 1000,
   headers: {
     Accept: "application/json",
-    "Content-Type": "multipart/form-data",
   },
 });
 
@@ -40,8 +39,8 @@ export default {
     return apiClient.post("/my/listing", item);
   },
 
-  createImage(image) {
-    return apiClientImage.post("/my/listing", image);
+  createImage(data) {
+    return apiClientImage.post("/my/listing", data);
   },
 
   getItems(filters, page, perPage) {
