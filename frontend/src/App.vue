@@ -234,8 +234,7 @@ li a:hover {
   color: rgba(0, 0, 0, 0.3);
 }
 
-label,
-.input-field {
+.register-input-field {
   display: flex;
   margin: auto;
   padding: 8px;
@@ -243,8 +242,8 @@ label,
   border-radius: 5px;
   justify-content: space-evenly;
 }
-.input-field:hover,
-.input-field:focus {
+.register-input-field:hover,
+.register-input-field:focus {
   border-color: var(--button-hover);
 }
 
