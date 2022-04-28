@@ -1,5 +1,8 @@
 <template>
-  <p>notification: {{ $store.state.countNotifications }}</p>
+  <div>{{ $store.state.countNotifications }}</div>
+  <div>
+    <font-awesome-icon icon="bell" class="icon">Test</font-awesome-icon>
+  </div>
 </template>
 
 <script>
@@ -26,3 +29,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.icon {
+  font-size: 2vw;
+}
+</style>
