@@ -128,15 +128,30 @@ public class ListingService {
                     listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
-            listingRepository.save(newListing);
-            Image image = new Image(listingRequest.getImage(), listingRequest.getCaption(), newListing);
-            imageRepository.save(image);
-            newListing.getImages().add(image);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public ResponseEntity<ImageResponse> createImage(ImageRequest imageRequest, String token){
+        try {
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+            if (!profile.isPresent()) {
+                logger.debug("profile of token not found found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            Optional<Listing> listing = listingRepository.findById(imageRequest.getListingId());
+            Image image = new Image(imageRequest.getImage(), imageRequest.getCaption(), listing.get());
+            Image savedImage = imageRepository.save(image);
+            return new ResponseEntity<>(new ImageResponse(savedImage), HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
     }
 
     public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {

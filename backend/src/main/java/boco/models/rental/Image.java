@@ -25,7 +25,6 @@ public class Image {
         this.caption = caption;
         this.listing = listing;
     }
-
     @ManyToOne
     @JoinColumn(name = "listing_id")
     @JsonManagedReference
