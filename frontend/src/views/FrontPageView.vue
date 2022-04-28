@@ -138,6 +138,8 @@ export default {
   color: var(--main-color);
   font-size: 2vw;
   margin-left: 40px;
+  height: 40px;
+  width: 40px;
 }
 
 .icon:hover {

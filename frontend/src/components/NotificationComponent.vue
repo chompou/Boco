@@ -1,7 +1,9 @@
 <template>
-  <div>{{ $store.state.countNotifications }}</div>
-  <div>
-    <font-awesome-icon icon="bell" class="icon">Test</font-awesome-icon>
+  <div class="notif">
+    <div id="count">{{ $store.state.countNotifications }}</div>
+    <div>
+      <font-awesome-icon icon="bell" class="icon">Test</font-awesome-icon>
+    </div>
   </div>
 </template>
 
@@ -30,7 +32,21 @@ export default {
 };
 </script>
 <style scoped>
+.notif {
+  width: 100px;
+  display: flex;
+}
+
 .icon {
+  height: 30px;
+  width: 30px;
   font-size: 2vw;
+  color: #0048ae;
+}
+
+#count {
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
 }
 </style>

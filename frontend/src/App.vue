@@ -265,6 +265,8 @@ li a:hover {
 
 .icons {
   color: var(--main-color);
+  height: 25px;
+  width: 25px;
 }
 
 .icons:hover {
