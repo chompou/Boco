@@ -10,7 +10,7 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img alt="Vue logo" src="@/assets/service.png" />
+          <img :src="url" />
           <div v-if="my">
             <button class="editButtons">Set Active</button>
             <button class="editButtons">Edit</button>
@@ -64,6 +64,7 @@ import ProfileBoxComponent from "@/components/ProfileBoxComponent";
 import ReviewComponent from "@/components/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
+import axios from "axios";
 export default {
   props: ["id"],
 
@@ -79,6 +80,7 @@ export default {
       item: { id: null, profileId: null, price: 0, priceType: null },
       profile: {},
       reviews: [],
+      url: null,
     };
   },
   computed: {
@@ -119,6 +121,10 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+
+    axios.get("https://picsum.photos/200/300").then((response) => {
+      this.url = response.request.responseURL;
+    });
   },
 };
 </script>
