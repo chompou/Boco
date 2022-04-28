@@ -22,7 +22,7 @@ export default {
   },
 
   createItem(item) {
-    return apiClient.post("/listing", item);
+    return apiClient.post("/my/listing", item);
   },
 
   getItems(filters, page, perPage) {
