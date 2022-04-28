@@ -121,7 +121,7 @@ export default {
       image: null,
       title: "",
       address: "",
-      price: "",
+      price: 0,
       leaseType: "",
       category: [],
       checked: false,
@@ -150,9 +150,9 @@ export default {
             JSON.stringify({
               name: this.title,
               address: this.address,
+              description: this.description,
               price: this.leasePrice,
               priceType: this.leaseType,
-              description: this.description,
             }),
           ],
           {
