@@ -48,6 +48,7 @@
     </div>
     <div>
       <router-link
+        id="profilebox"
         class="link"
         :to="{ name: 'profile', params: { id: profile.id } }"
       >
@@ -211,6 +212,10 @@ button:hover {
 
 #category label {
   display: inline;
+}
+
+#profilebox {
+  text-decoration: none;
 }
 
 .overlay-enter-active,
