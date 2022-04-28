@@ -9,7 +9,9 @@ import boco.service.rental.ReviewService;
 import boco.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,16 +35,14 @@ public class AuthorizedController {
     }
 
 
-    @PostMapping("/listing")
-    public ResponseEntity<ListingResponse> createListing(@RequestBody ListingRequest listingRequest,
-                                                         @RequestHeader(name="Authorization") String token) {
-        return listingService.createListing(listingRequest, token);
+    @PostMapping(value = "/listing", consumes = {"multipart/form-data"})
+    public ResponseEntity<ListingResponse> createListing(
+            @RequestPart("properties") @Validated ListingRequest listingRequest,
+            @RequestPart("file") @Validated MultipartFile multipartFile,
+            @RequestHeader(name="Authorization") String token) {
+        return listingService.createListing(listingRequest,multipartFile, token);
     }
-    @PostMapping("/listing/image")
-    public ResponseEntity<ImageResponse> createImage(@RequestParam("file")MultipartFile multipartFile,
-                                                     @RequestHeader(name="Authorization")String token) {
-        return listingService.createImage(multipartFile, token);
-    }
+
 
     @PutMapping("/listing")
     public ResponseEntity<ListingResponse> updateListing(@RequestBody UpdateListingRequest updateListingRequest,

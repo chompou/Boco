@@ -19,10 +19,8 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private byte[] image;
-    private String caption;
-    public Image(byte[] image, String caption, Listing listing){
+    public Image(byte[] image, Listing listing){
         this.image = image;
-        this.caption = caption;
         this.listing = listing;
     }
     @ManyToOne
@@ -33,5 +31,9 @@ public class Image {
 
     public Image(byte[] bytes) {
         this.image = bytes;
+    }
+
+    public Image(long size) {
+        this.id = size;
     }
 }
