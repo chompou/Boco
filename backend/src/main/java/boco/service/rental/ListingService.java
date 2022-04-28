@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +136,7 @@ public class ListingService {
         }
     }
 
-    public ResponseEntity<ImageResponse> createImage(ImageRequest imageRequest, String token){
+    public ResponseEntity<ImageResponse> createImage(MultipartFile multipartFile, String token){
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
@@ -143,8 +144,7 @@ public class ListingService {
                 logger.debug("profile of token not found found.");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            Optional<Listing> listing = listingRepository.findById(imageRequest.getListingId());
-            Image image = new Image(imageRequest.getImage(), imageRequest.getCaption(), listing.get());
+            Image image = new Image(multipartFile.getBytes());
             Image savedImage = imageRepository.save(image);
             return new ResponseEntity<>(new ImageResponse(savedImage), HttpStatus.CREATED);
         }catch (Exception e){
