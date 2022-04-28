@@ -18,6 +18,7 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 15000)
     private byte[] image;
     private String caption;
     public Image(byte[] image, String caption, Listing listing){
