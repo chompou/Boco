@@ -52,7 +52,6 @@ public class ListingService {
     }
 
     public ResponseEntity<List<ListingResponse>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String category){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
         CategoryType catType = null;
         if (!category.equals("")){
             Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
@@ -61,6 +60,9 @@ public class ListingService {
             }
             catType = catTypeData.get();
         }
+
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
 
         List<Listing> listings;
         if (priceFrom == -1) {
