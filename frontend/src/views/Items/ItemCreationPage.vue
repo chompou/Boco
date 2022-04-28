@@ -8,8 +8,7 @@
           <input
             type="file"
             accept="image/*"
-            ref="uploadImage"
-            @change="onImageUpload"
+            @change="previewImage"
             class="form-control-file"
             id="my-file"
           />
@@ -27,7 +26,7 @@
     </div>
     <div id="inputFields">
       <div class="ItemId">
-        <p class="ItemNameHeader">Title:</p>
+        <p id="ItemNameHeader">Title:</p>
         <input
           class="baseInput"
           v-model="title"
@@ -45,11 +44,10 @@
         />
       </div>
       <div class="ItemId">
-        <p class="ItemNameHeader">price:</p>
-        <div id="money">
+        <p>price:</p>
+        <div id="pricePicker">
           <input
             v-model="price"
-            id="price"
             placeholder="100"
             class="price"
             type="number"
@@ -64,36 +62,30 @@
           </select>
         </div>
       </div>
-      <div id="category">
-        <div>
-          <input type="checkbox" id="categoryCheckbox" v-model="checked" />
-          <label for="categoryCheckbox" id="categoryCheckboxLabel"
-            >Categories</label
-          >
+      <div class="ItemId">
+        <div class="checkboxItem">
+          <input type="checkbox" id="Tools" value="Tools" v-model="category" />
+          <label for="Tools">Tools</label>
         </div>
-        <div id="checkboxItems" v-if="checked">
-          <div class="ItemId2">
-            <input
-              type="checkbox"
-              id="vehicle"
-              value="vehicle"
-              v-model="category"
-            />
-            <label for="vehicle">Vehicle</label>
-          </div>
-          <div class="ItemId2">
-            <input type="checkbox" id="tool" value="tool" v-model="category" />
-            <label for="tool">Tool</label>
-          </div>
-          <div class="ItemId2">
-            <input
-              type="checkbox"
-              id="electronic"
-              value="electronic"
-              v-model="category"
-            />
-            <label for="electronic">Electronic</label>
-          </div>
+
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Vehicle"
+            value="Vehicle"
+            v-model="category"
+          />
+          <label for="Vehicle">Vehicle</label>
+        </div>
+
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Electronics"
+            value="Electronics"
+            v-model="category"
+          />
+          <label for="Electronics">Electronics</label>
         </div>
       </div>
       <div id="descriptionField">
@@ -119,9 +111,9 @@ import apiService from "@/services/apiService";
 export default {
   data() {
     return {
+      formData: null,
       preview: null,
       image: null,
-      formData: null,
       title: "",
       address: "",
       price: "",
@@ -132,11 +124,6 @@ export default {
     };
   },
   methods: {
-    onImageUpload() {
-      let file = this.$refs.uploadImage.files[0];
-      this.formData = new FormData();
-      this.formData.append("file", file);
-    },
     previewImage: function (event) {
       let input = event.target;
       if (input.files) {
@@ -145,20 +132,17 @@ export default {
           this.preview = e.target.result;
         };
         this.image = input.files[0];
+        this.formData = new FormData();
+        this.formData.append("file", this.image);
         reader.readAsDataURL(input.files[0]);
       }
     },
     submit() {
+      console.log(this.image);
       console.log(this.leaseType);
       apiService
-        .createImage({
-          image: this.image,
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      apiService
         .createItem({
+          image: this.formData,
           name: this.title,
           title: this.title,
           address: this.address,
@@ -197,10 +181,6 @@ export default {
   margin: 20px;
 }
 
-.ItemId2 {
-  margin: 10px;
-}
-
 .baseInput {
   width: 400px;
   height: 40px;
@@ -232,38 +212,6 @@ select {
   margin-bottom: 20px;
 }
 
-#money {
-  display: flex;
-}
-
-#price {
-  margin-top: 5px;
-}
-
-#category {
-  margin-top: 30px;
-  margin-left: 20px;
-}
-
-#categoryCheckboxLabel {
-  border: 1px solid #39495c;
-  font-size: 20px;
-  padding: 5px;
-}
-
-#categoryCheckboxLabel:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
-}
-
-#categoryCheckbox {
-  display: none;
-}
-
-#checkboxItems {
-  text-align: left;
-}
-
 #descriptionField {
   margin-top: 30px;
   margin-left: 20px;
@@ -282,6 +230,17 @@ select {
 
 .CreateButton {
   width: 100px;
+}
+
+#pricePicker {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxItem {
+  width: 200px;
+  display: flex;
+  align-items: center;
 }
 
 .CreateButton {
@@ -326,6 +285,14 @@ select {
   background-color: var(--button-hover);
   transform: scale(1.01);
   box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+label {
+  display: flex;
+  margin: auto;
+  padding: 0;
+  border-color: var(--button-color);
+  border-radius: 0;
 }
 
 #Delete {
