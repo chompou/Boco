@@ -10,7 +10,9 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <img id="logo" src="@/assets/mainLogo.png" alt="logo" />
+      <router-link to="/">
+        <img id="logo" src="@/assets/mainLogo.png" alt="logo"
+      /></router-link>
       <div
         id="collapsedNav"
         class="collapse navbar-collapse justify-content-center bg-light"
@@ -46,15 +48,6 @@
             <a class="nav-link">
               <router-link to="/create"
                 ><font-awesome-icon class="icons" icon="plus"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/"
-                ><font-awesome-icon class="icons" icon="house"
               /></router-link>
             </a>
           </li>
