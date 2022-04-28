@@ -1,6 +1,7 @@
 package boco.service.rental;
 
 import boco.models.http.LeaseResponse;
+import boco.models.http.UpdateLeaseRequest;
 import boco.models.profile.Personal;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
@@ -53,11 +54,11 @@ class LeaseServiceTest {
         Optional<Profile> pd2 = Optional.of(p2);
 
         Profile p3 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "12345678");
-        p3.setId(2L);
+        p3.setId(3L);
         Optional<Profile> pd3 = Optional.of(p3);
 
-        Profile p4 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "12345678");
-        p4.setId(2L);
+        Profile p4 = new Personal("si", "si@mail.com", "x", "SI", "x", "si", "12345678");
+        p4.setId(4L);
         Optional<Profile> pd4 = Optional.of(p4);
 
         Listing li1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);
@@ -102,27 +103,38 @@ class LeaseServiceTest {
 
         List<Lease> leases1 = List.of(le1, le2);
         List<Lease> leases2 = List.of(le3, le4, le5);
-        List<Lease> leases3 = List.of(le6);
+        List<Lease> leases3 = List.of(le6, le7);
 
         lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(pd1);
         lenient().when(profileRepository.findProfileByUsername("usr")).thenReturn(pd2);
+        lenient().when(profileRepository.findProfileByUsername("ron")).thenReturn(pd3);
+        lenient().when(profileRepository.findProfileByUsername("si")).thenReturn(pd4);
         lenient().when(profileRepository.findProfileByUsername("notfound")).thenReturn(Optional.empty());
 
-        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("messi"))).thenReturn("messi");
-        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("usr"))).thenReturn("usr");
-        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("notfound"))).thenReturn("notfound");
+        lenient().when(jwtUtil.extractUsername("messi")).thenReturn("messi");
+        lenient().when(jwtUtil.extractUsername("usr")).thenReturn("usr");
+        lenient().when(jwtUtil.extractUsername("ron")).thenReturn("ron");
+        lenient().when(jwtUtil.extractUsername("si")).thenReturn("si");
+        lenient().when(jwtUtil.extractUsername("notfound")).thenReturn("notfound");
 
         lenient().when(leaseRepository.getLeasesByOwner(pd1.get())).thenReturn(leases1);
         lenient().when(leaseRepository.getLeasesByOwner(pd2.get())).thenReturn(leases2);
+        lenient().when(leaseRepository.getLeasesByOwner(pd3.get())).thenReturn(leases3);
 
         lenient().when(leaseRepository.findById(1L)).thenReturn(Optional.of(le1));
         lenient().when(leaseRepository.findById(2L)).thenReturn(Optional.of(le2));
         lenient().when(leaseRepository.findById(3L)).thenReturn(Optional.of(le3));
         lenient().when(leaseRepository.findById(4L)).thenReturn(Optional.of(le4));
         lenient().when(leaseRepository.findById(5L)).thenReturn(Optional.of(le5));
+        lenient().when(leaseRepository.findById(6L)).thenReturn(Optional.of(le6));
+        lenient().when(leaseRepository.findById(7L)).thenReturn(Optional.of(le7));
 
         lenient().when(listingRepository.findById(1L)).thenReturn(Optional.of(li1));
         lenient().when(listingRepository.findById(2L)).thenReturn(Optional.of(li2));
+        lenient().when(listingRepository.findById(3L)).thenReturn(Optional.of(li3));
+
+        // Any lease can be returned to avoid NullPointerException, le1 was chosen randomly
+        lenient().when(leaseRepository.save(any())).thenReturn(le1);
     }
 
     @Test
@@ -206,17 +218,31 @@ class LeaseServiceTest {
 
     @Test
     public void deleteLeaseReturnsStatusCode204() {
+        // Owner deletes lease
         var r1 = service.deleteLease(1L, "Bearer messi");
         var r2 = service.deleteLease(2L, "Bearer messi");
         var r3 = service.deleteLease(3L, "Bearer usr");
         var r4 = service.deleteLease(4L, "Bearer usr");
         var r5 = service.deleteLease(5L, "Bearer usr");
 
+        // Leasee deletes lease
+        var r6 = service.deleteLease(1L, "Bearer usr");
+        var r7 = service.deleteLease(2L, "Bearer usr");
+        var r8 = service.deleteLease(3L, "Bearer messi");
+        var r9 = service.deleteLease(4L, "Bearer messi");
+        var r10 = service.deleteLease(5L, "Bearer messi");
+
         assertEquals(r1.getStatusCodeValue(), 204);
         assertEquals(r2.getStatusCodeValue(), 204);
         assertEquals(r3.getStatusCodeValue(), 204);
         assertEquals(r4.getStatusCodeValue(), 204);
         assertEquals(r5.getStatusCodeValue(), 204);
+        assertEquals(r6.getStatusCodeValue(), 204);
+        assertEquals(r7.getStatusCodeValue(), 204);
+        assertEquals(r8.getStatusCodeValue(), 204);
+        assertEquals(r9.getStatusCodeValue(), 204);
+        assertEquals(r10.getStatusCodeValue(), 204);
+
     }
 
     @Test
@@ -225,8 +251,8 @@ class LeaseServiceTest {
         var r1 = service.deleteLease(1L, "Bearer notfound");
 
         // Lease not in database
-        var r2 = service.deleteLease(6L, "Bearer usr");
-        var r3 = service.deleteLease(7L, "Bearer messi");
+        var r2 = service.deleteLease(8L, "Bearer usr");
+        var r3 = service.deleteLease(9L, "Bearer messi");
 
         assertEquals(r1.getStatusCodeValue(), 404);
         assertEquals(r2.getStatusCodeValue(), 404);
@@ -235,7 +261,45 @@ class LeaseServiceTest {
 
     @Test
     public void deleteLeaseReturnsStatusCode422() {
-        //var r1 = service.deleteLease(1L, );
+        // Completed lease
+        var r1 = service.deleteLease(6L, "Bearer ron");
+        // Trying to delete less than 24h before start
+        var r2 = service.deleteLease(7L, "Bearer ron");
+
+        // Profile not part of lease trying to delete the lease
+        var r3 = service.deleteLease(1L, "Bearer ron");
+        var r4 = service.deleteLease(2L, "Bearer si");
+
+        assertEquals(r1.getStatusCodeValue(), 422);
+        assertEquals(r2.getStatusCodeValue(), 422);
+        assertEquals(r3.getStatusCodeValue(), 422);
+        assertEquals(r4.getStatusCodeValue(), 422);
     }
+
+    @Test
+    public void updateLeaseReturnsStatusCode200() {
+        var req = new UpdateLeaseRequest(true,true,1L);
+        var r1 = service.updateLease(req, "Bearer messi");
+        assertEquals(r1.getStatusCodeValue(), 200);
+    }
+
+    @Test
+    public void updateLeaseReturnsStatusCode400() {
+        // updater of lease is not the lease owner
+        var req1 = new UpdateLeaseRequest(true,true,1L); // Owned by messi
+        var req2 = new UpdateLeaseRequest(true,true,3L); // Owned by usr
+
+        var r1 = service.updateLease(req1, "Bearer usr");
+        var r2 = service.updateLease(req1, "Bearer si");
+        var r3 = service.updateLease(req2, "Bearer messi");
+        var r4 = service.updateLease(req2, "Bearer ron");
+
+        assertEquals(r1.getStatusCodeValue(), 400);
+        assertEquals(r2.getStatusCodeValue(), 400);
+        assertEquals(r3.getStatusCodeValue(), 400);
+        assertEquals(r4.getStatusCodeValue(), 400);
+
+    }
+
 
 }
