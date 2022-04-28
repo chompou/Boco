@@ -31,4 +31,7 @@ public class Image {
     private Listing listing;
 
 
+    public Image(byte[] bytes) {
+        this.image = bytes;
+    }
 }

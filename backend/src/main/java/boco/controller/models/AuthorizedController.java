@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,9 +39,9 @@ public class AuthorizedController {
         return listingService.createListing(listingRequest, token);
     }
     @PostMapping("/listing/image")
-    public ResponseEntity<ImageResponse> createImage(@RequestBody ImageRequest imageRequest,
-                                                     @RequestHeader(name="Authorization") String token) {
-        return listingService.createImage(imageRequest,token);
+    public ResponseEntity<ImageResponse> createImage(@RequestParam("file")MultipartFile multipartFile,
+                                                     @RequestHeader(name="Authorization")String token) {
+        return listingService.createImage(multipartFile, token);
     }
 
     @PutMapping("/listing")
