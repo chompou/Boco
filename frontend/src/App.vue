@@ -10,7 +10,9 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <img id="logo" src="@/assets/mainLogo.png" alt="logo" />
+      <router-link to="/">
+        <img id="logo" src="@/assets/mainLogo.png" alt="logo"
+      /></router-link>
       <div
         id="collapsedNav"
         class="collapse navbar-collapse justify-content-center bg-light"
@@ -53,15 +55,6 @@
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/"
-                ><font-awesome-icon class="icons" icon="house"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
               <router-link to="/support"
                 ><font-awesome-icon class="icons" icon="info"
               /></router-link>
@@ -70,7 +63,7 @@
         </ul>
       </div>
     </div>
-    <NotificationComponent />
+    <NotificationComponent v-if="$store.state.loggedIn" />
   </nav>
 
   <div class="container">
@@ -247,6 +240,20 @@ li a:hover {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);
+}
+
+label,
+.input-field {
+  display: flex;
+  margin: auto;
+  padding: 8px;
+  border-color: var(--button-color);
+  border-radius: 5px;
+  justify-content: space-evenly;
+}
+.input-field:hover,
+.input-field:focus {
+  border-color: var(--button-hover);
 }
 
 #logo {
