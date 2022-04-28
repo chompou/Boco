@@ -15,10 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.internal.verification.Times;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,30 +52,57 @@ class LeaseServiceTest {
         p2.setId(2L);
         Optional<Profile> pd2 = Optional.of(p2);
 
+        Profile p3 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "12345678");
+        p3.setId(2L);
+        Optional<Profile> pd3 = Optional.of(p3);
+
+        Profile p4 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "12345678");
+        p4.setId(2L);
+        Optional<Profile> pd4 = Optional.of(p4);
+
         Listing li1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);
         li1.setId(1L);
 
         Listing li2 = new Listing("crypto", "crypto", "bitcoin", true, true, 100.0, "Month", p2);
         li2.setId(2L);
 
+        Listing li3 = new Listing("room", "room", "building", true, true, 1.0, "Week", p3);
+        li3.setId(3L);
+
         Lease le1 = new Lease(Timestamp.valueOf("2030-07-01 10:00:00"), Timestamp.valueOf("2030-12-01 10:00:00"),
                 p2, li1, p1);
+        le1.setId(1L);
         Lease le2 = new Lease(Timestamp.valueOf("2031-07-01 10:00:00"), Timestamp.valueOf("2031-12-01 10:00:00"),
                 p2, li1, p1);
+        le2.setId(2L);
         Lease le3 = new Lease(Timestamp.valueOf("2032-07-01 10:00:00"), Timestamp.valueOf("2032-12-01 10:00:00"),
                 p1, li2, p2);
+        le3.setId(3L);
         Lease le4 = new Lease(Timestamp.valueOf("2033-07-01 10:00:00"), Timestamp.valueOf("2033-12-01 10:00:00"),
                 p1, li2, p2);
+        le4.setId(4L);
         Lease le5 = new Lease(Timestamp.valueOf("2034-07-01 10:00:00"), Timestamp.valueOf("2034-12-01 10:00:00"),
                 p1, li2, p2);
-        le1.setId(1L);
-        le2.setId(2L);
-        le3.setId(3L);
-        le4.setId(4L);
         le5.setId(5L);
+
+        // SPECIAL CASES:
+        // Lease which is completed
+        Lease le6 = new Lease(Timestamp.valueOf("2025-07-01 10:00:00"), Timestamp.valueOf("2025-12-01 10:00:00"),
+                p4, li3, p3);
+        le6.setId(6L);
+        le6.setCompleted(true);
+        // Lease with start date less than 24 hours before now
+        Date date = new Date();
+        Timestamp fromDate = new Timestamp(date.getTime() + (3600*1000*3));
+        Timestamp toDate = new Timestamp(date.getTime() + (3600*1000*10));
+        Lease le7 = new Lease(fromDate, toDate,
+                p4, li3, p3);
+        le7.setId(7L);
+
 
         List<Lease> leases1 = List.of(le1, le2);
         List<Lease> leases2 = List.of(le3, le4, le5);
+        List<Lease> leases3 = List.of(le6);
 
         lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(pd1);
         lenient().when(profileRepository.findProfileByUsername("usr")).thenReturn(pd2);
@@ -203,4 +232,10 @@ class LeaseServiceTest {
         assertEquals(r2.getStatusCodeValue(), 404);
         assertEquals(r3.getStatusCodeValue(), 404);
     }
+
+    @Test
+    public void deleteLeaseReturnsStatusCode422() {
+        //var r1 = service.deleteLease(1L, );
+    }
+
 }
