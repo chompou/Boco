@@ -15,8 +15,6 @@ public class ListingRequest {
     private boolean isActive;
     private double price;
     private String priceType;
-    private byte[] image;
-    private String caption;
 
     private Long profileId; // ID of the profile listing the request
 
