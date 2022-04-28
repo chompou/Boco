@@ -8,7 +8,8 @@
           <input
             type="file"
             accept="image/*"
-            @change="previewImage"
+            ref="uploadImage"
+            @change="onImageUpload"
             class="form-control-file"
             id="my-file"
           />
@@ -26,7 +27,7 @@
     </div>
     <div id="inputFields">
       <div class="ItemId">
-        <p id="ItemNameHeader">Title:</p>
+        <p class="ItemNameHeader">Title:</p>
         <input
           class="baseInput"
           v-model="title"
@@ -44,21 +45,24 @@
         />
       </div>
       <div class="ItemId">
-        <p>price:</p>
-        <input
-          v-model="price"
-          placeholder="100"
-          class="price"
-          type="number"
-          min="0"
-        />
-        <label id="valuta">kr/</label>
-        <select v-model="leaseType">
-          <option disabled value="">Hour</option>
-          <option>Hour</option>
-          <option>Day</option>
-          <option>Week</option>
-        </select>
+        <p class="ItemNameHeader">price:</p>
+        <div id="money">
+          <input
+            v-model="price"
+            id="price"
+            placeholder="100"
+            class="price"
+            type="number"
+            min="0"
+          />
+          <label id="valuta">kr/</label>
+          <select v-model="leaseType">
+            <option disabled value="">Hour</option>
+            <option>Hour</option>
+            <option>Day</option>
+            <option>Week</option>
+          </select>
+        </div>
       </div>
       <div id="category">
         <div>
@@ -117,6 +121,7 @@ export default {
     return {
       preview: null,
       image: null,
+      formData: null,
       title: "",
       address: "",
       price: "",
@@ -127,6 +132,11 @@ export default {
     };
   },
   methods: {
+    onImageUpload() {
+      let file = this.$refs.uploadImage.files[0];
+      this.formData = new FormData();
+      this.formData.append("file", file);
+    },
     previewImage: function (event) {
       let input = event.target;
       if (input.files) {
@@ -139,11 +149,16 @@ export default {
       }
     },
     submit() {
-      console.log(this.image);
       console.log(this.leaseType);
       apiService
-        .createItem({
+        .createImage({
           image: this.image,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      apiService
+        .createItem({
           name: this.title,
           title: this.title,
           address: this.address,
@@ -215,6 +230,14 @@ select {
 #inputFields {
   text-align: left;
   margin-bottom: 20px;
+}
+
+#money {
+  display: flex;
+}
+
+#price {
+  margin-top: 5px;
 }
 
 #category {

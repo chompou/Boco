@@ -10,7 +10,22 @@ const apiClient = axios.create({
   },
 });
 
+const apiClientImage = axios.create({
+  baseURL: "http://localhost:8080/api",
+  timeout: 1000,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "multipart/form-data",
+  },
+});
+
 apiClient.interceptors.request.use((config) => {
+  let token = storageService.getToken();
+  if (token != null) config.headers.Authorization = "Bearer " + token;
+  return config;
+});
+
+apiClientImage.interceptors.request.use((config) => {
   let token = storageService.getToken();
   if (token != null) config.headers.Authorization = "Bearer " + token;
   return config;
@@ -23,6 +38,10 @@ export default {
 
   createItem(item) {
     return apiClient.post("/my/listing", item);
+  },
+
+  createImage(image) {
+    return apiClientImage.post("/my/listing", image);
   },
 
   getItems(filters, page, perPage) {
