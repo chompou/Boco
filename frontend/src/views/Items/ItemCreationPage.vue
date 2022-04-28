@@ -29,7 +29,7 @@
         <p id="ItemNameHeader">Title:</p>
         <input
           class="baseInput"
-          v-model="title"
+          v-model="this.title"
           placeholder="Name"
           id="ItemName"
         />
@@ -38,7 +38,7 @@
         <p>Address:</p>
         <input
           class="baseInput"
-          v-model="address"
+          v-model="this.address"
           placeholder="Address"
           id="Address"
         />
@@ -47,14 +47,14 @@
         <p>price:</p>
         <div id="pricePicker">
           <input
-            v-model="price"
+            v-model="this.price"
             placeholder="100"
             class="price"
             type="number"
             min="0"
           />
           <label id="valuta">kr/</label>
-          <select v-model="leaseType">
+          <select v-model="this.leaseType">
             <option disabled value="">Hour</option>
             <option>Hour</option>
             <option>Day</option>
@@ -64,7 +64,12 @@
       </div>
       <div class="ItemId">
         <div class="checkboxItem">
-          <input type="checkbox" id="Tools" value="Tools" v-model="category" />
+          <input
+            type="checkbox"
+            id="Tools"
+            value="Tools"
+            v-model="this.category"
+          />
           <label for="Tools">Tools</label>
         </div>
 
@@ -73,7 +78,7 @@
             type="checkbox"
             id="Vehicle"
             value="Vehicle"
-            v-model="category"
+            v-model="this.category"
           />
           <label for="Vehicle">Vehicle</label>
         </div>
@@ -83,7 +88,7 @@
             type="checkbox"
             id="Electronics"
             value="Electronics"
-            v-model="category"
+            v-model="this.category"
           />
           <label for="Electronics">Electronics</label>
         </div>
@@ -91,7 +96,7 @@
       <div id="descriptionField">
         <p>Description</p>
         <textarea
-          v-model="description"
+          v-model="this.description"
           placeholder="Description"
           id="description"
           name="description"
@@ -111,7 +116,7 @@ import apiService from "@/services/apiService";
 export default {
   data() {
     return {
-      formData: null,
+      formData: new FormData(),
       preview: null,
       image: null,
       title: "",
@@ -132,37 +137,32 @@ export default {
           this.preview = e.target.result;
         };
         this.image = input.files[0];
-        this.formData = new FormData();
         this.formData.append("file", this.image);
-        this.formData.append(
-          "properties",
-          new Blob(
-            [
-              JSON.stringify({
-                name: this.title,
-                address: this.address,
-                price: this.leasePrice,
-                priceType: this.leaseType,
-                description: this.description,
-              }),
-            ],
-            {
-              type: "application/json",
-            }
-          )
-        );
       }
     },
     submit() {
       console.log(this.image);
       console.log(this.leaseType);
-      apiService
-        .createImage({
-          data: this.formData,
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.formData.append(
+        "properties",
+        new Blob(
+          [
+            JSON.stringify({
+              name: this.title,
+              address: this.address,
+              price: this.leasePrice,
+              priceType: this.leaseType,
+              description: this.description,
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+      apiService.createItem(this.formData).catch((error) => {
+        console.log(error);
+      });
     },
   },
   computed: {

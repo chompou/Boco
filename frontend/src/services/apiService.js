@@ -6,7 +6,6 @@ const apiClient = axios.create({
   timeout: 1000,
   headers: {
     Accept: "application/json",
-    "Content-Type": "application/json",
   },
 });
 
@@ -37,10 +36,6 @@ export default {
 
   createItem(item) {
     return apiClient.post("/my/listing", item);
-  },
-
-  createImage(data) {
-    return apiClientImage.post("/my/listing", data);
   },
 
   getItems(filters, page, perPage) {
