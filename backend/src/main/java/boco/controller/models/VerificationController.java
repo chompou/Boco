@@ -2,7 +2,7 @@ package boco.controller.models;
 
 import boco.models.profile.Profile;
 import boco.service.profile.ProfileService;
-import boco.service.security.EmailService;
+import boco.service.profile.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ public class VerificationController {
     }
 
     @GetMapping("/verification/{profile_id}")
-    public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) throws MalformedURLException {
+    public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) {
         String url = "http://localhost:8080/api/verification/getVerified/"+ profileId;
         //TODO secure this endpoint better, (ask Elias)
         try {
@@ -33,6 +33,5 @@ public class VerificationController {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-
     }
 }

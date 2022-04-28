@@ -1,31 +1,31 @@
-import { createRouter, createWebHistory } from "vue-router";
+import apiService from "@/services/apiService";
+import storageService from "@/services/storageService";
 import store from "@/store/index.js";
-import FrontPage from "../views/FrontPageView.vue";
-import LoginView from "@/views/LoginView";
+import forgottenPwdView from "@/views/ForgottenPwdView";
 import ItemCreationPage from "@/views/Items/ItemCreationPage";
-import RegisterView from "@/views/RegisterView";
-import NotFoundView from "@/views/NotFoundView";
-import MyProfileView from "@/views/my/MyProfileView";
+import itemEditPage from "@/views/Items/ItemEditPage";
+import ItemPage from "@/views/Items/ItemPage";
+import itemsPage from "@/views/Items/ItemsPage";
+import LoginView from "@/views/LoginView";
 import MyItemsView from "@/views/my/MyItemsView";
 import MyLeasesView from "@/views/my/MyLeasesView";
+import MyProfileView from "@/views/my/MyProfileView";
 import MyReviewView from "@/views/my/MyReviewView";
 import MySettingsView from "@/views/my/MySettingsView";
-import itemEditPage from "@/views/Items/ItemEditPage";
-import forgottenPwdView from "@/views/ForgottenPwdView";
+import NotFoundView from "@/views/NotFoundView";
+import RegisterView from "@/views/RegisterView";
 import SupportFormView from "@/views/SupportFormView";
-import itemsPage from "@/views/Items/ItemsPage";
-import ItemPage from "@/views/Items/ItemPage";
-import storageService from "@/services/storageService";
-import apiService from "@/services/apiService";
+import { createRouter, createWebHistory } from "vue-router";
+import FrontPage from "../views/FrontPageView.vue";
 
-const routerGuard = {
-  beforeEnter: (to, from) => {
-    console.log(from.name);
-    if (!store.state.loggedIn && to.name !== "login") {
-      return { name: "login" };
-    }
-  },
-};
+// const routerGuard = {
+// beforeEnter: (to, from) => {
+//   console.log(from.name);
+//   if (!store.state.loggedIn && to.name !== "login") {
+//     return { name: "login" };
+//   }
+// },
+// };
 
 const routes = [
   {
@@ -57,10 +57,11 @@ const routes = [
     path: "/profile/:id",
     name: "profile",
     props: true,
+    component: MyProfileView,
   },
   {
-    ...routerGuard,
     path: "/my",
+    name: "my",
     component: MyProfileView,
     children: [
       {
@@ -86,13 +87,11 @@ const routes = [
     ],
   },
   {
-    ...routerGuard,
     path: "/create",
     name: "createItem",
     component: ItemCreationPage,
   },
   {
-    ...routerGuard,
     path: "/edit",
     name: "editItem",
     component: itemEditPage,
@@ -120,18 +119,31 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(() => {
-  console.log("gloal guard");
+router.beforeEach(async function (to) {
+  if (!store.state.loggedIn && storageService.getToken() != null) {
+    try {
+      let response = await apiService.getMyProfile();
+      store.state.loggedIn = true;
+      store.state.loggedInUser = response.data.id;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   if (!store.state.loggedIn) {
-    let token = storageService.getToken();
-    if (token != null) {
-      apiService
-        .getMyProfile()
-        .then((response) => {
-          store.state.loggedInUser = response.data.id;
-          store.state.loggedIn = true;
-        })
-        .catch((error) => console.error(error));
+    switch (to.path) {
+      case "/my/items":
+      case "/my/leases":
+      case "/my/reviews":
+      case "/my/settings":
+      case "/create":
+      case "/edit":
+        return { name: "login" };
+      default:
+    }
+  } else {
+    if (to.path == "/login") {
+      return { name: "home" };
     }
   }
 });

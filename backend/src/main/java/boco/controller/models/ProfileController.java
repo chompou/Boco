@@ -3,22 +3,22 @@ package boco.controller.models;
 import boco.models.http.ProfileRequest;
 import boco.models.http.PrivateProfileResponse;
 import boco.models.http.PublicProfileResponse;
+import boco.service.profile.EmailService;
 import boco.service.profile.ProfileService;
-import boco.service.security.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.MalformedURLException;
 
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
     private final ProfileService profileService;
+    private final EmailService emailService;
 
     @Autowired
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(ProfileService profileService, EmailService emailService) {
         this.profileService = profileService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/{profile_id}")
@@ -29,7 +29,12 @@ public class ProfileController {
 
     @PostMapping("")
     public ResponseEntity<PrivateProfileResponse> createProfile(@RequestBody ProfileRequest profileRequest) {
-        return profileService.createProfile(profileRequest);
+        ResponseEntity<PrivateProfileResponse> responseEntity = profileService.createProfile(profileRequest);
+        if (responseEntity.getBody() != null){
+            emailService.sendCreatedAccountMessage(profileRequest.getEmail());
+        }
+
+        return responseEntity;
     }
 
 

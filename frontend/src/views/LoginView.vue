@@ -24,6 +24,7 @@
         required
       />
       <br />
+      <div v-if="falsePWD">Wrong credentials. Try again</div>
       <input
         id="toggle-password-box"
         type="checkbox"
@@ -54,6 +55,7 @@ export default {
     return {
       username: "",
       password: "",
+      falsePWD: false,
     };
   },
   methods: {
@@ -65,17 +67,24 @@ export default {
         checkbox.type = "password";
       }
     },
+
     submit() {
       apiService
         .login(this.username, this.password)
         .then((response) => {
           storageService.setToken(response.data["jwt"]);
           storageService.setUser(this.username);
-          this.$store.state.loggedInUser = response.data["userId"];
           this.$router.push("/");
         })
-        .catch((error) => console.error(error));
+        .catch(() => (this.falsePWD = true));
     },
+  },
+
+  created() {
+    let user = storageService.getUser();
+    if (user != null) {
+      this.username = user;
+    }
   },
 };
 </script>

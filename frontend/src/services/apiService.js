@@ -22,7 +22,7 @@ export default {
   },
 
   createItem(item) {
-    return apiClient.post("/listing", item);
+    return apiClient.post("/my/listing", item);
   },
 
   getItems(filters, page, perPage) {
@@ -35,6 +35,10 @@ export default {
     return apiClient.get("/review", {
       params: { ...filters, page: page, perPage: perPage },
     });
+  },
+
+  getCategories() {
+    return apiClient.get("/category");
   },
 
   getProfile(profileId) {

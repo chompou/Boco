@@ -1,15 +1,15 @@
 <template>
   <div class="profile-bar">
     <div class="profile-bar-text">
-      <h3 id="username">{{ username }}</h3>
-      <p id="phone-number">Phone nr: {{ phoneNumber }}</p>
-      <p id="email">Email: {{ email }}</p>
+      <h3 id="username">{{ profile.displayName }}</h3>
+      <p id="phone-number">Phone nr: {{ profile.tlf }}</p>
+      <p id="email">Email: {{ profile.email }}</p>
     </div>
     <div id="rating">
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="all-buttons" v-if="isLoggedIn">
+      <div class="all-buttons" v-if="isMe">
         <button
           id="items-button"
           class="boco-btn"
@@ -51,16 +51,11 @@ import RatingComponent from "@/components/RatingComponent";
 
 export default {
   components: { RatingComponent },
-  data() {
-    return {
-      username: "Øyvind Bjøntegaard",
-      phoneNumber: "48420178",
-      email: "ØyvindBjørn@gmail.com",
-    };
-  },
+  props: ["profile"],
+
   computed: {
-    isLoggedIn() {
-      return this.$store.state.loggedInUser === 1;
+    isMe() {
+      return this.$store.state.loggedInUser == this.profile.id;
     },
   },
 };
@@ -131,6 +126,8 @@ export default {
 .boco-btn:hover,
 .boco-btn:focus {
   background-color: var(--button-hover);
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 .boco-btn:disabled {

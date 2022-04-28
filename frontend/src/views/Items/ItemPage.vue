@@ -10,14 +10,18 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img alt="Vue logo" src="@/assets/service.png" />
+          <img :src="url" />
           <div v-if="my">
             <button class="editButtons">Set Active</button>
             <button class="editButtons">Edit</button>
             <button class="editButtons">Delete</button>
           </div>
-          <button class="leaseButton" v-else @click="leaseOverlay = true">
-            Book leasing
+          <button
+            class="leaseButton boco-btn"
+            v-else
+            @click="leaseOverlay = true"
+          >
+            Book
           </button>
         </div>
         <div id="About">
@@ -26,12 +30,12 @@
               <h2>{{ item.name }}</h2>
               <div id="category">
                 <label>Category: </label>
-                <label v-for="item in item.category" :key="item"
-                  >{{ item }},
+                <label v-for="category in item.categoryTypes" :key="category"
+                  >{{ category.name }},
                 </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ item.price }}kr / {{ item.priceType }}</p>
+              <p>Price: {{ price }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
               <RatingComponent :rating="item.rating" />
@@ -43,7 +47,12 @@
       </div>
     </div>
     <div>
-      <ProfileBoxComponent :profile="profile" />
+      <router-link
+        class="link"
+        :to="{ name: 'profile', params: { id: profile.id } }"
+      >
+        <ProfileBoxComponent :profile="profile" />
+      </router-link>
       <ReviewComponent :reviews="reviews" />
     </div>
   </div>
@@ -55,6 +64,7 @@ import ProfileBoxComponent from "@/components/ProfileBoxComponent";
 import ReviewComponent from "@/components/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
+import axios from "axios";
 export default {
   props: ["id"],
 
@@ -67,12 +77,24 @@ export default {
   data() {
     return {
       leaseOverlay: false,
-      item: { id: null, profileId: null },
+      item: { id: null, profileId: null, price: 0, priceType: null },
       profile: {},
       reviews: [],
+      url: null,
     };
   },
-
+  computed: {
+    price() {
+      let actuallyPrice = this.item.price;
+      if (this.item.priceType === "Week") {
+        actuallyPrice = this.item.price * 7 * 24;
+      }
+      if (this.item.priceType === "Day") {
+        actuallyPrice = this.item.price * 24;
+      }
+      return actuallyPrice;
+    },
+  },
   created() {
     apiService
       .getItem(this.id)
@@ -99,6 +121,10 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+
+    axios.get("https://picsum.photos/200/300").then((response) => {
+      this.url = response.request.responseURL;
+    });
   },
 };
 </script>
@@ -138,14 +164,10 @@ img {
   border: 1px solid #39495c;
   width: 150px;
   height: 50px;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   padding: 5px;
-  background: white;
   margin: 50px;
 }
 

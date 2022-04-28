@@ -1,4 +1,7 @@
 <template>
+  <div class="container-fluid text-center">
+    <img src="@/assets/NyLogoBoCo1.png" alt="Logo" />
+  </div>
   <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
     <div class="container-fluid">
       <button
@@ -10,7 +13,9 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <img id="logo" src="@/assets/mainLogo.png" alt="logo" />
+      <router-link to="/">
+        <img id="logo" src="@/assets/mainLogo.png" alt="logo"
+      /></router-link>
       <div
         id="collapsedNav"
         class="collapse navbar-collapse justify-content-center bg-light"
@@ -21,7 +26,11 @@
               <router-link to="login" v-if="!$store.state.loggedIn"
                 ><font-awesome-icon icon="right-to-bracket"
               /></router-link>
-              <button id="log-out-button" v-if="$store.state.loggedIn">
+              <button
+                id="log-out-button"
+                v-if="$store.state.loggedIn"
+                @click="logout"
+              >
                 <font-awesome-icon icon="sign-out-alt" />
               </button>
             </a>
@@ -49,16 +58,7 @@
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/"
-                ><font-awesome-icon class="icons" icon="house"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/info"
+              <router-link to="/support"
                 ><font-awesome-icon class="icons" icon="info"
               /></router-link>
             </a>
@@ -66,7 +66,7 @@
         </ul>
       </div>
     </div>
-    <NotificationComponent />
+    <NotificationComponent v-if="$store.state.loggedIn" />
   </nav>
 
   <div class="container">
@@ -74,15 +74,26 @@
     <div style="height: 20px" />
   </div>
 </template>
-<script>
-import NotificationComponent from "@/components/NotificationComponent";
 
+<script>
+import storageService from "./services/storageService";
+import NotificationComponent from "@/components/NotificationComponent";
 export default {
   components: {
     NotificationComponent,
   },
+
+  methods: {
+    logout() {
+      storageService.clearToken();
+      this.$store.state.loggedIn = false;
+      this.$store.state.loggedInUser = null;
+      this.$router.push("/");
+    },
+  },
 };
 </script>
+
 <style>
 :root {
   --main-color: #008b8b;
@@ -248,7 +259,7 @@ li a:hover {
 }
 
 #logo {
-  height: 70px;
+  height: 50px;
   width: auto;
 }
 

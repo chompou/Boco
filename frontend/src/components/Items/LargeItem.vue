@@ -1,15 +1,15 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img alt="Vue logo" src="@/assets/service.png" />
+      <img :src="url" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
             <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
-            <p>Category: category</p>
+            <p>Category: {{ categoryString }}</p>
             <p>Address: {{ item.address }}</p>
-            <p>Price: {{ item.price }}kr/{{ item.priceType }}</p>
+            <p>Price: {{ price }}kr/{{ item.priceType }}</p>
           </div>
           <div id="About2">
             <RatingComponent :rating="item.rating" />
@@ -22,10 +22,39 @@
 
 <script>
 import RatingComponent from "@/components/RatingComponent";
+import axios from "axios";
 
 export default {
   props: ["item"],
   components: { RatingComponent },
+  computed: {
+    price() {
+      let actuallyPrice = this.item.price;
+      if (this.item.priceType === "Week") {
+        actuallyPrice = this.item.price * 7 * 24;
+      }
+      if (this.item.priceType === "Day") {
+        actuallyPrice = this.item.price * 24;
+      }
+      return actuallyPrice;
+    },
+
+    categoryString() {
+      return this.item.categoryTypes.map((c) => c.name).join(", ");
+    },
+  },
+
+  data() {
+    return {
+      url: null,
+    };
+  },
+
+  created() {
+    axios.get("https://picsum.photos/200/300").then((response) => {
+      this.url = response.request.responseURL;
+    });
+  },
 };
 </script>
 

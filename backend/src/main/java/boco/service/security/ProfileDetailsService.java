@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * ProfileDetails service, finds a user by either email or username used for user authentication
+ */
 @Service
 public class ProfileDetailsService implements UserDetailsService {
     @Autowired
