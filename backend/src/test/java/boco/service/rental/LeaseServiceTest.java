@@ -44,9 +44,11 @@ class LeaseServiceTest {
     public void setup() {
         Profile p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "12345678");
         p1.setId(1L);
-        Optional<Profile> profileData = Optional.of(p1);
+        Optional<Profile> pd1 = Optional.of(p1);
+
         Profile p2 = new Personal("usr", "usr@mail.com", "x", "USR", "x", "World", "12345678");
         p2.setId(2L);
+        Optional<Profile> pd2 = Optional.of(p2);
 
         Listing li1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);
         li1.setId(1L);
@@ -62,25 +64,48 @@ class LeaseServiceTest {
                 p1, li2, p2);
         Lease le4 = new Lease(Timestamp.valueOf("2033-07-01 10:00:00"), Timestamp.valueOf("2033-12-01 10:00:00"),
                 p1, li2, p2);
+        Lease le5 = new Lease(Timestamp.valueOf("2034-07-01 10:00:00"), Timestamp.valueOf("2034-12-01 10:00:00"),
+                p1, li2, p2);
         le1.setId(1L);
         le2.setId(2L);
         le3.setId(3L);
         le4.setId(4L);
-        List<Lease> leases = List.of(le1, le2, le3, le4);
+        le5.setId(5L);
 
-        lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(profileData);
-        lenient().when(leaseRepository.getLeasesByOwner(profileData.get())).thenReturn(leases);
-        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("messi"))).thenReturn("messi");
+        List<Lease> leases1 = List.of(le1, le2);
+        List<Lease> leases2 = List.of(le3, le4, le5);
+
+        lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(pd1);
+        lenient().when(profileRepository.findProfileByUsername("usr")).thenReturn(pd2);
         lenient().when(profileRepository.findProfileByUsername("notfound")).thenReturn(Optional.empty());
+
+        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("messi"))).thenReturn("messi");
+        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("usr"))).thenReturn("usr");
         lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("notfound"))).thenReturn("notfound");
+
+        lenient().when(leaseRepository.getLeasesByOwner(pd1.get())).thenReturn(leases1);
+        lenient().when(leaseRepository.getLeasesByOwner(pd2.get())).thenReturn(leases2);
+
+        lenient().when(leaseRepository.findById(1L)).thenReturn(Optional.of(le1));
+        lenient().when(leaseRepository.findById(2L)).thenReturn(Optional.of(le2));
+        lenient().when(leaseRepository.findById(3L)).thenReturn(Optional.of(le3));
+        lenient().when(leaseRepository.findById(4L)).thenReturn(Optional.of(le4));
+        lenient().when(leaseRepository.findById(5L)).thenReturn(Optional.of(le5));
+
+        lenient().when(listingRepository.findById(1L)).thenReturn(Optional.of(li1));
+        lenient().when(listingRepository.findById(2L)).thenReturn(Optional.of(li2));
     }
 
     @Test
     public void getMyLeasesReturnsCorrectNumberOfLeases() {
-        ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi");
-        List<LeaseResponse> leases = res.getBody();
+        ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi");
+        List<LeaseResponse> leases1 = res1.getBody();
+        ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr");
+        List<LeaseResponse> leases2 = res2.getBody();
 
-        assertEquals(leases.size(), 4);
+
+        assertEquals(leases1.size(), 2);
+        assertEquals(leases2.size(), 3);
     }
 
     @Test
@@ -92,12 +117,16 @@ class LeaseServiceTest {
 
     @Test
     public void getMyLeasesReturnsCorrectLeases() {
-        ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi");
-        List<LeaseResponse> leases = res.getBody();
-        LeaseResponse l1 = leases.get(0);
-        LeaseResponse l2 = leases.get(1);
-        LeaseResponse l3 = leases.get(2);
-        LeaseResponse l4 = leases.get(3);
+        ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi");
+        ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr");
+        List<LeaseResponse> leases1 = res1.getBody();
+        List<LeaseResponse> leases2 = res2.getBody();
+
+        LeaseResponse l1 = leases1.get(0);
+        LeaseResponse l2 = leases1.get(1);
+        LeaseResponse l3 = leases2.get(0);
+        LeaseResponse l4 = leases2.get(1);
+        LeaseResponse l5 = leases2.get(2);
 
         assertEquals(l1.getId(), 1L);
         assertEquals(l1.getIsApproved(), false);
@@ -130,6 +159,14 @@ class LeaseServiceTest {
         assertEquals(l4.getIsCompleted(), false);
         assertEquals(l4.getProfileId(), 1L);
         assertEquals(l4.getListingId(), 2L);
+
+        assertEquals(l5.getId(), 5L);
+        assertEquals(l5.getIsApproved(), false);
+        assertEquals(l5.getFromDatetime(), Timestamp.valueOf("2034-07-01 10:00:00"));
+        assertEquals(l5.getToDatetime(), Timestamp.valueOf("2034-12-01 10:00:00"));
+        assertEquals(l5.getIsCompleted(), false);
+        assertEquals(l5.getProfileId(), 1L);
+        assertEquals(l5.getListingId(), 2L);
     }
 
     @Test
@@ -138,4 +175,32 @@ class LeaseServiceTest {
         assertEquals(res.getStatusCodeValue(), 404);
     }
 
+    @Test
+    public void deleteLeaseReturnsStatusCode204() {
+        var r1 = service.deleteLease(1L, "Bearer messi");
+        var r2 = service.deleteLease(2L, "Bearer messi");
+        var r3 = service.deleteLease(3L, "Bearer usr");
+        var r4 = service.deleteLease(4L, "Bearer usr");
+        var r5 = service.deleteLease(5L, "Bearer usr");
+
+        assertEquals(r1.getStatusCodeValue(), 204);
+        assertEquals(r2.getStatusCodeValue(), 204);
+        assertEquals(r3.getStatusCodeValue(), 204);
+        assertEquals(r4.getStatusCodeValue(), 204);
+        assertEquals(r5.getStatusCodeValue(), 204);
+    }
+
+    @Test
+    public void deleteLeaseReturnsStatusCode404() {
+        // Username not in database
+        var r1 = service.deleteLease(1L, "Bearer notfound");
+
+        // Lease not in database
+        var r2 = service.deleteLease(6L, "Bearer usr");
+        var r3 = service.deleteLease(7L, "Bearer messi");
+
+        assertEquals(r1.getStatusCodeValue(), 404);
+        assertEquals(r2.getStatusCodeValue(), 404);
+        assertEquals(r3.getStatusCodeValue(), 404);
+    }
 }
