@@ -69,7 +69,11 @@
         :error="errors.verifyPassword"
       />
       <br />
+      <input id="is-personal-box" type="checkbox" v-model="checked" />
+      This is a personal account
+      <br />
       <button type="submit" class="boco-btn" @click="submit">Submit</button>
+      <br />
     </form>
   </div>
 </template>
@@ -130,7 +134,7 @@ export default {
           passwordHash: password.value.value,
           address: address.value.value,
           tlf: phoneNumber.value.value,
-          isPersonal: true,
+          isPersonal: document.getElementById("is-personal-box").checked,
         })
         .catch((error) => {
           console.log(error);
@@ -160,5 +164,9 @@ export default {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+}
+
+#is-personal-box {
+  margin-bottom: 20px;
 }
 </style>
