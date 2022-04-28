@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +71,8 @@ class LeaseServiceTest {
         lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(profileData);
         lenient().when(leaseRepository.getLeasesByOwner(profileData.get())).thenReturn(leases);
         lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("messi"))).thenReturn("messi");
-
+        lenient().when(profileRepository.findProfileByUsername("notfound")).thenReturn(Optional.empty());
+        lenient().when(jwtUtil.extractUsername(ArgumentMatchers.matches("notfound"))).thenReturn("notfound");
     }
 
     @Test
@@ -82,7 +84,7 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void getMyLeasesReturnsCorrectStatusCode200() {
+    public void getMyLeasesReturnsStatusCode200() {
         ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi");
 
         assertEquals(res.getStatusCodeValue(), 200);
@@ -129,4 +131,11 @@ class LeaseServiceTest {
         assertEquals(l4.getProfileId(), 1L);
         assertEquals(l4.getListingId(), 2L);
     }
+
+    @Test
+    public void getMyLeasesReturnsStatusCode404() {
+        var res = service.getMyLeases("Bearer notfound");
+        assertEquals(res.getStatusCodeValue(), 404);
+    }
+
 }
