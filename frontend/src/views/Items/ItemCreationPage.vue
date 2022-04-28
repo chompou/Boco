@@ -134,21 +134,31 @@ export default {
         this.image = input.files[0];
         this.formData = new FormData();
         this.formData.append("file", this.image);
-        reader.readAsDataURL(input.files[0]);
+        this.formData.append(
+          "properties",
+          new Blob(
+            [
+              JSON.stringify({
+                name: this.title,
+                address: this.address,
+                price: this.leasePrice,
+                priceType: this.leaseType,
+                description: this.description,
+              }),
+            ],
+            {
+              type: "application/json",
+            }
+          )
+        );
       }
     },
     submit() {
       console.log(this.image);
       console.log(this.leaseType);
       apiService
-        .createItem({
-          image: this.formData,
-          name: this.title,
-          title: this.title,
-          address: this.address,
-          price: this.leasePrice,
-          priceType: this.leaseType,
-          description: this.description,
+        .createImage({
+          data: this.formData,
         })
         .catch((error) => {
           console.log(error);
