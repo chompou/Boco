@@ -47,7 +47,12 @@
       </div>
     </div>
     <div>
-      <ProfileBoxComponent :profile="profile" />
+      <router-link
+        class="link"
+        :to="{ name: 'profile', params: { id: profile.id } }"
+      >
+        <ProfileBoxComponent :profile="profile" />
+      </router-link>
       <ReviewComponent :reviews="reviews" />
     </div>
   </div>
