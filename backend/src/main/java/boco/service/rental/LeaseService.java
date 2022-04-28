@@ -99,7 +99,7 @@ public class LeaseService {
             Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
             if (!profileData.isPresent()){
-                logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+                logger.debug("profile of token was not found.");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Profile profile = profileData.get();
