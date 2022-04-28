@@ -24,7 +24,7 @@
         required
       />
       <br />
-      <div id="false-cred-id" v-if="falseCRED">
+      <div id="false-cred-id" v-if="failedLogin">
         Wrong credentials. Try again
       </div>
       <input
@@ -57,7 +57,7 @@ export default {
     return {
       username: "",
       password: "",
-      falseCRED: false,
+      failedLogin: false,
     };
   },
   methods: {
@@ -78,7 +78,7 @@ export default {
           storageService.setUser(this.username);
           this.$router.push("/");
         })
-        .catch(() => (this.falseCRED = true));
+        .catch(() => (this.failedLogin = true));
     },
   },
 

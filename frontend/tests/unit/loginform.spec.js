@@ -5,9 +5,10 @@ describe("Loginform", () => {
   it("Wrong credentials message is visible if login fail", async () => {
     const wrapper = shallowMount(LoginView);
     await wrapper.setData({
-      falseCRED: true,
+      failedLogin: true,
     });
 
     expect(wrapper.find("#false-cred-id").isVisible()).toBe(true);
   });
+
 });
