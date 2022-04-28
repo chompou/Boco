@@ -117,7 +117,7 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, String token) {
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest,MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
@@ -129,6 +129,10 @@ public class ListingService {
                     listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
+            listingRepository.save(newListing);
+            Image image = new Image(multipartFile.getBytes(), newListing);
+            Image savedImage = imageRepository.save(image);
+            newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -136,23 +140,6 @@ public class ListingService {
         }
     }
 
-    public ResponseEntity<ImageResponse> createImage(MultipartFile multipartFile, String token){
-        try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found found.");
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            Image image = new Image(multipartFile.getBytes());
-            Image savedImage = imageRepository.save(image);
-            return new ResponseEntity<>(new ImageResponse(savedImage), HttpStatus.CREATED);
-        }catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-
-    }
 
     public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
         String username = jwtUtil.extractUsername(token.substring(7));

@@ -155,15 +155,15 @@ public class TempUserAdded {
 
                 Image image = new Image();
                 image.setImage(new byte[0]);
-                image.setCaption("Wonderful air");
+
                 image.setListing(listing);
                 Image image1 = new Image();
                 image1.setImage(new byte[0]);
-                image1.setCaption("Epic pic");
+
                 image1.setListing(listing);
                 Image image2 = new Image();
                 image2.setImage(new byte[0]);
-                image2.setCaption("Cool blank");
+
                 image2.setListing(listing1);
 
                 ArrayList<Image> images = new ArrayList<>();
