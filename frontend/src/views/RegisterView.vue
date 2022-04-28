@@ -69,10 +69,10 @@
         :error="errors.verifyPassword"
       />
       <br />
-      <button type="submit" class="boco-btn" @click="submit">Submit</button>
-      <br />
-      <input id="is-personal-box" type="checkbox" @click="isPersonal()" />
+      <input id="is-personal-box" type="checkbox" v-model="checked" />
       This is a personal account
+      <br />
+      <button type="submit" class="boco-btn" @click="submit">Submit</button>
       <br />
     </form>
   </div>
@@ -120,7 +120,6 @@ export default {
     const phoneNumber = useField("phoneNumber");
     const password = useField("password");
     const verifyPassword = useField("verifyPassword");
-    const isPersonal = useField("is-personal-box");
 
     const handleChange = (event) => {
       setFieldValue("email", event.target.value);
@@ -135,7 +134,7 @@ export default {
           passwordHash: password.value.value,
           address: address.value.value,
           tlf: phoneNumber.value.value,
-          isPersonal: isPersonal.value.value,
+          isPersonal: document.getElementById("is-personal-box").checked,
         })
         .catch((error) => {
           console.log(error);
@@ -156,12 +155,6 @@ export default {
       handleChange,
     };
   },
-  methods: {
-    isPersonal() {
-      const checkbox = document.getElementById("is-personal-box");
-      return !!checkbox.checked;
-    },
-  },
 };
 </script>
 
@@ -171,5 +164,9 @@ export default {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+}
+
+#is-personal-box {
+  margin-bottom: 20px;
 }
 </style>
