@@ -138,6 +138,7 @@ export default {
         };
         this.image = input.files[0];
         this.formData.append("file", this.image);
+        reader.readAsDataURL(input.files[0]);
       }
     },
     submit() {
