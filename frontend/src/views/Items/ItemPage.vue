@@ -38,7 +38,10 @@
               <p>Price: {{ price }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
-              <RatingComponent :rating="item.rating" />
+              <div id="items">
+                <p>Rating:</p>
+                <RatingComponent :rating="item.rating" />
+              </div>
             </div>
           </div>
           <h2>Description</h2>
@@ -48,6 +51,7 @@
     </div>
     <div>
       <router-link
+        id="profilebox"
         class="link"
         :to="{ name: 'profile', params: { id: profile.id } }"
       >
@@ -209,8 +213,18 @@ button:hover {
   margin-left: 50px;
 }
 
+#items {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
 #category label {
   display: inline;
+}
+
+#profilebox {
+  text-decoration: none;
 }
 
 .overlay-enter-active,

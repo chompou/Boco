@@ -7,7 +7,10 @@
         <p>Email: {{ profile.email }}</p>
       </div>
       <div id="rating">
-        <RatingComponent :rating="profile.ratingProfile" />
+        <div id="items">
+          <p id="ratingText">Rating:</p>
+          <RatingComponent :rating="profile.ratingProfile" />
+        </div>
       </div>
     </div>
     <img id="map" alt="Map" src="@/assets/map.png" />
@@ -37,6 +40,11 @@ export default {
   margin: 20px;
 }
 
+.profileBox:hover {
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
 .profile {
   display: flex;
 }
@@ -47,6 +55,16 @@ export default {
 
 #rating {
   margin-left: 20px;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
+#ratingText {
+  margin-right: 30px;
 }
 
 #map {

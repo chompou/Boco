@@ -4,7 +4,7 @@
     <form>
       <label>Username</label>
       <BaseInput
-        class="input-field"
+        class="register-input-field"
         v-model="username"
         type="text"
         placeholder="Enter username"
@@ -15,7 +15,7 @@
       <br />
       <label>Email</label>
       <BaseInput
-        class="input-field"
+        class="register-input-field"
         v-model="email"
         type="email"
         placeholder="example@gmail.com"
@@ -27,7 +27,7 @@
       <br />
       <label>Address</label>
       <BaseInput
-        class="input-field"
+        class="register-input-field"
         v-model="address"
         type="text"
         placeholder="Enter address"
@@ -38,7 +38,7 @@
       <br />
       <label>Phone number</label>
       <BaseInput
-        class="input-field"
+        class="register-input-field"
         v-model="phoneNumber"
         type="text"
         placeholder="Enter phone number"
@@ -49,7 +49,7 @@
       <br />
       <label>Password</label>
       <BaseInput
-        class="input-field"
+        class="register-input-field"
         v-model="password"
         type="password"
         placeholder="Enter password"
@@ -60,7 +60,7 @@
       <br />
       <label>Verify Password</label>
       <BaseInput
-        class="input-field"
+        class="register-input-field"
         v-model="verifyPassword"
         type="password"
         placeholder="Verify password"
@@ -69,8 +69,14 @@
         :error="errors.verifyPassword"
       />
       <br />
-      <input id="is-personal-box" type="checkbox" v-model="checked" />
-      This is a personal account
+
+      <div>Is this a personal account, or a company account?</div>
+
+      <select v-model="selected" id="is-personal-dropdown">
+        <option disabled value="">Please select one</option>
+        <option value="true">Personal</option>
+        <option value="false">Company</option>
+      </select>
       <br />
       <button type="submit" class="boco-btn" @click="submit">Submit</button>
       <br />
@@ -134,7 +140,7 @@ export default {
           passwordHash: password.value.value,
           address: address.value.value,
           tlf: phoneNumber.value.value,
-          isPersonal: document.getElementById("is-personal-box").checked,
+          isPersonal: document.getElementById("is-personal-dropdown").value,
         })
         .catch((error) => {
           console.log(error);
@@ -166,7 +172,7 @@ export default {
   margin: 0 auto;
 }
 
-#is-personal-box {
+#is-personal-dropdown {
   margin-bottom: 20px;
 }
 </style>

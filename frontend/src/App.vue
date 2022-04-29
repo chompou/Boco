@@ -1,8 +1,10 @@
 <template>
-  <div class="container-fluid text-center">
-    <img src="@/assets/NyLogoBoCo1.png" alt="Logo" />
+  <div id="header" class="container-fluid text-center">
+    <router-link to="/">
+      <img src="@/assets/NyLogoBoCo.png" alt="Logo" />
+    </router-link>
   </div>
-  <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
+  <nav id="navbar" class="navbar sticky-top navbar-expand-sm">
     <div class="container-fluid">
       <button
         class="navbar-toggler"
@@ -18,7 +20,7 @@
       /></router-link>
       <div
         id="collapsedNav"
-        class="collapse navbar-collapse justify-content-center bg-light"
+        class="collapse navbar-collapse justify-content-center"
       >
         <ul class="navbar-nav">
           <li class="nav-item">
@@ -69,7 +71,7 @@
     <NotificationComponent v-if="$store.state.loggedIn" />
   </nav>
 
-  <div class="container">
+  <div class="container-fluid">
     <router-view />
     <div style="height: 20px" />
   </div>
@@ -107,8 +109,11 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
+}
+
+#header {
+  background-color: #ececec;
 }
 
 /*Front page style*/
@@ -129,6 +134,11 @@ export default {
 }
 
 /* Navbar styling */
+#navbar,
+#collapsedNav {
+  background-color: #ececec;
+}
+
 li a {
   text-decoration: none;
 }
@@ -148,13 +158,6 @@ li a:hover {
 .nav-item {
   font-size: x-large;
 }
-
-/*
-.navbar-toggler .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
-}*/
-
-/* Navbar styling end*/
 
 /* Make navbar slide from left on small screens*/
 @media (max-width: 479px) {
@@ -186,6 +189,7 @@ li a:hover {
     transition: left 500ms ease-in-out;
   }
 }
+/* Navbar styling end*/
 
 #log-out-button {
   background: none;
@@ -245,8 +249,7 @@ li a:hover {
   color: rgba(0, 0, 0, 0.3);
 }
 
-label,
-.input-field {
+.register-input-field {
   display: flex;
   margin: auto;
   padding: 8px;
@@ -254,8 +257,8 @@ label,
   border-radius: 5px;
   justify-content: space-evenly;
 }
-.input-field:hover,
-.input-field:focus {
+.register-input-field:hover,
+.register-input-field:focus {
   border-color: var(--button-hover);
 }
 
@@ -266,6 +269,8 @@ label,
 
 .icons {
   color: var(--main-color);
+  height: 25px;
+  width: 25px;
 }
 
 .icons:hover {
