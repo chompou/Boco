@@ -12,7 +12,10 @@
             <p>Price: {{ price }}kr/{{ item.priceType }}</p>
           </div>
           <div id="About2">
-            <RatingComponent :rating="item.rating" />
+            <div id="items">
+              <p id="ratingText">Rating:</p>
+              <RatingComponent :rating="item.rating" />
+            </div>
           </div>
         </div>
       </div>
@@ -104,6 +107,16 @@ img {
   margin-top: 30px;
   margin-left: 50px;
   width: 150px;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
+#ratingText {
+  margin-right: 30px;
 }
 
 #texts {

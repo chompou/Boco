@@ -3,7 +3,18 @@
     <div class="rating-container">
       <h2>Rating</h2>
       <div class="rating-box-container">
-        <rating-component v-for="i in 3" :key="i" />
+        <div class="items">
+          <p class="ratingText">Lease out</p>
+          <RatingComponent :rating="3" />
+        </div>
+        <div class="items">
+          <p class="ratingText">Overall</p>
+          <RatingComponent :rating="3" />
+        </div>
+        <div class="items">
+          <p class="ratingText">Lease in</p>
+          <RatingComponent :rating="3" />
+        </div>
       </div>
     </div>
     <h2>Reviews</h2>
@@ -60,5 +71,15 @@ export default {
   padding: 15px;
   overflow-wrap: break-word;
   background-color: rgb(215, 215, 215, 0.5);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
+.ratingText {
+  margin-right: 30px;
 }
 </style>
