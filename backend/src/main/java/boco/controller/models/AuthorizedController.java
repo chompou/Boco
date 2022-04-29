@@ -1,7 +1,9 @@
 package boco.controller.models;
 
 import boco.models.http.*;
+import boco.models.profile.Notification;
 import boco.models.rental.Lease;
+import boco.service.profile.NotificationService;
 import boco.service.profile.ProfileService;
 import boco.service.rental.LeaseService;
 import boco.service.rental.ListingService;
@@ -24,14 +26,17 @@ public class AuthorizedController {
     private final ProfileService profileService;
     private final ReviewService reviewService;
     private final LeaseService leaseService;
+    private final NotificationService notificationService;
 
     @Autowired
     public AuthorizedController(ListingService listingService, ProfileService profileService,
-                                ReviewService reviewService, LeaseService leaseService) {
+                                ReviewService reviewService, LeaseService leaseService,
+                                NotificationService notificationService) {
         this.listingService = listingService;
         this.profileService = profileService;
         this.reviewService = reviewService;
         this.leaseService = leaseService;
+        this.notificationService = notificationService;
     }
 
 
@@ -92,6 +97,14 @@ public class AuthorizedController {
         return leaseService.deleteLease(leaseId, token);
     }
 
+    @GetMapping("/notifications")
+    public ResponseEntity<?> getMyNotifications(@RequestHeader(name="Authorization") String token){
+        return notificationService.getMyNotifications(token);
+    }
 
-
+    @PutMapping("/notifications")
+    public ResponseEntity<?> updateNotification(@RequestBody NotificationReadRequest toBeUpdated,
+                                                @RequestHeader(name="Authorization") String token){
+        return notificationService.upDateNotifications(toBeUpdated.getToBeRead(), token);
+    }
 }

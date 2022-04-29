@@ -1,12 +1,17 @@
 package boco.service.profile;
 
 import boco.component.BocoSocket;
+import boco.models.http.MyNotificationsResponse;
 import boco.models.http.NotificationResponse;
 import boco.models.profile.Notification;
+import boco.models.profile.Profile;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -110,4 +115,37 @@ public class NotificationService {
         return notificationResponses;
     }
 
+    public ResponseEntity<?> getMyNotifications(String token) {
+        try {
+            String username = jwtUtil.extractUsername(token.substring(7));
+            List<Notification> read = notificationRepository.findByProfileUsernameAndIsReadFalse(username);
+            List<Notification> unread = notificationRepository.findByProfileUsernameAndIsReadTrue(username);
+            MyNotificationsResponse response = new MyNotificationsResponse(convertNotifications(read), convertNotifications(unread));
+            return ResponseEntity.ok(response);
+
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<?> upDateNotifications(List<Integer> toBeUpdated, String token) {
+        try {
+            String username = jwtUtil.extractUsername(token.substring(7));
+            for (Integer i:toBeUpdated) {
+                Notification currentNotification = notificationRepository.getOne((long) i);
+                if (currentNotification.getProfile().getUsername().equals(username)){
+                    System.out.println("ok username for notification: " + i);
+                    currentNotification.setIsRead(true);
+                    notificationRepository.save(currentNotification);
+                }else {
+                    System.out.println("not ok for noti: " +i);
+                }
+            }
+            pushNotificationsFromJWT(token.substring(7));
+            return getMyNotifications(token);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -41,7 +41,7 @@ public class ListingResponse {
         this.lastChanged = listing.getLastChanged();
         this.rating = listing.getRating();
         this.categoryTypes = listing.getCategoryTypes();
-        this.profileId = listing.getProfile().getId();
+        if (listing.getProfile() != null) this.profileId = listing.getProfile().getId();
         this.images = listing.getImages();
     }
 }
