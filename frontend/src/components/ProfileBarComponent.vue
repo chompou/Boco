@@ -2,14 +2,14 @@
   <div class="profile-bar">
     <div class="profile-bar-text">
       <h3 id="username">{{ profile.displayName }}</h3>
-      <p id="phone-number">Phone nr: {{ phoneNumber }}</p>
-      <p id="email">Email: {{ email }}</p>
+      <p id="phone-number">Phone nr: {{ profile.tlf }}</p>
+      <p id="email">Email: {{ profile.email }}</p>
     </div>
     <div id="rating">
       <RatingComponent />
     </div>
     <div class="container">
-      <div class="all-buttons" v-if="isLoggedIn">
+      <div class="all-buttons" v-if="isMe">
         <button
           id="items-button"
           class="boco-btn"
@@ -48,28 +48,15 @@
 </template>
 <script>
 import RatingComponent from "@/components/RatingComponent";
-import apiService from "@/services/apiService";
 
 export default {
   components: { RatingComponent },
-  data() {
-    return {
-      profile: null,
-      dataReady: false,
-    };
-  },
+  props: ["profile"],
 
   computed: {
-    isLoggedIn() {
-      return this.$store.state.loggedInUser != null;
+    isMe() {
+      return this.$store.state.loggedInUser == this.profile.id;
     },
-  },
-
-  created() {
-    apiService.getMyProfile().then((response) => {
-      this.profile = response.data;
-      this.dataReady = true;
-    });
   },
 };
 </script>
@@ -139,6 +126,8 @@ export default {
 .boco-btn:hover,
 .boco-btn:focus {
   background-color: var(--button-hover);
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 .boco-btn:disabled {

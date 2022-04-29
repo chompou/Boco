@@ -9,7 +9,7 @@
       active-color="#ffd055"
       v-bind:star-size="20"
       border-color="#999"
-      border-width="3"
+      :border-width="3"
     >
     </star-rating>
   </div>

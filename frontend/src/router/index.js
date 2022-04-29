@@ -57,6 +57,7 @@ const routes = [
     path: "/profile/:id",
     name: "profile",
     props: true,
+    component: MyProfileView,
   },
   {
     path: "/my",
