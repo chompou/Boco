@@ -3,6 +3,7 @@
     <Transition name="overlay">
       <lease-request-component
         v-if="leaseOverlay"
+        :item="item"
         @close-overlay="leaseOverlay = false"
       />
     </Transition>
@@ -10,11 +11,11 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img :src="url" />
+          <img id="image" :src="url" />
           <div v-if="my">
-            <button class="editButtons">Set Active</button>
-            <button class="editButtons">Edit</button>
-            <button class="editButtons">Delete</button>
+            <button class="editButtons boco-btn">Set Active</button>
+            <button @click="edit" class="editButtons boco-btn">Edit</button>
+            <button class="editButtons boco-btn">Delete</button>
           </div>
           <button
             class="leaseButton boco-btn"
@@ -35,7 +36,7 @@
                 </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ price }}kr / {{ item.priceType }}</p>
+              <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
               <div id="items">
@@ -69,6 +70,7 @@ import ReviewComponent from "@/components/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
 import axios from "axios";
+import priceService from "@/services/priceService";
 export default {
   props: ["id"],
 
@@ -82,53 +84,48 @@ export default {
     return {
       leaseOverlay: false,
       item: { id: null, profileId: null, price: 0, priceType: null },
-      profile: {},
+      profile: { id: 0 },
       reviews: [],
       url: null,
+      profileLoaded: false,
     };
   },
   computed: {
-    price() {
-      let actuallyPrice = this.item.price;
-      if (this.item.priceType === "Week") {
-        actuallyPrice = this.item.price * 7 * 24;
-      }
-      if (this.item.priceType === "Day") {
-        actuallyPrice = this.item.price * 24;
-      }
-      return actuallyPrice;
+    displayPrice() {
+      return priceService.displayPrice(this.item);
+    },
+
+    my() {
+      return this.item.profileId === this.$store.state.loggedInUser;
+    },
+  },
+  methods: {
+    edit() {
+      this.$router.push({ name: "editItem", params: { id: this.id } });
     },
   },
   created() {
     apiService
       .getItem(this.id)
-      .then((response) => {
-        this.item = response.data;
+      .then((response) => (this.item = response.data))
+      .catch((error) => console.log(error))
+      .then(() =>
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
             this.profile = response.data;
           })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+          .catch((error) => console.log(error))
+      );
 
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
-      .then((response) => {
-        this.reviews = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then((response) => (this.reviews = response.data))
+      .catch((error) => console.log(error));
 
-    axios.get("https://picsum.photos/200/300").then((response) => {
-      this.url = response.request.responseURL;
-    });
+    axios
+      .get("https://picsum.photos/200/300")
+      .then((response) => (this.url = response.request.responseURL));
   },
 };
 </script>
@@ -155,6 +152,7 @@ export default {
 
 img {
   height: 300px;
+  min-width: 300px;
   width: 300px;
   padding: 10px;
   border: 1px solid #39495c;
@@ -179,14 +177,8 @@ img {
   border: 1px solid #39495c;
   width: 150px;
   height: 50px;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   padding: 5px;
-  background: white;
   margin: 25px;
 }
 
