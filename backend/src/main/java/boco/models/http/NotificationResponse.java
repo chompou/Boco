@@ -11,13 +11,11 @@ public class NotificationResponse {
     private String message;
     private String url;
     private Boolean isRead;
-    private Long profileId;
 
     public NotificationResponse(Notification notification) {
         this.id = notification.getId();
         this.message = notification.getMessage();
         this.url = notification.getUrl();
         this.isRead = notification.getIsRead();
-        this.profileId = notification.getProfile().getId();
     }
 }
