@@ -83,9 +83,10 @@ export default {
     return {
       leaseOverlay: false,
       item: { id: null, profileId: null, price: 0, priceType: null },
-      profile: { id: null },
+      profile: { id: 0 },
       reviews: [],
       url: null,
+      profileLoaded: false,
     };
   },
   computed: {
@@ -113,7 +114,9 @@ export default {
       .then(() =>
         apiService
           .getProfile(this.item.profileId)
-          .then((response) => (this.profile = response.data))
+          .then((response) => {
+            this.profile = response.data;
+          })
           .catch((error) => console.log(error))
       );
 
