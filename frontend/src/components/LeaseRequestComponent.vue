@@ -8,7 +8,10 @@
         <input type="datetime-local" v-model="toTime" />
       </div>
       <div class="lease-info">
-        <h3>{{ displayDuration }} {{ item.priceType }}(s)</h3>
+        <h3>
+          {{ displayDuration }} {{ item.priceType
+          }}{{ displayDuration != 1 ? "s" : "" }}
+        </h3>
         <h3>{{ displayPrice }} kr</h3>
       </div>
     </div>

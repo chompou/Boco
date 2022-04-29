@@ -36,7 +36,7 @@
                 </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ price }}kr / {{ item.priceType }}</p>
+              <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
               <div id="items">
@@ -70,6 +70,7 @@ import ReviewComponent from "@/components/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
 import axios from "axios";
+import priceService from "@/services/priceService";
 export default {
   props: ["id"],
 
@@ -90,15 +91,8 @@ export default {
     };
   },
   computed: {
-    price() {
-      let actuallyPrice = this.item.price;
-      if (this.item.priceType === "Week") {
-        actuallyPrice = this.item.price * 7 * 24;
-      }
-      if (this.item.priceType === "Day") {
-        actuallyPrice = this.item.price * 24;
-      }
-      return actuallyPrice;
+    displayPrice() {
+      return priceService.displayPrice(this.item);
     },
 
     my() {
