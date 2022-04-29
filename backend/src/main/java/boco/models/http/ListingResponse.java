@@ -1,6 +1,5 @@
 package boco.models.http;
 
-import boco.models.profile.Profile;
 import boco.models.rental.CategoryType;
 import boco.models.rental.Image;
 import boco.models.rental.Listing;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +25,7 @@ public class ListingResponse {
     private double rating;
     private List<CategoryType> categoryTypes;
     private Long profileId;
-    private List<Image> images;
+    private List<ImageResponse> images;
 
     public ListingResponse(Listing listing) {
         this.id = listing.getId();
@@ -42,6 +40,11 @@ public class ListingResponse {
         this.rating = listing.getRating();
         this.categoryTypes = listing.getCategoryTypes();
         if (listing.getProfile() != null) this.profileId = listing.getProfile().getId();
-        this.images = listing.getImages();
+
+        // Turn images into ImageResponses
+        images = new ArrayList<>();
+        for (Image img : listing.getImages()) {
+            images.add(new ImageResponse(img));
+        }
     }
 }
