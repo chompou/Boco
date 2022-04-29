@@ -71,7 +71,7 @@ export default {
   height: 200px;
   padding: 10px 28px;
   background: var(--main-color);
-  margin: 20px;
+  margin-top: 5px;
   flex-wrap: wrap;
 }
 

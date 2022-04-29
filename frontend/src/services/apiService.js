@@ -38,6 +38,14 @@ export default {
     return apiClient.post("/my/listing", item);
   },
 
+  updateItem(item) {
+    return apiClient.put("my/listing", item);
+  },
+
+  deleteItem(listingId) {
+    return apiClient.delete("my/listing/" + listingId.listingId, listingId);
+  },
+
   getItems(filters, page, perPage) {
     return apiClient.get("/listing", {
       params: { ...filters, page: page, perPage: perPage },

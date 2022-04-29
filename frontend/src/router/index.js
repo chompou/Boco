@@ -92,8 +92,9 @@ const routes = [
     component: ItemCreationPage,
   },
   {
-    path: "/edit",
+    path: "/edit/:id",
     name: "editItem",
+    props: true,
     component: itemEditPage,
   },
   {
