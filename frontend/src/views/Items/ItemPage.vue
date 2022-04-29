@@ -10,11 +10,11 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img :src="url" />
+          <img id="image" :src="url" />
           <div v-if="my">
-            <button class="editButtons">Set Active</button>
-            <button class="editButtons">Edit</button>
-            <button class="editButtons">Delete</button>
+            <button class="editButtons boco-btn">Set Active</button>
+            <button class="editButtons boco-btn">Edit</button>
+            <button class="editButtons boco-btn">Delete</button>
           </div>
           <button
             class="leaseButton boco-btn"
@@ -85,6 +85,7 @@ export default {
       profile: {},
       reviews: [],
       url: null,
+      my: false,
     };
   },
   computed: {
@@ -107,6 +108,11 @@ export default {
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
+            setTimeout(() => {
+              if (this.item.profileId === this.$store.state.loggedInUser) {
+                this.my = true;
+              }
+            }, 10);
             this.profile = response.data;
           })
           .catch((error) => {
@@ -116,7 +122,6 @@ export default {
       .catch((error) => {
         console.log(error);
       });
-
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
       .then((response) => {
@@ -125,7 +130,6 @@ export default {
       .catch((error) => {
         console.log(error);
       });
-
     axios.get("https://picsum.photos/200/300").then((response) => {
       this.url = response.request.responseURL;
     });
@@ -155,6 +159,7 @@ export default {
 
 img {
   height: 300px;
+  min-width: 300px;
   width: 300px;
   padding: 10px;
   border: 1px solid #39495c;
@@ -179,14 +184,8 @@ img {
   border: 1px solid #39495c;
   width: 150px;
   height: 50px;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   padding: 5px;
-  background: white;
   margin: 25px;
 }
 
