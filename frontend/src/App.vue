@@ -75,14 +75,25 @@
     <router-view />
     <div style="height: 20px" />
   </div>
-
   <div id="footer">
-    <h5>BORROW COMMUNITY</h5>
-    <div class="footer-row">
-      <p>HOLA</p>
-      |
-      <p>HOLA</p>
-    </div>
+    <footer>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-sm-4 col-md-3 item">
+            <h4><a href="#">About us</a></h4>
+          </div>
+          <div class="col-sm-4 col-md-3 item">
+            <router-link to="/support"><h4>Contact us</h4></router-link>
+          </div>
+          <div class="col-sm-4 col-md-3 item">
+            <h4><a href="#">F.A.Q</a></h4>
+          </div>
+          <div class="col-lg-3 item social">
+            <p class="copyright">Borrow Community © 2022</p>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -216,6 +227,15 @@ li a:hover {
 .footer-row {
   display: flex;
 }
+
+#footer-ul {
+  display: inline-grid;
+  grid-auto-flow: row;
+  grid-gap: 24px;
+  justify-items: center;
+  margin: auto;
+}
+
 /* FOOTER style END */
 
 #log-out-button {
