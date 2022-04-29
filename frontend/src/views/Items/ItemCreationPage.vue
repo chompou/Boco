@@ -55,7 +55,6 @@
           />
           <label id="valuta">kr/</label>
           <select v-model="this.leaseType">
-            <option disabled value="">Hour</option>
             <option>Hour</option>
             <option>Day</option>
             <option>Week</option>
