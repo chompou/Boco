@@ -3,6 +3,7 @@
     <Transition name="overlay">
       <lease-request-component
         v-if="leaseOverlay"
+        :item="item"
         @close-overlay="leaseOverlay = false"
       />
     </Transition>
@@ -79,7 +80,7 @@ export default {
     return {
       leaseOverlay: false,
       item: { id: null, profileId: null, price: 0, priceType: null },
-      profile: {},
+      profile: { id: null },
       reviews: [],
       url: null,
     };
@@ -99,33 +100,23 @@ export default {
   created() {
     apiService
       .getItem(this.id)
-      .then((response) => {
-        this.item = response.data;
+      .then((response) => (this.item = response.data))
+      .catch((error) => console.log(error))
+      .then(() =>
         apiService
           .getProfile(this.item.profileId)
-          .then((response) => {
-            this.profile = response.data;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+          .then((response) => (this.profile = response.data))
+          .catch((error) => console.log(error))
+      );
 
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
-      .then((response) => {
-        this.reviews = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then((response) => (this.reviews = response.data))
+      .catch((error) => console.log(error));
 
-    axios.get("https://picsum.photos/200/300").then((response) => {
-      this.url = response.request.responseURL;
-    });
+    axios
+      .get("https://picsum.photos/200/300")
+      .then((response) => (this.url = response.request.responseURL));
   },
 };
 </script>

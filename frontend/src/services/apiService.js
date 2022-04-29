@@ -56,4 +56,8 @@ export default {
   getMyProfile() {
     return apiClient.get("/my/profile");
   },
+
+  createLease(lease) {
+    return apiClient.post("/my/leases", lease);
+  },
 };
