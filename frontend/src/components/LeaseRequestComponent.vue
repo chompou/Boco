@@ -36,8 +36,8 @@ export default {
     onSubmit() {
       apiService
         .createLease({
-          fromDatetime: this.fromTime,
-          toDatetime: this.toTime,
+          fromDatetime: new Date(this.fromTime).getTime(),
+          toDatetime: new Date(this.toTime).getTime(),
           listingId: this.item.id,
         })
         .catch((error) => console.log(error))
