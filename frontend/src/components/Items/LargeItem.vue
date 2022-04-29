@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img alt="Vue logo" src="@/assets/service.png" />
+      <img id="image3" alt="Vue logo" src="" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
@@ -41,6 +41,12 @@ export default {
     categoryString() {
       return this.item.categoryTypes.map((c) => c.name).join(", ");
     },
+  },
+  created() {
+    let image = this.item.image;
+    setTimeout(() => {
+      document.getElementById("image3").src = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>

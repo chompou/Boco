@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div>
-      <img alt="Vue logo" src="@/assets/service.png" />
+      <img id="image" alt="Vue logo" src="" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
       <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
     </div>
@@ -14,6 +14,13 @@ export default {
 
   data() {
     return {};
+  },
+  created() {
+    let image = this.item.image;
+    setTimeout(() => {
+      document.getElementById("image").src =
+        "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>
