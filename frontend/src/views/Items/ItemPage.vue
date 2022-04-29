@@ -14,7 +14,7 @@
           <img id="image" :src="url" />
           <div v-if="my">
             <button class="editButtons boco-btn">Set Active</button>
-            <button class="editButtons boco-btn">Edit</button>
+            <button @click="edit" class="editButtons boco-btn">Edit</button>
             <button class="editButtons boco-btn">Delete</button>
           </div>
           <button
@@ -99,7 +99,11 @@ export default {
       return this.item.profileId === this.$store.state.loggedInUser;
     },
   },
-
+  methods: {
+    edit() {
+      this.$router.push({ name: "editItem", params: { id: this.id } });
+    },
+  },
   created() {
     apiService
       .getItem(this.id)

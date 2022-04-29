@@ -25,6 +25,10 @@ export default {
     return apiClient.post("/my/listing", item);
   },
 
+  updateItem(item) {
+    return apiClient.put("my/listing", item);
+  },
+
   getItems(filters, page, perPage) {
     return apiClient.get("/listing", {
       params: { ...filters, page: page, perPage: perPage },
