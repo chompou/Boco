@@ -66,11 +66,11 @@
         <div class="checkboxItem">
           <input
             type="checkbox"
-            id="Tools"
-            value="Tools"
+            id="Sport"
+            value="Sport"
             v-model="this.category"
           />
-          <label for="Tools">Tools</label>
+          <label for="Sport">Sport</label>
         </div>
 
         <div class="checkboxItem">
@@ -86,11 +86,11 @@
         <div class="checkboxItem">
           <input
             type="checkbox"
-            id="Electronics"
-            value="Electronics"
+            id="Electronic"
+            value="Electronic"
             v-model="this.category"
           />
-          <label for="Electronics">Electronics</label>
+          <label for="Electronic">Electronic</label>
         </div>
       </div>
       <div id="descriptionField">
@@ -119,13 +119,13 @@ export default {
       formData: new FormData(),
       preview: null,
       image: null,
-      title: "",
-      address: "",
+      title: this.title,
+      address: this.address,
       price: 0,
-      leaseType: "",
-      category: [],
+      leaseType: this.leaseType,
+      category: [this.category],
       checked: false,
-      description: "",
+      description: this.description,
     };
   },
   methods: {
@@ -153,6 +153,7 @@ export default {
               description: this.description,
               price: this.leasePrice,
               priceType: this.leaseType,
+              categoryNames: this.category,
             }),
           ],
           {
