@@ -1,9 +1,5 @@
 <template>
-  <div id="header" class="container-fluid text-center">
-    <router-link to="/">
-      <img src="@/assets/NyLogoBoCo.png" alt="Logo" />
-    </router-link>
-  </div>
+  <header-component />
   <nav id="navbar" class="navbar sticky-top navbar-expand-sm">
     <div class="container-fluid">
       <button
@@ -80,9 +76,11 @@
 <script>
 import storageService from "./services/storageService";
 import NotificationComponent from "@/components/NotificationComponent";
+import HeaderComponent from "@/components/HeaderComponent";
 export default {
   components: {
     NotificationComponent,
+    HeaderComponent,
   },
 
   methods: {
@@ -114,6 +112,7 @@ export default {
 
 #header {
   background-color: #ececec;
+  top: 0;
 }
 
 /*Front page style*/
