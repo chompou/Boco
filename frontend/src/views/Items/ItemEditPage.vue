@@ -79,7 +79,9 @@
       </div>
       <div id="CreateButtons" class="element">
         <button class="CreateButton" v-on:click="Update">Update</button>
-        <button id="Delete" class="CreateButton">Dismiss</button>
+        <button id="Delete" class="CreateButton" v-on:click="dismiss">
+          Dismiss
+        </button>
       </div>
     </div>
   </div>
@@ -109,6 +111,9 @@ export default {
           console.log(error);
         });
     },
+    dismiss() {
+      this.$router.push({ name: "item", params: { id: this.id } });
+    }
   },
   computed: {
     price() {
