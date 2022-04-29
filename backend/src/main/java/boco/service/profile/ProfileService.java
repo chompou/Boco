@@ -62,7 +62,7 @@ public class ProfileService {
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
 
             if (!profile.isPresent()) {
-                logger.debug("profile of token not found found.");
+                logger.debug("profile of token not found.");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             userId = profile.get().getId();
@@ -265,6 +265,15 @@ public class ProfileService {
         return true;
     }
 
+    /**
+     * Profile A and profile B has contact if either:
+     * - profile A has had a lease with profile B.
+     * - profile B has had a lease with profile A.
+     *
+     * @param profileId1 ID of profile A
+     * @param profileId2 ID of profile B
+     * @return Boolean indicating if profile A has contact with profile B
+     */
     private boolean profileHasContactWithProfile(long profileId1, long profileId2) {
         Optional<Profile> profile = profileRepository.getIfContact(profileId1, profileId2);
         return profile.isPresent();
