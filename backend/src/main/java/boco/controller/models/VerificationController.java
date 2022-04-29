@@ -28,10 +28,12 @@ public class VerificationController {
     public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) {
         String url = "http://localhost:8080/api/verification/getVerified/"+ profileId;
         //TODO secure this endpoint better, (ask Elias)
+        /**
         try {
             emailService.sendVerificationMessage(profileService.getEmail(profileId).getBody(), url);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+         */
     }
 }

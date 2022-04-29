@@ -10,13 +10,11 @@ import lombok.Setter;
 public class ImageResponse {
     private Long id;
     private byte[] image;
-    private String caption;
     private Long listingId;
 
     public ImageResponse(Image image) {
         this.id = image.getId();
         this.image = image.getImage();
-        this.caption = image.getCaption();
         this.listingId = image.getListing().getId();
     }
 }
