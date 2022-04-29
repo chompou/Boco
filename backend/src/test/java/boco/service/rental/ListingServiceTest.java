@@ -90,12 +90,12 @@ class ListingServiceTest {
         Page<Listing> listingPage3 = new PageImpl<Listing>(listings3, PageRequest.ofSize(pageSize), listings3.size());
         Page<Listing> listingPage4 = new PageImpl<Listing>(listings4, PageRequest.ofSize(pageSize), listings4.size());
 
-        Lease le1 = new Lease(new Timestamp(1651175214), new Timestamp(1651218414), p1, l1, null);
-        Lease le2 = new Lease(new Timestamp(1650008914), new Timestamp(1650959314), p2, l1, null);
-        Lease le3 = new Lease(new Timestamp(1650008914), new Timestamp(1650959314), p2, l1, null);
-        Lease le4 = new Lease(new Timestamp(1650008914), new Timestamp(1650959314), p2, l1, null);
-        Lease le5 = new Lease(new Timestamp(1650008914), new Timestamp(1650959314), p2, l2, null);
-        Lease le6 = new Lease(new Timestamp(1650008914), new Timestamp(1650959314), p2, l2, null);
+        Lease le1 = new Lease(1651175214L, 651218414L, p1, l1, null);
+        Lease le2 = new Lease(1650008914L, 1650959314L, p2, l1, null);
+        Lease le3 = new Lease(1650008914L, 1650959314L, p2, l1, null);
+        Lease le4 = new Lease(1650008914L, 1650959314L, p2, l1, null);
+        Lease le5 = new Lease(1650008914L, 1650959314L, p2, l2, null);
+        Lease le6 = new Lease(1650008914L, 1650959314L, p2, l2, null);
         l1.setLeases(new ArrayList<>(Arrays.asList(le1, le2, le3, le4)));
 
         Review r1 = new Review(4.0, "test");
