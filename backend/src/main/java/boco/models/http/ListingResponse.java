@@ -11,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
@@ -27,7 +28,7 @@ public class ListingResponse {
     private double rating;
     private List<CategoryType> categoryTypes;
     private Long profileId;
-    private List<Image> images;
+    private String image;
 
     public ListingResponse(Listing listing) {
         this.id = listing.getId();
@@ -42,6 +43,11 @@ public class ListingResponse {
         this.rating = listing.getRating();
         this.categoryTypes = listing.getCategoryTypes();
         this.profileId = listing.getProfile().getId();
-        this.images = listing.getImages();
+        try {
+            this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
     }
 }

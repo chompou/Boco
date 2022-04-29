@@ -10,7 +10,7 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img alt="Vue logo" src="@/assets/service.png" />
+          <img id="image" alt="Vue logo" src="" />
           <div v-if="my">
             <button class="editButtons">Set Active</button>
             <button class="editButtons">Edit</button>
@@ -71,7 +71,13 @@ export default {
   data() {
     return {
       leaseOverlay: false,
-      item: { id: null, profileId: null, price: 0, priceType: null },
+      item: {
+        id: null,
+        profileId: null,
+        price: 0,
+        priceType: null,
+        image: "",
+      },
       profile: {},
       reviews: [],
     };
@@ -87,12 +93,18 @@ export default {
       }
       return actuallyPrice;
     },
+    dataUrl() {
+      return btoa(this.item.image);
+    },
   },
   created() {
     apiService
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
+        document.getElementById("image").src =
+          "data:image/jpeg;base64, " + this.item.image;
+        console.log(this.item.image.length);
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
@@ -105,7 +117,6 @@ export default {
       .catch((error) => {
         console.log(error);
       });
-
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
       .then((response) => {
