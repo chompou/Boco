@@ -44,7 +44,12 @@
       </div>
       <div class="ItemId">
         <div class="checkboxItem">
-          <input type="checkbox" id="Tools" value="Tools" v-model="item.category" />
+          <input
+            type="checkbox"
+            id="Tools"
+            value="Tools"
+            v-model="item.category"
+          />
           <label for="Tools">Tools</label>
         </div>
 
@@ -78,7 +83,7 @@
         ></textarea>
       </div>
       <div id="CreateButtons" class="element">
-        <button class="CreateButton" v-on:click="Update">Update</button>
+        <button class="CreateButton" v-on:click="update">Update</button>
         <button id="Delete" class="CreateButton" v-on:click="dismiss">
           Dismiss
         </button>
@@ -99,21 +104,24 @@ export default {
   },
   methods: {
     update() {
-      console.log(this.item.address);
       apiService
         .updateItem({
+          listingId: this.id,
           address: this.item.address,
-          price: this.item.leasePrice,
+          price: this.item.price,
           priceType: this.item.priceType,
           description: this.item.description,
         })
         .catch((error) => {
           console.log(error);
         });
+      setTimeout(() => {
+        this.$router.push({ name: "item", params: { id: this.id } });
+      }, 100);
     },
     dismiss() {
       this.$router.push({ name: "item", params: { id: this.id } });
-    }
+    },
   },
   computed: {
     price() {
@@ -151,7 +159,6 @@ export default {
   width: 300px;
   height: 300px;
 }
-
 
 .ItemId {
   margin: 20px;
@@ -229,9 +236,9 @@ select {
   cursor: pointer;
   display: inline-flex;
   font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto,
-  "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
-  "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-  "Lucida Grande", Helvetica, Arial, sans-serif;
+    "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell,
+    "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Lucida Grande", Helvetica, Arial, sans-serif;
   font-size: 16px;
   font-weight: 600;
   justify-content: center;
@@ -244,8 +251,8 @@ select {
   text-align: center;
   touch-action: manipulation;
   transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
-  box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
-  color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
   user-select: none;
   -webkit-user-select: none;
   vertical-align: middle;
