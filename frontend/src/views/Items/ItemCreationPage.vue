@@ -62,6 +62,7 @@
         </div>
       </div>
       <div class="ItemId">
+        <p>Categories:</p>
         <div class="checkboxItem">
           <input
             type="checkbox"
