@@ -58,6 +58,6 @@ export default {
   },
 
   createLease(lease) {
-    return apiClient.post("/my/leases", lease);
+    return apiClient.post("/my/lease", lease);
   },
 };
