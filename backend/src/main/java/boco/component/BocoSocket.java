@@ -50,6 +50,7 @@ public class BocoSocket {
      */
     @OnClose
     public void closeSession(){
+        //ON close does not work in testing, this is not used elsewhere
         sessionPool.get(sessionId).remove(session);
         webSockets.remove(this);
         System. out. println ("[websocket message] disconnected, total unique: "+webSockets.size());
@@ -74,7 +75,7 @@ public class BocoSocket {
         for (BocoSocket socket:webSockets){
             System.out.println ("[websocket message] broadcast message:"+message);
             try {
-                socket.session.getAsyncRemote().sendText(message);
+                //socket.session.getAsyncRemote().sendText(message);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -98,5 +99,22 @@ public class BocoSocket {
                 }
             }
         }
+    }
+
+
+    public String getSessionId(String s) {
+        return sessionId;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public static CopyOnWriteArraySet<BocoSocket> getWebSockets() {
+        return webSockets;
+    }
+
+    public static Map<String, List<Session>> getSessionPool() {
+        return sessionPool;
     }
 }

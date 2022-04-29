@@ -78,10 +78,7 @@ public class LeaseService {
             Profile profile = profileData.get();
             Profile owner = listing.getProfile();
 
-            Timestamp fromDatetime = Timestamp.valueOf(leaseRequest.getFromDatetime());
-            Timestamp toDatetime = Timestamp.valueOf(leaseRequest.getToDatetime());
-
-            Lease newLease = new Lease(fromDatetime, toDatetime,
+            Lease newLease = new Lease(leaseRequest.getFromDatetime(), leaseRequest.getToDatetime(),
                     profile, listing, owner);
             Lease savedLease = leaseRepository.save(newLease);
 
@@ -99,7 +96,7 @@ public class LeaseService {
             Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
             if (!profileData.isPresent()){
-                logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+                logger.debug("profile of token was not found.");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Profile profile = profileData.get();
@@ -183,11 +180,7 @@ public class LeaseService {
     }
 
     private boolean isLessThanDayBeforeLeaseStart(Lease lease) {
-        Timestamp leaseTime = lease.getFromDatetime();
-        Date date = new Date();
-        Timestamp nowTime = new Timestamp(date.getTime() + (3600*1000*24)); // Adding 24 hours to date
-        return nowTime.after(leaseTime);
-
+        return (lease.getFromDatetime() + (3600*1000*24)) > lease.getToDatetime();
     }
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
