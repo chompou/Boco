@@ -75,6 +75,15 @@
     <router-view />
     <div style="height: 20px" />
   </div>
+
+  <div id="footer">
+    <h5>BORROW COMMUNITY</h5>
+    <div class="footer-row">
+      <p>HOLA</p>
+      |
+      <p>HOLA</p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -103,6 +112,7 @@ export default {
   --button-color: #00a5a5;
   --text-color: #2c3e50;
   --text-color2: white;
+  --background-color-header-nav-footer: #ececec;
 }
 
 #app {
@@ -112,6 +122,7 @@ export default {
   color: #2c3e50;
 }
 
+#footer,
 #header {
   background-color: #ececec;
 }
@@ -136,7 +147,7 @@ export default {
 /* Navbar styling */
 #navbar,
 #collapsedNav {
-  background-color: #ececec;
+  background-color: var(--background-color-header-nav-footer);
 }
 
 li a {
@@ -190,6 +201,22 @@ li a:hover {
   }
 }
 /* Navbar styling end*/
+
+/* FOOTER style */
+
+#footer {
+  align-items: center;
+  display: flex;
+  width: 100%;
+  padding: 2rem 2rem 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.footer-row {
+  display: flex;
+}
+/* FOOTER style END */
 
 #log-out-button {
   background: none;
