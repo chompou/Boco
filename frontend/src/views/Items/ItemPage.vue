@@ -15,7 +15,12 @@
           <div v-if="my">
             <button class="editButtons boco-btn">Set Active</button>
             <button @click="edit" class="editButtons boco-btn">Edit</button>
-            <button class="editButtons boco-btn">Delete</button>
+            <button
+              class="editButtons boco-btn"
+              onclick="return confirm('Are you sure?')"
+            >
+              Delete
+            </button>
           </div>
           <button
             class="leaseButton boco-btn"

@@ -83,7 +83,7 @@
         ></textarea>
       </div>
       <div id="CreateButtons" class="element">
-        <button class="CreateButton" v-on:click="Update">Update</button>
+        <button class="CreateButton" v-on:click="update">Update</button>
         <button id="Delete" class="CreateButton" v-on:click="dismiss">
           Dismiss
         </button>
@@ -104,17 +104,20 @@ export default {
   },
   methods: {
     update() {
-      console.log(this.item.address);
       apiService
         .updateItem({
+          listingId: this.id,
           address: this.item.address,
-          price: this.item.leasePrice,
+          price: this.item.price,
           priceType: this.item.priceType,
           description: this.item.description,
         })
         .catch((error) => {
           console.log(error);
         });
+      setTimeout(() => {
+        this.$router.push({ name: "item", params: { id: this.id } });
+      }, 100);
     },
     dismiss() {
       this.$router.push({ name: "item", params: { id: this.id } });
