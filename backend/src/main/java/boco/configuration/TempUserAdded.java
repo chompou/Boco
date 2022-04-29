@@ -40,7 +40,7 @@ public class TempUserAdded {
                 CategoryType categoryType1 = new CategoryType();
                 categoryType1.setName("Electronic");
                 CategoryType categoryType2 = new CategoryType();
-                categoryType2.setName("Car");
+                categoryType2.setName("Vehicle");
 
                 ArrayList<CategoryType> categoryTypes = new ArrayList<>();
                 categoryTypes.add(categoryType);

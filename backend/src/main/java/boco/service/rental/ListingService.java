@@ -130,12 +130,21 @@ public class ListingService {
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
             listingRepository.save(newListing);
+            System.out.println(listingRequest.getCategoryNames().size());
+            for (int i = 0; i<listingRequest.getCategoryNames().size(); i++){
+                Optional<CategoryType> categoryType = categoryTypeRepository.findCategoryTypeByNameEquals(listingRequest.getCategoryNames().get(i));
+                if (categoryType.isPresent()){
+                    newListing.getCategoryTypes().add(categoryType.get());
+                }
+            }
+            listingRepository.save(newListing);
             Image image = new Image(multipartFile.getBytes(), newListing);
             Image savedImage = imageRepository.save(image);
             newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
