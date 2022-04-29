@@ -179,8 +179,8 @@ public class TempUserAdded {
 
 
                 Lease lease = new Lease();
-                lease.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)));
-                lease.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)));
+                lease.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)).getTime());
+                lease.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)).getTime());
                 lease.setApproved(true);
                 lease.setCompleted(false);
                 lease.setProfile(profile2);
@@ -188,8 +188,8 @@ public class TempUserAdded {
                 lease.setOwner(lease.getListing().getProfile());
 
                 Lease lease1 = new Lease();
-                lease1.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 15, 0)));
-                lease1.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 18, 0)));
+                lease1.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 15, 0)).getTime());
+                lease1.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 18, 0)).getTime());
                 lease1.setApproved(true);
                 lease1.setCompleted(true);
                 lease1.setItemReview(review);
@@ -257,8 +257,8 @@ public class TempUserAdded {
                 List<Lease> leases = new ArrayList<>();
                 for (int i = 0; i < magnitude*5; i++) {
                     Lease lea = new Lease();
-                    lea.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)));
-                    lea.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)));
+                    lea.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)).getTime());
+                    lea.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)).getTime());
                     lea.setApproved(i%2==0);
                     lea.setCompleted(i%3==0);
                     lease1.setItemReview(reviewRepository.getOne((long) (i/magnitude)+1));

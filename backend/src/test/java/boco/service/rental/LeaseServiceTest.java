@@ -68,32 +68,44 @@ class LeaseServiceTest {
         Listing li3 = new Listing("room", "room", "building", true, true, 1.0, "Week", p3);
         li3.setId(3L);
 
-        Lease le1 = new Lease(Timestamp.valueOf("2030-07-01 10:00:00"), Timestamp.valueOf("2030-12-01 10:00:00"),
+        Lease le1 = new Lease(
+                Timestamp.valueOf("2030-07-01 10:00:00").getTime(),
+                Timestamp.valueOf("2030-12-01 10:00:00").getTime(),
                 p2, li1, p1);
         le1.setId(1L);
-        Lease le2 = new Lease(Timestamp.valueOf("2031-07-01 10:00:00"), Timestamp.valueOf("2031-12-01 10:00:00"),
+        Lease le2 = new Lease(
+                Timestamp.valueOf("2031-07-01 10:00:00").getTime(),
+                Timestamp.valueOf("2031-12-01 10:00:00").getTime(),
                 p2, li1, p1);
         le2.setId(2L);
-        Lease le3 = new Lease(Timestamp.valueOf("2032-07-01 10:00:00"), Timestamp.valueOf("2032-12-01 10:00:00"),
+        Lease le3 = new Lease(
+                Timestamp.valueOf("2032-07-01 10:00:00").getTime(),
+                Timestamp.valueOf("2032-12-01 10:00:00").getTime(),
                 p1, li2, p2);
         le3.setId(3L);
-        Lease le4 = new Lease(Timestamp.valueOf("2033-07-01 10:00:00"), Timestamp.valueOf("2033-12-01 10:00:00"),
+        Lease le4 = new Lease(
+                Timestamp.valueOf("2033-07-01 10:00:00").getTime(),
+                Timestamp.valueOf("2033-12-01 10:00:00").getTime(),
                 p1, li2, p2);
         le4.setId(4L);
-        Lease le5 = new Lease(Timestamp.valueOf("2034-07-01 10:00:00"), Timestamp.valueOf("2034-12-01 10:00:00"),
+        Lease le5 = new Lease(
+                Timestamp.valueOf("2034-07-01 10:00:00").getTime(),
+                Timestamp.valueOf("2034-12-01 10:00:00").getTime(),
                 p1, li2, p2);
         le5.setId(5L);
 
         // SPECIAL CASES:
         // Lease which is completed
-        Lease le6 = new Lease(Timestamp.valueOf("2025-07-01 10:00:00"), Timestamp.valueOf("2025-12-01 10:00:00"),
+        Lease le6 = new Lease(
+                Timestamp.valueOf("2025-07-01 10:00:00").getTime(),
+                Timestamp.valueOf("2025-12-01 10:00:00").getTime(),
                 p4, li3, p3);
         le6.setId(6L);
         le6.setCompleted(true);
         // Lease with start date less than 24 hours before now
         Date date = new Date();
-        Timestamp fromDate = new Timestamp(date.getTime() + (3600*1000*3));
-        Timestamp toDate = new Timestamp(date.getTime() + (3600*1000*10));
+        long fromDate = date.getTime() + (3600*1000*3);
+        long toDate = date.getTime() + (3600*1000*10);
         Lease le7 = new Lease(fromDate, toDate,
                 p4, li3, p3);
         le7.setId(7L);
@@ -169,40 +181,40 @@ class LeaseServiceTest {
 
         assertEquals(1L, l1.getId());
         assertEquals(false, l1.getIsApproved());
-        assertEquals(Timestamp.valueOf("2030-07-01 10:00:00"), l1.getFromDatetime());
-        assertEquals(Timestamp.valueOf("2030-12-01 10:00:00"), l1.getToDatetime());
+        assertEquals(Timestamp.valueOf("2030-07-01 10:00:00").getTime(), l1.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2030-12-01 10:00:00").getTime(), l1.getToDatetime());
         assertEquals(false, l1.getIsCompleted());
         assertEquals(2L, l1.getProfileId(), 2L);
         assertEquals(1L, l1.getListingId(), 1L);
 
         assertEquals(2L, l2.getId());
         assertEquals(false, l2.getIsApproved());
-        assertEquals(Timestamp.valueOf("2031-07-01 10:00:00"), l2.getFromDatetime());
-        assertEquals(Timestamp.valueOf("2031-12-01 10:00:00"), l2.getToDatetime());
+        assertEquals(Timestamp.valueOf("2031-07-01 10:00:00").getTime(), l2.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2031-12-01 10:00:00").getTime(), l2.getToDatetime());
         assertEquals(false, l2.getIsCompleted());
         assertEquals(2L, l2.getProfileId());
         assertEquals(1L, l2.getListingId());
 
         assertEquals(3L, l3.getId());
         assertEquals(false, l3.getIsApproved());
-        assertEquals(Timestamp.valueOf("2032-07-01 10:00:00"), l3.getFromDatetime());
-        assertEquals(Timestamp.valueOf("2032-12-01 10:00:00"), l3.getToDatetime());
+        assertEquals(Timestamp.valueOf("2032-07-01 10:00:00").getTime(), l3.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2032-12-01 10:00:00").getTime(), l3.getToDatetime());
         assertEquals(false, l3.getIsCompleted());
         assertEquals(1L, l3.getProfileId());
         assertEquals(2L, l3.getListingId());
 
         assertEquals(4L, l4.getId());
         assertEquals(false, l4.getIsApproved());
-        assertEquals(Timestamp.valueOf("2033-07-01 10:00:00"), l4.getFromDatetime());
-        assertEquals(Timestamp.valueOf("2033-12-01 10:00:00"), l4.getToDatetime());
+        assertEquals(Timestamp.valueOf("2033-07-01 10:00:00").getTime(), l4.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2033-12-01 10:00:00").getTime(), l4.getToDatetime());
         assertEquals(false, l4.getIsCompleted());
         assertEquals(1L, l4.getProfileId(), 1L);
         assertEquals(2L, l4.getListingId(), 2L);
 
         assertEquals(5L, l5.getId());
         assertEquals(false, l5.getIsApproved());
-        assertEquals(Timestamp.valueOf("2034-07-01 10:00:00"), l5.getFromDatetime());
-        assertEquals(Timestamp.valueOf("2034-12-01 10:00:00"), l5.getToDatetime());
+        assertEquals(Timestamp.valueOf("2034-07-01 10:00:00").getTime(), l5.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2034-12-01 10:00:00").getTime(), l5.getToDatetime());
         assertEquals(false, l5.getIsCompleted());
         assertEquals(1L, l5.getProfileId());
         assertEquals(2L, l5.getListingId());
