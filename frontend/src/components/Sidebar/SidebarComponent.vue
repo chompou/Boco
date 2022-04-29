@@ -7,7 +7,7 @@
           <p>From:</p>
           <input
             v-model="priceFrom"
-            placeholder="100"
+            placeholder="0"
             class="price"
             type="number"
             min="0"
@@ -15,7 +15,7 @@
           <p>To:</p>
           <input
             v-model="priceTo"
-            placeholder="100"
+            placeholder="0"
             class="price"
             type="number"
             min="0"
@@ -74,9 +74,27 @@
       </div>
       <transition>
         <div class="Header" v-if="collapsed === false">
-          <input type="submit" id="submit" value="Search" />
+          <input
+            type="submit"
+            id="submit"
+            value="Apply Filters"
+            @click="onSubmit"
+          />
         </div>
       </transition>
+      <div>
+        <h4 class="Header">Category</h4>
+
+        <select name="Category" v-bind="selectedCategory">
+          <option
+            v-for="category in categories"
+            :key="category"
+            :value="category.name"
+          >
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
     </div>
     <span
       class="collapse-icon"
@@ -89,6 +107,7 @@
 </template>
 
 <script>
+import apiService from "@/services/apiService";
 import { collapsed, toggleSidebar, sidebarWidth } from "./state";
 
 export default {
@@ -96,13 +115,28 @@ export default {
     return {
       priceFrom: 0,
       priceTo: 0,
-      leaseType: "Hour",
+      leaseType: null,
       search: "",
+      categories: [{ id: 0, name: "All" }],
     };
   },
   props: {},
   setup() {
     return { collapsed, toggleSidebar, sidebarWidth };
+  },
+
+  created() {
+    apiService
+      .getCategories()
+      .then((response) => {
+        this.categories.push(...response.data);
+        console.log(this.categories);
+      })
+      .catch((error) => console.log(error));
+
+    this.priceFrom = this.$route.query.priceFrom;
+    this.priceTo = this.$route.query.priceTo;
+    this.search = this.$route.query.search;
   },
 };
 </script>

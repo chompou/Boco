@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +119,7 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, String token) {
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest,MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
@@ -131,15 +132,25 @@ public class ListingService {
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
             listingRepository.save(newListing);
-            Image image = new Image(listingRequest.getImage(), listingRequest.getCaption(), newListing);
-            imageRepository.save(image);
-            newListing.getImages().add(image);
+            System.out.println(listingRequest.getCategoryNames().size());
+            for (int i = 0; i<listingRequest.getCategoryNames().size(); i++){
+                Optional<CategoryType> categoryType = categoryTypeRepository.findCategoryTypeByNameEquals(listingRequest.getCategoryNames().get(i));
+                if (categoryType.isPresent()){
+                    newListing.getCategoryTypes().add(categoryType.get());
+                }
+            }
+            listingRepository.save(newListing);
+            Image image = new Image(multipartFile.getBytes(), newListing);
+            Image savedImage = imageRepository.save(image);
+            newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
         String username = jwtUtil.extractUsername(token.substring(7));
