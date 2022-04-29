@@ -13,10 +13,8 @@ import boco.service.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.verification.Times;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
@@ -145,15 +143,15 @@ class LeaseServiceTest {
         List<LeaseResponse> leases2 = res2.getBody();
 
 
-        assertEquals(leases1.size(), 2);
-        assertEquals(leases2.size(), 3);
+        assertEquals(2, leases1.size());
+        assertEquals(3, leases2.size());
     }
 
     @Test
     public void getMyLeasesReturnsStatusCode200() {
         ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi");
 
-        assertEquals(res.getStatusCodeValue(), 200);
+        assertEquals(200, res.getStatusCodeValue());
     }
 
     @Test
@@ -169,51 +167,51 @@ class LeaseServiceTest {
         LeaseResponse l4 = leases2.get(1);
         LeaseResponse l5 = leases2.get(2);
 
-        assertEquals(l1.getId(), 1L);
-        assertEquals(l1.getIsApproved(), false);
-        assertEquals(l1.getFromDatetime(), Timestamp.valueOf("2030-07-01 10:00:00"));
-        assertEquals(l1.getToDatetime(), Timestamp.valueOf("2030-12-01 10:00:00"));
-        assertEquals(l1.getIsCompleted(), false);
-        assertEquals(l1.getProfileId(), 2L);
-        assertEquals(l1.getListingId(), 1L);
+        assertEquals(1L, l1.getId());
+        assertEquals(false, l1.getIsApproved());
+        assertEquals(Timestamp.valueOf("2030-07-01 10:00:00"), l1.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2030-12-01 10:00:00"), l1.getToDatetime());
+        assertEquals(false, l1.getIsCompleted());
+        assertEquals(2L, l1.getProfileId(), 2L);
+        assertEquals(1L, l1.getListingId(), 1L);
 
-        assertEquals(l2.getId(), 2L);
-        assertEquals(l2.getIsApproved(), false);
-        assertEquals(l2.getFromDatetime(), Timestamp.valueOf("2031-07-01 10:00:00"));
-        assertEquals(l2.getToDatetime(), Timestamp.valueOf("2031-12-01 10:00:00"));
-        assertEquals(l2.getIsCompleted(), false);
-        assertEquals(l2.getProfileId(), 2L);
-        assertEquals(l2.getListingId(), 1L);
+        assertEquals(2L, l2.getId());
+        assertEquals(false, l2.getIsApproved());
+        assertEquals(Timestamp.valueOf("2031-07-01 10:00:00"), l2.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2031-12-01 10:00:00"), l2.getToDatetime());
+        assertEquals(false, l2.getIsCompleted());
+        assertEquals(2L, l2.getProfileId());
+        assertEquals(1L, l2.getListingId());
 
-        assertEquals(l3.getId(), 3);
-        assertEquals(l3.getIsApproved(), false);
-        assertEquals(l3.getFromDatetime(), Timestamp.valueOf("2032-07-01 10:00:00"));
-        assertEquals(l3.getToDatetime(), Timestamp.valueOf("2032-12-01 10:00:00"));
-        assertEquals(l3.getIsCompleted(), false);
-        assertEquals(l3.getProfileId(), 1L);
-        assertEquals(l3.getListingId(), 2L);
+        assertEquals(3L, l3.getId());
+        assertEquals(false, l3.getIsApproved());
+        assertEquals(Timestamp.valueOf("2032-07-01 10:00:00"), l3.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2032-12-01 10:00:00"), l3.getToDatetime());
+        assertEquals(false, l3.getIsCompleted());
+        assertEquals(1L, l3.getProfileId());
+        assertEquals(2L, l3.getListingId());
 
-        assertEquals(l4.getId(), 4L);
-        assertEquals(l4.getIsApproved(), false);
-        assertEquals(l4.getFromDatetime(), Timestamp.valueOf("2033-07-01 10:00:00"));
-        assertEquals(l4.getToDatetime(), Timestamp.valueOf("2033-12-01 10:00:00"));
-        assertEquals(l4.getIsCompleted(), false);
-        assertEquals(l4.getProfileId(), 1L);
-        assertEquals(l4.getListingId(), 2L);
+        assertEquals(4L, l4.getId());
+        assertEquals(false, l4.getIsApproved());
+        assertEquals(Timestamp.valueOf("2033-07-01 10:00:00"), l4.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2033-12-01 10:00:00"), l4.getToDatetime());
+        assertEquals(false, l4.getIsCompleted());
+        assertEquals(1L, l4.getProfileId(), 1L);
+        assertEquals(2L, l4.getListingId(), 2L);
 
-        assertEquals(l5.getId(), 5L);
-        assertEquals(l5.getIsApproved(), false);
-        assertEquals(l5.getFromDatetime(), Timestamp.valueOf("2034-07-01 10:00:00"));
-        assertEquals(l5.getToDatetime(), Timestamp.valueOf("2034-12-01 10:00:00"));
-        assertEquals(l5.getIsCompleted(), false);
-        assertEquals(l5.getProfileId(), 1L);
-        assertEquals(l5.getListingId(), 2L);
+        assertEquals(5L, l5.getId());
+        assertEquals(false, l5.getIsApproved());
+        assertEquals(Timestamp.valueOf("2034-07-01 10:00:00"), l5.getFromDatetime());
+        assertEquals(Timestamp.valueOf("2034-12-01 10:00:00"), l5.getToDatetime());
+        assertEquals(false, l5.getIsCompleted());
+        assertEquals(1L, l5.getProfileId());
+        assertEquals(2L, l5.getListingId());
     }
 
     @Test
     public void getMyLeasesReturnsStatusCode404() {
         var res = service.getMyLeases("Bearer notfound");
-        assertEquals(res.getStatusCodeValue(), 404);
+        assertEquals(404, res.getStatusCodeValue());
     }
 
     @Test
@@ -232,16 +230,16 @@ class LeaseServiceTest {
         var r9 = service.deleteLease(4L, "Bearer messi");
         var r10 = service.deleteLease(5L, "Bearer messi");
 
-        assertEquals(r1.getStatusCodeValue(), 204);
-        assertEquals(r2.getStatusCodeValue(), 204);
-        assertEquals(r3.getStatusCodeValue(), 204);
-        assertEquals(r4.getStatusCodeValue(), 204);
-        assertEquals(r5.getStatusCodeValue(), 204);
-        assertEquals(r6.getStatusCodeValue(), 204);
-        assertEquals(r7.getStatusCodeValue(), 204);
-        assertEquals(r8.getStatusCodeValue(), 204);
-        assertEquals(r9.getStatusCodeValue(), 204);
-        assertEquals(r10.getStatusCodeValue(), 204);
+        assertEquals(204, r1.getStatusCodeValue());
+        assertEquals(204, r2.getStatusCodeValue());
+        assertEquals(204, r3.getStatusCodeValue());
+        assertEquals(204, r4.getStatusCodeValue());
+        assertEquals(204, r5.getStatusCodeValue());
+        assertEquals(204, r6.getStatusCodeValue());
+        assertEquals(204, r7.getStatusCodeValue());
+        assertEquals(204, r8.getStatusCodeValue());
+        assertEquals(204, r9.getStatusCodeValue());
+        assertEquals(204, r10.getStatusCodeValue());
 
     }
 
@@ -254,9 +252,9 @@ class LeaseServiceTest {
         var r2 = service.deleteLease(8L, "Bearer usr");
         var r3 = service.deleteLease(9L, "Bearer messi");
 
-        assertEquals(r1.getStatusCodeValue(), 404);
-        assertEquals(r2.getStatusCodeValue(), 404);
-        assertEquals(r3.getStatusCodeValue(), 404);
+        assertEquals(404, r1.getStatusCodeValue());
+        assertEquals(404, r2.getStatusCodeValue());
+        assertEquals(404, r3.getStatusCodeValue());
     }
 
     @Test
@@ -270,17 +268,17 @@ class LeaseServiceTest {
         var r3 = service.deleteLease(1L, "Bearer ron");
         var r4 = service.deleteLease(2L, "Bearer si");
 
-        assertEquals(r1.getStatusCodeValue(), 422);
-        assertEquals(r2.getStatusCodeValue(), 422);
-        assertEquals(r3.getStatusCodeValue(), 422);
-        assertEquals(r4.getStatusCodeValue(), 422);
+        assertEquals(422, r1.getStatusCodeValue());
+        assertEquals(422, r2.getStatusCodeValue());
+        assertEquals(422, r3.getStatusCodeValue());
+        assertEquals(422, r4.getStatusCodeValue());
     }
 
     @Test
     public void updateLeaseReturnsStatusCode200() {
         var req = new UpdateLeaseRequest(true,true,1L);
         var r1 = service.updateLease(req, "Bearer messi");
-        assertEquals(r1.getStatusCodeValue(), 200);
+        assertEquals(200, r1.getStatusCodeValue(), 200);
     }
 
     @Test
@@ -294,10 +292,10 @@ class LeaseServiceTest {
         var r3 = service.updateLease(req2, "Bearer messi");
         var r4 = service.updateLease(req2, "Bearer ron");
 
-        assertEquals(r1.getStatusCodeValue(), 400);
-        assertEquals(r2.getStatusCodeValue(), 400);
-        assertEquals(r3.getStatusCodeValue(), 400);
-        assertEquals(r4.getStatusCodeValue(), 400);
+        assertEquals(400, r1.getStatusCodeValue());
+        assertEquals(400, r2.getStatusCodeValue());
+        assertEquals(400, r3.getStatusCodeValue());
+        assertEquals(400, r4.getStatusCodeValue());
 
     }
 
