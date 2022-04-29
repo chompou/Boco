@@ -62,7 +62,7 @@
         <ul id="nav" class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link">
-              <router-link to="/info"
+              <router-link to="/support"
                 ><font-awesome-icon class="icons" icon="info"
               /></router-link>
             </a>
@@ -247,6 +247,20 @@ li a:hover {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);
+}
+
+label,
+.input-field {
+  display: flex;
+  margin: auto;
+  padding: 8px;
+  border-color: var(--button-color);
+  border-radius: 5px;
+  justify-content: space-evenly;
+}
+.input-field:hover,
+.input-field:focus {
+  border-color: var(--button-hover);
 }
 
 #logo {

@@ -24,35 +24,7 @@ import RatingComponent from "@/components/RatingComponent.vue";
 export default {
   components: { RatingComponent },
 
-  props: ["lease", "personal"],
-
-  data() {
-    return {
-      leases: [
-        {
-          id: 1,
-          title: "MyItemasfadfadfadfadfa",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-        {
-          id: 2,
-          title: "MyItem",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-        {
-          id: 3,
-          title: "MyItem",
-          owner: "Jon Martin",
-          from: "2022-05-15",
-          to: "2022-05-20",
-        },
-      ],
-    };
-  },
+  props: ["leases", "personal"],
 };
 </script>
 

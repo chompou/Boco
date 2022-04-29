@@ -18,7 +18,7 @@ export default {
   },
   created() {
     apiService
-      .getItems({ profileId: 1 }, 0, 15)
+      .getItems({ profileId: this.$store.state.loggedInUser }, 0, 15)
       .then((response) => {
         this.items = response.data;
         console.log(this.items);

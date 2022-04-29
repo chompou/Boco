@@ -6,11 +6,24 @@ const apiClient = axios.create({
   timeout: 1000,
   headers: {
     Accept: "application/json",
-    "Content-Type": "application/json",
+  },
+});
+
+const apiClientImage = axios.create({
+  baseURL: "http://localhost:8080/api",
+  timeout: 1000,
+  headers: {
+    Accept: "application/json",
   },
 });
 
 apiClient.interceptors.request.use((config) => {
+  let token = storageService.getToken();
+  if (token != null) config.headers.Authorization = "Bearer " + token;
+  return config;
+});
+
+apiClientImage.interceptors.request.use((config) => {
   let token = storageService.getToken();
   if (token != null) config.headers.Authorization = "Bearer " + token;
   return config;
@@ -35,6 +48,10 @@ export default {
     return apiClient.get("/review", {
       params: { ...filters, page: page, perPage: perPage },
     });
+  },
+
+  getCategories() {
+    return apiClient.get("/category");
   },
 
   getProfile(profileId) {
