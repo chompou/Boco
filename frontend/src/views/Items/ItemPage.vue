@@ -86,7 +86,6 @@ export default {
       profile: { id: null },
       reviews: [],
       url: null,
-      my: false,
     };
   },
   computed: {
