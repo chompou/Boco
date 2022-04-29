@@ -147,7 +147,7 @@ export default {
   color: white;
 
   float: left;
-  position: fixed;
+  position: sticky;
   z-index: 1;
   top: 0;
   left: 0;
@@ -165,7 +165,7 @@ export default {
 }
 
 .collapse-icon {
-  position: absolute;
+  position: relative;
   bottom: 0;
   padding: 0.75em;
 

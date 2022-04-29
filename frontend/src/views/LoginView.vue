@@ -132,6 +132,7 @@ export default {
   flex-direction: column;
   margin: auto;
   justify-content: space-evenly;
+  text-align: center;
 }
 
 label,
