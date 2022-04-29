@@ -33,7 +33,6 @@ public class ProfileController {
         if (responseEntity.getBody() != null){
             emailService.sendCreatedAccountMessage(profileRequest.getEmail());
         }
-
         return responseEntity;
     }
 

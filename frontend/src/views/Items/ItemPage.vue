@@ -13,9 +13,24 @@
         <div class="imageButtons">
           <img id="image" :src="url" />
           <div v-if="my">
-            <button class="editButtons boco-btn">Set Active</button>
+            <button
+              v-if="item.active"
+              @click="changeStatus(false)"
+              class="editButtons boco-btn"
+            >
+              Active
+            </button>
+            <button
+              v-else
+              @click="changeStatus(true)"
+              class="editButtons boco-btn"
+            >
+              Inactive
+            </button>
             <button @click="edit" class="editButtons boco-btn">Edit</button>
-            <button class="editButtons boco-btn">Delete</button>
+            <button class="editButtons boco-btn" @click="deleteItem">
+              Delete
+            </button>
           </div>
           <button
             class="leaseButton boco-btn"
@@ -102,6 +117,40 @@ export default {
   methods: {
     edit() {
       this.$router.push({ name: "editItem", params: { id: this.id } });
+    },
+    deleteItem() {
+      let result = confirm("Are you sure you want to delete?");
+      if (result) {
+        apiService
+          .deleteItem({
+            listingId: this.id,
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        setTimeout(() => {
+          this.$router.push({ name: "myItems" });
+        }, 300);
+      }
+    },
+    changeStatus(status) {
+      console.log(this.item);
+      apiService
+        .updateItem({
+          listingId: this.id,
+          isAvailable: true,
+          active: status,
+          address: this.item.address,
+          price: this.item.price,
+          priceType: this.item.priceType,
+          description: this.item.description,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setTimeout(() => {
+        location.reload();
+      }, 100);
     },
   },
   created() {

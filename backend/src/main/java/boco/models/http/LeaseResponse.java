@@ -12,12 +12,12 @@ import java.sql.Timestamp;
 public class LeaseResponse {
     private Long id;
     private Boolean isApproved;
-    private Timestamp fromDatetime;
-    private Timestamp toDatetime;
+    private Long fromDatetime;
+    private Long toDatetime;
     private Boolean isCompleted;
-    private Review ownerReview;
-    private Review leaseeReview;
-    private Review itemReview;
+    private ReviewResponse ownerReview;
+    private ReviewResponse leaseeReview;
+    private ReviewResponse itemReview;
     private Long profileId;
     private Long listingId;
 
@@ -27,9 +27,9 @@ public class LeaseResponse {
         this.fromDatetime = lease.getFromDatetime();
         this.toDatetime = lease.getToDatetime();
         this.isCompleted = lease.isCompleted();
-        this.ownerReview = lease.getOwnerReview();
-        this.leaseeReview = lease.getLeaseeReview();
-        this.itemReview = lease.getItemReview();
+        if (lease.getOwnerReview() != null) this.ownerReview = new ReviewResponse(lease.getOwnerReview());
+        if (lease.getLeaseeReview() != null) this.leaseeReview = new ReviewResponse(lease.getLeaseeReview());
+        if (lease.getItemReview() != null) this.itemReview = new ReviewResponse(lease.getItemReview());
         this.profileId = lease.getProfile().getId();
         this.listingId = lease.getListing().getId();
     }

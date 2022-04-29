@@ -1,6 +1,5 @@
 package boco.models.rental;
 
-import boco.models.http.LeaseRequest;
 import boco.models.profile.Profile;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Entity
@@ -18,17 +16,17 @@ public class Lease {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private boolean isApproved;
-    private Timestamp fromDatetime;
-    private Timestamp toDatetime;
+    private Long fromDatetime;
+    private Long toDatetime;
     private boolean isCompleted;
 
-    @OneToOne(mappedBy = "lease")
+    @OneToOne(mappedBy = "lease", cascade = CascadeType.ALL, orphanRemoval = true)
     private Review ownerReview;
 
-    @OneToOne(mappedBy = "lease")
+    @OneToOne(mappedBy = "lease", cascade = CascadeType.ALL, orphanRemoval = true)
     private Review leaseeReview;
 
-    @OneToOne(mappedBy = "lease")
+    @OneToOne(mappedBy = "lease", cascade = CascadeType.ALL, orphanRemoval = true)
     private Review itemReview;
 
     @ManyToOne
@@ -46,7 +44,7 @@ public class Lease {
     @JsonManagedReference
     private Profile owner; // The owner of the listing
 
-    public Lease(Timestamp fromDatetime, Timestamp toDatetime, Profile profile, Listing listing, Profile owner) {
+    public Lease(Long fromDatetime, Long toDatetime, Profile profile, Listing listing, Profile owner) {
         this.fromDatetime = fromDatetime;
         this.toDatetime = toDatetime;
         this.profile = profile;

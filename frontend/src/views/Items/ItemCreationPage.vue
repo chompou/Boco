@@ -29,7 +29,7 @@
         <p id="ItemNameHeader">Title:</p>
         <input
           class="baseInput"
-          v-model="title"
+          v-model="this.title"
           placeholder="Name"
           id="ItemName"
         />
@@ -38,7 +38,7 @@
         <p>Address:</p>
         <input
           class="baseInput"
-          v-model="address"
+          v-model="this.address"
           placeholder="Address"
           id="Address"
         />
@@ -90,7 +90,7 @@
       <div id="descriptionField">
         <p>Description</p>
         <textarea
-          v-model="description"
+          v-model="this.description"
           placeholder="Description"
           id="description"
           name="description"
@@ -110,15 +110,16 @@ import apiService from "@/services/apiService";
 export default {
   data() {
     return {
+      formData: new FormData(),
       preview: null,
       image: null,
-      title: "",
-      address: "",
-      price: "",
-      leaseType: "",
-      category: [],
+      title: this.title,
+      address: this.address,
+      price: 0,
+      leaseType: this.leaseType,
+      category: [this.category],
       checked: false,
-      description: "",
+      description: this.description,
     };
   },
   methods: {
@@ -130,25 +131,33 @@ export default {
           this.preview = e.target.result;
         };
         this.image = input.files[0];
-        reader.readAsDataURL(input.files[0]);
+        this.formData.append("file", this.image);
       }
     },
     submit() {
       console.log(this.image);
       console.log(this.leaseType);
-      apiService
-        .createItem({
-          image: this.image,
-          name: this.title,
-          title: this.title,
-          address: this.address,
-          price: this.leasePrice,
-          priceType: this.leaseType,
-          description: this.description,
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.formData.append(
+        "properties",
+        new Blob(
+          [
+            JSON.stringify({
+              name: this.title,
+              address: this.address,
+              description: this.description,
+              price: this.leasePrice,
+              priceType: this.leaseType,
+              categoryNames: this.category,
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+      apiService.createItem(this.formData).catch((error) => {
+        console.log(error);
+      });
     },
   },
   computed: {

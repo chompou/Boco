@@ -13,6 +13,7 @@ import { sidebarWidth } from "@/components/Sidebar/state";
 import LargeItem from "@/components/Items/LargeItem.vue";
 import apiService from "@/services/apiService";
 export default {
+  props: ["filter"],
   components: { LargeItem, Sidebar },
   data() {
     return {
@@ -28,7 +29,7 @@ export default {
   methods: {
     fetchItems() {
       apiService
-        .getItems({}, this.page, 15)
+        .getItems(this.filter, this.page, 15)
         .then((response) => {
           this.items.push(...response.data);
         })

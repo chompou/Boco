@@ -46,6 +46,7 @@ public class Listing {
         Timestamp createdTime = new Timestamp(date.getTime());
         this.lastChanged = createdTime;
         images = new ArrayList<>();
+        categoryTypes = new ArrayList<>();
     }
 
     @ManyToOne
@@ -63,6 +64,8 @@ public class Listing {
 
     @ManyToMany
     private List<CategoryType> categoryTypes;
+
+
 
     @Override
     public String toString() {
