@@ -55,7 +55,6 @@
           />
           <label id="valuta">kr/</label>
           <select v-model="this.leaseType">
-            <option disabled value="">Hour</option>
             <option>Hour</option>
             <option>Day</option>
             <option>Week</option>
@@ -122,7 +121,7 @@ export default {
       title: "",
       address: "",
       price: 0,
-      leaseType: "",
+      leaseType: "Hour",
       category: [],
       checked: false,
       description: "",
@@ -138,6 +137,7 @@ export default {
         };
         this.image = input.files[0];
         this.formData.append("file", this.image);
+        reader.readAsDataURL(input.files[0]);
       }
     },
     submit() {
