@@ -45,14 +45,14 @@ class ProfileServiceTest {
 
     @BeforeEach
     public void setup() {
-        Personal p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "12345678");
+        Personal p1 = new Personal("messi", "leo@psg.fr", "ligue 1", "LEO", "x", "Argentina", "12345678");
         p1.setId(1L);
-        Professional p2 = new Professional("ronaldo", "cr7@manu.uk", "x", "CR7", "x", "Portugal", "12345678");
+        Professional p2 = new Professional("ronaldo", "cr7@manu.uk", "premier league", "CR7", "x", "Portugal", "12345678");
         p2.setId(2L);
 
-        Personal  p3 = new Personal("kaka", "kaka@br.br", "x", "KAKA", "x", "Brazil", "84267483");
+        Personal  p3 = new Personal("kaka", "kaka@br.br", "x", "KAKA", "retired", "Brazil", "84267483");
         p3.setId(3L);
-        Personal p4 = new Personal("ramos", "ramos@psg.fr", "x", "SERGIO", "x", "Spain", "78592384");
+        Personal p4 = new Personal("ramos", "ramos@psg.fr", "x", "SERGIO", "spain", "Spain", "78592384");
         p4.setId(4L);
 
 
@@ -159,13 +159,31 @@ class ProfileServiceTest {
         var res1 = profileService.getPublicProfile(3L, "Bearer ramos").getBody();
         var res2 = profileService.getPublicProfile(4L, "Bearer kaka").getBody();
 
-        Assertions.assertEquals(res1.getTlf(), "84267483");
-        Assertions.assertEquals(res1.getEmail(), "kaka@br.br");
-        Assertions.assertEquals(res2.getTlf(), "78592384");
-        Assertions.assertEquals(res2.getEmail(), "ramos@psg.fr");
+        Assertions.assertEquals("84267483", res1.getTlf());
+        Assertions.assertEquals("kaka@br.br", res1.getEmail());
+        Assertions.assertEquals("78592384", res2.getTlf());
+        Assertions.assertEquals("ramos@psg.fr", res2.getEmail());
     }
 
 
+    /**
+     * Note that this test does not test the fields email and tlf, this is covered in the tests
+     * getPublicProfileHidesDataNotContacts and getPublicProfileDoesNotHideDataContacts
+     */
+    @Test
+    public void getPublicProfileReturnsCorrectData() {
+        var res1 = profileService.getPublicProfile(1L, "Bearer ronaldo").getBody();
+        var res2 = profileService.getPublicProfile(2L, "Bearer messi").getBody();
 
+        Assertions.assertEquals("ligue 1", res1.getDescription());
+        Assertions.assertEquals("LEO", res1.getDisplayName());
+        Assertions.assertEquals(false, res1.getIsVerified());
+        Assertions.assertEquals(null, res1.getDeactivated());
 
+        Assertions.assertEquals("premier league", res2.getDescription());
+        Assertions.assertEquals("CR7", res2.getDisplayName());
+        Assertions.assertEquals(false, res2.getIsVerified());
+        Assertions.assertEquals(null, res2.getDeactivated());
+
+    }
 }
