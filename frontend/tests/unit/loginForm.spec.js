@@ -10,5 +10,4 @@ describe("Loginform", () => {
 
     expect(wrapper.find("#false-cred-id").isVisible()).toBe(true);
   });
-
 });
