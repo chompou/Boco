@@ -15,10 +15,7 @@
           <div v-if="my">
             <button class="editButtons boco-btn">Set Active</button>
             <button @click="edit" class="editButtons boco-btn">Edit</button>
-            <button
-              class="editButtons boco-btn"
-              onclick="return confirm('Are you sure?')"
-            >
+            <button class="editButtons boco-btn" @click="deleteItem">
               Delete
             </button>
           </div>
@@ -107,6 +104,21 @@ export default {
   methods: {
     edit() {
       this.$router.push({ name: "editItem", params: { id: this.id } });
+    },
+    deleteItem() {
+      let result = confirm("Are you sure you want to delete?");
+      if (result) {
+        apiService
+          .deleteItem({
+            listingId: this.id,
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        setTimeout(() => {
+          this.$router.push({ name: "myItems" });
+        }, 300);
+      }
     },
   },
   created() {

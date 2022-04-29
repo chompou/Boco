@@ -138,7 +138,6 @@ export default {
       console.log(this.leaseType);
       apiService
         .createItem({
-          image: this.image,
           name: this.title,
           title: this.title,
           address: this.address,
