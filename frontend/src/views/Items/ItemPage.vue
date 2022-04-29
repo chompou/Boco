@@ -11,7 +11,7 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img id="image" :src="url" />
+          <img id="image" alt="Vue logo" src="" />
           <div v-if="my">
             <button
               v-if="item.active"
@@ -152,21 +152,30 @@ export default {
         location.reload();
       }, 100);
     },
+    dataUrl() {
+      return btoa(this.item.image);
+    },
   },
   created() {
     apiService
       .getItem(this.id)
-      .then((response) => (this.item = response.data))
-      .catch((error) => console.log(error))
-      .then(() =>
+      .then((response) => {
+        this.item = response.data;
+        document.getElementById("image").src =
+          "data:image/jpeg;base64, " + this.item.image;
+        console.log(this.item.image.length);
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
             this.profile = response.data;
           })
-          .catch((error) => console.log(error))
-      );
-
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
       .then((response) => (this.reviews = response.data))

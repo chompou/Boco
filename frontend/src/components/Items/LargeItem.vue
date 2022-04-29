@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img :src="url" />
+      <img id="image3" alt="Vue logo" src="" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
@@ -40,17 +40,11 @@ export default {
       return this.item.categoryTypes.map((c) => c.name).join(", ");
     },
   },
-
-  data() {
-    return {
-      url: null,
-    };
-  },
-
   created() {
-    axios.get("https://picsum.photos/200/300").then((response) => {
-      this.url = response.request.responseURL;
-    });
+    let image = this.item.image;
+    setTimeout(() => {
+      document.getElementById("image3").src = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>
