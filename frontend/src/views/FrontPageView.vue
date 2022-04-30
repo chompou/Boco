@@ -135,6 +135,11 @@ export default {
   color: rgba(0, 0, 0, 0.3);
 }
 
+.mt-5 {
+  justify-content: center;
+  display: flex;
+}
+
 .icon {
   color: var(--main-color);
   font-size: 2vw;

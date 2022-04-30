@@ -116,7 +116,7 @@ export default {
       title: this.title,
       address: this.address,
       price: 0,
-      leaseType: this.leaseType,
+      leaseType: "Hour",
       category: [this.category],
       checked: false,
       description: this.description,
@@ -181,6 +181,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.col-md-5 {
+  width: 400px;
 }
 
 .ItemId {
