@@ -11,7 +11,7 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img id="image" alt="Vue logo" src="" />
+          <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
               v-if="item.active"
@@ -103,6 +103,7 @@ export default {
       reviews: [],
       url: null,
       profileLoaded: false,
+      imgSource: null,
     };
   },
   computed: {
@@ -161,9 +162,10 @@ export default {
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
-        document.getElementById("image").src =
-          "data:image/jpeg;base64, " + this.item.image;
-        console.log(this.item.image.length);
+        setTimeout(() => {
+          let image = this.item.image;
+          this.imgSource = "data:image/jpeg;base64, " + image;
+        }, 100);
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {

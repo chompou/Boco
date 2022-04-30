@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img id="image3" alt="Vue logo" src="" />
+      <img id="image3" alt="Vue logo" :src="imgSource" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
@@ -25,12 +25,16 @@
 
 <script>
 import RatingComponent from "@/components/RatingComponent";
-import axios from "axios";
 import priceService from "@/services/priceService";
 
 export default {
   props: ["item"],
   components: { RatingComponent },
+  data() {
+    return {
+      imgSource: null,
+    };
+  },
   computed: {
     displayPrice() {
       return priceService.displayPrice(this.item);
@@ -43,7 +47,7 @@ export default {
   created() {
     let image = this.item.image;
     setTimeout(() => {
-      document.getElementById("image3").src = "data:image/jpeg;base64, " + image;
+      this.imgSource = "data:image/jpeg;base64, " + image;
     }, 100);
   },
 };

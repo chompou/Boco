@@ -73,6 +73,7 @@ export default {
       .getItems({}, 0, 15)
       .then((response) => {
         this.items = response.data;
+        console.log(this.items);
       })
       .catch((error) => console.log(error));
   },

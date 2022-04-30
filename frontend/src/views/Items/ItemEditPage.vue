@@ -2,7 +2,7 @@
   <div id="container">
     <h1>Edit item</h1>
     <div>
-      <img class="preview" alt="Vue logo" src="@/assets/service.png" />
+      <img id="image3" alt="Vue logo" :src="imgSource" />
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -100,6 +100,7 @@ export default {
   data() {
     return {
       item: null,
+      imgSource: null,
     };
   },
   methods: {
@@ -144,6 +145,10 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+    setTimeout(() => {
+      let image = this.item.image;
+      this.imgSource = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>
