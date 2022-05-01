@@ -6,7 +6,6 @@ import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ImageRepository;
-import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
 import boco.service.security.JwtUtil;
@@ -35,16 +34,16 @@ public class ListingService {
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository) {
+    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
         this.listingRepository = listingRepository;
         this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
         this.leaseRepository = leaseRepository;
         this.imageRepository = imageRepository;
+        this.jwtUtil = jwtUtil;
     }
 
 
