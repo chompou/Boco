@@ -1,7 +1,7 @@
 package boco.configuration;
 
+import boco.component.BocoHasher;
 import boco.models.profile.Personal;
-import boco.models.profile.Professional;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
 import boco.repository.profile.NotificationRepository;
@@ -34,7 +34,7 @@ public class TempUserAddV2 {
 
         return args ->{
             try {
-                String letmepassHash = "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a";
+                String letmepassHash = BocoHasher.encode("letmepass");
                 int teamProfiles = 10;
                 int extraProfiles = 3; // 3 extra profiles
                 int totalProfiles = teamProfiles + extraProfiles;
@@ -277,7 +277,7 @@ public class TempUserAddV2 {
                     profileRepository.save(np);
                 }
 
-                java.io.File file = new File("src/main/resources/testbilde2.png");
+                java.io.File file = new File("backend/src/main/resources/testbilde2.png");
                 byte[] imageBytes = Files.readAllBytes(file.toPath());
 
 
