@@ -94,8 +94,13 @@
 
 <script>
 import apiService from "@/services/apiService";
+import { useToast } from "vue-toastification";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   props: ["id"],
   data() {
     return {
@@ -119,9 +124,15 @@ export default {
       setTimeout(() => {
         this.$router.push({ name: "item", params: { id: this.id } });
       }, 100);
+      this.toast.success("Item listing was updated", {
+        timeout: 2000,
+      });
     },
     dismiss() {
       this.$router.push({ name: "item", params: { id: this.id } });
+      this.toast.error("Changes were discarded", {
+        timeout: 2000,
+      });
     },
   },
   computed: {
