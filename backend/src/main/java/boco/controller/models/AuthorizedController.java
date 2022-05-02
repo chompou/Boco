@@ -47,11 +47,6 @@ public class AuthorizedController {
             @RequestHeader(name="Authorization") String token) {
         return listingService.createListing(listingRequest,multipartFile, token);
     }
-    @PostMapping("/listing/image")
-    public ResponseEntity<ImageResponse> createImage(@RequestBody ImageRequest imageRequest,
-                                                     @RequestHeader(name="Authorization") String token) {
-        return listingService.createImage(imageRequest,token);
-    }
 
 
     @PutMapping("/listing")
