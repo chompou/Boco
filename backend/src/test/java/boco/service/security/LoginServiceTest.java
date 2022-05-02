@@ -46,7 +46,6 @@ class LoginServiceTest {
 
     @BeforeEach
     private void setUp() throws NoSuchAlgorithmException {
-        String logg = "";
         Profile profile1 = new Profile();
         profile1.setId(1L);
         profile1.setUsername("profile1");
@@ -82,7 +81,8 @@ class LoginServiceTest {
     @Test
     void throwsExceptionForInvalidUserAndReturnsForbidden() throws Exception {
         LoginRequest login = new LoginRequest("unknownProfile", "unknownPassword");
-        assertThrows(AuthenticationException.class, () -> {
+
+        assertThrows(Exception.class, () -> {
             ResponseEntity<?> thrown = loginService.verifyAndCreateToken(login);
             assertEquals(403, thrown.getStatusCodeValue());
         });
