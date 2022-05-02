@@ -91,6 +91,7 @@ import { object, string } from "yup";
 import { useField, useForm } from "vee-validate";
 import * as Yup from "yup";
 import router from "@/router";
+import { useToast } from "vue-toastification";
 
 export default {
   components: {
@@ -126,6 +127,7 @@ export default {
     const phoneNumber = useField("phoneNumber");
     const password = useField("password");
     const verifyPassword = useField("verifyPassword");
+    const toast = useToast();
 
     const handleChange = (event) => {
       setFieldValue("email", event.target.value);
@@ -145,8 +147,10 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-      alert("successfully created user (this is a placeholder");
       router.push("/Login");
+      toast.success("Account has been registered", {
+        timeout: 3000,
+      });
     });
 
     return {
@@ -159,6 +163,7 @@ export default {
       username: username.value,
       errors,
       handleChange,
+      toast,
     };
   },
 };

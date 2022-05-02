@@ -231,17 +231,17 @@ export default {
 
 /*Dropdown Menu Animation */
 .bounce-enter-active {
-  animation: bounce-in 0.5s;
+  animation: bounce-in 0.3s;
 }
 .bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
+  animation: bounce-in 0.2s reverse;
 }
 @keyframes bounce-in {
   0% {
-    transform: scale(0);
+    transform: scale(0.8);
   }
   50% {
-    transform: scale(1.25);
+    transform: scale(1.05);
   }
   100% {
     transform: scale(1);
