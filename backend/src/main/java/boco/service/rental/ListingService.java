@@ -22,8 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ListingService {
@@ -55,7 +57,7 @@ public class ListingService {
     /**
      * Gets a page of listingResponses that fulfills the requirements given.
      * @param page The page number of the search
-     * @param size The number of listingResponses to be returned
+     * @param perPage The number of listingResponses to be returned
      * @param search Requires the Listings to contain the search value in their name or description.
      *               Empty string if not used
      * @param sort The column we are sorting by.
@@ -68,7 +70,7 @@ public class ListingService {
      *                 Empty string if not used.
      * @return A responseEntity with a list of listingresponses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String category){
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category){
         CategoryType catType = null;
         if (!category.equals("")){
             Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
@@ -78,25 +80,37 @@ public class ListingService {
             catType = catTypeData.get();
         }
 
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
-
-        List<Listing> listings;
-        if (priceFrom == -1) {
-            if (category.equals("")){
-                listings = listingRepository.findByDescriptionContainingOrNameContaining(search, search, pageable).getContent();
-            } else {
-                listings = listingRepository.findByDescriptionContainingAndCategoryTypesContainingOrNameContainingAndCategoryTypesContaining(search, catType, search, catType, pageable).getContent();
-            }
-        } else {
-            if (category.equals("")){
-                listings = listingRepository.findByPriceBetweenAndDescriptionContainingOrPriceBetweenAndNameContaining(priceFrom, priceTo, search, priceFrom, priceTo,  search,  pageable).getContent();
-            } else {
-                listings = listingRepository.findByPriceBetweenAndDescriptionContainingAndCategoryTypesContainingOrPriceBetweenAndNameContainingAndCategoryTypesContaining(priceFrom, priceTo, search, catType, priceFrom, priceTo, search, catType, pageable).getContent();
-            }
-            System.out.println("Testing");
+        if (priceTo == -1){
+            priceTo = Double.MAX_VALUE;
         }
-        return new ResponseEntity<>(convertListings(listings), HttpStatus.OK);
+        if (sort.split(" ").length != 2){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        //TODO Validate sort name
+        String sortBy = sort.split(" ")[0];
+
+        String sortDir = sort.split(" ")[1];
+
+        List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
+
+        if (!category.equals("")){
+            CategoryType finalCatType = catType;
+            listings = listings.stream().filter(l -> (l.getCategoryTypes().contains(finalCatType))).collect(Collectors.toList());
+        }
+
+        if (!search.equals("")){
+            //TODO add more advanced searching
+            listings = listings.stream().filter(l -> (l.getName().contains(search) || l.getDescription().contains(search))).collect(Collectors.toList());
+        }
+
+
+        if (!sortDir.equals("ASC")){
+            Collections.reverse(listings);
+        }
+
+        List<Listing> listingsSublist = listings.subList(page*perPage, Math.min((page+1)*perPage, listings.size()));
+        return new ResponseEntity<>(convertListings(listingsSublist), HttpStatus.OK);
     }
 
 
