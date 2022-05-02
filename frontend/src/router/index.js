@@ -126,6 +126,7 @@ router.beforeEach(async function (to) {
       let response = await apiService.getMyProfile();
       store.state.loggedIn = true;
       store.state.loggedInUser = response.data.id;
+      store.dispatch("UPDATE_USERNAME", response.data.displayName);
     } catch (error) {
       console.log(error);
     }

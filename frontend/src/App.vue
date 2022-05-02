@@ -1,70 +1,13 @@
 <template>
   <header-component />
-  <nav id="navbar" class="navbar sticky-top navbar-expand-sm">
+  <nav id="navbar" class="navbar sticky-top">
     <div class="container-fluid">
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapsedNav"
-        aria-label="Navigation toggle"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
       <router-link to="/">
         <img id="logo" src="@/assets/mainLogo.png" alt="logo"
       /></router-link>
-      <div
-        id="collapsedNav"
-        class="collapse navbar-collapse justify-content-center"
-      >
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="login" v-if="!$store.state.loggedIn"
-                ><font-awesome-icon icon="right-to-bracket"
-              /></router-link>
-              <button
-                id="log-out-button"
-                v-if="$store.state.loggedIn"
-                @click="logout"
-              >
-                <font-awesome-icon icon="sign-out-alt" />
-              </button>
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/my/items"
-                ><font-awesome-icon class="icons" icon="user"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/create"
-                ><font-awesome-icon class="icons" icon="plus"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/support"
-                ><font-awesome-icon class="icons" icon="info"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-      </div>
+      <NotificationComponent v-if="$store.state.loggedIn" />
+      <ProfileDropDownComponent />
     </div>
-    <NotificationComponent v-if="$store.state.loggedIn" />
   </nav>
 
   <div class="container-fluid">
@@ -74,23 +17,16 @@
 </template>
 
 <script>
-import storageService from "./services/storageService";
 import NotificationComponent from "@/components/NotificationComponent";
 import HeaderComponent from "@/components/HeaderComponent";
+import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
     NotificationComponent,
     HeaderComponent,
+    ProfileDropDownComponent,
   },
-
-  methods: {
-    logout() {
-      storageService.clearToken();
-      this.$store.state.loggedIn = false;
-      this.$store.state.loggedInUser = null;
-      this.$router.push("/");
-    },
-  },
+  methods: {},
 };
 </script>
 
@@ -133,60 +69,8 @@ export default {
 }
 
 /* Navbar styling */
-#navbar,
-#collapsedNav {
+#navbar {
   background-color: #ececec;
-}
-
-li a {
-  text-decoration: none;
-}
-
-li a.router-link-exact-active {
-  color: lightgray;
-}
-
-li a.router-link-exact-active:hover {
-  color: lightgray;
-}
-
-li a:hover {
-  color: lightgray;
-}
-
-.nav-item {
-  font-size: x-large;
-}
-
-/* Make navbar slide from left on small screens*/
-@media (max-width: 479px) {
-  .navbar-collapse {
-    position: fixed;
-    top: 20px;
-    left: 0;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 15px;
-    width: 45%;
-    height: 100%;
-    /*background-color: #343a40;*/
-    background-color: gray;
-    margin-top: 35px;
-  }
-
-  .navbar-collapse.collapsing {
-    left: -75%;
-    transition: height 0s ease;
-  }
-
-  .navbar-collapse.show {
-    left: 0;
-    transition: left 300ms ease-in-out;
-  }
-
-  .navbar-toggler.collapsed ~ .navbar-collapse {
-    transition: left 500ms ease-in-out;
-  }
 }
 /* Navbar styling end*/
 
@@ -262,17 +146,17 @@ li a:hover {
 }
 
 #logo {
-  height: 50px;
+  height: 40px;
   width: auto;
 }
 
-.icons {
+.dropdownMenuIcons {
   color: var(--main-color);
   height: 25px;
   width: 25px;
 }
 
-.icons:hover {
+.dropdownMenuIcons:hover {
   color: gray;
 }
 </style>
