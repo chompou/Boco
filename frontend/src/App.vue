@@ -80,7 +80,13 @@
 <script>
 import storageService from "./services/storageService";
 import NotificationComponent from "@/components/NotificationComponent";
+import { useToast } from "vue-toastification";
+
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   components: {
     NotificationComponent,
   },
@@ -91,6 +97,9 @@ export default {
       this.$store.state.loggedIn = false;
       this.$store.state.loggedInUser = null;
       this.$router.push("/");
+      this.toast.info("Logged out", {
+        timeout: 2000,
+      });
     },
   },
 };
