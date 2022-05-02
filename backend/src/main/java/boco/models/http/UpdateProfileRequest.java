@@ -13,5 +13,4 @@ public class UpdateProfileRequest {
     private String passwordHash;
     private String address;
     private String tlf;
-    private Boolean isPersonal;
 }
