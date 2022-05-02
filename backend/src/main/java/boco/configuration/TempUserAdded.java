@@ -12,7 +12,6 @@ import boco.repository.rental.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -30,8 +29,7 @@ public class TempUserAdded {
                                    ListingRepository listingRepository,
                                    ImageRepository imageRepository,
                                    LeaseRepository leaseRepository,
-                                   NotificationRepository notificationRepository,
-                                   PasswordEncoder passwordEncoder){
+                                   NotificationRepository notificationRepository){
 
         return args ->{
             int magnitude = 10;
