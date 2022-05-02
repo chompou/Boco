@@ -35,7 +35,7 @@ public class LoginService {
 
     public ResponseEntity<?> verifyAndCreateToken(LoginRequest loginRequest)throws Exception{
         try {authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), BocoHasher.encode(loginRequest.getPassword()))
         );
         }catch (BadCredentialsException e){
             logger.info("bad login request denied");
