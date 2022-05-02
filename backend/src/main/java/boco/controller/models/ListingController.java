@@ -26,7 +26,7 @@ public class ListingController {
     public ResponseEntity<List<ListingResponse>> getListings(@RequestParam int perPage,
                                      @RequestParam int page,
                                      @RequestParam(defaultValue  = "") String search,
-                                     @RequestParam(defaultValue  = "id DESC") String sort,
+                                     @RequestParam(defaultValue  = "id:DESC") String sort,
                                      @RequestParam(defaultValue = "") String location,
                                      @RequestParam(defaultValue  =  "-1") double priceFrom,
                                      @RequestParam(defaultValue  = "-1") double priceTo,

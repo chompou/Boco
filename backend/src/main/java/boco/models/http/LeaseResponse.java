@@ -19,6 +19,7 @@ public class LeaseResponse {
     private ReviewResponse leaseeReview;
     private ReviewResponse itemReview;
     private Long profileId;
+    private Long ownerId;
     private Long listingId;
 
     public LeaseResponse(Lease lease) {
@@ -31,6 +32,7 @@ public class LeaseResponse {
         if (lease.getLeaseeReview() != null) this.leaseeReview = new ReviewResponse(lease.getLeaseeReview());
         if (lease.getItemReview() != null) this.itemReview = new ReviewResponse(lease.getItemReview());
         this.profileId = lease.getProfile().getId();
+        this.ownerId = lease.getOwner().getId();
         this.listingId = lease.getListing().getId();
     }
 }

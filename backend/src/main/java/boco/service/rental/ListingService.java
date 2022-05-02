@@ -81,7 +81,7 @@ public class ListingService {
             priceTo = Double.MAX_VALUE;
         }
         if (sort.split(":").length != 2){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         //TODO Validate sort name
