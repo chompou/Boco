@@ -8,6 +8,7 @@ import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.*;
 import com.github.javafaker.Faker;
+import com.github.javafaker.Name;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,45 +44,17 @@ public class TempUserAddV2 {
             // Making profiles. Password for all profiles are letmepass
 
             // Profiles for team
-            Personal emptyProfile = new Personal("", "", "This user does not exist",
-                    "Deleted user", "donothashthispassword", "", "");
-            Personal profile = new Personal("emilgl", "gluckemil@gmail.com", "Test",
-                    "Emil", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Baerum", "12345678");
-            Personal profile1 = new Personal("olavdei", "olav@gmail.com", "Test1",
-                    "Olav", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Baerum", "12345677");
-            Personal profile2 = new Personal("askros", "ask@gmail.com", "Test2",
-                    "Ask", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Baerum", "12345777");
-            Profile profile3 = new Personal("eliaseb", "elias@gmail.com", "Test3",
-                    "Elias", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Bergen", "12347777");
-            Personal profile4 = new Personal("tobigi", "tobias@gmail.com", "Test4",
-                    "Tobias", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Oslo", "12377777");
-            Professional profile5 = new Professional("fanuel", "fanuel@gmail.com", "Test5",
-                    "Fanuel", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Vik", "12777777");
-            Professional profile6 = new Professional("jonmk", "jonmartin@gmail.com", "Test6",
-                    "Jon Martin", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Oslo", "17777777");
-            Professional profile7 = new Professional("sindrgl", "sindre@gmail.com", "Test7",
-                    "Sindre", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Auuuuuure", "77777777");
-            Professional profile8 = new Professional("oyvibjo", "oyvind@gmail.com", "Test8",
-                    "Oyvind", "$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a","Ottestad", "11777777");
-
-            profileRepository.save(emptyProfile);
-            profileRepository.save(profile);
-            profileRepository.save(profile1);
-            profileRepository.save(profile2);
-            profileRepository.save(profile3);
-            profileRepository.save(profile4);
-            profileRepository.save(profile5);
-            profileRepository.save(profile6);
-            profileRepository.save(profile7);
-            profileRepository.save(profile8);
+            // TODO: ADD
 
             // Random profiles
             for (int i = 0; i < profiles; i++) {
+                Name name = faker.name();
                 var p = Personal.builder()
+                        .username(name.username())
                         .address(faker.address().fullAddress())
                         .deactivated(null)
                         .description(faker.lorem().characters(10))
-                        .displayName(faker.name().title())
+                        .displayName(name.fullName())
                         .isVerified(false)
                         .passwordHash("$2a$12$9FDSwGUAG.n8bv0feCeaj./slkAPYV42sMy4tPe/osKeNp6HRlB8a")
                         .tlf(faker.phoneNumber().phoneNumber())
