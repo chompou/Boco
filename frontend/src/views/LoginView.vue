@@ -50,7 +50,13 @@
 <script>
 import apiService from "@/services/apiService";
 import storageService from "@/services/storageService";
+import { useToast } from "vue-toastification";
+
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   data() {
     return {
       username: "",
@@ -75,6 +81,9 @@ export default {
           storageService.setToken(response.data["jwt"]);
           storageService.setUser(this.username);
           this.$router.push("/");
+          this.toast.success("Successfully logged in as " + this.username, {
+            timeout: 2000,
+          });
         })
         .catch(() => (this.falsePWD = true));
     },
