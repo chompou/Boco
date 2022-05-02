@@ -1,7 +1,9 @@
 <template>
   <div class="forgotten-pwd">
-    <h2 id="getting-back" class="text">Getting back to your BoCo account</h2>
-    <p id="tell-us" class="text">
+    <h2 id="getting-back" class="dropdownMenuText">
+      Getting back to your BoCo account
+    </h2>
+    <p id="tell-us" class="dropdownMenuText">
       Tell us some more information about your account.
     </p>
     <form @submit.prevent="submit" id="input">
@@ -46,7 +48,7 @@ export default {
 .boco-btn {
   margin: 20px;
 }
-.text {
+.dropdownMenuText {
 }
 label,
 .input-field {

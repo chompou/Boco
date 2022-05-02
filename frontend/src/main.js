@@ -17,6 +17,7 @@ import {
   faLemon,
   faChildren,
   faToiletPaper,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -32,7 +33,8 @@ library.add(
   faUmbrella,
   faLemon,
   faChildren,
-  faToiletPaper
+  faToiletPaper,
+  faBell
 );
 
 createApp(App)

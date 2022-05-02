@@ -5,6 +5,7 @@ import boco.models.rental.Listing;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +30,15 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
             "WHERE lease.listing.id = ?1")
     @Modifying
     int updateLeaseWhenListingDeleted(Long listingId);
+
+    @Query("SELECT l FROM Listing l " +
+            "WHERE l.price > ?1 AND l.price < ?2")
+    List<Listing> getListingByPriceRange(double priceFrom, double priceTo, Sort sort);
+
+    @Query("SELECT l FROM Listing l " +
+            "WHERE l.price > ?1 AND l.price < ?2" +
+            "ORDER BY ?3 DESC")
+    List<Listing> getListingByPriceRangeDesc(double priceFrom, double priceTo, String orderBy);
+
+
 }

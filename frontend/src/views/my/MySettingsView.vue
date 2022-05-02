@@ -4,38 +4,78 @@
     <div class="input-container">
       <div id="information" class="input-grid">
         <label> Display Name </label>
-        <input v-bind="displayName" />
+        <input :value="profile.displayName" />
 
         <label> E-Mail </label>
-        <input type="email" v-bind="email" />
+        <input type="email" :value="profile.email" />
 
         <label> Address </label>
-        <input />
+        <input :value="profile.address" />
 
         <label> Telephone </label>
-        <input />
+        <input :value="profile.tlf" />
 
         <label> Description </label>
-        <input style="height: 100px" />
+        <input style="height: 100px" :value="profile.description" />
       </div>
 
       <div id="password" class="input-grid" style="max-height: 0px">
         <label> Old Password </label>
-        <input />
+        <input :value="oldPass" />
 
         <label> New Password </label>
-        <input />
+        <input :value="newPass" />
 
         <label> Confirm New Password </label>
-        <input />
+        <input :value="confirmPass" />
       </div>
       <div id="buttons" class="button-container">
-        <button id="save-btn" class="boco-btn">Save</button>
-        <button class="boco-btn">Reset</button>
+        <button class="boco-btn" @click="onSave">Save</button>
+        <button class="boco-btn" @click="onReset">Reset</button>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import apiService from "@/services/apiService";
+export default {
+  data() {
+    return {
+      profile: {
+        displayName: null,
+        email: null,
+        address: null,
+        tlf: null,
+        description: null,
+      },
+      oldPass: null,
+      newPass: null,
+      confirmPass: null,
+    };
+  },
+
+  methods: {
+    fetchProfile() {
+      apiService
+        .getProfile(this.$store.state.loggedInUser)
+        .then((response) => (this.profile = response.data))
+        .catch((error) => console.log(error));
+    },
+
+    onSave() {},
+
+    onReset() {
+      this.fetchProfile();
+      this.oldPass = this.newPass = this.confirmPass = null;
+    },
+  },
+
+  created() {
+    this.fetchProfile();
+  },
+};
+</script>
 
 <style scoped>
 .settings-container {

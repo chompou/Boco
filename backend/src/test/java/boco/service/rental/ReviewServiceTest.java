@@ -59,13 +59,13 @@ class ReviewServiceTest {
     @Test
     public void getAllReviewsReturnsCorrectNumberOfReviewsTest() {
         var res = service.getAllReviews();
-        Assertions.assertEquals(res.getBody().size(), 3);
+        Assertions.assertEquals(3, res.getBody().size());
     }
 
     @Test
     public void getAllReviewsReturnsCorrectHttpStatusCode() {
         var res = service.getAllReviews();
-        Assertions.assertEquals(res.getStatusCodeValue(), 200);
+        Assertions.assertEquals(200, res.getStatusCodeValue());
     }
 
     @Test
@@ -75,22 +75,22 @@ class ReviewServiceTest {
         ReviewResponse r2 = res.getBody().get(1);
         ReviewResponse r3 = res.getBody().get(2);
 
-        Assertions.assertEquals(r1.getId(), 1L);
-        Assertions.assertEquals(r1.getRating(), 4.5);
-        Assertions.assertEquals(r1.getComment(), "good!");
-        Assertions.assertEquals(r1.getProfile_id(), 1L);
-        Assertions.assertEquals(r1.getDisplayName(), "Emil");
+        Assertions.assertEquals(1L, r1.getId());
+        Assertions.assertEquals(4.5, r1.getRating());
+        Assertions.assertEquals("good!", r1.getComment());
+        Assertions.assertEquals(1L, r1.getProfile_id());
+        Assertions.assertEquals("Emil", r1.getDisplayName());
 
-        Assertions.assertEquals(r2.getId(), 2L);
-        Assertions.assertEquals(r2.getRating(), 4.2);
-        Assertions.assertEquals(r2.getComment(), "ok");
-        Assertions.assertEquals(r2.getProfile_id(), 2L);
-        Assertions.assertEquals(r2.getDisplayName(), "Olav");
+        Assertions.assertEquals(2L, r2.getId());
+        Assertions.assertEquals(4.2, r2.getRating());
+        Assertions.assertEquals("ok", r2.getComment());
+        Assertions.assertEquals(2L, r2.getProfile_id());
+        Assertions.assertEquals("Olav", r2.getDisplayName());
 
-        Assertions.assertEquals(r3.getId(), 3L);
-        Assertions.assertEquals(r3.getRating(), 2.2);
-        Assertions.assertEquals(r3.getComment(), "...");
-        Assertions.assertEquals(r3.getProfile_id(), 2L);
-        Assertions.assertEquals(r3.getDisplayName(), "Olav");
+        Assertions.assertEquals(3L, r3.getId());
+        Assertions.assertEquals(2.2, r3.getRating());
+        Assertions.assertEquals("...", r3.getComment());
+        Assertions.assertEquals(2L, r3.getProfile_id());
+        Assertions.assertEquals("Olav", r3.getDisplayName());
     }
 }

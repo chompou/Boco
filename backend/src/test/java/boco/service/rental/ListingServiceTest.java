@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.util.collections.ListUtil;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,11 +28,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.swing.plaf.ListUI;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.*;
@@ -75,15 +76,18 @@ class ListingServiceTest {
         Listing l6 = new Listing("pencil", "pencil", "Oslo", true, true, 150.0, "Month", p3);
         listings2 = new ArrayList<>(Arrays.asList(l4, l5, l6));
 
-        Listing l7 = new Listing("tree", "tree", "los", true, true, 100.0, "Month", p1);
-        Listing l8 = new Listing("bottle", "bottle", "miami", true, true, 50.0, "Month", p2);
-        Listing l9 = new Listing("phone", "phone", "ny", true, true, 150.0, "Month", p3);
+        Listing l7 = new Listing("tree", "tree", "los", true, true, 200.0, "Month", p1);
+        Listing l8 = new Listing("bottle", "bottle", "miami", true, true, 250.0, "Month", p2);
+        Listing l9 = new Listing("phone", "phone", "ny", true, true, 300.0, "Month", p3);
         List<Listing> listings3 = new ArrayList<>(Arrays.asList(l7, l8, l9));
 
-        Listing l10 = new Listing("cup", "cup", "los", true, true, 100.0, "Month", p1);
-        Listing l11 = new Listing("city", "city", "miami", true, true, 50.0, "Month", p2);
-        Listing l12 = new Listing("north", "north", "ny", true, true, 150.0, "Month", p3);
+        Listing l10 = new Listing("cup", "cup", "los", true, true, 400.0, "Month", p1);
+        Listing l11 = new Listing("city", "city", "miami", true, true, 500.0, "Month", p2);
+        Listing l12 = new Listing("north", "north", "ny", true, true, 1500.0, "Month", p3);
         List<Listing> listings4 = new ArrayList<>(Arrays.asList(l10, l11, l12));
+
+        List<Listing> listings5 = Stream.of(listings1, listings2, listings3, listings4)
+                .flatMap(Collection::stream).collect(Collectors.toList());
         pageSize = 5;
 
         Page<Listing> listingPage1 = new PageImpl<Listing>(listings1, PageRequest.ofSize(pageSize), listings1.size());
@@ -122,23 +126,9 @@ class ListingServiceTest {
         lenient()
                 .when(categoryTypeRepository.findCategoryTypeByNameEquals("Car"))
                 .thenReturn(Optional.empty());
-
-
         lenient()
-                .when(listingRepository.findByDescriptionContainingOrNameContaining(any(), any(), any()))
-                .thenReturn(listingPage1);
-
-        lenient()
-                .when(listingRepository.findByDescriptionContainingAndCategoryTypesContainingOrNameContainingAndCategoryTypesContaining(any(), any(), any(), any(), any()))
-                .thenReturn(listingPage2);
-
-        lenient()
-                .when(listingRepository.findByPriceBetweenAndDescriptionContainingOrPriceBetweenAndNameContaining(anyDouble(), anyDouble(), any(), anyDouble(), anyDouble(), any(), any()))
-                .thenReturn(listingPage3);
-
-        lenient()
-                .when(listingRepository.findByPriceBetweenAndDescriptionContainingAndCategoryTypesContainingOrPriceBetweenAndNameContainingAndCategoryTypesContaining(anyDouble(), anyDouble(), any(), any(), anyDouble(), anyDouble(), any(), any(), any()))
-                .thenReturn(listingPage4);
+                .when(listingRepository.getListingByPriceRange(anyDouble(), anyDouble(), any()))
+                .thenReturn(listings5);
 
         lenient()
                 .when(listingRepository.findById(eq(1L)))
@@ -191,53 +181,46 @@ class ListingServiceTest {
 
     @Test
     public void categoryDoesNotExist(){
-        ResponseEntity<List<ListingResponse>> response = service.getListings(1, pageSize, "", "id", -1, -1, "Car");
+        ResponseEntity<List<ListingResponse>> response = service.getListings(1, pageSize, "", "id ASC", -1, -1, "Car");
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
 
     @Test
-    public void testGetListingsWithOutCategoryOrPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id", -1, -1, "");
+    public void testGetListings() {
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price ASC", -1, -1, "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
-        Assertions.assertEquals(listingResponses.size(), 3);
-        Assertions.assertEquals( "house", listingResponses.get(0).getName());
-        Assertions.assertEquals("parking lot", listingResponses.get(1).getName());
-        Assertions.assertEquals("penthouse", listingResponses.get(2).getName());
+        Assertions.assertEquals(listingResponses.size(), 5);
+        Assertions.assertEquals( "pencil", listingResponses.get(0).getName());
     }
 
     @Test
-    public void testGetListingsWithCategoryWithOutPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id", -1, -1, "Tool");
+    public void testGetListingsWithCategory() {
+        //TODO add category
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id ASC", -1, -1, "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
-        Assertions.assertEquals(listingResponses.size(), 3);
-        Assertions.assertEquals( "bench", listingResponses.get(0).getName());
-        Assertions.assertEquals("bulldozer", listingResponses.get(1).getName());
-        Assertions.assertEquals("pencil", listingResponses.get(2).getName());
+        Assertions.assertEquals(5, listingResponses.size());
+        Assertions.assertEquals( "pencil", listingResponses.get(0).getName());
     }
 
     @Test
-    public void testGetListingsWithOutCategoryAndWithPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id", 50.0, 100.0, "");
+    public void testGetListingsWithPriceRange() {
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id ASC", 175.0, 2000.0, "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
-        Assertions.assertEquals(listingResponses.size(), 3);
+        Assertions.assertEquals(5, listingResponses.size());
+        Assertions.assertEquals( "pencil", listingResponses.get(0).getName());
+    }
+
+    @Test
+    public void testGetListingsWithDesc() {
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price Desc", 50.0, 100.0, "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody();
+        Assertions.assertEquals(5, listingResponses.size());
         Assertions.assertEquals( "tree", listingResponses.get(0).getName());
-        Assertions.assertEquals("bottle", listingResponses.get(1).getName());
-        Assertions.assertEquals("phone", listingResponses.get(2).getName());
-    }
-
-    @Test
-    public void testGetListingsWithCategoryAndWithPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id", 50.0, 100.0, "Tool");
-        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-        List<ListingResponse> listingResponses = responseEntity.getBody();
-        Assertions.assertEquals(listingResponses.size(), 3);
-        Assertions.assertEquals( "cup", listingResponses.get(0).getName());
-        Assertions.assertEquals("city", listingResponses.get(1).getName());
-        Assertions.assertEquals("north", listingResponses.get(2).getName());
     }
 
     @Test

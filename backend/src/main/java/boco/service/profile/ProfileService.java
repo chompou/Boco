@@ -1,11 +1,7 @@
 package boco.service.profile;
 
-import boco.models.http.ListingResponse;
-import boco.models.http.ProfileRequest;
-import boco.models.http.UpdatePasswordRequest;
-import boco.models.http.PrivateProfileResponse;
-import boco.models.http.PublicProfileResponse;
-import boco.models.http.ReviewResponse;
+import boco.component.BocoHasher;
+import boco.models.http.*;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
@@ -243,11 +239,11 @@ public class ProfileService {
         return null;
     }
 
-    public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email) {
+    public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (checkIfProfileEmailExists(email) != null) {
             if (updatePasswordRequest.getPasswordHash2().equals(updatePasswordRequest.getPasswordHash1())) {
                 Profile profile = checkIfProfileEmailExists(email).getBody();
-                profile.setPasswordHash(updatePasswordRequest.getPasswordHash1());
+                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash1()));
                 profileRepository.save(profile);
                 return new ResponseEntity<>(profile, HttpStatus.OK);
             }
