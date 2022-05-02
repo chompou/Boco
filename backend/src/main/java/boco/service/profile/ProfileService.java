@@ -1,11 +1,7 @@
 package boco.service.profile;
 
-import boco.models.http.ListingResponse;
-import boco.models.http.ProfileRequest;
-import boco.models.http.UpdatePasswordRequest;
-import boco.models.http.PrivateProfileResponse;
-import boco.models.http.PublicProfileResponse;
-import boco.models.http.ReviewResponse;
+import boco.component.BocoHasher;
+import boco.models.http.*;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
@@ -217,6 +213,30 @@ public class ProfileService {
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
         return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+    }
+
+    public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String token) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+
+        if (!profileData.isPresent()){
+            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Setting the new data
+        Profile profile = profileData.get();
+        // Update all values, even null from request?
+        profile.setEmail(updateProfileRequest.getEmail());
+        profile.setDescription(updateProfileRequest.getDescription());
+        profile.setDisplayName(updateProfileRequest.getDisplayName());
+        profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
+        profile.setAddress(updateProfileRequest.getAddress());
+        profile.setTlf(updateProfileRequest.getTlf());
+
+        Profile savedProfile = profileRepository.save(profile);
+        logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
+        return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
     }
 
     public ResponseEntity<Profile> verifyProfile(Long profileId){

@@ -63,7 +63,7 @@ public class AuthorizedController {
         return profileService.getPrivateProfile(token);
     }
     @PutMapping("/profile")
-    public ResponseEntity<ListingResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest,
+    public ResponseEntity<PrivateProfileResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest,
                                                          @RequestHeader(name="Authorization") String token) {
         return profileService.updateProfile(updateProfileRequest, token);
     }
