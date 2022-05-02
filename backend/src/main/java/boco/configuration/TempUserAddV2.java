@@ -43,14 +43,56 @@ public class TempUserAddV2 {
                 List<Listing> listingList = new ArrayList<>();
                 int leases = 20;
                 List<Lease> leaseList = new ArrayList<>();
+                List<CategoryType> categoryList = new ArrayList<>();
 
                 Faker faker = new Faker();
 
+                // Making categories
+                CategoryType categoryType = new CategoryType();
+                categoryType.setName("Sport/Hiking");
+                categoryList.add(categoryType);
+                CategoryType categoryType1 = new CategoryType();
+                categoryType1.setName("Electronics");
+                categoryList.add(categoryType1);
+                CategoryType categoryType2 = new CategoryType();
+                categoryType2.setName("Vehicle");
+                categoryList.add(categoryType2);
+                CategoryType categoryType3 = new CategoryType();
+                categoryType3.setName("Tools");
+                categoryList.add(categoryType3);
+                CategoryType categoryType4 = new CategoryType();
+                categoryType4.setName("Interior");
+                categoryList.add(categoryType4);
+                CategoryType categoryType5 = new CategoryType();
+                categoryType5.setName("Hobby/Entertainment");
+                categoryList.add(categoryType5);
+                CategoryType categoryType6 = new CategoryType();
+                categoryType6.setName("School/Office");
+                categoryList.add(categoryType6);
+                CategoryType categoryType7 = new CategoryType();
+                categoryType7.setName("Home/Garden");
+                categoryList.add(categoryType7);
+                CategoryType categoryType8 = new CategoryType();
+                categoryType8.setName("Fashion");
+                categoryList.add(categoryType8);
+                CategoryType categoryType9 = new CategoryType();
+                categoryType9.setName("Musical Instruments");
+                categoryList.add(categoryType9);
+
+                categoryTypeRepository.save(categoryType);
+                categoryTypeRepository.save(categoryType1);
+                categoryTypeRepository.save(categoryType2);
+                categoryTypeRepository.save(categoryType3);
+                categoryTypeRepository.save(categoryType4);
+                categoryTypeRepository.save(categoryType5);
+                categoryTypeRepository.save(categoryType6);
+                categoryTypeRepository.save(categoryType7);
+                categoryTypeRepository.save(categoryType8);
+                categoryTypeRepository.save(categoryType9);
+
+
                 // Making profiles. Password for all profiles are letmepass
-
                 // Profiles for team
-                // TODO: ADD
-
                 var p = Personal.builder()
                         .username("")
                         .email("")
@@ -235,7 +277,7 @@ public class TempUserAddV2 {
                     profileRepository.save(np);
                 }
 
-                java.io.File file = new File("backend/src/main/resources/testbilde2.png");
+                java.io.File file = new File("src/main/resources/testbilde2.png");
                 byte[] imageBytes = Files.readAllBytes(file.toPath());
 
 
@@ -264,6 +306,7 @@ public class TempUserAddV2 {
                             .lastChanged(null)
                             .priceType("Week")
                             .images(null) // images
+                            .categoryTypes(List.of(categoryList.get(faker.random().nextInt(0, categoryList.size()-1))))
                             .build();
                     listingRepository.save(l);
                     Image image = new Image();
@@ -301,7 +344,6 @@ public class TempUserAddV2 {
                     // NOTE REVIEWS SHOULD NOT BE CREATED BEFORE LEASE
                 }
 
-                // Making categories
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
