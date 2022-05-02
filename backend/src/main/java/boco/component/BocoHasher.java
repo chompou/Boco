@@ -24,6 +24,6 @@ public class BocoHasher {
             messageDigest.update((unhashed+"").getBytes());
             return new String(messageDigest.digest(), StandardCharsets.UTF_8);
         }catch (Exception ignored){}
-        return unhashed +"";
+        return unhashed.toString();
     }
 }
