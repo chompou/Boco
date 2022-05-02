@@ -47,7 +47,7 @@
         <p>price:</p>
         <div id="pricePicker">
           <input
-            v-model="this.price"
+            v-model="price"
             placeholder="100"
             class="price"
             type="number"
@@ -62,15 +62,9 @@
         </div>
       </div>
       <div class="ItemId">
-        <p>Categories:</p>
         <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Sport"
-            value="Sport"
-            v-model="this.category"
-          />
-          <label for="Sport">Sport</label>
+          <input type="checkbox" id="Tools" value="Tools" v-model="category" />
+          <label for="Tools">Tools</label>
         </div>
 
         <div class="checkboxItem">
@@ -78,7 +72,7 @@
             type="checkbox"
             id="Vehicle"
             value="Vehicle"
-            v-model="this.category"
+            v-model="category"
           />
           <label for="Vehicle">Vehicle</label>
         </div>
@@ -86,11 +80,11 @@
         <div class="checkboxItem">
           <input
             type="checkbox"
-            id="Electronic"
-            value="Electronic"
-            v-model="this.category"
+            id="Electronics"
+            value="Electronics"
+            v-model="category"
           />
-          <label for="Electronic">Electronic</label>
+          <label for="Electronics">Electronics</label>
         </div>
       </div>
       <div id="descriptionField">
@@ -122,7 +116,7 @@ export default {
       title: this.title,
       address: this.address,
       price: 0,
-      leaseType: this.leaseType,
+      leaseType: "Hour",
       category: [this.category],
       checked: false,
       description: this.description,
@@ -138,6 +132,7 @@ export default {
         };
         this.image = input.files[0];
         this.formData.append("file", this.image);
+        reader.readAsDataURL(input.files[0]);
       }
     },
     submit() {
@@ -186,6 +181,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.col-md-5 {
+  width: 400px;
 }
 
 .ItemId {

@@ -3,16 +3,13 @@ package boco.models.profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Profile {

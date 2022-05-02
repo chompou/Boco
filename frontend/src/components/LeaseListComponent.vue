@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent.vue";
+import RatingComponent from "@/components/RateReview/RatingComponent.vue";
 export default {
   components: { RatingComponent },
 

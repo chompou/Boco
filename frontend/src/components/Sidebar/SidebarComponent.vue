@@ -113,6 +113,13 @@ import { collapsed, toggleSidebar, sidebarWidth } from "./state";
 export default {
   data() {
     return {
+      filters: {
+        search: "",
+        sort: "id",
+        priceFrom: -1,
+        priceTo: -1,
+        category: "",
+      },
       priceFrom: 0,
       priceTo: 0,
       leaseType: null,
@@ -120,11 +127,21 @@ export default {
       categories: [{ id: 0, name: "All" }],
     };
   },
-  props: {},
   setup() {
     return { collapsed, toggleSidebar, sidebarWidth };
   },
-
+  methods: {
+    filter() {
+      if (this.leaseType === "Day") {
+        this.filters.priceFrom = this.priceFrom / 24;
+        this.filters.priceTo = this.priceTo / 24;
+      }
+      if (this.leaseType === "Week") {
+        this.filters.priceFrom = this.priceFrom / (24 * 7);
+        this.filters.priceTo = this.priceTo / (24 * 7);
+      }
+    },
+  },
   created() {
     apiService
       .getCategories()
@@ -147,7 +164,7 @@ export default {
   color: white;
 
   float: left;
-  position: fixed;
+  position: sticky;
   z-index: 1;
   top: 0;
   left: 0;
@@ -165,7 +182,7 @@ export default {
 }
 
 .collapse-icon {
-  position: absolute;
+  position: relative;
   bottom: 0;
   padding: 0.75em;
 

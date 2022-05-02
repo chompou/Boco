@@ -1,6 +1,5 @@
 <template>
   <div id="items">
-    <p>Rating:</p>
     <star-rating
       :rating="rating"
       :read-only="true"
@@ -34,9 +33,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-p {
   font-size: 20px;
 }
 </style>

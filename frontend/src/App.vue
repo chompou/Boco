@@ -1,100 +1,52 @@
 <template>
-  <nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">
+  <header-component />
+  <nav id="navbar" class="navbar sticky-top">
     <div class="container-fluid">
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapsedNav"
-        aria-label="Navigation toggle"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <img id="logo" src="@/assets/mainLogo.png" alt="logo" />
-      <div
-        id="collapsedNav"
-        class="collapse navbar-collapse justify-content-center bg-light"
-      >
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="login" v-if="!$store.state.loggedIn"
-                ><font-awesome-icon icon="right-to-bracket"
-              /></router-link>
-              <button
-                id="log-out-button"
-                v-if="$store.state.loggedIn"
-                @click="logout"
-              >
-                <font-awesome-icon icon="sign-out-alt" />
-              </button>
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/my/items"
-                ><font-awesome-icon class="icons" icon="user"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/create"
-                ><font-awesome-icon class="icons" icon="plus"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/"
-                ><font-awesome-icon class="icons" icon="house"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-        <ul id="nav" class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link">
-              <router-link to="/support"
-                ><font-awesome-icon class="icons" icon="info"
-              /></router-link>
-            </a>
-          </li>
-        </ul>
-      </div>
+      <router-link to="/">
+        <img id="logo" src="@/assets/mainLogo.png" alt="logo"
+      /></router-link>
+      <NotificationComponent v-if="$store.state.loggedIn" />
+      <ProfileDropDownComponent />
     </div>
-    <NotificationComponent />
   </nav>
 
-  <div class="container">
+  <div class="container-fluid">
     <router-view />
     <div style="height: 20px" />
+  </div>
+  <div id="footer">
+    <footer>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-sm-4 col-md-3 item">
+            <h4><a href="#">About us</a></h4>
+          </div>
+          <div class="col-sm-4 col-md-3 item">
+            <router-link to="/support"><h4>Contact us</h4></router-link>
+          </div>
+          <div class="col-sm-4 col-md-3 item">
+            <h4><a href="#">F.A.Q</a></h4>
+          </div>
+          <div class="col-lg-3 item social">
+            <p class="copyright">Borrow Community © 2022</p>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
 <script>
-import storageService from "./services/storageService";
 import NotificationComponent from "@/components/NotificationComponent";
+import HeaderComponent from "@/components/HeaderComponent";
+import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
     NotificationComponent,
+    HeaderComponent,
+    ProfileDropDownComponent,
   },
-
-  methods: {
-    logout() {
-      storageService.clearToken();
-      this.$store.state.loggedIn = false;
-      this.$store.state.loggedInUser = null;
-      this.$router.push("/");
-    },
-  },
+  methods: {},
 };
 </script>
 
@@ -105,14 +57,19 @@ export default {
   --button-color: #00a5a5;
   --text-color: #2c3e50;
   --text-color2: white;
+  --background-color-header-nav-footer: #ececec;
 }
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
+}
+
+#footer,
+#header {
+  background-color: #ececec;
 }
 
 /*Front page style*/
@@ -133,63 +90,35 @@ export default {
 }
 
 /* Navbar styling */
-li a {
-  text-decoration: none;
+#navbar {
+  background-color: #ececec;
 }
-
-li a.router-link-exact-active {
-  color: lightgray;
-}
-
-li a.router-link-exact-active:hover {
-  color: lightgray;
-}
-
-li a:hover {
-  color: lightgray;
-}
-
-.nav-item {
-  font-size: x-large;
-}
-
-/*
-.navbar-toggler .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
-}*/
-
 /* Navbar styling end*/
 
-/* Make navbar slide from left on small screens*/
-@media (max-width: 479px) {
-  .navbar-collapse {
-    position: fixed;
-    top: 20px;
-    left: 0;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 15px;
-    width: 45%;
-    height: 100%;
-    /*background-color: #343a40;*/
-    background-color: gray;
-    margin-top: 35px;
-  }
+/* FOOTER style */
 
-  .navbar-collapse.collapsing {
-    left: -75%;
-    transition: height 0s ease;
-  }
-
-  .navbar-collapse.show {
-    left: 0;
-    transition: left 300ms ease-in-out;
-  }
-
-  .navbar-toggler.collapsed ~ .navbar-collapse {
-    transition: left 500ms ease-in-out;
-  }
+#footer {
+  align-items: center;
+  display: flex;
+  width: 100%;
+  padding: 2rem 2rem 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
+
+.footer-row {
+  display: flex;
+}
+
+#footer-ul {
+  display: inline-grid;
+  grid-auto-flow: row;
+  grid-gap: 24px;
+  justify-items: center;
+  margin: auto;
+}
+
+/* FOOTER style END */
 
 #log-out-button {
   background: none;
@@ -249,8 +178,7 @@ li a:hover {
   color: rgba(0, 0, 0, 0.3);
 }
 
-label,
-.input-field {
+.register-input-field {
   display: flex;
   margin: auto;
   padding: 8px;
@@ -258,21 +186,13 @@ label,
   border-radius: 5px;
   justify-content: space-evenly;
 }
-.input-field:hover,
-.input-field:focus {
+.register-input-field:hover,
+.register-input-field:focus {
   border-color: var(--button-hover);
 }
 
 #logo {
-  height: 70px;
+  height: 40px;
   width: auto;
-}
-
-.icons {
-  color: var(--main-color);
-}
-
-.icons:hover {
-  color: gray;
 }
 </style>
