@@ -263,11 +263,11 @@ public class ProfileService {
         return null;
     }
 
-    public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email) {
+    public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (checkIfProfileEmailExists(email) != null) {
             if (updatePasswordRequest.getPasswordHash2().equals(updatePasswordRequest.getPasswordHash1())) {
                 Profile profile = checkIfProfileEmailExists(email).getBody();
-                profile.setPasswordHash(updatePasswordRequest.getPasswordHash1());
+                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash1()));
                 profileRepository.save(profile);
                 return new ResponseEntity<>(profile, HttpStatus.OK);
             }

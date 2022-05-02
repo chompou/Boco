@@ -1,5 +1,6 @@
 package boco.models.profile;
 
+import boco.component.BocoHasher;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -48,19 +49,18 @@ public class Profile {
     private List<Notification> notifications;
 
     public Profile(String username, String email, String description, String displayName,
-                   String passwordHash, String address, String tlf) {
+                   String passwordHash, String address, String tlf){
         this.username = username;
         this.email = email;
         this.description = description;
         this.displayName = displayName;
-        this.passwordHash = passwordHash;
+        this.passwordHash = BocoHasher.encode(passwordHash);
         this.address = address;
         this.tlf = tlf;
 
         // Setting some default values
         this.isVerified = false;
         this.deactivated = null;
-
     }
 
     /**
