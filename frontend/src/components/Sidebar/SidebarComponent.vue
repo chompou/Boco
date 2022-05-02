@@ -72,28 +72,34 @@
           </div>
         </transition>
       </div>
-      <transition>
-        <div class="Header" v-if="collapsed === false">
-          <input
-            type="submit"
-            id="submit"
-            value="Apply Filters"
-            @click="onSubmit"
-          />
-        </div>
-      </transition>
       <div>
         <h4 class="Header">Category</h4>
 
-        <select name="Category" v-bind="selectedCategory">
-          <option
-            v-for="category in categories"
-            :key="category"
-            :value="category.name"
+        <transition>
+          <select
+            v-if="collapsed === false"
+            name="Category"
+            v-bind="selectedCategory"
           >
-            {{ category.name }}
-          </option>
-        </select>
+            <option
+              v-for="category in categories"
+              :key="category"
+              :value="category.name"
+            >
+              {{ category.name }}
+            </option>
+          </select>
+        </transition>
+        <transition>
+          <div class="Header" v-if="collapsed === false">
+            <input
+              type="submit"
+              id="submit"
+              value="Apply Filters"
+              @click="onSubmit"
+            />
+          </div>
+        </transition>
       </div>
     </div>
     <span
@@ -223,7 +229,6 @@ h4 {
 }
 
 .baseInput {
-  margin-left: 30px;
   width: 230px;
 }
 
