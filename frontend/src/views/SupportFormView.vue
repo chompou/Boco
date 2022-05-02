@@ -40,6 +40,7 @@ import BaseInput from "@/components/base/BaseInput";
 import BaseTextArea from "@/components/base/BaseTextArea";
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
+import { useToast } from "vue-toastification";
 
 export default {
   components: {
@@ -47,6 +48,7 @@ export default {
     BaseInput,
   },
   setup() {
+    const toast = useToast();
     const validationSchema = object({
       name: string().required("This field is required!"),
       email: string()
@@ -69,6 +71,9 @@ export default {
     //Handle submit, do something other than logging
     const submit = handleSubmit((values) => {
       console.log("submit", values);
+      toast.info("Support ticket sent", {
+        timeout: 2000,
+      });
     });
 
     return {
@@ -78,6 +83,7 @@ export default {
       message: message.value,
       errors,
       handleChange,
+      toast,
     };
   },
 };

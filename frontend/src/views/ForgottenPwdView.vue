@@ -15,10 +15,6 @@
         placeholder="example@gmail.com"
         required
       />
-      <p v-if="emailSent">
-        If your email exists in our system, we have sent you instructions on how
-        to get back to your BoCo account
-      </p>
       <br />
       <button id="submit" class="boco-btn" type="submit">Submit</button>
     </form>
@@ -26,7 +22,13 @@
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
+
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   data() {
     return {
       email: "",
@@ -35,8 +37,10 @@ export default {
   },
   methods: {
     submit() {
-      console.log("nice");
       this.emailSent = true;
+      this.toast.info("A mail has been sent to " + this.email, {
+        timeout: 4000,
+      });
     },
   },
 };
