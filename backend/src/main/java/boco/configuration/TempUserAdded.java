@@ -22,7 +22,7 @@ import java.util.List;
 public class TempUserAdded {
 
     @Bean
-    CommandLineRunner simpleRunner(ProfileRepository profileRepository,
+    CommandLineRunner runner(ProfileRepository profileRepository,
                                    ReviewRepository reviewRepository,
                                    CategoryTypeRepository categoryTypeRepository,
                                    ListingRepository listingRepository,
@@ -32,15 +32,30 @@ public class TempUserAdded {
                                    ){
 
         return args ->{
+            /*
             int magnitude = 10;
             try {
                 //Defaults
                 CategoryType categoryType = new CategoryType();
-                categoryType.setName("Sport");
+                categoryType.setName("Sport/Hiking");
                 CategoryType categoryType1 = new CategoryType();
-                categoryType1.setName("Electronic");
+                categoryType1.setName("Electronics");
                 CategoryType categoryType2 = new CategoryType();
                 categoryType2.setName("Vehicle");
+                CategoryType categoryType3 = new CategoryType();
+                categoryType3.setName("Tools");
+                CategoryType categoryType4 = new CategoryType();
+                categoryType4.setName("Interior");
+                CategoryType categoryType5 = new CategoryType();
+                categoryType5.setName("Hobby/Entertainment");
+                CategoryType categoryType6 = new CategoryType();
+                categoryType6.setName("School/Office");
+                CategoryType categoryType7 = new CategoryType();
+                categoryType7.setName("Home/Garden");
+                CategoryType categoryType8 = new CategoryType();
+                categoryType8.setName("Fashion");
+                CategoryType categoryType9 = new CategoryType();
+                categoryType9.setName("Musical Instruments");
 
                 ArrayList<CategoryType> categoryTypes = new ArrayList<>();
                 categoryTypes.add(categoryType);
@@ -334,6 +349,7 @@ public class TempUserAdded {
             }catch (Exception e){
                 System.out.println("Db already populated");
             }
+             */
         };
     }
 

@@ -94,12 +94,6 @@ class ProfileServiceTest {
     }
 
     @Test
-    public void createProfileTest() {
-        var res = profileService.createProfile(null);
-        System.out.println(res);
-    }
-
-    @Test
     public void testVerifyProfile(){
         var res = profileService.verifyProfile(2L);
         Assertions.assertEquals(true, res.getBody().getIsVerified());
@@ -185,5 +179,31 @@ class ProfileServiceTest {
         Assertions.assertEquals(false, res2.getIsVerified());
         Assertions.assertEquals(null, res2.getDeactivated());
 
+    }
+
+    @Test
+    public void getPrivateProfileReturnsCorrectData() {
+        var res1 = profileService.getPrivateProfile("Bearer messi").getBody();
+        var res2 = profileService.getPrivateProfile("Bearer ronaldo").getBody();
+
+        Assertions.assertEquals(1L, res1.getId());
+        Assertions.assertEquals("messi", res1.getUsername());
+        Assertions.assertEquals("leo@psg.fr", res1.getEmail());
+        Assertions.assertEquals("ligue 1", res1.getDescription());
+        Assertions.assertEquals("LEO", res1.getDisplayName());
+        Assertions.assertEquals("Argentina", res1.getAddress());
+        Assertions.assertEquals(false, res1.getIsVerified());
+        Assertions.assertEquals("12345678", res1.getTlf());
+        Assertions.assertEquals(null, res1.getDeactivated());
+
+        Assertions.assertEquals(2L, res2.getId());
+        Assertions.assertEquals("ronaldo", res2.getUsername());
+        Assertions.assertEquals("cr7@manu.uk", res2.getEmail());
+        Assertions.assertEquals("premier league", res2.getDescription());
+        Assertions.assertEquals("CR7", res2.getDisplayName());
+        Assertions.assertEquals("Portugal", res2.getAddress());
+        Assertions.assertEquals(false, res2.getIsVerified());
+        Assertions.assertEquals("12345678", res2.getTlf());
+        Assertions.assertEquals(null, res2.getDeactivated());
     }
 }
