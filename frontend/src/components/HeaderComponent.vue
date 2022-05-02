@@ -1,7 +1,7 @@
 <template>
   <div id="header" class="container-fluid text-center" v-if="isHome">
     <router-link to="/">
-      <img src="@/assets/NyLogoBoCo.png" alt="Logo" />
+      <img id="mainLogo" src="@/assets/mainLogo.png" alt="Logo" />
     </router-link>
   </div>
 </template>
@@ -14,3 +14,10 @@ export default {
   },
 };
 </script>
+
+<style>
+#mainLogo {
+  height: 100px;
+  width: auto;
+}
+</style>
