@@ -9,16 +9,21 @@ import java.security.NoSuchAlgorithmException;
 @Component
 public class BocoHasher {
 
-    public static String encode(String unhashed) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.update(unhashed.getBytes());
-        return new String(messageDigest.digest(), StandardCharsets.UTF_8);
+    public static String encode(String unhashed){
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(unhashed.getBytes());
+            return new String(messageDigest.digest(), StandardCharsets.UTF_8);
+        }catch (Exception ignored){}
+        return unhashed;
     }
 
     public static String encode(Long unhashed) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.update((unhashed+"").getBytes());
-        return new String(messageDigest.digest(), StandardCharsets.UTF_8);
-
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update((unhashed+"").getBytes());
+            return new String(messageDigest.digest(), StandardCharsets.UTF_8);
+        }catch (Exception ignored){}
+        return unhashed.toString();
     }
 }

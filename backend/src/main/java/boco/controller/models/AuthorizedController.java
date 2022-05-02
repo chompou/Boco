@@ -62,6 +62,11 @@ public class AuthorizedController {
     public ResponseEntity<PrivateProfileResponse> getMyProfile(@RequestHeader(name="Authorization") String token){
         return profileService.getPrivateProfile(token);
     }
+    @PutMapping("/profile")
+    public ResponseEntity<PrivateProfileResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest,
+                                                         @RequestHeader(name="Authorization") String token) {
+        return profileService.updateProfile(updateProfileRequest, token);
+    }
 
     @GetMapping("/review")
     public ResponseEntity<List<ReviewResponse>> getGivenReviews(@RequestParam(name = "perPage") int perPage,
