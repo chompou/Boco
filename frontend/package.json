@@ -23,6 +23,7 @@
     "vue-router": "^4.0.3",
     "vue-star-rating": "^2.1.0",
     "vue-toastification": "^2.0.0-rc.5",
+    "vue3-openlayers": "^0.1.63",
     "vuex": "^4.0.0",
     "yup": "^0.32.11"
   },

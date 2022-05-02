@@ -14,7 +14,6 @@
           :key="lease"
           :lease="lease"
           @click="openOverlay(lease)"
-          @keydown.esc="closeOverlay"
         />
       </div>
     </div>
