@@ -105,9 +105,14 @@
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
 import apiService from "@/services/apiService";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   data() {
     return {
       preview: null,
@@ -148,6 +153,10 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+      this.toast.success("Listing was successfully created", {
+        timeout: 2000,
+      });
+      this.$router.push("/my/items");
     },
   },
   computed: {
