@@ -22,7 +22,7 @@ import java.util.List;
 public class TempUserAdded {
 
     @Bean
-    CommandLineRunner simpleRunner(ProfileRepository profileRepository,
+    CommandLineRunner runner(ProfileRepository profileRepository,
                                    ReviewRepository reviewRepository,
                                    CategoryTypeRepository categoryTypeRepository,
                                    ListingRepository listingRepository,
@@ -32,6 +32,7 @@ public class TempUserAdded {
                                    ){
 
         return args ->{
+            /*
             int magnitude = 10;
             try {
                 //Defaults
@@ -334,6 +335,7 @@ public class TempUserAdded {
             }catch (Exception e){
                 System.out.println("Db already populated");
             }
+             */
         };
     }
 
