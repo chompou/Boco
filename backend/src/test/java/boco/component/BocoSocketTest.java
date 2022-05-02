@@ -4,7 +4,6 @@ package boco.component;
 
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.mock.web.MockHttpSession;

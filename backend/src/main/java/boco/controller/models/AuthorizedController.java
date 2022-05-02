@@ -1,17 +1,13 @@
 package boco.controller.models;
 
 import boco.models.http.*;
-import boco.models.profile.Notification;
-import boco.models.rental.Lease;
 import boco.service.profile.NotificationService;
 import boco.service.profile.ProfileService;
 import boco.service.rental.LeaseService;
 import boco.service.rental.ListingService;
 import boco.service.rental.ReviewService;
-import boco.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -75,8 +71,9 @@ public class AuthorizedController {
     }
 
     @GetMapping("/lease")
-    public ResponseEntity<List<LeaseResponse>> getMyLeases(@RequestHeader(name="Authorization") String token) {
-        return leaseService.getMyLeases(token);
+    public ResponseEntity<List<LeaseResponse>> getMyLeases(@RequestHeader(name="Authorization") String token,
+                                                           @RequestParam(name = "is_owner") Boolean isOwner) {
+        return leaseService.getMyLeases(token, isOwner);
     }
 
     @PostMapping("/lease")
