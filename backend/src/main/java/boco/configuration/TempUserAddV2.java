@@ -13,6 +13,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,6 +224,10 @@ public class TempUserAddV2 {
                 profileRepository.save(np);
             }
 
+            java.io.File file = new File("backend/src/main/resources/testbilde2.png");
+            byte [] imageBytes = Files.readAllBytes(file.toPath());
+
+
             // Making listings
             for (int i = 0; i < listings; i++) {
                 String name;
@@ -234,6 +240,7 @@ public class TempUserAddV2 {
                 } else {
                     name = faker.pokemon().name();
                 }
+                ArrayList<Image> images = new ArrayList<>();
 
                 var l = Listing.builder()
                         .address(faker.address().fullAddress())
@@ -247,8 +254,15 @@ public class TempUserAddV2 {
                         .priceType("Week")
                         .images(null) // images
                         .build();
-                listingList.add(l);
                 listingRepository.save(l);
+                Image image = new Image();
+                image.setImage(imageBytes);
+                image.setListing(l);
+                images.add(image);
+                imageRepository.save(image);
+                l.setImages(images);
+                listingRepository.save(l);
+                listingList.add(l);
             }
 
             // Making leases
