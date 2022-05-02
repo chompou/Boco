@@ -155,9 +155,7 @@ class ListingServiceTest {
                 .when(profileRepository.findProfileByUsername("miami"))
                 .thenReturn(Optional.of(p2));
 
-        lenient()
-                .when(listingRepository.save(any()))
-                .thenReturn()
+
 
 
 
@@ -277,7 +275,7 @@ class ListingServiceTest {
     public void createListingInvalidToken(){
         ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 2L);
         ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 2");
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
 
