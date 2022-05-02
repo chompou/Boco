@@ -155,9 +155,7 @@ class ListingServiceTest {
                 .when(profileRepository.findProfileByUsername("miami"))
                 .thenReturn(Optional.of(p2));
 
-        lenient()
-                .when(listingRepository.save(any()))
-                .thenReturn()
+
 
 
 
