@@ -79,9 +79,9 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 import ProfileBoxComponent from "@/components/ProfileBoxComponent";
-import ReviewComponent from "@/components/ReviewComponent";
+import ReviewComponent from "@/components/RateReview/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
 import axios from "axios";

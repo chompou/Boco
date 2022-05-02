@@ -17,6 +17,7 @@ import RegisterView from "@/views/RegisterView";
 import SupportFormView from "@/views/SupportFormView";
 import { createRouter, createWebHistory } from "vue-router";
 import FrontPage from "../views/FrontPageView.vue";
+import GiveRating from "@/components/RateReview/GiveRating";
 
 // const routerGuard = {
 // beforeEnter: (to, from) => {
@@ -112,6 +113,11 @@ const routes = [
     path: "/:catchAll(.*)",
     name: "NotFound",
     component: NotFoundView,
+  },
+  {
+    path: "/newRating",
+    name: "newRating",
+    component: GiveRating,
   },
 ];
 

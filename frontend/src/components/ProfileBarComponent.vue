@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 
 export default {
   components: { RatingComponent },

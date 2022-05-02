@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 import priceService from "@/services/priceService";
 
 export default {
