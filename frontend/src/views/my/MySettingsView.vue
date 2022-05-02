@@ -20,9 +20,6 @@
       </div>
 
       <div id="password" class="input-grid" style="max-height: 0px">
-        <label> Old Password </label>
-        <input :value="oldPass" />
-
         <label> New Password </label>
         <input :value="newPass" />
 
@@ -48,8 +45,8 @@ export default {
         address: null,
         tlf: null,
         description: null,
+        password: null,
       },
-      oldPass: null,
       newPass: null,
       confirmPass: null,
     };
@@ -63,7 +60,16 @@ export default {
         .catch((error) => console.log(error));
     },
 
-    onSave() {},
+    onSave() {
+      if (this.newPass != this.confirmPass) {
+        return alert("Passwords do not match");
+      }
+
+      this.profile.password = this.newPass;
+      apiService
+        .updateMyProfile(this.profile)
+        .catch((error) => console.log(error));
+    },
 
     onReset() {
       this.fetchProfile();

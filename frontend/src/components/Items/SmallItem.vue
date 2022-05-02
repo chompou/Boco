@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div>
-      <img :src="url" />
+      <img id="image" alt="Vue logo" :src="imgSource" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
       <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
     </div>
@@ -9,20 +9,19 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   props: ["item"],
 
   data() {
     return {
-      url: null,
+      imgSource: null,
     };
   },
-
   created() {
-    axios.get("https://picsum.photos/200/300").then((response) => {
-      this.url = response.request.responseURL;
-    });
+    let image = this.item.image;
+    setTimeout(() => {
+      this.imgSource = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>

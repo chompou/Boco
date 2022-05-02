@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img :src="url" />
+      <img id="image3" alt="Vue logo" :src="imgSource" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
@@ -24,13 +24,17 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
-import axios from "axios";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 import priceService from "@/services/priceService";
 
 export default {
   props: ["item"],
   components: { RatingComponent },
+  data() {
+    return {
+      imgSource: null,
+    };
+  },
   computed: {
     displayPrice() {
       return priceService.displayPrice(this.item);
@@ -40,17 +44,11 @@ export default {
       return this.item.categoryTypes.map((c) => c.name).join(", ");
     },
   },
-
-  data() {
-    return {
-      url: null,
-    };
-  },
-
   created() {
-    axios.get("https://picsum.photos/200/300").then((response) => {
-      this.url = response.request.responseURL;
-    });
+    let image = this.item.image;
+    setTimeout(() => {
+      this.imgSource = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>

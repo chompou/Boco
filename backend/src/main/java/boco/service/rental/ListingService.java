@@ -146,12 +146,6 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    /**
-     * Creates a new listing for a given listing request.
-     * @param listingRequest The request filled with the necessary details for creating the request.
-     * @param token The token of that authenticates the user.
-     * @return A responseEntity filed with the listingResponse just created.
-     */
     public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest,MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));

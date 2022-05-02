@@ -34,6 +34,10 @@ export default {
 
   methods: {
     onSubmit() {
+      if (this.computedHours <= 0) {
+        return alert("Invalid lease period");
+      }
+
       apiService
         .createLease({
           fromDatetime: new Date(this.fromTime).getTime(),
@@ -51,6 +55,8 @@ export default {
     },
 
     displayDuration() {
+      if (this.computedHours < 0) return "-";
+
       return priceService.displayDuration(
         this.computedHours,
         this.item.priceType
@@ -58,8 +64,22 @@ export default {
     },
 
     displayPrice() {
-      return priceService.leasePrice(this.item, this.computedHours);
+      let computedPrice = priceService.leasePrice(
+        this.item,
+        this.computedHours
+      );
+      if (computedPrice < 0) return "-";
+
+      return computedPrice;
     },
+  },
+
+  created() {
+    window.addEventListener("keydown", (e) => {
+      if (e.key == "Escape") {
+        this.$emit("close-overlay");
+      }
+    });
   },
 };
 </script>

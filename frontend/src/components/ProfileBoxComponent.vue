@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 export default {
   props: ["profile"],
   components: { RatingComponent },

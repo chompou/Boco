@@ -11,7 +11,7 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img id="image" :src="url" />
+          <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
               v-if="item.active"
@@ -79,9 +79,9 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 import ProfileBoxComponent from "@/components/ProfileBoxComponent";
-import ReviewComponent from "@/components/ReviewComponent";
+import ReviewComponent from "@/components/RateReview/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
 import axios from "axios";
@@ -103,6 +103,7 @@ export default {
       reviews: [],
       url: null,
       profileLoaded: false,
+      imgSource: null,
     };
   },
   computed: {
@@ -152,21 +153,31 @@ export default {
         location.reload();
       }, 100);
     },
+    dataUrl() {
+      return btoa(this.item.image);
+    },
   },
   created() {
     apiService
       .getItem(this.id)
-      .then((response) => (this.item = response.data))
-      .catch((error) => console.log(error))
-      .then(() =>
+      .then((response) => {
+        this.item = response.data;
+        setTimeout(() => {
+          let image = this.item.image;
+          this.imgSource = "data:image/jpeg;base64, " + image;
+        }, 100);
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
             this.profile = response.data;
           })
-          .catch((error) => console.log(error))
-      );
-
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
       .then((response) => (this.reviews = response.data))

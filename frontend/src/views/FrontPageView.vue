@@ -73,6 +73,7 @@ export default {
       .getItems({}, 0, 15)
       .then((response) => {
         this.items = response.data;
+        console.log(this.items);
       })
       .catch((error) => console.log(error));
   },
@@ -132,6 +133,11 @@ export default {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);
+}
+
+.mt-5 {
+  justify-content: center;
+  display: flex;
 }
 
 .icon {

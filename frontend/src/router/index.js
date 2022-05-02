@@ -17,6 +17,7 @@ import RegisterView from "@/views/RegisterView";
 import SupportFormView from "@/views/SupportFormView";
 import { createRouter, createWebHistory } from "vue-router";
 import FrontPage from "../views/FrontPageView.vue";
+import GiveRating from "@/components/RateReview/GiveRating";
 
 // const routerGuard = {
 // beforeEnter: (to, from) => {
@@ -113,6 +114,11 @@ const routes = [
     name: "NotFound",
     component: NotFoundView,
   },
+  {
+    path: "/newRating",
+    name: "newRating",
+    component: GiveRating,
+  },
 ];
 
 const router = createRouter({
@@ -126,6 +132,7 @@ router.beforeEach(async function (to) {
       let response = await apiService.getMyProfile();
       store.state.loggedIn = true;
       store.state.loggedInUser = response.data.id;
+      store.dispatch("UPDATE_USERNAME", response.data.displayName);
     } catch (error) {
       console.log(error);
     }

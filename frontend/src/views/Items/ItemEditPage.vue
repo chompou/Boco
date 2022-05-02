@@ -2,7 +2,7 @@
   <div id="container">
     <h1>Edit item</h1>
     <div>
-      <img class="preview" alt="Vue logo" src="@/assets/service.png" />
+      <img id="image" alt="Vue logo" :src="imgSource" />
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -100,6 +100,7 @@ export default {
   data() {
     return {
       item: null,
+      imgSource: null,
     };
   },
   methods: {
@@ -144,6 +145,10 @@ export default {
       .catch((error) => {
         console.log(error);
       });
+    setTimeout(() => {
+      let image = this.item.image;
+      this.imgSource = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>
@@ -155,7 +160,7 @@ export default {
   align-items: center;
 }
 
-.preview {
+#image {
   width: 300px;
   height: 300px;
 }
@@ -183,11 +188,6 @@ select {
   font-size: 16px;
   width: 100px;
   height: 40px;
-}
-
-.img-fluid {
-  width: 300px;
-  height: 300px;
 }
 
 #inputFields {

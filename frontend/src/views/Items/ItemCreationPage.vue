@@ -121,7 +121,7 @@ export default {
       title: this.title,
       address: this.address,
       price: 0,
-      leaseType: this.leaseType,
+      leaseType: "Hour",
       category: [this.category],
       checked: false,
       description: this.description,
@@ -137,6 +137,7 @@ export default {
         };
         this.image = input.files[0];
         this.formData.append("file", this.image);
+        reader.readAsDataURL(input.files[0]);
       }
     },
     submit() {
@@ -189,6 +190,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.col-md-5 {
+  width: 400px;
 }
 
 .ItemId {
