@@ -44,4 +44,11 @@ public class EmailService extends SimpleMailMessage {
         message.setText("Thank you for opening an account with us \n\nBest regards Boco");
         emailSender.send(message);
     }
+    public void sendContactFormFromUser(String from, String name, String issue){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo("idatt2106.4@gmail.com");
+        message.setSubject("Issue from " + name);
+        message.setText(issue);
+    }
 }

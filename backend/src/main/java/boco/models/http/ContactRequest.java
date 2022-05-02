@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor
-public class contactRequest {
+public class ContactRequest {
     private String name;
     private String email;
     private String issue;
