@@ -1,5 +1,6 @@
 package boco.configuration;
 
+import boco.component.BocoHasher;
 import boco.models.profile.Notification;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
@@ -22,25 +23,39 @@ import java.util.List;
 public class TempUserAdded {
 
     @Bean
-    CommandLineRunner simpleRunner(ProfileRepository profileRepository,
+    CommandLineRunner runner(ProfileRepository profileRepository,
                                    ReviewRepository reviewRepository,
                                    CategoryTypeRepository categoryTypeRepository,
                                    ListingRepository listingRepository,
                                    ImageRepository imageRepository,
                                    LeaseRepository leaseRepository,
-                                   NotificationRepository notificationRepository
-                                   ){
+                                   NotificationRepository notificationRepository){
 
         return args ->{
+            /*
             int magnitude = 10;
             try {
                 //Defaults
                 CategoryType categoryType = new CategoryType();
-                categoryType.setName("Sport");
+                categoryType.setName("Sport/Hiking");
                 CategoryType categoryType1 = new CategoryType();
-                categoryType1.setName("Electronic");
+                categoryType1.setName("Electronics");
                 CategoryType categoryType2 = new CategoryType();
                 categoryType2.setName("Vehicle");
+                CategoryType categoryType3 = new CategoryType();
+                categoryType3.setName("Tools");
+                CategoryType categoryType4 = new CategoryType();
+                categoryType4.setName("Interior");
+                CategoryType categoryType5 = new CategoryType();
+                categoryType5.setName("Hobby/Entertainment");
+                CategoryType categoryType6 = new CategoryType();
+                categoryType6.setName("School/Office");
+                CategoryType categoryType7 = new CategoryType();
+                categoryType7.setName("Home/Garden");
+                CategoryType categoryType8 = new CategoryType();
+                categoryType8.setName("Fashion");
+                CategoryType categoryType9 = new CategoryType();
+                categoryType9.setName("Musical Instruments");
 
                 ArrayList<CategoryType> categoryTypes = new ArrayList<>();
                 categoryTypes.add(categoryType);
@@ -78,27 +93,29 @@ public class TempUserAdded {
                 reviewRepository.save(review3);
                 reviewRepository.save(review4);
 
+                String password = BocoHasher.encode("letmepass");
+
 
                 Personal emptyProfile = new Personal("", "", "This user does not exist",
                         "Deleted user", "donothashthispassword", "", "");
                 Personal profile = new Personal("emilgl", "gluckemil@gmail.com", "Test",
-                        "Emil", "letmepass","Baerum", "12345678");
+                        "Emil", password,"Baerum", "12345678");
                 Personal profile1 = new Personal("olavdei", "olav@gmail.com", "Test1",
-                        "Olav", "letmepass","Baerum", "12345677");
+                        "Olav", password,"Baerum", "12345677");
                 Personal profile2 = new Personal("askros", "ask@gmail.com", "Test2",
-                        "Ask", "letmepass","Baerum", "12345777");
+                        "Ask", password,"Baerum", "12345777");
                 Profile profile3 = new Personal("eliaseb", "elias@gmail.com", "Test3",
-                        "Elias", "letmepass","Bergen", "12347777");
+                        "Elias", password,"Bergen", "12347777");
                 Personal profile4 = new Personal("tobigi", "tobias@gmail.com", "Test4",
-                        "Tobias", "letmepass","Oslo", "12377777");
+                        "Tobias", password,"Oslo", "12377777");
                 Professional profile5 = new Professional("fanuel", "fanuel@gmail.com", "Test5",
-                        "Fanuel", "letmepass","Vik", "12777777");
+                        "Fanuel", password,"Vik", "12777777");
                 Professional profile6 = new Professional("jonmk", "jonmartin@gmail.com", "Test6",
-                        "Jon Martin", "letmepass","Oslo", "17777777");
+                        "Jon Martin", password,"Oslo", "17777777");
                 Professional profile7 = new Professional("sindrgl", "sindre@gmail.com", "Test7",
-                        "Sindre", "letmepass","Auuuuuure", "77777777");
+                        "Sindre", password,"Auuuuuure", "77777777");
                 Professional profile8 = new Professional("oyvibjo", "oyvind@gmail.com", "Test8",
-                        "Oyvind", "letmepass","Ottestad", "11777777");
+                        "Oyvind", password,"Ottestad", "11777777");
 
                 profileRepository.save(emptyProfile);
                 profileRepository.save(profile);
@@ -213,10 +230,10 @@ public class TempUserAdded {
                 List<Profile> profileList = new ArrayList<>();
                 for (int i = 0; i < magnitude; i++) {
                     if (i%2==0){
-                        Profile p = new Personal(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
+                        Profile p = new Personal(i+"", i+"@mail.no", i+"", i+"", password, i+"", i+"");
                         profileList.add(p);
                     }else {
-                        Profile p = new Professional(i+"", i+"@mail.no", i+"", i+"", "pass", i+"", i+"");
+                        Profile p = new Professional(i+"", i+"@mail.no", i+"", i+"", password, i+"", i+"");
                         profileList.add(p);
                     }
                 }
@@ -333,7 +350,9 @@ public class TempUserAdded {
 
             }catch (Exception e){
                 System.out.println("Db already populated");
+                e.printStackTrace();
             }
+             */
         };
     }
 

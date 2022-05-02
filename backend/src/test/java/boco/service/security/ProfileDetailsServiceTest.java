@@ -3,14 +3,10 @@ package boco.service.security;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
 import boco.models.profile.Profile;
-import boco.models.rental.CategoryType;
 import boco.repository.profile.ProfileRepository;
-import boco.repository.rental.CategoryTypeRepository;
-import boco.service.rental.CategoryTypeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)

@@ -149,9 +149,9 @@ class LeaseServiceTest {
 
     @Test
     public void getMyLeasesReturnsCorrectNumberOfLeases() {
-        ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi");
+        ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi", true);
         List<LeaseResponse> leases1 = res1.getBody();
-        ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr");
+        ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr", true);
         List<LeaseResponse> leases2 = res2.getBody();
 
 
@@ -161,15 +161,15 @@ class LeaseServiceTest {
 
     @Test
     public void getMyLeasesReturnsStatusCode200() {
-        ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi");
+        ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi", true);
 
         assertEquals(200, res.getStatusCodeValue());
     }
 
     @Test
     public void getMyLeasesReturnsCorrectLeases() {
-        ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi");
-        ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr");
+        ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi", true);
+        ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr", true);
         List<LeaseResponse> leases1 = res1.getBody();
         List<LeaseResponse> leases2 = res2.getBody();
 
@@ -222,7 +222,7 @@ class LeaseServiceTest {
 
     @Test
     public void getMyLeasesReturnsStatusCode404() {
-        var res = service.getMyLeases("Bearer notfound");
+        var res = service.getMyLeases("Bearer notfound", true);
         assertEquals(404, res.getStatusCodeValue());
     }
 
