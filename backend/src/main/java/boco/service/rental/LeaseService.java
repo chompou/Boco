@@ -1,7 +1,6 @@
 package boco.service.rental;
 
 import boco.models.http.*;
-import boco.models.profile.Notification;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
@@ -16,10 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +37,7 @@ public class LeaseService {
         this.jwtUtil = jwtUtil;
     }
 
-    public ResponseEntity<List<LeaseResponse>> getMyLeases(String token) {
+    public ResponseEntity<List<LeaseResponse>> getMyLeases(String token, Boolean isOwner) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
@@ -51,7 +47,12 @@ public class LeaseService {
             }
             Profile profile = profileData.get();
 
-            List<Lease> leases = leaseRepository.getLeasesByOwner(profile);
+            List<Lease> leases;
+            if (isOwner) {
+                leases = leaseRepository.getLeasesByOwner(profile);
+            } else {
+                leases = leaseRepository.getLeasesByProfile(profile);
+            }
             return new ResponseEntity<>(convertLease(leases), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
