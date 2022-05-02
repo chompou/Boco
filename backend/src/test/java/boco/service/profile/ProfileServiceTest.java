@@ -1,5 +1,6 @@
 package boco.service.profile;
 
+import boco.component.BocoHasher;
 import boco.models.http.UpdatePasswordRequest;
 import boco.models.profile.Personal;
 import boco.models.profile.Professional;
@@ -121,7 +122,7 @@ class ProfileServiceTest {
     public void testChangePassword(){
         UpdatePasswordRequest goodRequest = new UpdatePasswordRequest("letmepass", "letmepass");
         var res = profileService.changePassword(goodRequest, "leo@psg.fr");
-        Assertions.assertEquals("letmepass", res.getBody().getPasswordHash());
+        Assertions.assertEquals(BocoHasher.encode("letmepass"), res.getBody().getPasswordHash());
 
         UpdatePasswordRequest badRequest = new UpdatePasswordRequest("letmepass", "dontletmepass");
         var res1 = profileService.changePassword(badRequest, "leo@psg.fr");
