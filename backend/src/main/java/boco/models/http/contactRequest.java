@@ -1,0 +1,12 @@
+package boco.models.http;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter @AllArgsConstructor
+public class contactRequest {
+    private String name;
+    private String email;
+    private String issue;
+}
