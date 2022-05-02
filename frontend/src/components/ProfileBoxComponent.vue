@@ -2,7 +2,13 @@
   <div class="profileBox">
     <div class="profile">
       <div class="profileBoxText">
-        <h3>{{ profile.displayName }}</h3>
+        <router-link
+          id="profilebox"
+          class="link"
+          :to="{ name: 'profile', params: { id: profile.id } }"
+        >
+          <h3>{{ profile.displayName }}</h3>
+        </router-link>
         <p>Phone nr: {{ profile.tlf }}</p>
         <p>Email: {{ profile.email }}</p>
       </div>
@@ -13,15 +19,17 @@
         </div>
       </div>
     </div>
-    <img id="map" alt="Map" src="@/assets/map.png" />
+    <map-test></map-test>
   </div>
 </template>
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
+import "vue3-openlayers/dist/vue3-openlayers.css";
+import MapTest from "@/components/MapComponent";
 export default {
   props: ["profile"],
-  components: { RatingComponent },
+  components: { MapTest, RatingComponent },
 };
 </script>
 
@@ -38,11 +46,6 @@ export default {
   padding: 10px 28px;
   background-color: rgba(0, 139, 139, 0.4);
   margin: 20px;
-}
-
-.profileBox:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
 .profile {
