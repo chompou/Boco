@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 
 export default {
   components: { RatingComponent },
@@ -71,7 +71,7 @@ export default {
   height: 200px;
   padding: 10px 28px;
   background: var(--main-color);
-  margin: 20px;
+  margin-top: 5px;
   flex-wrap: wrap;
 }
 

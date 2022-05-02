@@ -3,6 +3,7 @@
     <Transition name="overlay">
       <lease-request-component
         v-if="leaseOverlay"
+        :item="item"
         @close-overlay="leaseOverlay = false"
       />
     </Transition>
@@ -10,11 +11,26 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img alt="Vue logo" src="@/assets/service.png" />
+          <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
-            <button class="editButtons">Set Active</button>
-            <button class="editButtons">Edit</button>
-            <button class="editButtons">Delete</button>
+            <button
+              v-if="item.active"
+              @click="changeStatus(false)"
+              class="editButtons boco-btn"
+            >
+              Active
+            </button>
+            <button
+              v-else
+              @click="changeStatus(true)"
+              class="editButtons boco-btn"
+            >
+              Inactive
+            </button>
+            <button @click="edit" class="editButtons boco-btn">Edit</button>
+            <button class="editButtons boco-btn" @click="deleteItem">
+              Delete
+            </button>
           </div>
           <button
             class="leaseButton boco-btn"
@@ -35,10 +51,13 @@
                 </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ price }}kr / {{ item.priceType }}</p>
+              <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
-              <RatingComponent :rating="item.rating" />
+              <div id="items">
+                <p>Rating:</p>
+                <RatingComponent :rating="item.rating" />
+              </div>
             </div>
           </div>
           <h2>Description</h2>
@@ -47,18 +66,26 @@
       </div>
     </div>
     <div>
-      <ProfileBoxComponent :profile="profile" />
+      <router-link
+        id="profilebox"
+        class="link"
+        :to="{ name: 'profile', params: { id: profile.id } }"
+      >
+        <ProfileBoxComponent :profile="profile" />
+      </router-link>
       <ReviewComponent :reviews="reviews" />
     </div>
   </div>
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
 import ProfileBoxComponent from "@/components/ProfileBoxComponent";
-import ReviewComponent from "@/components/ReviewComponent";
+import ReviewComponent from "@/components/RateReview/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
+import axios from "axios";
+import priceService from "@/services/priceService";
 export default {
   props: ["id"],
 
@@ -72,20 +99,62 @@ export default {
     return {
       leaseOverlay: false,
       item: { id: null, profileId: null, price: 0, priceType: null },
-      profile: {},
+      profile: { id: 0 },
       reviews: [],
+      url: null,
+      profileLoaded: false,
+      imgSource: null,
     };
   },
   computed: {
-    price() {
-      let actuallyPrice = this.item.price;
-      if (this.item.priceType === "Week") {
-        actuallyPrice = this.item.price * 7 * 24;
+    displayPrice() {
+      return priceService.displayPrice(this.item);
+    },
+
+    my() {
+      return this.item.profileId === this.$store.state.loggedInUser;
+    },
+  },
+  methods: {
+    edit() {
+      this.$router.push({ name: "editItem", params: { id: this.id } });
+    },
+    deleteItem() {
+      let result = confirm("Are you sure you want to delete?");
+      if (result) {
+        apiService
+          .deleteItem({
+            listingId: this.id,
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        setTimeout(() => {
+          this.$router.push({ name: "myItems" });
+        }, 300);
       }
-      if (this.item.priceType === "Day") {
-        actuallyPrice = this.item.price * 24;
-      }
-      return actuallyPrice;
+    },
+    changeStatus(status) {
+      console.log(this.item);
+      apiService
+        .updateItem({
+          listingId: this.id,
+          isAvailable: true,
+          active: status,
+          address: this.item.address,
+          price: this.item.price,
+          priceType: this.item.priceType,
+          description: this.item.description,
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setTimeout(() => {
+        location.reload();
+      }, 100);
+    },
+    dataUrl() {
+      return btoa(this.item.image);
     },
   },
   created() {
@@ -93,6 +162,10 @@ export default {
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
+        setTimeout(() => {
+          let image = this.item.image;
+          this.imgSource = "data:image/jpeg;base64, " + image;
+        }, 100);
         apiService
           .getProfile(this.item.profileId)
           .then((response) => {
@@ -105,15 +178,14 @@ export default {
       .catch((error) => {
         console.log(error);
       });
-
     apiService
       .getReviews({ listingId: this.id }, 0, 15)
-      .then((response) => {
-        this.reviews = response.data;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then((response) => (this.reviews = response.data))
+      .catch((error) => console.log(error));
+
+    axios
+      .get("https://picsum.photos/200/300")
+      .then((response) => (this.url = response.request.responseURL));
   },
 };
 </script>
@@ -140,6 +212,7 @@ export default {
 
 img {
   height: 300px;
+  min-width: 300px;
   width: 300px;
   padding: 10px;
   border: 1px solid #39495c;
@@ -164,14 +237,8 @@ img {
   border: 1px solid #39495c;
   width: 150px;
   height: 50px;
-  font-size: 20px;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   padding: 5px;
-  background: white;
   margin: 25px;
 }
 
@@ -198,8 +265,18 @@ button:hover {
   margin-left: 50px;
 }
 
+#items {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
 #category label {
   display: inline;
+}
+
+#profilebox {
+  text-decoration: none;
 }
 
 .overlay-enter-active,

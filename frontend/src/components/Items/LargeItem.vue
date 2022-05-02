@@ -1,7 +1,7 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img alt="Vue logo" src="@/assets/service.png" />
+      <img id="image3" alt="Vue logo" :src="imgSource" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
@@ -9,10 +9,13 @@
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
             <p>Category: {{ categoryString }}</p>
             <p>Address: {{ item.address }}</p>
-            <p>Price: {{ price }}kr/{{ item.priceType }}</p>
+            <p>Price: {{ displayPrice }}kr/{{ item.priceType }}</p>
           </div>
           <div id="About2">
-            <RatingComponent :rating="item.rating" />
+            <div id="items">
+              <p id="ratingText">Rating:</p>
+              <RatingComponent :rating="item.rating" />
+            </div>
           </div>
         </div>
       </div>
@@ -21,26 +24,31 @@
 </template>
 
 <script>
-import RatingComponent from "@/components/RatingComponent";
+import RatingComponent from "@/components/RateReview/RatingComponent";
+import priceService from "@/services/priceService";
 
 export default {
   props: ["item"],
   components: { RatingComponent },
+  data() {
+    return {
+      imgSource: null,
+    };
+  },
   computed: {
-    price() {
-      let actuallyPrice = this.item.price;
-      if (this.item.priceType === "Week") {
-        actuallyPrice = this.item.price * 7 * 24;
-      }
-      if (this.item.priceType === "Day") {
-        actuallyPrice = this.item.price * 24;
-      }
-      return actuallyPrice;
+    displayPrice() {
+      return priceService.displayPrice(this.item);
     },
 
     categoryString() {
       return this.item.categoryTypes.map((c) => c.name).join(", ");
     },
+  },
+  created() {
+    let image = this.item.image;
+    setTimeout(() => {
+      this.imgSource = "data:image/jpeg;base64, " + image;
+    }, 100);
   },
 };
 </script>
@@ -91,6 +99,16 @@ img {
   margin-top: 30px;
   margin-left: 50px;
   width: 150px;
+}
+
+#items {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+}
+
+#ratingText {
+  margin-right: 30px;
 }
 
 #texts {

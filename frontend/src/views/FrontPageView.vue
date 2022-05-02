@@ -1,35 +1,30 @@
 <template>
   <div class="frontPageWrap container position-relative mt-2">
-    <form @submit.prevent>
-      <div class="row justify-content-center">
-        <div class="col-1">
+    <select id="categories" name="Category" v-bind="orderBy">
+      <option v-for="order in orderOptions" :key="order" :value="order.name">
+        {{ order.name }}
+      </option>
+    </select>
+    <div id="content">
+      <form class="form-inline">
+        <div class="input-group">
           <input
             type="text"
-            class="form-control"
-            id="frontPageSearchField"
-            placeholder="Search"
+            id="search"
+            class="form-control search-form"
+            placeholder="Search..."
           />
+          <span class="input-group-btn" style="width: 39px">
+            <button
+              id="search-this"
+              type="button"
+              class="pull-right btn btn-default search-btn"
+            >
+              Search
+            </button>
+          </span>
         </div>
-        <div class="col-3">
-          <button type="submit" class="btn btn-success">Search</button>
-        </div>
-      </div>
-    </form>
-    <div class="position-absolute dropdown top-0 end-0">
-      <button
-        class="btn btn-success dropdown-toggle"
-        type="button"
-        id="dropdownMenuButton"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Search by:
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li><a class="dropdown-item" href="#">Name</a></li>
-        <li><a class="dropdown-item" href="#">Score</a></li>
-        <li><a class="dropdown-item" href="#">Date added</a></li>
-      </ul>
+      </form>
     </div>
     <div class="mt-5">
       <router-link to="items">
@@ -65,6 +60,11 @@ export default {
   data() {
     return {
       items: [],
+      orderOptions: [
+        { name: "No filter" },
+        { name: "Price high to low" },
+        { name: "Price low to high" },
+      ],
     };
   },
 
@@ -73,6 +73,7 @@ export default {
       .getItems({}, 0, 15)
       .then((response) => {
         this.items = response.data;
+        console.log(this.items);
       })
       .catch((error) => console.log(error));
   },
@@ -134,13 +135,55 @@ export default {
   color: rgba(0, 0, 0, 0.3);
 }
 
+.mt-5 {
+  justify-content: center;
+  display: flex;
+}
+
 .icon {
   color: var(--main-color);
   font-size: 2vw;
   margin-left: 40px;
+  height: 40px;
+  width: 40px;
+}
+
+#categories {
+  float: right;
 }
 
 .icon:hover {
   color: gray;
+}
+
+#content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-form {
+  border: 1px solid #39495c;
+  border-radius: 30px 0 0 30px;
+}
+
+.input-group {
+  width: 200px;
+}
+
+.input-group-btn {
+  max-width: 38px;
+}
+
+#search {
+  border: 1px solid #39495c;
+}
+
+.search-btn {
+  cursor: pointer;
+  border-radius: 0 30px 30px 0;
+  background-color: var(--main-color);
+  color: #ffffff;
 }
 </style>

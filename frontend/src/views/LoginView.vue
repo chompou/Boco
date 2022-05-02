@@ -24,7 +24,9 @@
         required
       />
       <br />
-      <div v-if="falsePWD">Wrong credentials. Try again</div>
+      <div id="false-cred-id" v-if="failedLogin">
+        Wrong credentials. Try again
+      </div>
       <input
         id="toggle-password-box"
         type="checkbox"
@@ -55,7 +57,7 @@ export default {
     return {
       username: "",
       password: "",
-      falsePWD: false,
+      failedLogin: false,
     };
   },
   methods: {
@@ -76,7 +78,7 @@ export default {
           storageService.setUser(this.username);
           this.$router.push("/");
         })
-        .catch(() => (this.falsePWD = true));
+        .catch(() => (this.failedLogin = true));
     },
   },
 
@@ -132,6 +134,7 @@ export default {
   flex-direction: column;
   margin: auto;
   justify-content: space-evenly;
+  text-align: center;
 }
 
 label,

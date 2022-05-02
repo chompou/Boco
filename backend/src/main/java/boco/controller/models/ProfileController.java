@@ -30,13 +30,9 @@ public class ProfileController {
     @PostMapping("")
     public ResponseEntity<PrivateProfileResponse> createProfile(@RequestBody ProfileRequest profileRequest) {
         ResponseEntity<PrivateProfileResponse> responseEntity = profileService.createProfile(profileRequest);
-        /**
-         * Code for sending welcome message to new users, inactive under development.
         if (responseEntity.getBody() != null){
             emailService.sendCreatedAccountMessage(profileRequest.getEmail());
         }
-         
-         */
         return responseEntity;
     }
 
