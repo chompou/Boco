@@ -162,14 +162,14 @@ class ListingServiceTest {
 
     @Test
     public void categoryDoesNotExist(){
-        ResponseEntity<List<ListingResponse>> response = service.getListings(1, pageSize, "", "id ASC", -1, -1, "Car");
+        ResponseEntity<List<ListingResponse>> response = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "Car", "");
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
 
     @Test
     public void testGetListings() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price ASC", -1, -1, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price:ASC", -1, -1, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(listingResponses.size(), 5);
@@ -179,7 +179,7 @@ class ListingServiceTest {
     @Test
     public void testGetListingsWithCategory() {
         //TODO add category
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id ASC", -1, -1, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(5, listingResponses.size());
@@ -188,7 +188,7 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id ASC", 175.0, 2000.0, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id:ASC", 175.0, 2000.0, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(5, listingResponses.size());
@@ -197,7 +197,7 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithDesc() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price Desc", 50.0, 100.0, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price:DESC", 50.0, 100.0, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(5, listingResponses.size());

@@ -72,7 +72,7 @@ public class ProfileService {
             Profile profile = profileData.get();
             PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
 
-            if (userId != null && !profileHasContactWithProfile(profileId, userId)){
+            if (userId == null || profileHasContactWithProfile(profileId, userId)){
                 publicProfile.setEmail(null);
                 publicProfile.setTlf(null);
             }

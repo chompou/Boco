@@ -27,6 +27,7 @@ public class ListingController {
                                      @RequestParam int page,
                                      @RequestParam(defaultValue  = "") String search,
                                      @RequestParam(defaultValue  = "id DESC") String sort,
+                                     @RequestParam(defaultValue = "") String location,
                                      @RequestParam(defaultValue  =  "-1") double priceFrom,
                                      @RequestParam(defaultValue  = "-1") double priceTo,
                                      @RequestParam(defaultValue = "") String category,
@@ -37,7 +38,7 @@ public class ListingController {
             return profileService.getProfileListings(profileId, perPage, page);
         }
 
-        return listingService.getListings(page, perPage, search, sort, priceFrom, priceTo, category);
+        return listingService.getListings(page, perPage, search, sort, priceFrom, priceTo, category, location);
     }
 
     @GetMapping("/{listing_id}")
