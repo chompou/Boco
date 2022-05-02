@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,7 +96,7 @@ public class LeaseService {
             Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
             if (!profileData.isPresent()){
-                logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+                logger.debug("profile of token was not found.");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Profile profile = profileData.get();
@@ -118,8 +119,7 @@ public class LeaseService {
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
-            // Checking if the deleter of lease is part of the lease
-            if ((lease.getProfile().getId() != profile.getId()) && (lease.getOwner().getId() != profile.getId())) {
+            if (!isProfilePartOfLease(profile, lease)) {
                 logger.debug("profileId=" + profile.getId() +
                         " could not delete lease with profileId=" +
                         lease.getProfile().getId() + " and ownerId=" + lease.getOwner().getId());
@@ -133,9 +133,41 @@ public class LeaseService {
         }
     }
 
-    public ResponseEntity<Lease> updateLease(UpdateLeaseRequest updateLeaseRequest, String token) {
-        // implement
-        return null;
+    public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String token) {
+        try {
+            String username = jwtUtil.extractUsername(token.substring(7));
+            Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+
+            if (!profileData.isPresent()) {
+                logger.debug("profile of request was not found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            Profile profile = profileData.get();
+
+            Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
+
+            if (!leaseData.isPresent()) {
+                logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was not found.");
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            Lease lease = leaseData.get();
+
+            if (lease.getOwner().getId() != profile.getId()) { // Owner of lease is not the profile trying to update
+                logger.debug("profileId is not the owner of listing.");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+
+            // Setting the new data
+            lease.setApproved(updateLeaseRequest.getIsApproved());
+            lease.setCompleted(updateLeaseRequest.getIsCompleted());
+
+            Lease savedLease = leaseRepository.save(lease);
+            logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
+            return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public static List<LeaseResponse> convertLease(List<Lease> leases){
@@ -148,10 +180,10 @@ public class LeaseService {
     }
 
     private boolean isLessThanDayBeforeLeaseStart(Lease lease) {
-        Timestamp leaseTime = lease.getFromDatetime();
-        Date date = new Date();
-        Timestamp nowTime = new Timestamp(date.getTime() + (3600*1000*24)); // Adding 24 hours to date
-        return nowTime.before(leaseTime);
+        return (lease.getFromDatetime() + (3600*1000*24)) > lease.getToDatetime();
+    }
 
+    private boolean isProfilePartOfLease(Profile profile, Lease lease) {
+        return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
     }
 }

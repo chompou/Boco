@@ -7,7 +7,8 @@ import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UpdateLeaseRequest {
-    private boolean isApproved;
-    private boolean isCompleted;
+    private Boolean isApproved;
+    private Boolean isCompleted;
+    private Long leaseId;
 
 }

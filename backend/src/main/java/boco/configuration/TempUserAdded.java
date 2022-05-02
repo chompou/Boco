@@ -36,11 +36,25 @@ public class TempUserAdded {
             try {
                 //Defaults
                 CategoryType categoryType = new CategoryType();
-                categoryType.setName("Sport");
+                categoryType.setName("Sport/Hiking");
                 CategoryType categoryType1 = new CategoryType();
-                categoryType1.setName("Electronic");
+                categoryType1.setName("Electronics");
                 CategoryType categoryType2 = new CategoryType();
-                categoryType2.setName("Car");
+                categoryType2.setName("Vehicle");
+                CategoryType categoryType3 = new CategoryType();
+                categoryType3.setName("Tools");
+                CategoryType categoryType4 = new CategoryType();
+                categoryType4.setName("Interior");
+                CategoryType categoryType5 = new CategoryType();
+                categoryType5.setName("Hobby/Entertainment");
+                CategoryType categoryType6 = new CategoryType();
+                categoryType6.setName("School/Office");
+                CategoryType categoryType7 = new CategoryType();
+                categoryType7.setName("Home/Garden");
+                CategoryType categoryType8 = new CategoryType();
+                categoryType8.setName("Fashion");
+                CategoryType categoryType9 = new CategoryType();
+                categoryType9.setName("Musical Instruments");
 
                 ArrayList<CategoryType> categoryTypes = new ArrayList<>();
                 categoryTypes.add(categoryType);
@@ -155,15 +169,15 @@ public class TempUserAdded {
 
                 Image image = new Image();
                 image.setImage(new byte[0]);
-                image.setCaption("Wonderful air");
+
                 image.setListing(listing);
                 Image image1 = new Image();
                 image1.setImage(new byte[0]);
-                image1.setCaption("Epic pic");
+
                 image1.setListing(listing);
                 Image image2 = new Image();
                 image2.setImage(new byte[0]);
-                image2.setCaption("Cool blank");
+
                 image2.setListing(listing1);
 
                 ArrayList<Image> images = new ArrayList<>();
@@ -179,8 +193,8 @@ public class TempUserAdded {
 
 
                 Lease lease = new Lease();
-                lease.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)));
-                lease.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)));
+                lease.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)).getTime());
+                lease.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)).getTime());
                 lease.setApproved(true);
                 lease.setCompleted(false);
                 lease.setProfile(profile2);
@@ -188,8 +202,8 @@ public class TempUserAdded {
                 lease.setOwner(lease.getListing().getProfile());
 
                 Lease lease1 = new Lease();
-                lease1.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 15, 0)));
-                lease1.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 18, 0)));
+                lease1.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 15, 0)).getTime());
+                lease1.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 1, 1, 18, 0)).getTime());
                 lease1.setApproved(true);
                 lease1.setCompleted(true);
                 lease1.setItemReview(review);
@@ -257,8 +271,8 @@ public class TempUserAdded {
                 List<Lease> leases = new ArrayList<>();
                 for (int i = 0; i < magnitude*5; i++) {
                     Lease lea = new Lease();
-                    lea.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)));
-                    lea.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)));
+                    lea.setFromDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 17, 15, 0)).getTime());
+                    lea.setToDatetime(Timestamp.valueOf(LocalDateTime.of(2022, 6, 30, 15, 0)).getTime());
                     lea.setApproved(i%2==0);
                     lea.setCompleted(i%3==0);
                     lease1.setItemReview(reviewRepository.getOne((long) (i/magnitude)+1));
@@ -287,6 +301,49 @@ public class TempUserAdded {
                 notificationRepository.saveAll(notifyList);
 
 
+
+                //reviews
+                List<Lease> finishesLeases = leaseRepository.getLeasesByIsApprovedIsTrueAndIsCompletedIsTrue();
+                for (Lease l:finishesLeases) {
+                    Review ownerRev = new Review(Math.random()*5, "Lorem owner");
+                    ownerRev.setLease(l);
+                    Review customerRev = new Review(Math.random()*5, "Lorem customer");
+                    customerRev.setLease(l);
+                    Review itemRev = new Review(Math.random()*5, "Lorem item");
+                    itemRev.setLease(l);
+
+                    reviewRepository.save(ownerRev);
+                    reviewRepository.save(customerRev);
+                    reviewRepository.save(itemRev);
+
+                    l.setLeaseeReview(customerRev);
+                    l.setOwnerReview(ownerRev);
+                    l.setItemReview(itemRev);
+
+                    //leasee review
+                    Profile leasee = l.getProfile();
+                    Double lVal = reviewRepository.getProfileRating(leasee.getId());
+                    if (lVal != null){
+                        leasee.setRatingProfile(lVal);
+                        profileRepository.save(leasee);
+                    }
+
+                    //owner review
+                    Profile owner = l.getOwner();
+                    Double oVal = reviewRepository.getOwnerRating(owner.getId());
+                    if (oVal != null){
+                        owner.setRatingProfile(oVal);
+                        profileRepository.save(owner);
+                    }
+
+                    //item review
+                    Listing item = l.getListing();
+                    Double iVal = reviewRepository.getItemRating(item.getId());
+                    if (iVal != null){
+                        item.setRating(iVal);
+                        listingRepository.save(item);
+                    }
+                }
 
             }catch (Exception e){
                 System.out.println("Db already populated");

@@ -29,7 +29,7 @@
         <p id="ItemNameHeader">Title:</p>
         <input
           class="baseInput"
-          v-model="title"
+          v-model="this.title"
           placeholder="Name"
           id="ItemName"
         />
@@ -38,71 +38,72 @@
         <p>Address:</p>
         <input
           class="baseInput"
-          v-model="address"
+          v-model="this.address"
           placeholder="Address"
           id="Address"
         />
       </div>
       <div class="ItemId">
         <p>price:</p>
-        <input
-          v-model="price"
-          placeholder="100"
-          class="price"
-          type="number"
-          min="0"
-        />
-        <label id="valuta">kr</label>
-        <select v-model="leaseType">
-          <option disabled value="">/Hour</option>
-          <option>/Hour</option>
-          <option>/Day</option>
-          <option>/Week</option>
-        </select>
-      </div>
-      <div id="category">
-        <div>
-          <input type="checkbox" id="categoryCheckbox" v-model="checked" />
-          <label for="categoryCheckbox" id="categoryCheckboxLabel"
-            >Categories</label
-          >
+        <div id="pricePicker">
+          <input
+            v-model="this.price"
+            placeholder="100"
+            class="price"
+            type="number"
+            min="0"
+          />
+          <label id="valuta">kr/</label>
+          <select v-model="this.leaseType">
+            <option>Hour</option>
+            <option>Day</option>
+            <option>Week</option>
+          </select>
         </div>
-        <div id="checkboxItems" v-if="checked">
-          <div class="ItemId2">
-            <input
-              type="checkbox"
-              id="vehicle"
-              value="vehicle"
-              v-model="category"
-            />
-            <label for="vehicle">Vehicle</label>
-          </div>
-          <div class="ItemId2">
-            <input type="checkbox" id="tool" value="tool" v-model="category" />
-            <label for="tool">Tool</label>
-          </div>
-          <div class="ItemId2">
-            <input
-              type="checkbox"
-              id="electronic"
-              value="electronic"
-              v-model="category"
-            />
-            <label for="electronic">Electronic</label>
-          </div>
+      </div>
+      <div class="ItemId">
+        <p>Categories:</p>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Sport"
+            value="Sport"
+            v-model="this.category"
+          />
+          <label for="Sport">Sport</label>
+        </div>
+
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Vehicle"
+            value="Vehicle"
+            v-model="this.category"
+          />
+          <label for="Vehicle">Vehicle</label>
+        </div>
+
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Electronic"
+            value="Electronic"
+            v-model="this.category"
+          />
+          <label for="Electronic">Electronic</label>
         </div>
       </div>
       <div id="descriptionField">
         <p>Description</p>
         <textarea
-          v-model="description"
+          v-model="this.description"
           placeholder="Description"
           id="description"
           name="description"
         ></textarea>
       </div>
       <div id="CreateButtons" class="element">
-        <button class="CreateButton">Create</button>
+        <button class="CreateButton" v-on:click="submit">Create</button>
         <button id="Delete" class="CreateButton">Delete</button>
       </div>
     </div>
@@ -115,15 +116,16 @@ import apiService from "@/services/apiService";
 export default {
   data() {
     return {
+      formData: new FormData(),
       preview: null,
       image: null,
-      title: "",
-      address: "",
-      price: "",
-      leaseType: "",
-      category: [],
+      title: this.title,
+      address: this.address,
+      price: 0,
+      leaseType: this.leaseType,
+      category: [this.category],
       checked: false,
-      description: "",
+      description: this.description,
     };
   },
   methods: {
@@ -135,23 +137,46 @@ export default {
           this.preview = e.target.result;
         };
         this.image = input.files[0];
-        reader.readAsDataURL(input.files[0]);
+        this.formData.append("file", this.image);
       }
     },
-  },
-  created() {
-    apiService
-      .createItem({
-        image: this.image,
-        title: this.title,
-        address: this.address,
-        price: this.price,
-        priceType: this.leaseType,
-        description: this.description,
-      })
-      .catch((error) => {
+    submit() {
+      console.log(this.image);
+      console.log(this.leaseType);
+      this.formData.append(
+        "properties",
+        new Blob(
+          [
+            JSON.stringify({
+              name: this.title,
+              address: this.address,
+              description: this.description,
+              price: this.leasePrice,
+              priceType: this.leaseType,
+              categoryNames: this.category,
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+      apiService.createItem(this.formData).catch((error) => {
         console.log(error);
       });
+    },
+  },
+  computed: {
+    leasePrice() {
+      let priceInHours = this.price;
+      if (this.leaseType === "Week") {
+        priceInHours = this.price / (7 * 24);
+      }
+      if (this.leaseType === "Day") {
+        priceInHours = this.price / 24;
+      }
+      return priceInHours;
+    },
   },
 };
 </script>
@@ -165,10 +190,6 @@ export default {
 
 .ItemId {
   margin: 20px;
-}
-
-.ItemId2 {
-  margin: 10px;
 }
 
 .baseInput {
@@ -202,30 +223,6 @@ select {
   margin-bottom: 20px;
 }
 
-#category {
-  margin-top: 30px;
-  margin-left: 20px;
-}
-
-#categoryCheckboxLabel {
-  border: 1px solid #39495c;
-  font-size: 20px;
-  padding: 5px;
-}
-
-#categoryCheckboxLabel:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
-}
-
-#categoryCheckbox {
-  display: none;
-}
-
-#checkboxItems {
-  text-align: left;
-}
-
 #descriptionField {
   margin-top: 30px;
   margin-left: 20px;
@@ -244,6 +241,17 @@ select {
 
 .CreateButton {
   width: 100px;
+}
+
+#pricePicker {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxItem {
+  width: 200px;
+  display: flex;
+  align-items: center;
 }
 
 .CreateButton {
@@ -284,7 +292,27 @@ select {
   justify-content: space-evenly;
 }
 
+.CreateButton:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+label {
+  display: flex;
+  margin: auto;
+  padding: 0;
+  border-color: var(--button-color);
+  border-radius: 0;
+}
+
 #Delete {
   background: #ff6565;
+}
+
+#Delete:hover {
+  background: #b74646;
+  transform: scale(1.01);
+  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 </style>

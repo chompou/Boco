@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +52,23 @@ public class ListingService {
         return convertListings(listingRepository.findAll());
     }
 
+    /**
+     * Gets a page of listingResponses that fulfills the requirements given.
+     * @param page The page number of the search
+     * @param size The number of listingResponses to be returned
+     * @param search Requires the Listings to contain the search value in their name or description.
+     *               Empty string if not used
+     * @param sort The column we are sorting by.
+     *             "id" if not used.
+     * @param priceFrom The minimum price of item we are looking for.
+     *                  -1 if not used.
+     * @param priceTo The maximum price of item we are looking for.
+     *                -1 if not used. priceTo and priceFrom must be used together.
+     * @param category The category of items we are looking for
+     *                 Empty string if not used.
+     * @return A responseEntity with a list of listingresponses.
+     */
     public ResponseEntity<List<ListingResponse>> getListings(int page, int size, String search, String sort, double priceFrom, double priceTo, String category){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
         CategoryType catType = null;
         if (!category.equals("")){
             Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
@@ -61,6 +77,9 @@ public class ListingService {
             }
             catType = catTypeData.get();
         }
+
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort));
 
         List<Listing> listings;
         if (priceFrom == -1) {
@@ -81,7 +100,13 @@ public class ListingService {
     }
 
 
-
+    /**
+     * gets the reviews of an listing given by Id.
+     * @param listingId The id of the listing.
+     * @param perPage The number of reviews to be returned.
+     * @param page The page number to be returned
+     * @return A list of reviewResponses
+     */
     public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
         Optional<Listing> listingData = listingRepository.findById(listingId);
 
@@ -90,12 +115,11 @@ public class ListingService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Lease> listingLeases = listingData.get().getLeases();
-
-        if (listingLeases == null) {
-            logger.debug("leases is null for listingId=" + listingId);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (listingData.get().getLeases() == null) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         }
+
+        List<Lease> listingLeases = listingData.get().getLeases();
 
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
@@ -107,6 +131,12 @@ public class ListingService {
         return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
+
+    /**
+     * Gets the listing response of a listing given its id.
+     * @param listingId The id of the listing we are looking for.
+     * @return The listing response we are looking for.
+     */
     public ResponseEntity<ListingResponse> getListingById(Long listingId){
         Optional<Listing> listing = listingRepository.findById(listingId);
         if (!listing.isPresent()) {
@@ -116,7 +146,13 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, String token) {
+    /**
+     * Creates a new listing for a given listing request.
+     * @param listingRequest The request filled with the necessary details for creating the request.
+     * @param token The token of that authenticates the user.
+     * @return A responseEntity filed with the listingResponse just created.
+     */
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest,MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
@@ -128,31 +164,26 @@ public class ListingService {
                     listingRequest.getAddress(), listingRequest.isAvailable(),
                     listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
+            listingRepository.save(newListing);
+            System.out.println(listingRequest.getCategoryNames().size());
+            for (int i = 0; i<listingRequest.getCategoryNames().size(); i++){
+                Optional<CategoryType> categoryType = categoryTypeRepository.findCategoryTypeByNameEquals(listingRequest.getCategoryNames().get(i));
+                if (categoryType.isPresent()){
+                    newListing.getCategoryTypes().add(categoryType.get());
+                }
+            }
+            listingRepository.save(newListing);
+            Image image = new Image(multipartFile.getBytes(), newListing);
+            Image savedImage = imageRepository.save(image);
+            newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<ImageResponse> createImage(ImageRequest imageRequest, String token){
-        try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found found.");
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            Optional<Listing> listing = listingRepository.findById(imageRequest.getListingId());
-            Image image = new Image(imageRequest.getImage(), imageRequest.getCaption(), listing.get());
-            Image savedImage = imageRepository.save(image);
-            return new ResponseEntity<>(new ImageResponse(savedImage), HttpStatus.CREATED);
-        }catch (Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-
-    }
 
     public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
         String username = jwtUtil.extractUsername(token.substring(7));
@@ -222,7 +253,6 @@ public class ListingService {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
             setListingWhenDeleted(listingId, emptyListing.get());
-            //TODO fix
             listingRepository.deleteById(listingId);
             System.out.println("Updated stuff" );
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
