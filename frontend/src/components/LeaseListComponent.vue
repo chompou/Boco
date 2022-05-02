@@ -10,7 +10,7 @@
       <div class="lease-container" v-for="lease in leases" :key="lease">
         <div>
           <h4>{{ lease.title }}</h4>
-          <h6>{{ lease.owner }}</h6>
+          <h6>Leased by {{ lease.owner }}</h6>
           <h6>{{ lease.from }} - {{ lease.to }}</h6>
         </div>
         <rating-component />

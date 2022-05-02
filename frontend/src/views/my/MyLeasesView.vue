@@ -1,36 +1,113 @@
 <template>
-  <div class="lease-list-container">
-    <div>
+  <div class="lease-view-container">
+    <div class="lease-column-container">
       <h2>Owned</h2>
-      <lease-list-component class="lease-list-component" :personal="true" />
+      <div class="filter-check-container">
+        <label>Past <input type="radio" name="personal" /></label>
+        <label>Current <input type="radio" name="personal" /></label>
+        <label>Upcoming <input type="radio" name="personal" /></label>
+      </div>
+
+      <div class="lease-list-container">
+        <lease-component
+          v-for="lease in owned"
+          :key="lease"
+          :lease="lease"
+          @click="openOverlay(lease)"
+          @keydown.esc="closeOverlay"
+        />
+      </div>
     </div>
-    <div>
-      <h2>Leases</h2>
-      <lease-list-component class="lease-list-component" :personal="false" />
-    </div>
+
+    <lease-detail-component v-if="showOverlay" :lease="selectedLease" />
   </div>
 </template>
 
 <script>
-import LeaseListComponent from "@/components/LeaseListComponent.vue";
+import LeaseComponent from "@/components/LeaseComponent.vue";
+import LeaseDetailComponent from "@/components/LeaseDetailComponent.vue";
 export default {
-  components: { LeaseListComponent },
+  components: { LeaseComponent, LeaseDetailComponent },
 
   data() {
     return {
-      owned: [],
-      leased: [],
+      showOverlay: false,
+      selectedLease: null,
+      owned: [
+        {
+          id: 1,
+          title: "Lemon",
+          owner: 2,
+          from: "2022",
+          to: "2023",
+        },
+        {
+          id: 1,
+          title: "Lemon",
+          owner: 2,
+          from: "2022",
+          to: "2023",
+        },
+        {
+          id: 1,
+          title: "Lemon",
+          owner: 2,
+          from: "2022",
+          to: "2023",
+        },
+      ],
+      leased: [
+        {
+          id: 2,
+        },
+      ],
     };
   },
 
-  created() {},
+  created() {
+    window.addEventListener("keydown", (event) => {
+      if (event.key == "Escape") {
+        this.showOverlay = false;
+      }
+    });
+  },
+
+  methods: {
+    openOverlay(lease) {
+      if (!this.showOverlay) {
+        console.log(lease);
+        this.selectedLease = lease;
+        this.showOverlay = true;
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-.lease-list-container {
+.lease-view-container {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+}
+
+.lease-column-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.lease-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filter-check-container {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  justify-content: space-around;
 }
 </style>
