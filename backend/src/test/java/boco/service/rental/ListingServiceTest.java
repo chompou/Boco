@@ -1,5 +1,6 @@
 package boco.service.rental;
 
+import boco.models.http.ListingRequest;
 import boco.models.http.ListingResponse;
 import boco.models.http.ReviewResponse;
 import boco.models.profile.Personal;
@@ -141,6 +142,24 @@ class ListingServiceTest {
         lenient()
                 .when(listingRepository.findById(eq(4L)))
                 .thenReturn(Optional.of(l3));
+        lenient()
+                .when(jwtUtil.extractUsername(eq("1")))
+                .thenReturn("los");
+        lenient()
+                .when(jwtUtil.extractUsername(eq("2")))
+                .thenReturn(null);
+        lenient()
+                .when(profileRepository.findProfileByUsername("los"))
+                .thenReturn(Optional.empty());
+        lenient()
+                .when(profileRepository.findProfileByUsername("miami"))
+                .thenReturn(Optional.of(p2));
+
+        lenient()
+                .when(listingRepository.save(any()))
+                .thenReturn()
+
+
 
 
 
@@ -246,6 +265,21 @@ class ListingServiceTest {
         ResponseEntity<ListingResponse> responseEntity = service.getListingById(1L);
         Assertions.assertEquals("house", responseEntity.getBody().getName());
     }
+
+    @Test
+    public void createListingInvalidProfile(){
+        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 1L);
+        ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 1");
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void createListingInvalidToken(){
+        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 2L);
+        ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 2");
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+    }
+
 
 
 
