@@ -195,14 +195,4 @@ export default {
   height: 40px;
   width: auto;
 }
-
-.dropdownMenuIcons {
-  color: var(--main-color);
-  height: 25px;
-  width: 25px;
-}
-
-.dropdownMenuIcons:hover {
-  color: gray;
-}
 </style>

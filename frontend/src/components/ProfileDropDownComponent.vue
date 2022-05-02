@@ -204,8 +204,9 @@ export default {
 }
 
 .dropdownMenuIcons {
-  width: 1.4rem;
-  height: 1.5rem;
+  color: var(--main-color);
+  height: 25px;
+  width: 25px;
 }
 
 .username {
