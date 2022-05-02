@@ -66,13 +66,7 @@
       </div>
     </div>
     <div>
-      <router-link
-        id="profilebox"
-        class="link"
-        :to="{ name: 'profile', params: { id: profile.id } }"
-      >
-        <ProfileBoxComponent :profile="profile" />
-      </router-link>
+      <ProfileBoxComponent :profile="profile" />
       <ReviewComponent :reviews="reviews" />
     </div>
   </div>
