@@ -8,29 +8,21 @@
           <input
             type="file"
             accept="image/*"
-            multiple="multiple"
-            @change="previewMultiImage"
+            @change="previewImage"
             class="form-control-file"
             id="my-file"
           />
 
           <div class="border p-2 mt-3">
             <p>Preview Here:</p>
-            <template v-if="preview_list.length">
-              <div v-for="(item, index) in preview_list" :key="index">
-                <img :src="item" class="img-fluid" />
-                <p class="mb-0">file name: {{ image_list[index].name }}</p>
-                <p>size: {{ image_list[index].size / 1024 }}KB</p>
-              </div>
+            <template v-if="preview">
+              <img alt="image" :src="preview" class="img-fluid" />
+              <p class="mb-0">file name: {{ image.name }}</p>
+              <p class="mb-0">size: {{ image.size / 1024 }}KB</p>
             </template>
           </div>
         </div>
       </form>
-      <div class="col-12 mt-3 text-center">
-        <button class="CreateButton" id="reset" @click="reset">
-          Clear All
-        </button>
-      </div>
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -187,8 +179,6 @@ export default {
       formData: new FormData(),
       preview: null,
       image: null,
-      preview_list: [],
-      image_list: [],
       title: this.title,
       address: this.address,
       price: 0,
@@ -199,33 +189,21 @@ export default {
     };
   },
   methods: {
-    previewMultiImage: function (event) {
+    previewImage: function (event) {
       let input = event.target;
-      let count = input.files.length;
-      let index = 0;
       if (input.files) {
-        while (count--) {
-          let reader = new FileReader();
-          reader.onload = (e) => {
-            this.preview_list.push(e.target.result);
-          };
-          this.image_list.push(input.files[index]);
-          reader.readAsDataURL(input.files[index]);
-          index++;
-        }
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.preview = e.target.result;
+        };
+        this.image = input.files[0];
+        this.formData.append("file", this.image);
+        reader.readAsDataURL(input.files[0]);
       }
-    },
-    reset: function () {
-      console.log(this.image_list);
-      this.image = null;
-      this.preview = null;
-      this.image_list = [];
-      this.preview_list = [];
     },
     submit() {
       console.log(this.image);
       console.log(this.leaseType);
-      this.formData.append("file", this.image_list);
       this.formData.append(
         "properties",
         new Blob(
@@ -247,10 +225,6 @@ export default {
       apiService.createItem(this.formData).catch((error) => {
         console.log(error);
       });
-      this.toast.success("Listing was successfully created", {
-        timeout: 2000,
-      });
-      this.$router.push("/my/items");
     },
   },
   computed: {
