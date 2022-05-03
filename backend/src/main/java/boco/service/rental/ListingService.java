@@ -20,10 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,7 +66,8 @@ public class ListingService {
      *                 Empty string if not used.
      * @return A responseEntity with a list of listingresponses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category){
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location){
+        boolean distanceSort = false;
         CategoryType catType = null;
         if (!category.equals("")){
             Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
@@ -82,14 +80,18 @@ public class ListingService {
         if (priceTo == -1){
             priceTo = Double.MAX_VALUE;
         }
-        if (sort.split(" ").length != 2){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (sort.split(":").length != 2){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         //TODO Validate sort name
-        String sortBy = sort.split(" ")[0];
+        String sortBy = sort.split(":")[0];
+        if (sortBy.equals("distance")){
+            distanceSort = true;
+            sortBy = "id";
+        }
 
-        String sortDir = sort.split(" ")[1];
+        String sortDir = sort.split(":")[1];
 
         List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
 
@@ -101,6 +103,15 @@ public class ListingService {
         if (!search.equals("")){
             //TODO add more advanced searching
             listings = listings.stream().filter(l -> (l.getName().contains(search) || l.getDescription().contains(search))).collect(Collectors.toList());
+        }
+
+
+        if (distanceSort){
+            List<ListingResponse> responses = new ArrayList<>();
+            for (Listing listing: listings) {
+
+            }
+            //Comparator<Listing> distanceComp = (l1, l2) -> Have
         }
 
 
@@ -285,6 +296,7 @@ public class ListingService {
         }
         imageRepository.saveAll(images);
     }
+
 
     public static List<ListingResponse> convertListings(List<Listing> listings){
         List<ListingResponse> listingResponses = new ArrayList<>();

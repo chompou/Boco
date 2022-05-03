@@ -41,7 +41,7 @@ public interface ProfileRepository extends JpaRepository <Profile, Long> {
             "(SELECT p1 FROM Profile p1 WHERE EXISTS " +
             "(SELECT li FROM Listing li WHERE li.profile.id = p1.id AND EXISTS" +
             "(SELECT le FROM Lease le WHERE le.listing.id = li.id AND le.profile.id = ?1)))" +
-            "OR p IN " +
+            "OR p.id = ?2  AND p IN " +
             "(SELECT p1 FROM Profile p1 WHERE EXISTS " +
             "(SELECT li FROM Listing li WHERE li.profile.id = ?1 AND EXISTS" +
             "(SELECT le FROM Lease le WHERE le.listing.id = li.id AND le.profile.id = p1.id)))")

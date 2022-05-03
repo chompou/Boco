@@ -35,17 +35,22 @@ public class TempUserAddV2 {
         return args ->{
             try {
                 String letmepassHash = BocoHasher.encode("letmepass");
+
                 int teamProfiles = 10;
                 int extraProfiles = 3; // 3 extra profiles
                 int totalProfiles = teamProfiles + extraProfiles;
                 List<Profile> profileList = new ArrayList<>();
+
                 int listings = 100;
                 List<Listing> listingList = new ArrayList<>();
+
                 int leases = 20;
                 List<Lease> leaseList = new ArrayList<>();
+                boolean includeReviews = true;
+
                 List<CategoryType> categoryList = new ArrayList<>();
 
-                Faker faker = new Faker();
+                Faker faker = new Faker(); // Used to create fake data
 
                 // Making categories
                 CategoryType categoryType = new CategoryType();
@@ -277,7 +282,7 @@ public class TempUserAddV2 {
                     profileRepository.save(np);
                 }
 
-                java.io.File file = new File("backend/src/main/resources/testbilde2.png");
+                java.io.File file = new File("src/main/resources/testbilde2.png");
                 byte[] imageBytes = Files.readAllBytes(file.toPath());
 
 
@@ -325,9 +330,6 @@ public class TempUserAddV2 {
                     long toDate = fromDate + faker.random().nextInt(10, 10000);
                     Listing listing = listingList.get(faker.random().nextInt(0, listings - 1));
 
-                    Review r1 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
-                    Review r2 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
-                    Review r3 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
                     var l = Lease.builder()
                             .fromDatetime(fromDate)
                             .toDatetime(toDate)
@@ -336,19 +338,35 @@ public class TempUserAddV2 {
                             .listing(listing)
                             .owner(listing.getProfile())
                             .profile(profileList.get(faker.random().nextInt(1, totalProfiles - 1)))
-                            .itemReview(r1)
-                            .leaseeReview(r2)
-                            .ownerReview(r3)
+                            .itemReview(null)
+                            .leaseeReview(null)
+                            .ownerReview(null)
                             .build();
                     leaseRepository.save(l);
-                    // NOTE REVIEWS SHOULD NOT BE CREATED BEFORE LEASE
+
+
+                    if (includeReviews) {
+                        Review r1 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
+                        Review r2 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
+                        Review r3 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
+
+                        r1.setLease(l);
+                        r2.setLease(l);
+                        r3.setLease(l);
+                        reviewRepository.save(r1);
+                        reviewRepository.save(r2);
+                        reviewRepository.save(r3);
+
+                        l.setItemReview(r1);
+                        l.setLeaseeReview(r2);
+                        l.setOwnerReview(r3);
+                        leaseRepository.save(l);
+                    }
                 }
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
-
         };
     }
 

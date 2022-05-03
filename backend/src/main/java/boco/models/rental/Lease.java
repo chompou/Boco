@@ -17,13 +17,25 @@ public class Lease {
     private Long toDatetime;
     private boolean isCompleted;
 
-    @OneToOne(mappedBy = "lease", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(
+            name = "owner_review_id", // name of the foreign key
+            referencedColumnName = "id" // references id in Review entity
+    )
     private Review ownerReview;
 
-    @OneToOne(mappedBy = "lease", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(
+            name = "leasee_review_id", // name of the foreign key
+            referencedColumnName = "id" // references id in Review entity
+    )
     private Review leaseeReview;
 
-    @OneToOne(mappedBy = "lease", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(
+            name = "item_review_id", // name of the foreign key
+            referencedColumnName = "id" // references id in Review entity
+    )
     private Review itemReview;
 
     @ManyToOne
