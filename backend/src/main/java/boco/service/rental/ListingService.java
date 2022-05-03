@@ -1,11 +1,11 @@
 package boco.service.rental;
 
+import boco.component.Haversine;
 import boco.models.http.*;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
-import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -21,10 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,16 +34,16 @@ public class ListingService {
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository) {
+    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
         this.listingRepository = listingRepository;
         this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
         this.leaseRepository = leaseRepository;
         this.imageRepository = imageRepository;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -70,7 +67,8 @@ public class ListingService {
      *                 Empty string if not used.
      * @return A responseEntity with a list of listingresponses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category){
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location){
+        boolean distanceSort = false;
         CategoryType catType = null;
         if (!category.equals("")){
             Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
@@ -83,14 +81,21 @@ public class ListingService {
         if (priceTo == -1){
             priceTo = Double.MAX_VALUE;
         }
-        if (sort.split(" ").length != 2){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (sort.split(":").length != 2){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         //TODO Validate sort name
-        String sortBy = sort.split(" ")[0];
+        String sortBy = sort.split(":")[0];
+        String sortDir = sort.split(":")[1];
 
-        String sortDir = sort.split(" ")[1];
+
+        System.out.println("Sort by " + sortBy + ", order: " + sortDir);
+        if (sortBy.equals("distance")){
+            distanceSort = true;
+            sortBy = "id";
+        }
+
 
         List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
 
@@ -102,6 +107,27 @@ public class ListingService {
         if (!search.equals("")){
             //TODO add more advanced searching
             listings = listings.stream().filter(l -> (l.getName().contains(search) || l.getDescription().contains(search))).collect(Collectors.toList());
+        }
+
+
+        if (distanceSort){
+            System.out.println("Test");
+            double lat1 = Double.valueOf(location.split(":")[0]);
+            double long1 = Double.valueOf(location.split(":")[1]);
+            double lat2;
+            double long2;
+
+            List<ListingResponse> responses = new ArrayList<>();
+            for (Listing listing: listings) {
+
+                lat2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                long2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                double distance = Haversine.distance(lat1, long1, lat2, long2);
+                responses.add(new ListingResponse(listing, distance));
+                System.out.println(distance);
+            }
+            Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
+            Collections.sort(responses, distanceComp);
         }
 
 
@@ -286,6 +312,7 @@ public class ListingService {
         }
         imageRepository.saveAll(images);
     }
+
 
     public static List<ListingResponse> convertListings(List<Listing> listings){
         List<ListingResponse> listingResponses = new ArrayList<>();

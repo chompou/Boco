@@ -4,9 +4,11 @@ import boco.models.http.*;
 import boco.models.profile.Profile;
 import boco.models.rental.Lease;
 import boco.models.rental.Listing;
+import boco.models.rental.Review;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
+import boco.repository.rental.ReviewRepository;
 import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +26,19 @@ public class LeaseService {
     private final LeaseRepository leaseRepository;
     private final ListingRepository listingRepository;
     private final ProfileRepository profileRepository;
+    private final ReviewRepository reviewRepository;
     private final JwtUtil jwtUtil;
 
     Logger logger = LoggerFactory.getLogger(LeaseService.class);
 
     @Autowired
     public LeaseService(LeaseRepository leaseRepository, ListingRepository listingRepository,
-                        ProfileRepository profileRepository, JwtUtil jwtUtil) {
+                        ProfileRepository profileRepository, ReviewRepository reviewRepository,
+                        JwtUtil jwtUtil) {
         this.leaseRepository = leaseRepository;
         this.listingRepository = listingRepository;
         this.profileRepository = profileRepository;
+        this.reviewRepository = reviewRepository;
         this.jwtUtil = jwtUtil;
     }
 
@@ -169,6 +174,63 @@ public class LeaseService {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public ResponseEntity<LeaseResponse> createLeaseReview(ReviewLeaseRequest request, String reviewType, String token) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+
+        if (!profileData.isPresent()) {
+            logger.debug("profile of request was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Profile profile = profileData.get();
+
+        Optional<Lease> leaseData = leaseRepository.findById(request.getLeaseId());
+        if (!leaseData.isPresent()) {
+            logger.debug("leaseId=" + request.getLeaseId() + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Lease lease = leaseData.get();
+
+        Review newReview = new Review(request.getRating(), request.getComment());
+        newReview.setLease(lease);
+        Lease savedLease;
+
+        if (reviewType.equals("owner")) {
+            if (profile.getId() != lease.getProfile().getId()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            reviewRepository.save(newReview);
+            lease.setOwnerReview(newReview);
+            savedLease = leaseRepository.save(lease);
+            leaseRepository.save(lease);
+
+        } else if (reviewType.equals("leasee")) {
+            if (profile.getId() != lease.getOwner().getId()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            reviewRepository.save(newReview);
+            lease.setLeaseeReview(newReview);
+            savedLease = leaseRepository.save(lease);
+
+        } else if (reviewType.equals("item")) {
+            if (profile.getId() != lease.getProfile().getId()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            reviewRepository.save(newReview);
+            lease.setItemReview(newReview);
+            savedLease = leaseRepository.save(lease);
+
+        } else {
+            logger.debug("reviewType=" + reviewType + " does not match owner/leasee/item");
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
+
     }
 
     public static List<LeaseResponse> convertLease(List<Lease> leases){

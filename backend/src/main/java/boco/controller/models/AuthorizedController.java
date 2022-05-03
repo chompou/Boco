@@ -62,6 +62,11 @@ public class AuthorizedController {
     public ResponseEntity<PrivateProfileResponse> getMyProfile(@RequestHeader(name="Authorization") String token){
         return profileService.getPrivateProfile(token);
     }
+    @PutMapping("/profile")
+    public ResponseEntity<PrivateProfileResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest,
+                                                         @RequestHeader(name="Authorization") String token) {
+        return profileService.updateProfile(updateProfileRequest, token);
+    }
 
     @GetMapping("/review")
     public ResponseEntity<List<ReviewResponse>> getGivenReviews(@RequestParam(name = "perPage") int perPage,
@@ -74,6 +79,13 @@ public class AuthorizedController {
     public ResponseEntity<List<LeaseResponse>> getMyLeases(@RequestHeader(name="Authorization") String token,
                                                            @RequestParam(name = "is_owner") Boolean isOwner) {
         return leaseService.getMyLeases(token, isOwner);
+    }
+
+    @PostMapping("/lease/review")
+    public ResponseEntity<LeaseResponse> createLeaseReview(@RequestBody ReviewLeaseRequest reviewLeaseRequest,
+                                                           @RequestParam(name = "review_type") String reviewType,
+                                                           @RequestHeader(name="Authorization") String token) {
+        return leaseService.createLeaseReview(reviewLeaseRequest, reviewType, token);
     }
 
     @PostMapping("/lease")
