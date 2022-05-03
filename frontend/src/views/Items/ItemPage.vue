@@ -43,9 +43,9 @@
         <div id="About">
           <div id="About11">
             <div id="About1">
-              <h2>{{ item.name }}</h2>
+              <h1>{{ item.name }}</h1>
               <div id="category">
-                <label>Category: </label>
+                <h5>Category:</h5>
                 <label v-for="category in item.categoryTypes" :key="category"
                   >{{ category.name }},
                 </label>
@@ -80,7 +80,13 @@ import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
 import axios from "axios";
 import priceService from "@/services/priceService";
+import { useToast } from "vue-toastification";
+
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   props: ["id"],
 
   components: {
@@ -126,6 +132,9 @@ export default {
         setTimeout(() => {
           this.$router.push({ name: "myItems" });
         }, 300);
+        this.toast.success("Item was successfully deleted", {
+          timeout: 2000,
+        });
       }
     },
     changeStatus(status) {
@@ -146,6 +155,9 @@ export default {
       setTimeout(() => {
         location.reload();
       }, 100);
+      this.toast.info("Listing is now " + status, {
+        timeout: 2000,
+      });
     },
     dataUrl() {
       return btoa(this.item.image);
@@ -158,7 +170,6 @@ export default {
         this.item = response.data;
         setTimeout(() => {
           let image = this.item.image;
-          console.log(image);
           this.imgSource = "data:image/jpeg;base64, " + image;
         }, 100);
         apiService

@@ -91,19 +91,37 @@
           />
           <label for="interior">Interior</label>
 
-          <input type="checkbox" id="hobby" value="Hobby" v-model="category" />
-          <label for="hobby">Hobby</label>
+          <input
+            type="checkbox"
+            id="hobby"
+            value="Hobby/Entertainment"
+            v-model="category"
+          />
+          <label for="hobby">Hobby/Entertainment</label>
 
           <input
             type="checkbox"
             id="school"
-            value="School"
+            value="School/Office"
             v-model="category"
           />
-          <label for="school">School</label>
+          <label for="school">School/Office</label>
 
-          <input type="checkbox" id="home" value="Home" v-model="category" />
-          <label for="home">Home</label>
+          <input
+            type="checkbox"
+            id="musical"
+            value="Musical Instruments"
+            v-model="category"
+          />
+          <label for="musical">Musical Instruments</label>
+
+          <input
+            type="checkbox"
+            id="home"
+            value="Home/Garden"
+            v-model="category"
+          />
+          <label for="home">Home/Garden</label>
 
           <input
             type="checkbox"
@@ -120,14 +138,6 @@
             v-model="category"
           />
           <label for="fashion">Fashion</label>
-
-          <input
-            type="checkbox"
-            id="musical"
-            value="Musical"
-            v-model="category"
-          />
-          <label for="musical">Musical</label>
         </form>
       </div>
       <div id="descriptionField">
@@ -141,7 +151,9 @@
       </div>
       <div id="CreateButtons" class="element">
         <button class="CreateButton" v-on:click="submit">Create</button>
-        <button id="Delete" class="CreateButton">Delete</button>
+        <button id="Delete" class="CreateButton" v-on:click="dismiss">
+          Delete
+        </button>
       </div>
     </div>
   </div>
@@ -171,6 +183,11 @@ export default {
     };
   },
   methods: {
+    dismiss() {
+      this.toast.error("Listing was discarded", {
+        timeout: 2000,
+      });
+    },
     previewImage: function (event) {
       let input = event.target;
       if (input.files) {
@@ -207,6 +224,10 @@ export default {
       apiService.createItem(this.formData).catch((error) => {
         console.log(error);
       });
+      this.toast.success("Item was successfully created", {
+        timeout: 2000,
+      });
+      this.$router.push("/my/items");
     },
   },
   computed: {
@@ -238,12 +259,6 @@ export default {
   grid-row-gap: 10px;
   grid-column-gap: 40px;
   margin: 10px;
-}
-
-.checkboxItem {
-  width: 200px;
-  display: flex;
-  align-items: center;
 }
 
 .col-md-5 {
