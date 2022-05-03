@@ -158,6 +158,7 @@ export default {
         this.item = response.data;
         setTimeout(() => {
           let image = this.item.image;
+          console.log(image);
           this.imgSource = "data:image/jpeg;base64, " + image;
         }, 100);
         apiService

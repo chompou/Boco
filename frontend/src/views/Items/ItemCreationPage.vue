@@ -226,10 +226,6 @@ export default {
       apiService.createItem(this.formData).catch((error) => {
         console.log(error);
       });
-      this.toast.success("Listing was successfully created", {
-        timeout: 2000,
-      });
-      this.$router.push("/my/items");
     },
   },
   computed: {
@@ -385,6 +381,10 @@ label {
 
 #Delete {
   background: #ff6565;
+}
+
+#reset {
+  width: 130px;
 }
 
 #Delete:hover {
