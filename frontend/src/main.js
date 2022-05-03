@@ -8,6 +8,7 @@ import "vue3-openlayers/dist/vue3-openlayers.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import VueGoogleMaps from "@fawmi/vue-google-maps";
 import {
   faRightToBracket,
   faUser,
@@ -15,6 +16,13 @@ import {
   faPlus,
   faHouse,
   faInfo,
+  faBasketball,
+  faCampground,
+  faGraduationCap,
+  faCouch,
+  faBolt,
+  faShirt,
+  faGuitar,
   faCar,
   faWrench,
   faUmbrella,
@@ -32,6 +40,13 @@ library.add(
   faPlus,
   faHouse,
   faInfo,
+  faBasketball,
+  faCampground,
+  faGraduationCap,
+  faBolt,
+  faCouch,
+  faShirt,
+  faGuitar,
   faCar,
   faWrench,
   faUmbrella,
@@ -52,6 +67,11 @@ app.use(Toast, {
 });
 app.use(router);
 app.use(OpenLayersMap);
+app.use(VueGoogleMaps, {
+  load: {
+    key: "AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4",
+  },
+});
 app.mount("#app");
 
 import "bootstrap/dist/js/bootstrap.js";

@@ -1,15 +1,47 @@
 <template>
-  <div class="notif">
-    <div id="count">{{ $store.state.countNotifications }}</div>
-    <div>
-      <font-awesome-icon icon="bell" class="icon">Test</font-awesome-icon>
+  <button class="notificationButton" key="on" @click="show = !show">
+    <div class="notification" :style="notificationStyle">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        :width="size"
+        :height="size"
+        viewBox="0 0 20 20"
+      >
+        <path
+          d="M16 7a5.38 5.38 0 0 0-4.46-4.85C11.6 1.46 11.53 0 10 0S8.4 1.46
+        8.46 2.15A5.38 5.38 0 0 0 4 7v6l-2 2v1h16v-1l-2-2zm-6 13a3 3 0 0 0
+        3-3H7a3 3 0 0 0 3 3z"
+        />
+      </svg>
+      <div
+        class="notificationCounter"
+        v-if="$store.state.countNotifications > 0"
+        :style="notificationCounterLocation"
+      >
+        <div class="counterWrapper">
+          <span v-if="$store.state.countNotifications <= 10">{{
+            $store.state.countNotifications
+          }}</span>
+          <span v-if="$store.state.countNotifications > 10"> 10+</span>
+        </div>
+      </div>
     </div>
-  </div>
+  </button>
+  <transition name="bounce">
+    <div class="dropdownMenu" v-if="show">
+      <div class="gridContainer">
+        <div>
+          <p class="title">Notifications</p>
+        </div>
+      </div>
+      <hr />
+    </div>
+  </transition>
 </template>
-
 <script>
-import { onMounted } from "vue";
 import store from "@/store";
+import { onMounted } from "vue";
+
 export default {
   setup() {
     const id = store.state.loggedInUser;
@@ -29,24 +61,101 @@ export default {
       });
     });
   },
+  data() {
+    return {
+      show: false,
+    };
+  },
+  props: {
+    size: {
+      type: Number,
+      default: 30,
+    },
+  },
+  computed: {
+    notificationStyle() {
+      return {
+        display: "grid",
+        position: "relative",
+        width: `${this.size}px`,
+        height: `${this.size}px`,
+      };
+    },
+    notificationCounterLocation() {
+      return {
+        position: "absolute",
+        left: `calc(100% - ${this.size * 0.45}px)`,
+        transform: "translateY(-40%)",
+        fontSize: `${this.size * 0.5}px`,
+      };
+    },
+  },
+  watch: {
+    $route: {
+      handler() {
+        //Close notification box at route change
+        this.show = false;
+      },
+    },
+  },
 };
 </script>
 <style scoped>
-.notif {
-  width: 100px;
-  display: flex;
+.notificationButton {
+  margin-top: 0.3rem;
+  border: none;
 }
 
-.icon {
-  height: 30px;
+.counterWrapper {
+  display: grid;
+  grid-auto-flow: column;
+}
+
+.notificationCounter {
   width: 30px;
-  font-size: 2vw;
-  color: #0048ae;
+  text-align: center;
+  border-radius: 100%;
+  background-color: red;
+  color: white;
 }
 
-#count {
-  color: red;
-  font-size: 20px;
-  font-weight: bold;
+/* Dropdown menu styling*/
+.dropdownMenu {
+  right: 0;
+  position: absolute;
+  z-index: 10;
+  height: 25rem;
+  min-width: 30rem;
+  margin-top: 1rem;
+  overflow-y: auto;
+  padding: 2rem 1rem 2rem 0;
+  border-radius: 12px;
+  background-color: white;
+  border: 1px solid black;
+  background-clip: padding-box;
+}
+
+.title {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+/*Dropdown Menu Animation */
+.bounce-enter-active {
+  animation: bounce-in 0.3s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.2s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

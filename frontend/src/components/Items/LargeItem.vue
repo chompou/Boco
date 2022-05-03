@@ -8,7 +8,8 @@
             <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
             <p>Category: {{ categoryString }}</p>
-            <p>Address: {{ item.address }}</p>
+            <p v-if="item.address.length < 8">Address:{{ item.address }}</p>
+            <p v-else>Address:{{ item.address.substring(0, 16) + ".." }}</p>
             <p>Price: {{ displayPrice }}kr/{{ item.priceType }}</p>
           </div>
           <div id="About2">
@@ -62,12 +63,16 @@ export default {
 img {
   width: 200px;
   height: 200px;
-  border: 1px solid #39495c;
+}
+
+p {
+  font-size: 17px;
 }
 
 #main {
   display: flex;
   border: 1px solid #39495c;
+  border-radius: 10px;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
