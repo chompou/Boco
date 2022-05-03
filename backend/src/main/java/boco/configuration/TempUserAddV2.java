@@ -343,6 +343,7 @@ public class TempUserAddV2 {
                             .ownerReview(null)
                             .build();
                     leaseRepository.save(l);
+                    System.out.println(l.toString());
 
 
                     if (includeReviews) {
