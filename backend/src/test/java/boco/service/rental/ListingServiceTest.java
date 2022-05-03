@@ -61,9 +61,9 @@ class ListingServiceTest {
 
     @BeforeEach
     public void setup() {
-        Personal p1 = new Personal("los", "la@la.com", "city", "LA", "pass","US", "12345678");
-        Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "12345678");
-        Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "12345678");
+        Personal p1 = new Personal("los", "la@la.com", "city", "LA", "pass","US", "4:2", "12345678");
+        Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "4:", "12345678");
+        Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "6:3", "12345678");
         List<Profile> profiles = new ArrayList<>(Arrays.asList(p1, p2, p3));
 
         Listing l1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);

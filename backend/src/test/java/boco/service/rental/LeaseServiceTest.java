@@ -43,19 +43,19 @@ class LeaseServiceTest {
 
     @BeforeEach
     public void setup() {
-        Profile p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "12345678");
+        Profile p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "6:6", "12345678");
         p1.setId(1L);
         Optional<Profile> pd1 = Optional.of(p1);
 
-        Profile p2 = new Personal("usr", "usr@mail.com", "x", "USR", "x", "World", "12345678");
+        Profile p2 = new Personal("usr", "usr@mail.com", "x", "USR", "x", "World", "7:7", "12345678");
         p2.setId(2L);
         Optional<Profile> pd2 = Optional.of(p2);
 
-        Profile p3 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "12345678");
+        Profile p3 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "1:1", "12345678");
         p3.setId(3L);
         Optional<Profile> pd3 = Optional.of(p3);
 
-        Profile p4 = new Personal("si", "si@mail.com", "x", "SI", "x", "si", "12345678");
+        Profile p4 = new Personal("si", "si@mail.com", "x", "SI", "x", "si", "5:5", "12345678");
         p4.setId(4L);
         Optional<Profile> pd4 = Optional.of(p4);
 

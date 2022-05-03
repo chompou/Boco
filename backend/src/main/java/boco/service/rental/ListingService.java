@@ -118,8 +118,8 @@ public class ListingService {
             List<ListingResponse> responses = new ArrayList<>();
             for (Listing listing: listings) {
 
-                lat2 = Double.valueOf(listing.getAddress().split(":")[0]);
-                long2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                lat2 = Double.valueOf(listing.getProfile().getLocation().split(":")[0]);
+                long2 = Double.valueOf(listing.getProfile().getLocation().split(":")[1]);
                 double distance = Haversine.distance(lat1, long1, lat2, long2);
                 responses.add(new ListingResponse(listing, distance));
                 System.out.println(distance);

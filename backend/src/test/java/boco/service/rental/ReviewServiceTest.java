@@ -31,10 +31,10 @@ class ReviewServiceTest {
     @BeforeEach
     public void setup() {
         Personal p1 = new Personal("emilgl", "gluckemil@gmail.com", "Test",
-                "Emil", "letmepass","Baerum", "12345678");
+                "Emil", "letmepass","Baerum", "4:5", "12345678");
         p1.setId(1L);
         Personal p2 = new Personal("olavdei", "olav@gmail.com", "Test1",
-                "Olav", "letmepass","Baerum", "12345677");
+                "Olav", "letmepass","Baerum", "3:3", "12345677");
         p2.setId(2L);
 
         Listing listing = new Listing("listing", "x", "Adr", true, true, 4.4, "Day", p1);

@@ -121,14 +121,14 @@ public class ProfileService {
             if (profileRequest.getIsPersonal()) {
                 Personal p = new Personal(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
-                        profileRequest.getAddress(), profileRequest.getTlf());
+                        profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Personal savedProfile = personalRepository.save(p);
                 logger.debug("Personal profile was saved: " + p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
                 Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
-                        profileRequest.getAddress(), profileRequest.getTlf());
+                        profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Professional savedProfile = professionalRepository.save(p);
                 logger.debug("Professional profile was saved: " + p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);

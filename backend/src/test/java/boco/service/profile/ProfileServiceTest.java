@@ -46,14 +46,14 @@ class ProfileServiceTest {
 
     @BeforeEach
     public void setup() {
-        Personal p1 = new Personal("messi", "leo@psg.fr", "ligue 1", "LEO", "x", "Argentina", "12345678");
+        Personal p1 = new Personal("messi", "leo@psg.fr", "ligue 1", "LEO", "x", "Argentina", "5:5", "12345678");
         p1.setId(1L);
-        Professional p2 = new Professional("ronaldo", "cr7@manu.uk", "premier league", "CR7", "x", "Portugal", "12345678");
+        Professional p2 = new Professional("ronaldo", "cr7@manu.uk", "premier league", "CR7", "x", "Portugal", "2:2", "12345678");
         p2.setId(2L);
 
-        Personal  p3 = new Personal("kaka", "kaka@br.br", "x", "KAKA", "retired", "Brazil", "84267483");
+        Personal  p3 = new Personal("kaka", "kaka@br.br", "x", "KAKA", "retired", "Brazil", "2:2", "84267483");
         p3.setId(3L);
-        Personal p4 = new Personal("ramos", "ramos@psg.fr", "x", "SERGIO", "spain", "Spain", "78592384");
+        Personal p4 = new Personal("ramos", "ramos@psg.fr", "x", "SERGIO", "spain", "Spain", "4:4", "78592384");
         p4.setId(4L);
 
 
