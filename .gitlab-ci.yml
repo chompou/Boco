@@ -1,11 +1,13 @@
 image: node:16.15.0-alpine
 
 stages:
+  - install
   - build
   - test
+  - deploy
 
-vue-build:
-  stage: build
+vue-install:
+  stage: install
   script:
     - cd frontend
     - npm install
