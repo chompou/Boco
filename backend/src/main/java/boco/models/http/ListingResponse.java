@@ -44,6 +44,7 @@ public class ListingResponse {
         this.rating = listing.getRating();
         this.categoryTypes = listing.getCategoryTypes();
         this.profileId = listing.getProfile().getId();
+        this.distance = -1;
         try {
             this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
         }catch (Exception e){
