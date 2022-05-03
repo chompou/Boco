@@ -2,8 +2,8 @@
   <div class="lease-container">
     <div style="flex-direction: row">
       <h4>{{ lease.title }}</h4>
-      <h6>Leased by {{ lease.owner }}</h6>
-      <h6>{{ lease.from }} - {{ lease.to }}</h6>
+      <h6>{{ fromDatetime }}</h6>
+      <h6>{{ toDatetime }}</h6>
     </div>
     <div>
       <h5>Lease Ended</h5>
@@ -14,6 +14,18 @@
 <script>
 export default {
   props: ["lease"],
+
+  computed: {
+    fromDatetime() {
+      let from = new Date(this.lease.fromDatetime * 1e3);
+      return `${from.toLocaleDateString()} - ${from.toLocaleTimeString()} `;
+    },
+
+    toDatetime() {
+      let to = new Date(this.lease.toDatetime * 1e3);
+      return `${to.toLocaleDateString()} - ${to.toLocaleTimeString()}`;
+    },
+  },
 };
 </script>
 

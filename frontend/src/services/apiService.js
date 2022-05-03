@@ -71,4 +71,8 @@ export default {
   createLease(lease) {
     return apiClient.post("/my/lease", lease);
   },
+
+  getMyLeases(owned) {
+    return apiClient.get("/my/lease", { params: { is_owner: owned } });
+  },
 };

@@ -17,14 +17,16 @@
         />
       </div>
     </div>
-
-    <lease-detail-component v-if="showOverlay" :lease="selectedLease" />
+    <transition name="overlay">
+      <lease-detail-component v-if="showOverlay" />
+    </transition>
   </div>
 </template>
 
 <script>
 import LeaseComponent from "@/components/LeaseComponent.vue";
 import LeaseDetailComponent from "@/components/LeaseDetailComponent.vue";
+import apiService from "@/services/apiService";
 export default {
   components: { LeaseComponent, LeaseDetailComponent },
 
@@ -32,34 +34,8 @@ export default {
     return {
       showOverlay: false,
       selectedLease: null,
-      owned: [
-        {
-          id: 1,
-          title: "Lemon",
-          owner: 2,
-          from: "2022",
-          to: "2023",
-        },
-        {
-          id: 1,
-          title: "Lemon",
-          owner: 2,
-          from: "2022",
-          to: "2023",
-        },
-        {
-          id: 1,
-          title: "Lemon",
-          owner: 2,
-          from: "2022",
-          to: "2023",
-        },
-      ],
-      leased: [
-        {
-          id: 2,
-        },
-      ],
+      owned: [],
+      leased: [],
     };
   },
 
@@ -69,12 +45,21 @@ export default {
         this.showOverlay = false;
       }
     });
+
+    apiService
+      .getMyLeases(true)
+      .then((response) => (this.owned = response.data))
+      .catch((error) => console.log(error));
+
+    apiService
+      .getMyLeases(false)
+      .then((response) => (this.leased = response.data))
+      .catch((error) => console.log(error));
   },
 
   methods: {
     openOverlay(lease) {
       if (!this.showOverlay) {
-        console.log(lease);
         this.selectedLease = lease;
         this.showOverlay = true;
       }
@@ -108,5 +93,16 @@ export default {
   flex-direction: row;
   gap: 15px;
   justify-content: space-around;
+}
+
+.overlay-enter-active,
+.overlay-leave-active {
+  transition: all 0.2s ease;
+}
+
+.overlay-enter-from,
+.overlay-leave-to {
+  opacity: 0;
+  bottom: 10%;
 }
 </style>
