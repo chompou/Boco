@@ -30,7 +30,6 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BocoSocketTest {
     private BocoSocket socket;
