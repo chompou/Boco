@@ -19,8 +19,11 @@ public class LeaseResponse {
     private ReviewResponse leaseeReview;
     private ReviewResponse itemReview;
     private Long profileId;
+    private String leaseeDisplayName;
     private Long ownerId;
+    private String ownerDisplayName;
     private Long listingId;
+    private String itemName;
 
     public LeaseResponse(Lease lease) {
         this.id = lease.getId();
@@ -32,7 +35,10 @@ public class LeaseResponse {
         if (lease.getLeaseeReview() != null) this.leaseeReview = new ReviewResponse(lease.getLeaseeReview());
         if (lease.getItemReview() != null) this.itemReview = new ReviewResponse(lease.getItemReview());
         this.profileId = lease.getProfile().getId();
+        this.leaseeDisplayName = lease.getProfile().getDisplayName();
         this.ownerId = lease.getOwner().getId();
+        this.ownerDisplayName = lease.getOwner().getDisplayName();
         this.listingId = lease.getListing().getId();
+        this.itemName = lease.getListing().getName();
     }
 }
