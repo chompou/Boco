@@ -49,7 +49,7 @@
             type="checkbox"
             id="SportAndHiking"
             value="SportAndHiking"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="SportAndHiking">Sport/Hiking</label>
         </div>
@@ -58,7 +58,7 @@
             type="checkbox"
             id="Electronics"
             value="Electronics"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="Electronics">Electronics</label>
         </div>
@@ -67,7 +67,7 @@
             type="checkbox"
             id="Vehicle"
             value="Vehicle"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="Vehicle">Vehicle</label>
         </div>
@@ -76,7 +76,7 @@
             type="checkbox"
             id="Tools"
             value="Tools"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="Tools">Tools</label>
         </div>
@@ -85,7 +85,7 @@
             type="checkbox"
             id="Interior"
             value="Interior"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="Interior">Interior</label>
         </div>
@@ -94,7 +94,7 @@
             type="checkbox"
             id="HobbyAndEntertainment"
             value="HobbyAndEntertainment"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="HobbyAndEntertainment">Hobby/Entertainment</label>
         </div>
@@ -103,7 +103,7 @@
             type="checkbox"
             id="SchoolAndOffice"
             value="SchoolAndOffice"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="SchoolAndOffice">School/Office</label>
         </div>
@@ -112,7 +112,7 @@
             type="checkbox"
             id="HomeAndGarden"
             value="HomeAndGarden"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="HomeAndGarden">Home/Garden</label>
         </div>
@@ -121,7 +121,7 @@
             type="checkbox"
             id="Fashion"
             value="Fashion"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="Fashion">Fashion</label>
         </div>
@@ -130,7 +130,7 @@
             type="checkbox"
             id="MusicalInstrument"
             value="MusicalInstrument"
-            v-model="item.category"
+            v-model="this.item.category"
           />
           <label for="MusicalInstrument">Musical Instrument</label>
         </div>
@@ -138,7 +138,7 @@
       <div id="descriptionField">
         <h5>Description</h5>
         <textarea
-          v-model="item.description"
+          v-model="this.item.description"
           placeholder="Description"
           id="description"
           name="description"
@@ -168,6 +168,7 @@ export default {
     return {
       item: null,
       imgSource: null,
+      category: [this.category],
     };
   },
   methods: {
@@ -179,6 +180,7 @@ export default {
           price: this.item.price,
           priceType: this.item.priceType,
           description: this.item.description,
+          category: [this.category],
         })
         .catch((error) => {
           console.log(error);
