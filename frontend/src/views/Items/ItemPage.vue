@@ -11,7 +11,7 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img id="image3" alt="Vue logo" :src="imgSource" />
+          <imageComponent></imageComponent>
           <div v-if="my">
             <button
               v-if="item.active"
@@ -78,8 +78,9 @@ import ProfileBoxComponent from "@/components/ProfileBoxComponent";
 import ReviewComponent from "@/components/RateReview/ReviewComponent";
 import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
-import axios from "axios";
 import priceService from "@/services/priceService";
+import imageComponent from "@/components/imageComponent";
+import axios from "axios";
 export default {
   props: ["id"],
 
@@ -88,6 +89,7 @@ export default {
     RatingComponent,
     ReviewComponent,
     LeaseRequestComponent,
+    imageComponent,
   },
   data() {
     return {
@@ -202,14 +204,6 @@ export default {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
   cursor: pointer;
-}
-
-img {
-  height: 300px;
-  min-width: 300px;
-  width: 300px;
-  padding: 10px;
-  border: 1px solid #39495c;
 }
 
 .imageButtons {
