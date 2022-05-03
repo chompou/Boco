@@ -3,22 +3,41 @@
     <div class="lease-detail-container">
       <div class="lease-info-container">
         <div class="lease-info-list">
-          <h4>Item: {{ item.title }}</h4>
-          <h4>Owner: {{ lease.owner }}</h4>
-          <h4>Leaser: {{ lease.leaser }}</h4>
+          <h4>
+            Item:
+            <a :href="'/items/' + lease.listingId">
+              {{ item.name }}
+            </a>
+          </h4>
+          <h4>
+            Owner:
+            <a :href="'/profile/' + lease.ownerId">
+              {{ lease.ownerDisplayName }}
+            </a>
+          </h4>
+          <h4>
+            Leaser:
+            <a :href="'/profile/' + lease.profileId">
+              {{ lease.leaseeDisplayName }}
+            </a>
+          </h4>
           <h4>Price: {{ displayPrice }} kr</h4>
         </div>
 
         <div class="lease-info-list">
-          <h4>From: {{ fromTimestamp }}</h4>
-          <h4>To: {{ toTimestamp }}</h4>
+          <h4>From: {{ fromDate }}</h4>
+          <h4>To: {{ toDate }}</h4>
           <h4>Duration: {{ displayDuration }} {{ item.priceType }}(s)</h4>
           <h4>Remaining: {{ displayRemaining }}</h4>
         </div>
       </div>
 
-      <div class="lease-status-container">
-        <h2>Status: Lease expired</h2>
+      <div class="lease-footer">
+        <h2>Status: {{ status }}</h2>
+        <div class="lease-button-container">
+          <button class="boco-btn">Approve</button>
+          <button class="boco-btn">Decline</button>
+        </div>
       </div>
     </div>
   </div>
@@ -26,22 +45,18 @@
 
 <script>
 import priceService from "@/services/priceService";
+import apiService from "@/services/apiService";
+import leaseService from "@/services/leaseService";
 export default {
-  props: [],
+  props: ["lease"],
 
   data() {
     return {
       remaining: 0,
       item: {
-        title: "Wrench",
-        priceType: "Day",
-        price: 50,
-      },
-      lease: {
-        owner: "Jon Martin",
-        leaser: "Tobias",
-        fromDatetime: 1651561325,
-        toDatetime: 1651568602,
+        title: null,
+        priceType: null,
+        price: null,
       },
     };
   },
@@ -65,20 +80,12 @@ export default {
       return priceService.leasePrice(this.item, this.computedDuration);
     },
 
-    fromTimestamp() {
-      return (
-        new Date(this.lease.fromDatetime * 1e3).toLocaleDateString() +
-        " " +
-        new Date(this.lease.fromDatetime * 1e3).toLocaleTimeString()
-      );
+    fromDate() {
+      return leaseService.displayDate(leaseService.fromDate(this.lease));
     },
 
-    toTimestamp() {
-      return (
-        new Date(this.lease.toDatetime * 1e3).toLocaleDateString() +
-        " " +
-        new Date(this.lease.toDatetime * 1e3).toLocaleTimeString()
-      );
+    toDate() {
+      return leaseService.displayDate(leaseService.toDate(this.lease));
     },
 
     displayRemaining() {
@@ -104,6 +111,13 @@ export default {
       immediate: true,
     },
   },
+
+  created() {
+    apiService
+      .getItem(this.lease.listingId)
+      .then((response) => (this.item = response.data))
+      .catch((error) => console.log(error));
+  },
 };
 </script>
 
@@ -115,11 +129,12 @@ export default {
   left: 50%;
   transform: translateX(-50%);
 
-  padding: 20px;
+  padding: 30px;
 
   border: solid 1px;
   border-radius: 5px;
   background-color: white;
+  box-shadow: 50px 50px 50px 1000vmax rgba(0, 0, 0, 0.5);
 }
 
 .lease-detail-container {
@@ -140,5 +155,17 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.lease-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 30px;
+}
+
+.lease-button-container {
+  display: flex;
+  gap: 10px;
 }
 </style>

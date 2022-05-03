@@ -17,8 +17,26 @@
         />
       </div>
     </div>
+
+    <div class="lease-column-container">
+      <h2>Leased</h2>
+      <div class="filter-check-container">
+        <label>Past <input type="radio" name="personal" /></label>
+        <label>Current <input type="radio" name="personal" /></label>
+        <label>Upcoming <input type="radio" name="personal" /></label>
+      </div>
+
+      <div class="lease-list-container">
+        <lease-component
+          v-for="lease in leased"
+          :key="lease"
+          :lease="lease"
+          @click="openOverlay(lease)"
+        />
+      </div>
+    </div>
     <transition name="overlay">
-      <lease-detail-component v-if="showOverlay" />
+      <lease-detail-component v-if="showOverlay" :lease="selectedLease" />
     </transition>
   </div>
 </template>
@@ -64,6 +82,12 @@ export default {
         this.showOverlay = true;
       }
     },
+
+    getStatus(lease) {
+      if (!lease.isApproved) {
+        return "Pending Approval";
+      }
+    },
   },
 };
 </script>
@@ -103,6 +127,6 @@ export default {
 .overlay-enter-from,
 .overlay-leave-to {
   opacity: 0;
-  bottom: 10%;
+  bottom: 50%;
 }
 </style>

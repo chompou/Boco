@@ -1,29 +1,28 @@
 <template>
   <div class="lease-container">
     <div style="flex-direction: row">
-      <h4>{{ lease.title }}</h4>
-      <h6>{{ fromDatetime }}</h6>
-      <h6>{{ toDatetime }}</h6>
+      <h4>{{ lease.itemName }}</h4>
+      <h6>{{ fromDate }}</h6>
+      <h6>{{ toDate }}</h6>
     </div>
     <div>
-      <h5>Lease Ended</h5>
+      <h5>{{ status }}</h5>
     </div>
   </div>
 </template>
 
 <script>
+import leaseService from "@/services/leaseService";
 export default {
   props: ["lease"],
 
   computed: {
-    fromDatetime() {
-      let from = new Date(this.lease.fromDatetime * 1e3);
-      return `${from.toLocaleDateString()} - ${from.toLocaleTimeString()} `;
+    fromDate() {
+      return leaseService.displayDate(leaseService.fromDate(this.lease));
     },
 
-    toDatetime() {
-      let to = new Date(this.lease.toDatetime * 1e3);
-      return `${to.toLocaleDateString()} - ${to.toLocaleTimeString()}`;
+    toDate() {
+      return leaseService.displayDate(leaseService.toDate(this.lease));
     },
   },
 };
