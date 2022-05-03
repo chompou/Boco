@@ -12,6 +12,7 @@ import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
+import boco.repository.rental.ListingRepository;
 import boco.service.rental.ListingService;
 import boco.service.rental.ReviewService;
 import boco.service.security.JwtUtil;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,8 @@ public class ProfileService {
     private final PersonalRepository personalRepository;
     private final ProfessionalRepository professionalRepository;
     private final LeaseRepository leaseRepository;
+    private final ListingRepository listingRepository;
+    private final ListingService listingService;
 
 
     private final JwtUtil jwtUtil;
@@ -43,12 +47,15 @@ public class ProfileService {
                           PersonalRepository personalRepository,
                           ProfessionalRepository professionalRepository,
                           LeaseRepository leaseRepository,
-                          JwtUtil jwtUtil) {
+                          JwtUtil jwtUtil, ListingRepository listingRepository,
+                          ListingService listingService) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
         this.leaseRepository = leaseRepository;
         this.jwtUtil = jwtUtil;
+        this.listingRepository = listingRepository;
+        this.listingService = listingService;
     }
 
     public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String token) {
@@ -277,5 +284,59 @@ public class ProfileService {
 
     public Long getProfileIdByUsername(String username){
         return profileRepository.findProfileByUsername(username).get().getId();
+    }
+
+    private void checkLeaseAndPrepareForDelete(Lease lease, Profile profile){
+        Profile deletedUser = profileRepository.getOne(1l);
+        Listing deletedListing = listingRepository.getOne(1l);
+            if(lease.getOwner().getId() == profile.getId()){
+                lease.setOwner(deletedUser);
+                leaseRepository.save(lease);
+            }
+            if (lease.getProfile().getId() == profile.getId()){
+                lease.setProfile(deletedUser);
+                leaseRepository.save(lease);
+            }
+            if (lease.getListing().getProfile().getId() == profile.getId()){
+                lease.setListing(deletedListing);
+                leaseRepository.save(lease);
+            }
+            if (lease.getProfile().equals(deletedUser) && lease.getOwner().equals(deletedUser)){
+                leaseRepository.delete(lease);
+            }
+    }
+
+    public void deleteDeactivatedProfiles(){
+        try {
+            Long bufferTime = 1000L *60*60*24*90;
+            Long deleteBeforeTime = System.currentTimeMillis() - bufferTime;
+            Timestamp deleteBefore = new Timestamp(deleteBeforeTime);
+            List<Profile> deactivated = profileRepository.getAllByDeactivatedBefore(deleteBefore);
+            for (Profile p: deactivated) {
+                if (p.getDeactivated().before(deleteBefore)){
+                    for (Lease owned:p.getOwned()) {
+                        checkLeaseAndPrepareForDelete(owned, p);
+                    }
+                    System.out.println("1 ok");
+                    for (Lease rental:p.getRentals()) {
+                        checkLeaseAndPrepareForDelete(rental, p);
+                    }
+                    List<Lease> hanging = leaseRepository.getLeasesByOwner(p);
+                    hanging.addAll(leaseRepository.getLeasesByProfile(p));
+                    for (Lease l:hanging) {
+                        checkLeaseAndPrepareForDelete(l, p);
+                    }
+                    System.out.println("2 ok");
+                    for (Listing l: p.getListings()) {
+                        listingService.deleteListing(l);
+                    }
+                    Profile delete = profileRepository.getOne(p.getId());
+                    profileRepository.delete(delete);
+                    System.out.println("4 ok");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

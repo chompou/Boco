@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -186,5 +187,19 @@ public class LeaseService {
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
         return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
+    }
+
+    public void removeDangling() {
+        Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
+        List<Lease> leases = leaseRepository.findAll();
+        for (Lease lease:leases) {
+            if (!lease.isApproved() && new Date(lease.getToDatetime()).before(aWeekAgo)){
+                try {
+                    leaseRepository.delete(lease);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -1,11 +1,13 @@
 package boco.service.rental;
 
-import boco.models.http.*;
+import boco.models.http.ListingRequest;
+import boco.models.http.ListingResponse;
+import boco.models.http.ReviewResponse;
+import boco.models.http.UpdateListingRequest;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
-import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -13,8 +15,6 @@ import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -266,6 +266,19 @@ public class ListingService {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void deleteListing(Listing listing) {
+        try {
+            Optional<Listing> listingData = listingRepository.findById(listing.getId());
+            Optional<Listing> emptyListing = listingRepository.findById(1L);
+            if (!emptyListing.isPresent()){
+                return;
+            }
+            setListingWhenDeleted(listing.getId(), emptyListing.get());
+            listingRepository.deleteById(listing.getId());
+        } catch (Exception ignored) {
         }
     }
 

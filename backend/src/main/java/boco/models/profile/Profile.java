@@ -30,6 +30,7 @@ public class Profile {
     private Double ratingListing;
     private Double ratingProfile;
     private Double ratingGiven;
+    //Time profile was deactivated by user
     private Timestamp deactivated;
 
     @OneToMany(mappedBy = "profile")
