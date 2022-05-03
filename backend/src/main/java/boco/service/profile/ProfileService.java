@@ -12,6 +12,7 @@ import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
+import boco.repository.rental.ListingRepository;
 import boco.service.rental.ListingService;
 import boco.service.rental.ReviewService;
 import boco.service.security.JwtUtil;
@@ -22,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,7 @@ public class ProfileService {
     private final PersonalRepository personalRepository;
     private final ProfessionalRepository professionalRepository;
     private final LeaseRepository leaseRepository;
+    private final ListingRepository listingRepository;
 
 
     private final JwtUtil jwtUtil;
@@ -43,11 +47,13 @@ public class ProfileService {
                           PersonalRepository personalRepository,
                           ProfessionalRepository professionalRepository,
                           LeaseRepository leaseRepository,
+                          ListingRepository listingRepository,
                           JwtUtil jwtUtil) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
         this.leaseRepository = leaseRepository;
+        this.listingRepository = listingRepository;
         this.jwtUtil = jwtUtil;
     }
 
@@ -236,6 +242,41 @@ public class ProfileService {
 
         Profile savedProfile = profileRepository.save(profile);
         logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
+        return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
+    }
+
+    public ResponseEntity<PrivateProfileResponse> deactivateProfile(String token) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+
+        if (!profileData.isPresent()) {
+            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Profile profile = profileData.get();
+        profile.setDeactivated(Timestamp.valueOf(LocalDateTime.now()));
+        Profile savedProfile = profileRepository.save(profile);
+
+        List<Listing> listings = listingRepository.getListingsByProfile(profileData.get());
+        for (int i =0; i<listings.size(); i++){
+            listings.get(i).setActive(false);
+            listingRepository.save(listings.get(i));
+        }
+
+        List<Lease> leasesProfile = leaseRepository.getLeasesByProfile(profile);
+        for (int i = 0; i<leasesProfile.size(); i++){
+            if (leasesProfile.get(i).getIsApproved()== null){
+                leasesProfile.get(i).setIsApproved(false);
+                leaseRepository.save(leasesProfile.get(i));
+            }
+        }
+        List<Lease> leasesOwner = leaseRepository.getLeasesByOwner(profile);
+        for (int i = 0; i<leasesOwner.size(); i++){
+            if (leasesOwner.get(i).getIsApproved()== null){
+                leasesOwner.get(i).setIsApproved(false);
+                leaseRepository.save(leasesOwner.get(i));
+            }
+        }
         return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
     }
 
