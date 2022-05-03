@@ -26,7 +26,7 @@
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
 import "vue3-openlayers/dist/vue3-openlayers.css";
-import MapTest from "@/components/MapComponent";
+import MapTest from "@/components/Map/MapComponent";
 export default {
   props: ["profile"],
   components: { MapTest, RatingComponent },
@@ -54,6 +54,8 @@ export default {
 
 .profileBoxText {
   text-align: left;
+  min-width: 160px;
+  min-height: 150px;
 }
 
 #rating {

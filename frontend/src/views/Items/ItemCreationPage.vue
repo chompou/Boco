@@ -61,22 +61,16 @@
           </select>
         </div>
       </div>
-      <div class="ItemId">
-        <div class="checkboxItem">
-          <input type="checkbox" id="Tools" value="Tools" v-model="category" />
-          <label for="Tools">Tools</label>
-        </div>
-
+      <form class="checkboxItem">
         <div class="checkboxItem">
           <input
             type="checkbox"
-            id="Vehicle"
-            value="Vehicle"
+            id="SportAndHiking"
+            value="SportAndHiking"
             v-model="category"
           />
-          <label for="Vehicle">Vehicle</label>
+          <label for="SportAndHiking">Sport/Hiking</label>
         </div>
-
         <div class="checkboxItem">
           <input
             type="checkbox"
@@ -86,7 +80,74 @@
           />
           <label for="Electronics">Electronics</label>
         </div>
-      </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Vehicle"
+            value="Vehicle"
+            v-model="category"
+          />
+          <label for="Vehicle">Vehicle</label>
+        </div>
+        <div class="checkboxItem">
+          <input type="checkbox" id="Tools" value="Tools" v-model="category" />
+          <label for="Tools">Tools</label>
+        </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Interior"
+            value="Interior"
+            v-model="category"
+          />
+          <label for="Interior">Interior</label>
+        </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="HobbyAndEntertainment"
+            value="HobbyAndEntertainment"
+            v-model="category"
+          />
+          <label for="HobbyAndEntertainment">Hobby/Entertainment</label>
+        </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="SchoolAndOffice"
+            value="SchoolAndOffice"
+            v-model="category"
+          />
+          <label for="SchoolAndOffice">School/Office</label>
+        </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="HomeAndGarden"
+            value="HomeAndGarden"
+            v-model="category"
+          />
+          <label for="HomeAndGarden">Home/Garden</label>
+        </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="Fashion"
+            value="Fashion"
+            v-model="category"
+          />
+          <label for="Fashion">Fashion</label>
+        </div>
+        <div class="checkboxItem">
+          <input
+            type="checkbox"
+            id="MusicalInstrument"
+            value="MusicalInstrument"
+            v-model="category"
+          />
+          <label for="MusicalInstrument">Musical Instrument</label>
+        </div>
+      </form>
       <div id="descriptionField">
         <p>Description</p>
         <textarea
@@ -164,10 +225,6 @@ export default {
       apiService.createItem(this.formData).catch((error) => {
         console.log(error);
       });
-      this.toast.success("Listing was successfully created", {
-        timeout: 2000,
-      });
-      this.$router.push("/my/items");
     },
   },
   computed: {
@@ -257,9 +314,10 @@ select {
 }
 
 .checkboxItem {
-  width: 200px;
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-rows: repeat(5, min-content);
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--button-color);
 }
 
 .CreateButton {
@@ -316,6 +374,10 @@ label {
 
 #Delete {
   background: #ff6565;
+}
+
+#reset {
+  width: 130px;
 }
 
 #Delete:hover {
