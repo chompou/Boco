@@ -36,11 +36,11 @@ img {
   width: 200px;
   height: 200px;
   margin: 8px;
-  border: 1px solid #39495c;
 }
 
 div {
   border: 1px solid #39495c;
+  border-radius: 10px;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
