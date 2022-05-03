@@ -1,5 +1,6 @@
 package boco.repository.rental;
 
+import boco.models.profile.Profile;
 import boco.models.rental.CategoryType;
 import boco.models.rental.Listing;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
@@ -39,6 +40,8 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
             "WHERE l.price > ?1 AND l.price < ?2" +
             "ORDER BY ?3 DESC")
     List<Listing> getListingByPriceRangeDesc(double priceFrom, double priceTo, String orderBy);
+
+    List<Listing> getListingsByProfile(Profile profile);
 
 
 }

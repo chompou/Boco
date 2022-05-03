@@ -1,10 +1,12 @@
 package boco.service.rental;
 
+import boco.component.Haversine;
 import boco.models.http.*;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
+import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -86,12 +88,15 @@ public class ListingService {
 
         //TODO Validate sort name
         String sortBy = sort.split(":")[0];
+        String sortDir = sort.split(":")[1];
+
+
+        System.out.println("Sort by " + sortBy + ", order: " + sortDir);
         if (sortBy.equals("distance")){
             distanceSort = true;
             sortBy = "id";
         }
 
-        String sortDir = sort.split(":")[1];
 
         List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
 
@@ -107,11 +112,23 @@ public class ListingService {
 
 
         if (distanceSort){
+            System.out.println("Test");
+            double lat1 = Double.valueOf(location.split(":")[0]);
+            double long1 = Double.valueOf(location.split(":")[1]);
+            double lat2;
+            double long2;
+
             List<ListingResponse> responses = new ArrayList<>();
             for (Listing listing: listings) {
 
+                lat2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                long2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                double distance = Haversine.distance(lat1, long1, lat2, long2);
+                responses.add(new ListingResponse(listing, distance));
+                System.out.println(distance);
             }
-            //Comparator<Listing> distanceComp = (l1, l2) -> Have
+            Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
+            Collections.sort(responses, distanceComp);
         }
 
 
@@ -279,6 +296,19 @@ public class ListingService {
         }
     }
 
+    public void deleteListing(Listing listing) {
+        try {
+            Optional<Listing> listingData = listingRepository.findById(listing.getId());
+            Optional<Listing> emptyListing = listingRepository.findById(1L);
+            if (!emptyListing.isPresent()){
+                return;
+            }
+            setListingWhenDeleted(listing.getId(), emptyListing.get());
+            listingRepository.deleteById(listing.getId());
+        } catch (Exception ignored) {
+        }
+    }
+
     public void setListingWhenDeleted(Long listingId, Listing emptyListing){
         List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
 
@@ -296,7 +326,6 @@ public class ListingService {
         }
         imageRepository.saveAll(images);
     }
-
 
     public static List<ListingResponse> convertListings(List<Listing> listings){
         List<ListingResponse> listingResponses = new ArrayList<>();

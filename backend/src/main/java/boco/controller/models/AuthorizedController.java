@@ -39,7 +39,7 @@ public class AuthorizedController {
     @PostMapping(value = "/listing", consumes = {"multipart/form-data"})
     public ResponseEntity<ListingResponse> createListing(
             @RequestPart("properties") @Validated ListingRequest listingRequest,
-            @RequestPart("file") @Validated MultipartFile multipartFile,
+            @RequestPart("file") MultipartFile multipartFile,
             @RequestHeader(name="Authorization") String token) {
         return listingService.createListing(listingRequest,multipartFile, token);
     }
@@ -66,6 +66,10 @@ public class AuthorizedController {
     public ResponseEntity<PrivateProfileResponse> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest,
                                                          @RequestHeader(name="Authorization") String token) {
         return profileService.updateProfile(updateProfileRequest, token);
+    }
+    @PutMapping("/profile/deactivate")
+    public ResponseEntity<PrivateProfileResponse> deactivateMyProfile(@RequestHeader(name="Authorization") String token){
+        return profileService.deactivateProfile(token);
     }
 
     @GetMapping("/review")

@@ -12,6 +12,7 @@ import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
+import boco.repository.rental.ListingRepository;
 import boco.service.rental.ListingService;
 import boco.service.rental.ReviewService;
 import boco.service.security.JwtUtil;
@@ -22,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,8 @@ public class ProfileService {
     private final PersonalRepository personalRepository;
     private final ProfessionalRepository professionalRepository;
     private final LeaseRepository leaseRepository;
+    private final ListingRepository listingRepository;
+    private final ListingService listingService;
 
 
     private final JwtUtil jwtUtil;
@@ -43,12 +48,15 @@ public class ProfileService {
                           PersonalRepository personalRepository,
                           ProfessionalRepository professionalRepository,
                           LeaseRepository leaseRepository,
-                          JwtUtil jwtUtil) {
+                          JwtUtil jwtUtil, ListingRepository listingRepository,
+                          ListingService listingService) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
         this.leaseRepository = leaseRepository;
         this.jwtUtil = jwtUtil;
+        this.listingRepository = listingRepository;
+        this.listingService = listingService;
     }
 
     public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String token) {
@@ -239,6 +247,41 @@ public class ProfileService {
         return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
     }
 
+    public ResponseEntity<PrivateProfileResponse> deactivateProfile(String token) {
+        String username = jwtUtil.extractUsername(token.substring(7));
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+
+        if (!profileData.isPresent()) {
+            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Profile profile = profileData.get();
+        profile.setDeactivated(Timestamp.valueOf(LocalDateTime.now()));
+        Profile savedProfile = profileRepository.save(profile);
+
+        List<Listing> listings = listingRepository.getListingsByProfile(profileData.get());
+        for (int i =0; i<listings.size(); i++){
+            listings.get(i).setActive(false);
+            listingRepository.save(listings.get(i));
+        }
+
+        List<Lease> leasesProfile = leaseRepository.getLeasesByProfile(profile);
+        for (int i = 0; i<leasesProfile.size(); i++){
+            if (leasesProfile.get(i).getIsApproved()== null){
+                leasesProfile.get(i).setIsApproved(false);
+                leaseRepository.save(leasesProfile.get(i));
+            }
+        }
+        List<Lease> leasesOwner = leaseRepository.getLeasesByOwner(profile);
+        for (int i = 0; i<leasesOwner.size(); i++){
+            if (leasesOwner.get(i).getIsApproved()== null){
+                leasesOwner.get(i).setIsApproved(false);
+                leaseRepository.save(leasesOwner.get(i));
+            }
+        }
+        return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
+    }
+
     public ResponseEntity<Profile> verifyProfile(Long profileId){
         Optional<Profile> profileData = profileRepository.findProfileById(profileId);
         if (profileData.isPresent()){
@@ -301,5 +344,59 @@ public class ProfileService {
 
     public Long getProfileIdByUsername(String username){
         return profileRepository.findProfileByUsername(username).get().getId();
+    }
+
+    private void checkLeaseAndPrepareForDelete(Lease lease, Profile profile){
+        Profile deletedUser = profileRepository.getOne(1l);
+        Listing deletedListing = listingRepository.getOne(1l);
+            if(lease.getOwner().getId() == profile.getId()){
+                lease.setOwner(deletedUser);
+                leaseRepository.save(lease);
+            }
+            if (lease.getProfile().getId() == profile.getId()){
+                lease.setProfile(deletedUser);
+                leaseRepository.save(lease);
+            }
+            if (lease.getListing().getProfile().getId() == profile.getId()){
+                lease.setListing(deletedListing);
+                leaseRepository.save(lease);
+            }
+            if (lease.getProfile().equals(deletedUser) && lease.getOwner().equals(deletedUser)){
+                leaseRepository.delete(lease);
+            }
+    }
+
+    public void deleteDeactivatedProfiles(){
+        try {
+            Long bufferTime = 1000L *60*60*24*90;
+            Long deleteBeforeTime = System.currentTimeMillis() - bufferTime;
+            Timestamp deleteBefore = new Timestamp(deleteBeforeTime);
+            List<Profile> deactivated = profileRepository.getAllByDeactivatedBefore(deleteBefore);
+            for (Profile p: deactivated) {
+                if (p.getDeactivated().before(deleteBefore)){
+                    for (Lease owned:p.getOwned()) {
+                        checkLeaseAndPrepareForDelete(owned, p);
+                    }
+                    System.out.println("1 ok");
+                    for (Lease rental:p.getRentals()) {
+                        checkLeaseAndPrepareForDelete(rental, p);
+                    }
+                    List<Lease> hanging = leaseRepository.getLeasesByOwner(p);
+                    hanging.addAll(leaseRepository.getLeasesByProfile(p));
+                    for (Lease l:hanging) {
+                        checkLeaseAndPrepareForDelete(l, p);
+                    }
+                    System.out.println("2 ok");
+                    for (Listing l: p.getListings()) {
+                        listingService.deleteListing(l);
+                    }
+                    Profile delete = profileRepository.getOne(p.getId());
+                    profileRepository.delete(delete);
+                    System.out.println("4 ok");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

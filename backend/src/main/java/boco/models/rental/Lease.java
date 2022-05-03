@@ -12,10 +12,10 @@ public class Lease {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private boolean isApproved;
+    private Boolean isApproved;
     private Long fromDatetime;
     private Long toDatetime;
-    private boolean isCompleted;
+    private Boolean isCompleted;
 
     @OneToOne
     @JoinColumn(
