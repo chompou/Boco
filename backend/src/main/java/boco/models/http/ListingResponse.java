@@ -29,8 +29,31 @@ public class ListingResponse {
     private List<CategoryType> categoryTypes;
     private Long profileId;
     private String image;
+    private double distance;
 
     public ListingResponse(Listing listing) {
+        this.id = listing.getId();
+        this.name = listing.getName();
+        this.description = listing.getDescription();
+        this.address = listing.getAddress();
+        this.isAvailable = listing.isAvailable();
+        this.isActive = listing.isActive();
+        this.price = listing.getPrice();
+        this.priceType = listing.getPriceType();
+        this.lastChanged = listing.getLastChanged();
+        this.rating = listing.getRating();
+        this.categoryTypes = listing.getCategoryTypes();
+        this.profileId = listing.getProfile().getId();
+        this.distance = -1;
+        try {
+            this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public ListingResponse(Listing listing, double distance){
         this.id = listing.getId();
         this.name = listing.getName();
         this.description = listing.getDescription();
@@ -48,6 +71,7 @@ public class ListingResponse {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+        this.distance =  distance;
 
     }
 }

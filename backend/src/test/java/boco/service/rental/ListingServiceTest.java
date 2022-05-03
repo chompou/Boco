@@ -1,5 +1,6 @@
 package boco.service.rental;
 
+import boco.models.http.ListingRequest;
 import boco.models.http.ListingResponse;
 import boco.models.http.ReviewResponse;
 import boco.models.profile.Personal;
@@ -141,6 +142,22 @@ class ListingServiceTest {
         lenient()
                 .when(listingRepository.findById(eq(4L)))
                 .thenReturn(Optional.of(l3));
+        lenient()
+                .when(jwtUtil.extractUsername(eq("1")))
+                .thenReturn("los");
+        lenient()
+                .when(jwtUtil.extractUsername(eq("2")))
+                .thenReturn(null);
+        lenient()
+                .when(profileRepository.findProfileByUsername("los"))
+                .thenReturn(Optional.empty());
+        lenient()
+                .when(profileRepository.findProfileByUsername("miami"))
+                .thenReturn(Optional.of(p2));
+
+
+
+
 
 
 
@@ -162,14 +179,14 @@ class ListingServiceTest {
 
     @Test
     public void categoryDoesNotExist(){
-        ResponseEntity<List<ListingResponse>> response = service.getListings(1, pageSize, "", "id ASC", -1, -1, "Car");
+        ResponseEntity<List<ListingResponse>> response = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "Car", "");
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
 
     @Test
     public void testGetListings() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price ASC", -1, -1, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price:ASC", -1, -1, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(listingResponses.size(), 5);
@@ -179,7 +196,7 @@ class ListingServiceTest {
     @Test
     public void testGetListingsWithCategory() {
         //TODO add category
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id ASC", -1, -1, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(5, listingResponses.size());
@@ -188,7 +205,7 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id ASC", 175.0, 2000.0, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id:ASC", 175.0, 2000.0, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(5, listingResponses.size());
@@ -197,7 +214,7 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithDesc() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price Desc", 50.0, 100.0, "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price:DESC", 50.0, 100.0, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
         Assertions.assertEquals(5, listingResponses.size());
@@ -246,6 +263,21 @@ class ListingServiceTest {
         ResponseEntity<ListingResponse> responseEntity = service.getListingById(1L);
         Assertions.assertEquals("house", responseEntity.getBody().getName());
     }
+
+    @Test
+    public void createListingInvalidProfile(){
+        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 1L);
+        ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 1");
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void createListingInvalidToken(){
+        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 2L);
+        ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 2");
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
 
 
 

@@ -124,6 +124,7 @@ class ProfileServiceTest {
         var res = profileService.changePassword(goodRequest, "leo@psg.fr");
         Assertions.assertEquals(BocoHasher.encode("letmepass"), res.getBody().getPasswordHash());
 
+
         UpdatePasswordRequest badRequest = new UpdatePasswordRequest("letmepass", "dontletmepass");
         var res1 = profileService.changePassword(badRequest, "leo@psg.fr");
         Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.NOT_ACCEPTABLE), res1);
