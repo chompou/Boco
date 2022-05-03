@@ -155,7 +155,7 @@ export default {
       setTimeout(() => {
         location.reload();
       }, 100);
-      this.toast.info("Listing is now" + status, {
+      this.toast.info("Listing is now " + status, {
         timeout: 2000,
       });
     },
