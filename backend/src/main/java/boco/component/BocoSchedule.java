@@ -18,7 +18,7 @@ public class BocoSchedule {
     private final ProfileService profileService;
     private final NotificationService notificationService;
     private final LeaseService leaseService;
-    private final static Long DAILY = 1000L *60*60*24;
+    private final static int DAILY = 1000*60*60*24;
 
     @Autowired
     public BocoSchedule(ProfileService profileService, NotificationService notificationService,
