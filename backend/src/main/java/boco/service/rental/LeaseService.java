@@ -255,7 +255,7 @@ public class LeaseService {
         Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
         List<Lease> leases = leaseRepository.findAll();
         for (Lease lease:leases) {
-            if (!lease.isApproved() && new Date(lease.getToDatetime()).before(aWeekAgo)){
+            if (!lease.getIsApproved() && new Date(lease.getToDatetime()).before(aWeekAgo)){
                 try {
                     leaseRepository.delete(lease);
                 }catch (Exception e){

@@ -158,8 +158,8 @@ public class NotificationService {
         Date tomorrow = new Date(now.getTime() + (1000*60*60*24));
         List<Lease> leases = leaseRepository.findAll();
         for (Lease lease:leases) {
-            boolean approved = lease.isApproved();
-            boolean completed = lease.isCompleted();
+            boolean approved = lease.getIsApproved();
+            boolean completed = lease.getIsCompleted();
             if (approved && !completed){
                 Date from = new Date(lease.getFromDatetime());
                 Date to = new Date(lease.getToDatetime());
