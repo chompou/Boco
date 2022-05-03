@@ -28,22 +28,34 @@
     </div>
     <div class="mt-5">
       <router-link to="items">
-        <font-awesome-icon icon="car" class="icon" />
-      </router-link>
-      <router-link to="items">
         <font-awesome-icon icon="wrench" class="icon" />
       </router-link>
       <router-link to="items">
-        <font-awesome-icon icon="umbrella" class="icon" />
+        <font-awesome-icon icon="basketball" class="icon" />
       </router-link>
       <router-link to="items">
-        <font-awesome-icon icon="lemon" class="icon" />
+        <font-awesome-icon icon="bolt" class="icon" />
       </router-link>
       <router-link to="items">
-        <font-awesome-icon icon="children" class="icon" />
+        <font-awesome-icon icon="couch" class="icon" />
       </router-link>
       <router-link to="items">
-        <font-awesome-icon icon="toilet-paper" class="icon" />
+        <font-awesome-icon icon="campground" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="graduation-cap" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="house" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="car" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="shirt" class="icon" />
+      </router-link>
+      <router-link to="items">
+        <font-awesome-icon icon="guitar" class="icon" />
       </router-link>
     </div>
     <div class="items">
