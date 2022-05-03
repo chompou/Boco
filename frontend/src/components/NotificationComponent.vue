@@ -1,67 +1,32 @@
 <template>
-  <div>
-    <button
-      class="notificationButton"
-      v-if="show"
-      key="on"
-      @click="show = false"
-    >
-      <div class="notification" :style="notificationStyle">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          :width="size"
-          :height="size"
-          viewBox="0 0 20 20"
-        >
-          <path
-            d="M16 7a5.38 5.38 0 0 0-4.46-4.85C11.6 1.46 11.53 0 10 0S8.4 1.46
+  <button class="notificationButton" key="on" @click="show = !show">
+    <div class="notification" :style="notificationStyle">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        :width="size"
+        :height="size"
+        viewBox="0 0 20 20"
+      >
+        <path
+          d="M16 7a5.38 5.38 0 0 0-4.46-4.85C11.6 1.46 11.53 0 10 0S8.4 1.46
         8.46 2.15A5.38 5.38 0 0 0 4 7v6l-2 2v1h16v-1l-2-2zm-6 13a3 3 0 0 0
         3-3H7a3 3 0 0 0 3 3z"
-          />
-        </svg>
-        <div
-          class="notificationCounter"
-          v-if="$store.state.countNotifications > 0"
-          :style="notificationCounterLocation"
-        >
-          <div class="counterWrapper">
-            <span v-if="$store.state.countNotifications <= 10">{{
-              $store.state.countNotifications
-            }}</span>
-            <span v-if="$store.state.countNotifications > 10"> 10+</span>
-          </div>
+        />
+      </svg>
+      <div
+        class="notificationCounter"
+        v-if="$store.state.countNotifications > 0"
+        :style="notificationCounterLocation"
+      >
+        <div class="counterWrapper">
+          <span v-if="$store.state.countNotifications <= 10">{{
+            $store.state.countNotifications
+          }}</span>
+          <span v-if="$store.state.countNotifications > 10"> 10+</span>
         </div>
       </div>
-    </button>
-    <button class="notificationButton" v-else key="off" @click="show = true">
-      <div class="notification" :style="notificationStyle">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          :width="size"
-          :height="size"
-          viewBox="0 0 20 20"
-        >
-          <path
-            d="M16 7a5.38 5.38 0 0 0-4.46-4.85C11.6 1.46 11.53 0 10 0S8.4 1.46
-        8.46 2.15A5.38 5.38 0 0 0 4 7v6l-2 2v1h16v-1l-2-2zm-6 13a3 3 0 0 0
-        3-3H7a3 3 0 0 0 3 3z"
-          />
-        </svg>
-        <div
-          class="notificationCounter"
-          v-if="$store.state.countNotifications > 0"
-          :style="notificationCounterLocation"
-        >
-          <div class="counterWrapper">
-            <span v-if="$store.state.countNotifications <= 10">{{
-              $store.state.countNotifications
-            }}</span>
-            <span v-if="$store.state.countNotifications > 10"> 10+</span>
-          </div>
-        </div>
-      </div>
-    </button>
-  </div>
+    </div>
+  </button>
   <transition name="bounce">
     <div class="dropdownMenu" v-if="show">
       <div class="gridContainer">
