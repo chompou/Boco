@@ -42,99 +42,90 @@
           </select>
         </div>
       </div>
-      <h5>Categories (Multi-select):</h5>
-      <form class="checkBoxForm">
-        <div class="checkboxItem">
+      <div class="ItemId">
+        <h5>Categories (Multi-select):</h5>
+        <form class="checkBoxForm">
           <input
             type="checkbox"
-            id="SportAndHiking"
-            value="SportAndHiking"
-            v-model="this.item.category"
-          />
-          <label for="SportAndHiking">Sport/Hiking</label>
-        </div>
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Electronics"
-            value="Electronics"
-            v-model="this.item.category"
-          />
-          <label for="Electronics">Electronics</label>
-        </div>
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Vehicle"
-            value="Vehicle"
-            v-model="this.item.category"
-          />
-          <label for="Vehicle">Vehicle</label>
-        </div>
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Tools"
+            id="tools"
             value="Tools"
-            v-model="this.item.category"
+            v-model="this.category"
           />
-          <label for="Tools">Tools</label>
-        </div>
-        <div class="checkboxItem">
+          <label for="tools">Tools</label>
+
           <input
             type="checkbox"
-            id="Interior"
+            id="sport"
+            value="Sport/Hiking"
+            v-model="this.category"
+          />
+          <label for="sport">Sport/Hiking</label>
+
+          <input
+            type="checkbox"
+            id="electronics"
+            value="Electronics"
+            v-model="this.category"
+          />
+          <label for="electronics">Electronics</label>
+
+          <input
+            type="checkbox"
+            id="interior"
             value="Interior"
-            v-model="this.item.category"
+            v-model="this.category"
           />
-          <label for="Interior">Interior</label>
-        </div>
-        <div class="checkboxItem">
+          <label for="interior">Interior</label>
+
           <input
             type="checkbox"
-            id="HobbyAndEntertainment"
-            value="HobbyAndEntertainment"
-            v-model="this.item.category"
+            id="hobby"
+            value="Hobby/Entertainment"
+            v-model="this.category"
           />
-          <label for="HobbyAndEntertainment">Hobby/Entertainment</label>
-        </div>
-        <div class="checkboxItem">
+          <label for="hobby">Hobby/Entertainment</label>
+
           <input
             type="checkbox"
-            id="SchoolAndOffice"
-            value="SchoolAndOffice"
-            v-model="this.item.category"
+            id="school"
+            value="School/Office"
+            v-model="this.category"
           />
-          <label for="SchoolAndOffice">School/Office</label>
-        </div>
-        <div class="checkboxItem">
+          <label for="school">School/Office</label>
+
           <input
             type="checkbox"
-            id="HomeAndGarden"
-            value="HomeAndGarden"
-            v-model="this.item.category"
+            id="musical"
+            value="Musical Instruments"
+            v-model="this.category"
           />
-          <label for="HomeAndGarden">Home/Garden</label>
-        </div>
-        <div class="checkboxItem">
+          <label for="musical">Musical Instruments</label>
+
           <input
             type="checkbox"
-            id="Fashion"
+            id="home"
+            value="Home/Garden"
+            v-model="this.category"
+          />
+          <label for="home">Home/Garden</label>
+
+          <input
+            type="checkbox"
+            id="vehicle"
+            value="Vehicle"
+            v-model="this.category"
+          />
+          <label for="vehicle">Vehicle</label>
+
+          <input
+            type="checkbox"
+            id="fashion"
             value="Fashion"
-            v-model="this.item.category"
+            v-model="this.category"
           />
-          <label for="Fashion">Fashion</label>
-        </div>
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="MusicalInstrument"
-            value="MusicalInstrument"
-            v-model="this.item.category"
-          />
-          <label for="MusicalInstrument">Musical Instrument</label>
-        </div>
-      </form>
+          <label for="fashion">Fashion</label>
+        </form>
+      </div>
       <div id="descriptionField">
         <h5>Description</h5>
         <textarea
@@ -180,7 +171,7 @@ export default {
           price: this.item.price,
           priceType: this.item.priceType,
           description: this.item.description,
-          category: [this.category],
+          categoryType: [this.category],
         })
         .catch((error) => {
           console.log(error);
@@ -238,14 +229,10 @@ export default {
 .checkBoxForm {
   display: inline-grid;
   grid-template-rows: repeat(5, min-content);
-  grid-template-columns: repeat(2, min-content);
+  grid-template-columns: repeat(4, min-content);
+  grid-row-gap: 10px;
+  grid-column-gap: 40px;
   margin: 10px;
-}
-
-.checkboxItem {
-  width: 200px;
-  display: flex;
-  align-items: center;
 }
 
 #image {

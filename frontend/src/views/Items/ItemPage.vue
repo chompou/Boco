@@ -43,9 +43,9 @@
         <div id="About">
           <div id="About11">
             <div id="About1">
-              <h2>{{ item.name }}</h2>
+              <h1>{{ item.name }}</h1>
               <div id="category">
-                <label>Category: </label>
+                <h5>Category:</h5>
                 <label v-for="category in item.categoryTypes" :key="category"
                   >{{ category.name }},
                 </label>
@@ -170,7 +170,6 @@ export default {
         this.item = response.data;
         setTimeout(() => {
           let image = this.item.image;
-          console.log(image);
           this.imgSource = "data:image/jpeg;base64, " + image;
         }, 100);
         apiService
