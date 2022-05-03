@@ -24,6 +24,10 @@ export default {
     toDate() {
       return leaseService.displayDate(leaseService.toDate(this.lease));
     },
+
+    status() {
+      return leaseService.getStatus(this.lease);
+    },
   },
 };
 </script>

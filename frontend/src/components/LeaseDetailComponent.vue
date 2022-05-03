@@ -26,18 +26,25 @@
 
         <div class="lease-info-list">
           <h4>From: {{ fromDate }}</h4>
-          <h4>To: {{ toDate }}</h4>
+          <h4>To: &emsp;&nbsp;{{ toDate }}</h4>
           <h4>Duration: {{ displayDuration }} {{ item.priceType }}(s)</h4>
           <h4>Remaining: {{ displayRemaining }}</h4>
+          <p>{{ buttons }}</p>
         </div>
       </div>
 
       <div class="lease-footer">
-        <h2>Status: {{ status }}</h2>
-        <div class="lease-button-container">
+        <h2>Status: Lease {{ status }}</h2>
+        <div class="lease-button-container" v-if="buttons == 'approve'">
           <button class="boco-btn">Approve</button>
           <button class="boco-btn">Decline</button>
         </div>
+
+        <div class="lease-button-container" v-if="buttons == 'cancel'">
+          <button class="boco-btn">Cancel</button>
+        </div>
+
+        <div class="lease-button-container" v-if="buttons == 'remove'"></div>
       </div>
     </div>
   </div>
@@ -62,6 +69,35 @@ export default {
   },
 
   computed: {
+    buttons() {
+      let status = leaseService.getStatus(this.lease);
+
+      if (this.$store.state.loggedInUser == this.lease.ownerId) {
+        switch (status) {
+          case "Pending":
+            return "accept";
+          case "Upcoming":
+            return "cancel";
+          case "Expired":
+            return "remove";
+          case "In Progress":
+          case "Overdue":
+            return "complete";
+          case "Completed":
+          default:
+            return "";
+        }
+      } else {
+        switch (status) {
+          case "Pending":
+          case "Upcoming":
+            return "cancel";
+          default:
+            return "";
+        }
+      }
+    },
+
     computedDuration() {
       return priceService.parseHours(
         this.lease.fromDatetime,
@@ -88,6 +124,10 @@ export default {
       return leaseService.displayDate(leaseService.toDate(this.lease));
     },
 
+    status() {
+      return leaseService.getStatus(this.lease);
+    },
+
     displayRemaining() {
       let sec, min, hour, day;
 
@@ -105,7 +145,11 @@ export default {
     remaining: {
       handler() {
         setTimeout(() => {
-          this.remaining = new Date(this.lease.toDatetime * 1e3) - Date.now();
+          if (this.remaining > 0) {
+            this.remaining = new Date(this.lease.toDatetime * 1e3) - Date.now();
+          } else if (this.remaining < 0) {
+            this.remaining = 0;
+          }
         }, 1000);
       },
       immediate: true,
