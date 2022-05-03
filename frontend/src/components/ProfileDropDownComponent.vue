@@ -49,8 +49,13 @@
 
 <script>
 import storageService from "@/services/storageService";
+import { useToast } from "vue-toastification";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   name: "ProfileComponent",
   data() {
     return {
@@ -68,6 +73,9 @@ export default {
       this.$store.dispatch("RESET_NOTIFICATION");
       this.show = false;
       this.$router.push({ path: "/" });
+      this.toast.info("Signed out", {
+        timeout: 2000,
+      });
     },
   },
   computed: {
