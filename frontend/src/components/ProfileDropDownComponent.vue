@@ -6,17 +6,8 @@
     </button>
   </div>
   <div v-if="$store.state.loggedIn">
-    <button class="profileButtons" v-if="show" key="on" @click="show = false">
+    <button class="profileButtons" key="on" @click="show = !show">
       <font-awesome-icon icon="user" />
-    </button>
-    <button
-      id="profileOpenButton"
-      class="profileButtons"
-      v-else
-      key="off"
-      @click="show = true"
-    >
-      <font-awesome-icon icon="user" class="test" />
     </button>
     <transition name="bounce">
       <div class="dropdownMenu" v-if="show">
