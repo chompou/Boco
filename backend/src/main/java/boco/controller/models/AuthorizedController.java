@@ -86,10 +86,10 @@ public class AuthorizedController {
     }
 
     @PostMapping("/lease/review")
-    public ResponseEntity<LeaseResponse> createLeaseReview(@RequestBody ReviewLeaseRequest reviewLeaseRequest,
+    public ResponseEntity<LeaseResponse> createLeaseReview(@RequestBody ReviewRequest reviewRequest,
                                                            @RequestParam(name = "review_type") String reviewType,
                                                            @RequestHeader(name="Authorization") String token) {
-        return leaseService.createLeaseReview(reviewLeaseRequest, reviewType, token);
+        return leaseService.createLeaseReview(reviewRequest, reviewType, token);
     }
 
     @PostMapping("/lease")

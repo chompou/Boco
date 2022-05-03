@@ -176,7 +176,7 @@ public class LeaseService {
         }
     }
 
-    public ResponseEntity<LeaseResponse> createLeaseReview(ReviewLeaseRequest request, String reviewType, String token) {
+    public ResponseEntity<LeaseResponse> createLeaseReview(ReviewRequest request, String reviewType, String token) {
         String username = jwtUtil.extractUsername(token.substring(7));
         Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
