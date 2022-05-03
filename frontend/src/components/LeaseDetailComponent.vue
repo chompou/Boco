@@ -29,7 +29,6 @@
           <h4>To: &emsp;&nbsp;{{ toDate }}</h4>
           <h4>Duration: {{ displayDuration }} {{ item.priceType }}(s)</h4>
           <h4>Remaining: {{ displayRemaining }}</h4>
-          <p>{{ buttons }}</p>
         </div>
       </div>
 
@@ -44,7 +43,13 @@
           <button class="boco-btn">Cancel</button>
         </div>
 
-        <div class="lease-button-container" v-if="buttons == 'remove'"></div>
+        <div class="lease-button-container" v-if="buttons == 'remove'">
+          <button class="boco-btn">Remove</button>
+        </div>
+
+        <div class="lease-button-container" v-if="buttons == 'complete'">
+          <button class="boco-btn">Complete</button>
+        </div>
       </div>
     </div>
   </div>
@@ -74,7 +79,7 @@ export default {
 
       if (this.$store.state.loggedInUser == this.lease.ownerId) {
         switch (status) {
-          case "Pending":
+          case "Pending Approval":
             return "accept";
           case "Upcoming":
             return "cancel";
@@ -89,7 +94,7 @@ export default {
         }
       } else {
         switch (status) {
-          case "Pending":
+          case "Pending Approval":
           case "Upcoming":
             return "cancel";
           default:
