@@ -114,7 +114,7 @@ public class LeaseService {
             }
             Lease lease = leaseData.get();
 
-            if (lease.isCompleted()) {
+            if (lease.getIsCompleted()) {
                 logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
@@ -165,8 +165,8 @@ public class LeaseService {
 
 
             // Setting the new data
-            lease.setApproved(updateLeaseRequest.getIsApproved());
-            lease.setCompleted(updateLeaseRequest.getIsCompleted());
+            lease.setIsApproved(updateLeaseRequest.getIsApproved());
+            lease.setIsCompleted(updateLeaseRequest.getIsCompleted());
 
             Lease savedLease = leaseRepository.save(lease);
             logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
