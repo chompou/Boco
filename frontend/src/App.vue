@@ -5,8 +5,14 @@
       <router-link to="/">
         <img id="logo" src="@/assets/mainLogo.png" alt="logo"
       /></router-link>
-      <NotificationComponent v-if="$store.state.loggedIn" />
-      <ProfileDropDownComponent />
+      <div class="gridContainer">
+        <div>
+          <NotificationComponent v-if="$store.state.loggedIn" />
+        </div>
+        <div>
+          <ProfileDropDownComponent />
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -37,9 +43,9 @@ import HeaderComponent from "@/components/HeaderComponent";
 import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
-    NotificationComponent,
     HeaderComponent,
     ProfileDropDownComponent,
+    NotificationComponent,
   },
   methods: {},
 };
@@ -109,6 +115,13 @@ a {
 }
 
 /* FOOTER style END */
+
+/* Profile icon and notification*/
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px;
+}
 
 #log-out-button {
   background: none;
