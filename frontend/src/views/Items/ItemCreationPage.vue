@@ -141,7 +141,9 @@
       </div>
       <div id="CreateButtons" class="element">
         <button class="CreateButton" v-on:click="submit">Create</button>
-        <button id="Delete" class="CreateButton">Delete</button>
+        <button id="Delete" class="CreateButton" v-on:click="dismiss">
+          Delete
+        </button>
       </div>
     </div>
   </div>
@@ -171,6 +173,11 @@ export default {
     };
   },
   methods: {
+    dismiss() {
+      this.toast.error("Listing was discarded", {
+        timeout: 2000,
+      });
+    },
     previewImage: function (event) {
       let input = event.target;
       if (input.files) {
@@ -207,6 +214,10 @@ export default {
       apiService.createItem(this.formData).catch((error) => {
         console.log(error);
       });
+      this.toast.success("Item was successfully created", {
+        timeout: 2000,
+      });
+      this.$router.push("/my/items");
     },
   },
   computed: {
