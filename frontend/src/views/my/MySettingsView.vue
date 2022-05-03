@@ -10,7 +10,7 @@
         <input type="email" :value="profile.email" />
 
         <label> Address </label>
-        <input :value="profile.address" />
+        <input v-model="profile.address" />
 
         <label> Telephone </label>
         <input :value="profile.tlf" />
@@ -28,43 +28,15 @@
       <div>
         <h3>Your location</h3>
         <div>
-          <ol-map
-            :loadTilesWhileAnimating="true"
-            :loadTilesWhileInteracting="true"
-            style="height: 400px"
+          <GMapMap
+            :center="{ lat: position.lat, lng: position.lng }"
+            :zoom="9"
+            map-type-id="terrain"
+            style="width: 600px; height: 400px"
           >
-            <ol-view
-              ref="view"
-              :center="center"
-              :rotation="rotation"
-              :zoom="zoom"
-              :projection="projection"
-            />
-
-            <ol-tile-layer>
-              <ol-source-osm />
-            </ol-tile-layer>
-
-            <ol-vector-layer>
-              <ol-source-vector :projection="projection">
-                <ol-interaction-draw
-                  v-if="draw"
-                  type="Point"
-                  @drawstart="drawstart"
-                >
-                </ol-interaction-draw>
-              </ol-source-vector>
-
-              <ol-style>
-                <ol-style-stroke color="red" :width="2"></ol-style-stroke>
-                <ol-style-fill color="rgba(255,255,255,0.1)"></ol-style-fill>
-                <ol-style-circle :radius="7">
-                  <ol-style-fill color="blue"></ol-style-fill>
-                </ol-style-circle>
-              </ol-style>
-            </ol-vector-layer>
-          </ol-map>
-          <p>{{ profile.coords }}</p>
+            <GMapMarker :position="position" :clickable="true" />
+          </GMapMap>
+          <button @click="getPoint">Check your address</button>
         </div>
       </div>
     </div>
@@ -77,7 +49,7 @@
 
 <script>
 import apiService from "@/services/apiService";
-import { ref } from "vue";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -88,29 +60,26 @@ export default {
         tlf: null,
         description: null,
         password: null,
-        coords: [0, 0],
       },
       newPass: null,
       confirmPass: null,
-      draw: true,
-    };
-  },
-  setup() {
-    const center = ref([40, 40]);
-    const projection = ref("EPSG:4326");
-    const zoom = ref(8);
-    const rotation = ref(0);
-    const drawType = ref("Point");
-
-    return {
-      center,
-      projection,
-      zoom,
-      rotation,
-      drawType,
+      position: {
+        lat: 63.3,
+        lng: 10,
+      },
     };
   },
   methods: {
+    async getPoint() {
+      console.log(this.profile.address);
+      const { data } = await axios.get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          this.profile.address +
+          "&key=AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4"
+      );
+      this.position.lat = data.results[0].geometry.location.lat;
+      this.position.lng = data.results[0].geometry.location.lng;
+    },
     fetchProfile() {
       apiService
         .getProfile(this.$store.state.loggedInUser)
@@ -128,18 +97,7 @@ export default {
         .updateMyProfile(this.profile)
         .catch((error) => console.log(error));
     },
-
-    onReset() {
-      this.fetchProfile();
-      this.oldPass = this.newPass = this.confirmPass = null;
-    },
-    drawstart(event) {
-      this.draw = false;
-      console.log(event.target.sketchCoords_);
-      this.profile.coords = event.target.sketchCoords_;
-    },
   },
-
   created() {
     this.fetchProfile();
   },
