@@ -1,5 +1,6 @@
 package boco.service.rental;
 
+import boco.component.Haversine;
 import boco.models.http.*;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
@@ -86,12 +87,15 @@ public class ListingService {
 
         //TODO Validate sort name
         String sortBy = sort.split(":")[0];
+        String sortDir = sort.split(":")[1];
+
+
+        System.out.println("Sort by " + sortBy + ", order: " + sortDir);
         if (sortBy.equals("distance")){
             distanceSort = true;
             sortBy = "id";
         }
 
-        String sortDir = sort.split(":")[1];
 
         List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
 
@@ -107,11 +111,23 @@ public class ListingService {
 
 
         if (distanceSort){
+            System.out.println("Test");
+            double lat1 = Double.valueOf(location.split(":")[0]);
+            double long1 = Double.valueOf(location.split(":")[1]);
+            double lat2;
+            double long2;
+
             List<ListingResponse> responses = new ArrayList<>();
             for (Listing listing: listings) {
 
+                lat2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                long2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                double distance = Haversine.distance(lat1, long1, lat2, long2);
+                responses.add(new ListingResponse(listing, distance));
+                System.out.println(distance);
             }
-            //Comparator<Listing> distanceComp = (l1, l2) -> Have
+            Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
+            Collections.sort(responses, distanceComp);
         }
 
 
