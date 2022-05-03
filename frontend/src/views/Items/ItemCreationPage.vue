@@ -4,7 +4,7 @@
     <div class="col-md-5">
       <form>
         <div class="form-group">
-          <label for="my-file">Select Image</label>
+          <h5 for="my-file">Select Image</h5>
           <input
             type="file"
             accept="image/*"
@@ -26,7 +26,7 @@
     </div>
     <div id="inputFields">
       <div class="ItemId">
-        <p id="ItemNameHeader">Title:</p>
+        <h5 id="ItemNameHeader">Title:</h5>
         <input
           class="baseInput"
           v-model="this.title"
@@ -35,7 +35,7 @@
         />
       </div>
       <div class="ItemId">
-        <p>Address:</p>
+        <h5>Address:</h5>
         <input
           class="baseInput"
           v-model="this.address"
@@ -44,7 +44,7 @@
         />
       </div>
       <div class="ItemId">
-        <p>price:</p>
+        <h5>Price:</h5>
         <div id="pricePicker">
           <input
             v-model="price"
@@ -61,7 +61,8 @@
           </select>
         </div>
       </div>
-      <form class="checkboxItem">
+      <h5>Categories (Multi-select):</h5>
+      <form class="checkBoxForm">
         <div class="checkboxItem">
           <input
             type="checkbox"
@@ -149,7 +150,7 @@
         </div>
       </form>
       <div id="descriptionField">
-        <p>Description</p>
+        <h5>Description</h5>
         <textarea
           v-model="this.description"
           placeholder="Description"
@@ -253,6 +254,19 @@ export default {
   align-items: center;
 }
 
+.checkBoxForm {
+  display: inline-grid;
+  grid-template-rows: repeat(5, min-content);
+  grid-template-columns: repeat(2, min-content);
+  margin: 10px;
+}
+
+.checkboxItem {
+  width: 200px;
+  display: flex;
+  align-items: center;
+}
+
 .col-md-5 {
   width: 400px;
 }
@@ -315,13 +329,6 @@ select {
 #pricePicker {
   display: flex;
   align-items: center;
-}
-
-.checkboxItem {
-  display: grid;
-  grid-template-rows: repeat(5, min-content);
-  grid-template-columns: repeat(2, 1fr);
-  border: 1px solid var(--button-color);
 }
 
 .CreateButton {
