@@ -90,7 +90,6 @@ public class ListingService {
         String sortDir = sort.split(":")[1];
 
 
-        System.out.println("Sort by " + sortBy + ", order: " + sortDir);
         if (sortBy.equals("distance")){
             distanceSort = true;
             sortBy = "id";
@@ -111,7 +110,6 @@ public class ListingService {
 
 
         if (distanceSort){
-            System.out.println("Test");
             double lat1 = Double.valueOf(location.split(":")[0]);
             double long1 = Double.valueOf(location.split(":")[1]);
             double lat2;
