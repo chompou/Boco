@@ -1,10 +1,10 @@
 package boco.service.security;
 
 import boco.component.BocoHasher;
-import boco.models.profile.Profile;
-import boco.models.security.LoginRequest;
-import boco.models.security.LoginResponse;
-import boco.models.security.ProfileDetails;
+import boco.model.profile.Profile;
+import boco.model.security.LoginRequest;
+import boco.model.security.LoginResponse;
+import boco.model.security.ProfileDetails;
 import boco.service.profile.ProfileService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,19 +1,14 @@
 package boco.service.security;
 
-import boco.models.profile.Profile;
-import boco.models.security.ProfileDetails;
-import io.jsonwebtoken.Claims;
+import boco.model.profile.Profile;
+import boco.model.security.ProfileDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 

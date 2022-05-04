@@ -1,13 +1,15 @@
 package boco.service.profile;
 
 import boco.component.BocoHasher;
-import boco.models.http.*;
-import boco.models.profile.Personal;
-import boco.models.profile.Professional;
-import boco.models.profile.Profile;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.profile.*;
+import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ReviewResponse;
+import boco.model.profile.Personal;
+import boco.model.profile.Professional;
+import boco.model.profile.Profile;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
+import boco.model.rental.Review;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
@@ -129,14 +131,14 @@ public class ProfileService {
             if (profileRequest.getIsPersonal()) {
                 Personal p = new Personal(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
-                        profileRequest.getAddress(), profileRequest.getTlf());
+                        profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Personal savedProfile = personalRepository.save(p);
                 logger.debug("Personal profile was saved: " + p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
                 Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
-                        profileRequest.getAddress(), profileRequest.getTlf());
+                        profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Professional savedProfile = professionalRepository.save(p);
                 logger.debug("Professional profile was saved: " + p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
@@ -261,7 +263,7 @@ public class ProfileService {
 
         List<Listing> listings = listingRepository.getListingsByProfile(profileData.get());
         for (int i =0; i<listings.size(); i++){
-            listings.get(i).setActive(false);
+            listings.get(i).setIsActive(false);
             listingRepository.save(listings.get(i));
         }
 

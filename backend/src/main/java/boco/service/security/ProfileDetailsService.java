@@ -1,7 +1,7 @@
 package boco.service.security;
 
-import boco.models.profile.Profile;
-import boco.models.security.ProfileDetails;
+import boco.model.profile.Profile;
+import boco.model.security.ProfileDetails;
 import boco.repository.profile.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

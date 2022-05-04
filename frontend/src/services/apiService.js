@@ -25,7 +25,7 @@ export default {
   },
 
   updateItem(item) {
-    return apiClient.put("my/listing", item);
+    return apiClient.put("/my/listing", item);
   },
 
   deleteItem(listingId) {

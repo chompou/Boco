@@ -1,10 +1,10 @@
 package boco.service.rental;
 
-import boco.models.http.ReviewResponse;
-import boco.models.profile.Personal;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.rental.ReviewResponse;
+import boco.model.profile.Personal;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
+import boco.model.rental.Review;
 import boco.repository.rental.ReviewRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,13 +31,13 @@ class ReviewServiceTest {
     @BeforeEach
     public void setup() {
         Personal p1 = new Personal("emilgl", "gluckemil@gmail.com", "Test",
-                "Emil", "letmepass","Baerum", "12345678");
+                "Emil", "letmepass","Baerum", "4:5", "12345678");
         p1.setId(1L);
         Personal p2 = new Personal("olavdei", "olav@gmail.com", "Test1",
-                "Olav", "letmepass","Baerum", "12345677");
+                "Olav", "letmepass","Baerum", "3:3", "12345677");
         p2.setId(2L);
 
-        Listing listing = new Listing("listing", "x", "Adr", true, true, 4.4, "Day", p1);
+        Listing listing = new Listing("listing", "x", true, 4.4, "Day", p1);
 
 
         Lease lease = new Lease(1L, true, null, null, true, null, null, null, p2, listing, p1);

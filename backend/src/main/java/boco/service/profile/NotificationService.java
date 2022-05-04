@@ -1,10 +1,10 @@
 package boco.service.profile;
 
 import boco.component.BocoSocket;
-import boco.models.http.MyNotificationsResponse;
-import boco.models.http.NotificationResponse;
-import boco.models.profile.Notification;
-import boco.models.rental.Lease;
+import boco.model.http.notification.MyNotificationsResponse;
+import boco.model.http.notification.NotificationResponse;
+import boco.model.profile.Notification;
+import boco.model.rental.Lease;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;

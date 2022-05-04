@@ -14,7 +14,7 @@
           <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
-              class="boco-btn"
+              class="editButtons boco-btn"
               :class="[active ? 'green' : 'red']"
               @click="toggle"
               id="status-btn"
@@ -115,7 +115,7 @@ export default {
     toggle() {
       this.active = !this.active;
       apiService
-        .updateItem({ ...this.item, active: this.active })
+        .updateItem({ ...this.item, isActive: this.active })
         .catch((error) => {
           console.log(error);
         });
@@ -180,7 +180,7 @@ export default {
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
-        this.active = this.item.active;
+        this.active = this.item.isActive;
         setTimeout(() => {
           let image = this.item.image;
           this.imgSource = "data:image/jpeg;base64, " + image;

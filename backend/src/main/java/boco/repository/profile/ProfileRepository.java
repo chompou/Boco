@@ -1,6 +1,6 @@
 package boco.repository.profile;
 
-import boco.models.profile.Profile;
+import boco.model.profile.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

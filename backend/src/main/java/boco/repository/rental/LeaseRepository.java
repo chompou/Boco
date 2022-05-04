@@ -1,7 +1,7 @@
 package boco.repository.rental;
 
-import boco.models.profile.Profile;
-import boco.models.rental.Lease;
+import boco.model.profile.Profile;
+import boco.model.rental.Lease;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
