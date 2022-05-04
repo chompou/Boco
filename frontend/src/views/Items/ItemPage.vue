@@ -217,6 +217,9 @@ export default {
 .red {
   background-color: red;
 }
+.red:hover {
+  background-color: #ac0000;
+}
 
 .container {
   margin-top: 20px;
