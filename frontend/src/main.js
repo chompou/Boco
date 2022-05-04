@@ -9,29 +9,29 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import VueGoogleMaps from "@fawmi/vue-google-maps";
-import "nprogress/nprogress.css";
 import {
   faRightToBracket,
   faUser,
   faSignOutAlt,
   faPlus,
-  faHouse,
   faInfo,
-  faBasketball,
-  faCampground,
-  faGraduationCap,
-  faCouch,
-  faBolt,
-  faAnglesLeft,
   faShirt,
-  faGuitar,
-  faCar,
-  faWrench,
   faUmbrella,
   faLemon,
   faChildren,
   faToiletPaper,
   faBell,
+  /**ICONS main categories*/
+  faWrench,
+  faPlug,
+  faPalette,
+  faGuitar,
+  faCar,
+  faBasketball,
+  faCampground,
+  faCouch,
+  faGraduationCap,
+  faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -40,23 +40,24 @@ library.add(
   faUser,
   faSignOutAlt,
   faPlus,
-  faHouse,
   faInfo,
-  faBasketball,
-  faCampground,
-  faGraduationCap,
-  faBolt,
-  faAnglesLeft,
-  faCouch,
   faShirt,
-  faGuitar,
-  faCar,
-  faWrench,
   faUmbrella,
   faLemon,
   faChildren,
   faToiletPaper,
-  faBell
+  faBell,
+  /**ICONS main categories*/
+  faWrench,
+  faPlug,
+  faPalette,
+  faGuitar,
+  faCar,
+  faBasketball,
+  faCampground,
+  faCouch,
+  faGraduationCap,
+  faHouse
 );
 
 const app = createApp(App);
