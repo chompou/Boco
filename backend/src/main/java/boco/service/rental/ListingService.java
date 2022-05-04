@@ -7,6 +7,7 @@ import boco.models.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ImageRepository;
+import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
 import boco.service.security.JwtUtil;
@@ -293,6 +294,19 @@ public class ListingService {
         }
     }
 
+    public void deleteListing(Listing listing) {
+        try {
+            Optional<Listing> listingData = listingRepository.findById(listing.getId());
+            Optional<Listing> emptyListing = listingRepository.findById(1L);
+            if (!emptyListing.isPresent()){
+                return;
+            }
+            setListingWhenDeleted(listing.getId(), emptyListing.get());
+            listingRepository.deleteById(listing.getId());
+        } catch (Exception ignored) {
+        }
+    }
+
     public void setListingWhenDeleted(Long listingId, Listing emptyListing){
         List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
 
@@ -310,7 +324,6 @@ public class ListingService {
         }
         imageRepository.saveAll(images);
     }
-
 
     public static List<ListingResponse> convertListings(List<Listing> listings){
         List<ListingResponse> listingResponses = new ArrayList<>();
