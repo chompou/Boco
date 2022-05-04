@@ -6,7 +6,7 @@
         <div class="priceHolder" v-if="collapsed === false">
           <p>From:</p>
           <input
-            v-model="filters.priceFrom"
+            v-model="priceFrom"
             placeholder="0"
             class="price"
             type="number"
@@ -14,7 +14,7 @@
           />
           <p>To:</p>
           <input
-            v-model="filters.priceTo"
+            v-model="priceTo"
             placeholder="0"
             class="price"
             type="number"
@@ -32,7 +32,7 @@
               name="options"
               id="option1"
               autocomplete="off"
-              v-model="filters.leaseType"
+              v-model="leaseType"
               checked
             />
             <label class="btn btn-secondary" for="option1">Hour</label>
@@ -42,7 +42,7 @@
               class="btn-check"
               name="options"
               id="option2"
-              v-model="filters.leaseType"
+              v-model="leaseType"
               autocomplete="off"
             />
             <label class="btn btn-secondary" for="option2">Day</label>
@@ -52,7 +52,7 @@
               class="btn-check"
               name="options"
               id="option3"
-              v-model="filters.leaseType"
+              v-model="leaseType"
               autocomplete="off"
             />
             <label class="btn btn-secondary" for="option3">Week</label>
@@ -65,7 +65,7 @@
           <div v-if="collapsed === false">
             <input
               class="baseInput"
-              v-model="filters.search"
+              v-model="search"
               placeholder="Search"
               id="ItemName"
             />
@@ -138,15 +138,18 @@ export default {
   setup() {
     return { collapsed, toggleSidebar, sidebarWidth };
   },
-
   methods: {
-    onSubmit() {
-      this.$router.push(
-        "/items?" + new URLSearchParams(this.filters).toString()
-      );
+    filter() {
+      if (this.leaseType === "Day") {
+        this.filters.priceFrom = this.priceFrom / 24;
+        this.filters.priceTo = this.priceTo / 24;
+      }
+      if (this.leaseType === "Week") {
+        this.filters.priceFrom = this.priceFrom / (24 * 7);
+        this.filters.priceTo = this.priceTo / (24 * 7);
+      }
     },
   },
-
   created() {
     apiService
       .getCategories()
