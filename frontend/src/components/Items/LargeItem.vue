@@ -102,7 +102,7 @@ p {
 #About1 {
   margin-left: 30px;
   text-align: left;
-  width: 200px;
+  width: 250px;
 }
 
 #About2 {
