@@ -92,6 +92,7 @@ public class LeaseService {
                     profile, listing, owner);
             Lease savedLease = leaseRepository.save(newLease);
 
+
             return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -169,8 +170,12 @@ public class LeaseService {
 
 
             // Setting the new data
-            lease.setIsApproved(updateLeaseRequest.getIsApproved());
-            lease.setIsCompleted(updateLeaseRequest.getIsCompleted());
+            if (updateLeaseRequest.getIsApproved() != null){
+                lease.setIsApproved(updateLeaseRequest.getIsApproved());
+            }
+            if (updateLeaseRequest.getIsCompleted() != null){
+                lease.setIsCompleted(updateLeaseRequest.getIsCompleted());
+            }
 
             Lease savedLease = leaseRepository.save(lease);
             logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
