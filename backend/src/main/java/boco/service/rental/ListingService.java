@@ -226,10 +226,10 @@ public class ListingService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getListingId());
+        Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getId());
 
         if (!listingData.isPresent()) {
-            logger.debug("listingId=" + updateListingRequest.getListingId() + " was not found.");
+            logger.debug("listingId=" + updateListingRequest.getId() + " was not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -249,7 +249,7 @@ public class ListingService {
         listing.setPriceType(updateListingRequest.getPriceType());
 
         Listing savedListing = listingRepository.save(listing);
-        logger.debug("listingId=" + updateListingRequest.getListingId() + " was updated to:\n" + savedListing);
+        logger.debug("listingId=" + updateListingRequest.getId() + " was updated to:\n" + savedListing);
         return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
