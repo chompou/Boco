@@ -113,9 +113,9 @@ public class ListingService {
         if (distanceSort){
             double lat1 = Double.valueOf(location.split(":")[0]);
             double long1 = Double.valueOf(location.split(":")[1]);
+
             double lat2;
             double long2;
-
             List<ListingResponse> responses = new ArrayList<>();
             for (Listing listing: listings) {
 
@@ -140,7 +140,7 @@ public class ListingService {
 
 
     /**
-     * gets the reviews of an listing given by Id.
+     * gets the reviews of a listing given by Id.
      * @param listingId The id of the listing.
      * @param perPage The number of reviews to be returned.
      * @param page The page number to be returned
