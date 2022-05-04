@@ -54,7 +54,7 @@
             min="0"
           />
           <label id="valuta">kr/</label>
-          <select v-model="this.leaseType">
+          <select v-model="leaseType">
             <option>Hour</option>
             <option>Day</option>
             <option>Week</option>
@@ -162,6 +162,7 @@
 <script>
 import { useToast } from "vue-toastification";
 import apiService from "@/services/apiService";
+import priceService from "@/services/priceService";
 
 export default {
   setup() {
@@ -201,6 +202,8 @@ export default {
       }
     },
     submit() {
+      let standardPrice = priceService.parsePrice(this.price, this.leaseType);
+
       console.log(this.image);
       console.log(this.leaseType);
       this.formData.append(
@@ -211,7 +214,7 @@ export default {
               name: this.title,
               address: this.address,
               description: this.description,
-              price: this.leasePrice,
+              price: standardPrice,
               priceType: this.leaseType,
               categoryNames: this.category,
             }),

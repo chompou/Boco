@@ -34,6 +34,10 @@ export default {
     return Math.ceil((new Date(toTime) - new Date(fromTime)) / 36e5);
   },
 
+  parsePrice(price, priceType) {
+    return normalize(price, priceType);
+  },
+
   displayPrice(item) {
     return formatter.format(scale(item.price, item.priceType));
   },
