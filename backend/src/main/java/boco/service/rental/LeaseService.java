@@ -64,6 +64,7 @@ public class LeaseService {
             }
             return new ResponseEntity<>(convertLease(leases), HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -78,9 +79,9 @@ public class LeaseService {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            Optional<Listing> listingData = listingRepository.findById(leaseRequest.getListingId());
+            Optional<Listing> listingData = listingRepository.findById(leaseRequest.getId());
             if (!listingData.isPresent()) {
-                logger.debug("listingId=" + leaseRequest.getListingId() + " was not found");
+                logger.debug("listingId=" + leaseRequest.getId() + " was not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
@@ -94,6 +95,7 @@ public class LeaseService {
 
             return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.CREATED);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -139,6 +141,7 @@ public class LeaseService {
             leaseRepository.deleteById(leaseId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -176,6 +179,7 @@ public class LeaseService {
             logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
             return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -105,7 +105,8 @@ public class TempUserAddV2 {
                         .description("This user does not exist")
                         .displayName("Deleted User")
                         .passwordHash("donothashthispassword")
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("")
                         .isVerified(false)
                         .ratingAsLeasee(0d)
@@ -120,7 +121,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Emil")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -134,7 +136,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Olav")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("48329432")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -148,7 +151,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Ask")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("13718237")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -162,7 +166,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Elias")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("94729333")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -176,7 +181,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Tobias")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("87234823")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -190,7 +196,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Fanuel")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12777777")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -204,7 +211,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Jon Martin")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -218,7 +226,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Sindre")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -232,7 +241,8 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Oyvind")
                         .passwordHash(letmepassHash)
-                        .address(faker.address().latitude() + ":" + faker.address().longitude())
+                        .address(faker.address().fullAddress())
+                        .location(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingAsLeasee((double) faker.random().nextInt(0, 5))
@@ -268,7 +278,8 @@ public class TempUserAddV2 {
                     Name name = faker.name();
                     var np = Personal.builder()
                             .username(name.username())
-                            .address(faker.address().latitude() + ":" + faker.address().longitude())
+                            .address(faker.address().fullAddress())
+                            .location(faker.address().latitude() + ":" + faker.address().longitude())
                             .deactivated(null)
                             .description(faker.lorem().characters(10))
                             .displayName(name.fullName())
@@ -306,6 +317,16 @@ public class TempUserAddV2 {
                     }
                     ArrayList<Image> images = new ArrayList<>();
 
+                    int rand = faker.random().nextInt(0, 2);
+                    String priceType;
+                    if (rand == 0){
+                        priceType = "Hour";
+                    } else if (rand == 1){
+                        priceType = "Day";
+                    } else{
+                        priceType = "Week";
+                    }
+
                     var l = Listing.builder()
                             .name(name)
                             .price((double) faker.random().nextInt(10, 10000))
@@ -313,7 +334,7 @@ public class TempUserAddV2 {
                             .profile(profileList.get(faker.random().nextInt(1, totalProfiles - 1)))
                             .isActive(true)
                             .lastChanged(null)
-                            .priceType("Week")
+                            .priceType(priceType)
                             .images(null) // images
                             .categoryTypes(List.of(categoryList.get(faker.random().nextInt(0, categoryList.size()-1))))
                             .build();
@@ -330,9 +351,10 @@ public class TempUserAddV2 {
 
                 // Making leases
                 for (int i = 0; i < leases; i++) {
-                    long fromDate = 1651478864 + faker.random().nextInt(10000, 100000);
-                    long toDate = fromDate + faker.random().nextInt(10, 10000);
+                    long fromDate = 1651478864L*1000L + faker.random().nextInt(10000, 100000);
+                    long toDate = fromDate + faker.random().nextInt(10, 10000)*1000L;
                     Listing listing = listingList.get(faker.random().nextInt(0, listings - 1));
+
 
                     var l = Lease.builder()
                             .fromDatetime(fromDate)

@@ -11,5 +11,5 @@ public class UpdateListingRequest {
     private Double price;
     private String priceType;
 
-    private Long listingId;
+    private Long id;
 }
