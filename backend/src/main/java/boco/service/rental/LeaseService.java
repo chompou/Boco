@@ -214,6 +214,9 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setOwnerReview(newReview);
             savedLease = leaseRepository.save(lease);
+            Profile owner = lease.getOwner();
+            owner.setRatingAsOwner(reviewRepository.getOwnerRating(owner.getId()));
+            profileRepository.save(owner);
 
 
         } else if (reviewType.equals("leasee")) {
@@ -224,6 +227,9 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setLeaseeReview(newReview);
             savedLease = leaseRepository.save(lease);
+            Profile leasee = lease.getProfile();
+            leasee.setRatingAsLeasee(reviewRepository.getLeaseeRating(leasee.getId()));
+            profileRepository.save(leasee);
 
         } else if (reviewType.equals("item")) {
             if (profile.getId() != lease.getProfile().getId()) {
@@ -233,6 +239,12 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setItemReview(newReview);
             savedLease = leaseRepository.save(lease);
+            Listing listing = lease.getListing();
+            listing.setRating(reviewRepository.getItemRating(listing.getId()));
+            listingRepository.save(listing);
+            Profile owner = lease.getOwner();
+            owner.setRatingListing(reviewRepository.getAverageItemRatingForProfile(owner.getId()));
+            profileRepository.save(owner);
 
         } else {
             logger.debug("reviewType=" + reviewType + " does not match owner/leasee/item");

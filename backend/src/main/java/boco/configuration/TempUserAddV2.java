@@ -368,6 +368,13 @@ public class TempUserAddV2 {
                     }
                 }
 
+                for (Profile p12:profileRepository.findAll()) {
+                    p12.setRatingAsOwner(reviewRepository.getOwnerRating(p12.getId()));
+                    p12.setRatingAsLeasee(reviewRepository.getLeaseeRating(p12.getId()));
+                    p12.setRatingListing(reviewRepository.getAverageItemRatingForProfile(p12.getId()));
+                    profileRepository.save(p12);
+
+                }
 
                 // Making notifications
                 int numberOfReadAndUnreadNotifications = 10;
