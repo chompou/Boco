@@ -99,7 +99,7 @@ class LeaseServiceTest {
         Lease le6 = new Lease(
                 Timestamp.valueOf("2025-07-01 10:00:00").getTime(),
                 Timestamp.valueOf("2025-12-01 10:00:00").getTime(),
-                p4, li3, p3);
+                p3, li3, p4);
         le6.setId(6L);
         le6.setIsCompleted(true);
         // Lease with start date less than 24 hours before now
@@ -107,7 +107,7 @@ class LeaseServiceTest {
         long fromDate = date.getTime() + (3600*1000*3);
         long toDate = date.getTime() + (3600*1000*10);
         Lease le7 = new Lease(fromDate, toDate,
-                p4, li3, p3);
+                p3, li3, p4);
         le7.setId(7L);
 
 
