@@ -1,7 +1,12 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img id="image3" alt="Vue logo" :src="imgSource" />
+      <img
+        v-if="imgSource === null"
+        alt="Vue logo"
+        src="@/assets/default.png"
+      />
+      <img v-else id="image" alt="Vue logo" :src="imgSource" />
       <div id="texts">
         <div id="About11">
           <div id="About1">

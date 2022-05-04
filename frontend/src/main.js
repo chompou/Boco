@@ -9,6 +9,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import VueGoogleMaps from "@fawmi/vue-google-maps";
+import "nprogress/nprogress.css";
 import {
   faRightToBracket,
   faUser,
