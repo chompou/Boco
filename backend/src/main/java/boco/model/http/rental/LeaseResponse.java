@@ -1,4 +1,4 @@
-package boco.model.http;
+package boco.model.http.rental;
 
 import boco.model.rental.Lease;
 import lombok.Getter;

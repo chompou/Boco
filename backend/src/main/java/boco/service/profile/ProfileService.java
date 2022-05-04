@@ -1,7 +1,9 @@
 package boco.service.profile;
 
 import boco.component.BocoHasher;
-import boco.model.http.*;
+import boco.model.http.profile.*;
+import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ReviewResponse;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
 import boco.model.profile.Profile;
@@ -261,7 +263,7 @@ public class ProfileService {
 
         List<Listing> listings = listingRepository.getListingsByProfile(profileData.get());
         for (int i =0; i<listings.size(); i++){
-            listings.get(i).setActive(false);
+            listings.get(i).setIsActive(false);
             listingRepository.save(listings.get(i));
         }
 

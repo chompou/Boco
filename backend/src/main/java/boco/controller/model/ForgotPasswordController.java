@@ -1,6 +1,6 @@
 package boco.controller.model;
 
-import boco.model.http.UpdatePasswordRequest;
+import boco.model.http.profile.UpdatePasswordRequest;
 import boco.model.profile.Profile;
 import boco.service.profile.ProfileService;
 import boco.service.profile.EmailService;

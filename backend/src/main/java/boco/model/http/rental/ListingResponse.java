@@ -1,4 +1,4 @@
-package boco.model.http;
+package boco.model.http.rental;
 
 import boco.model.rental.CategoryType;
 import boco.model.rental.Listing;
@@ -37,10 +37,14 @@ public class ListingResponse {
         this.price = listing.getPrice();
         this.priceType = listing.getPriceType();
         this.lastChanged = listing.getLastChanged();
-        this.rating = listing.getRating();
+        if (listing.getRating() != null){
+            this.rating = listing.getRating();
+        }else{
+            this.rating = -1.0;
+        }
         this.categoryTypes = listing.getCategoryTypes();
         this.profileId = listing.getProfile().getId();
-        this.distance = null;
+        this.distance = -1.0;
         try {
             if (listing.getImages().size() != 0) {
                 this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());

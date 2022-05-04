@@ -1,4 +1,4 @@
-package boco.model.http;
+package boco.model.http.profile;
 
 import boco.model.profile.Profile;
 import lombok.Getter;
@@ -15,11 +15,11 @@ import java.sql.Timestamp;
 @Getter @Setter @NoArgsConstructor
 public class PublicProfileResponse {
     private Long id;
-    private String email; // EMAIL ?
+    private String email;
     private String description;
     private String displayName;
     private Boolean isVerified;
-    private String tlf; // TLF ?
+    private String tlf;
     private Timestamp deactivated;
 
     public PublicProfileResponse(Profile profile) {

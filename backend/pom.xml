@@ -124,7 +124,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/configuration/**</exclude>
-                        <exclude>**/models/**</exclude>
+                        <exclude>**/model/**</exclude>
                         <exclude>**/repository/**</exclude>
                     </excludes>
                 </configuration>

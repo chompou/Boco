@@ -1,8 +1,8 @@
 package boco.service.rental;
 
-import boco.model.http.ListingRequest;
-import boco.model.http.ListingResponse;
-import boco.model.http.ReviewResponse;
+import boco.model.http.rental.ListingRequest;
+import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ReviewResponse;
 import boco.model.profile.Personal;
 import boco.model.profile.Profile;
 import boco.model.rental.CategoryType;
@@ -61,24 +61,24 @@ class ListingServiceTest {
         Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "6:3", "12345678");
         List<Profile> profiles = new ArrayList<>(Arrays.asList(p1, p2, p3));
 
-        Listing l1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);
-        Listing l2 = new Listing("parking lot", "parking lot", "miami", true, true, 50.0, "Month", p2);
-        Listing l3 = new Listing("penthouse", "penthouse", "ny", true, true, 150.0, "Month", p3);
+        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1);
+        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2);
+        Listing l3 = new Listing("penthouse", "penthouse", true, 150.0, "Month", p3);
         List<Listing> listings1 = new ArrayList<>(Arrays.asList(l1, l2, l3));
 
-        Listing l4 = new Listing("bench", "bench", "Bergen", true, true, 100.0, "Month", p1);
-        Listing l5 = new Listing("bulldozer", "bulldozer", "Trondheim", true, true, 50.0, "Month", p2);
-        Listing l6 = new Listing("pencil", "pencil", "Oslo", true, true, 150.0, "Month", p3);
+        Listing l4 = new Listing("bench", "bench",  true, 100.0, "Month", p1);
+        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 50.0, "Month", p2);
+        Listing l6 = new Listing("pencil", "pencil",  true, 150.0, "Month", p3);
         listings2 = new ArrayList<>(Arrays.asList(l4, l5, l6));
 
-        Listing l7 = new Listing("tree", "tree", "los", true, true, 200.0, "Month", p1);
-        Listing l8 = new Listing("bottle", "bottle", "miami", true, true, 250.0, "Month", p2);
-        Listing l9 = new Listing("phone", "phone", "ny", true, true, 300.0, "Month", p3);
+        Listing l7 = new Listing("tree", "tree",  true, 200.0, "Month", p1);
+        Listing l8 = new Listing("bottle", "bottle",  true, 250.0, "Month", p2);
+        Listing l9 = new Listing("phone", "phone",  true, 300.0, "Month", p3);
         List<Listing> listings3 = new ArrayList<>(Arrays.asList(l7, l8, l9));
 
-        Listing l10 = new Listing("cup", "cup", "los", true, true, 400.0, "Month", p1);
-        Listing l11 = new Listing("city", "city", "miami", true, true, 500.0, "Month", p2);
-        Listing l12 = new Listing("north", "north", "ny", true, true, 1500.0, "Month", p3);
+        Listing l10 = new Listing("cup", "cup",  true, 400.0, "Month", p1);
+        Listing l11 = new Listing("city", "city", true, 500.0, "Month", p2);
+        Listing l12 = new Listing("north", "north",  true, 1500.0, "Month", p3);
         List<Listing> listings4 = new ArrayList<>(Arrays.asList(l10, l11, l12));
 
         List<Listing> listings5 = Stream.of(listings1, listings2, listings3, listings4)
@@ -261,14 +261,14 @@ class ListingServiceTest {
 
     @Test
     public void createListingInvalidProfile(){
-        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 1L);
+        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", true, 50.0, "hour", null, 1L);
         ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 1");
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
     public void createListingInvalidToken(){
-        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", "On the hill", true, true, 50.0, "hour", null, 2L);
+        ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", true, 50.0, "hour", null, 2L);
         ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 2");
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }

@@ -1,4 +1,4 @@
-package boco.model.http;
+package boco.model.http.notification;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

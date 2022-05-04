@@ -1,8 +1,8 @@
 package boco.controller.model;
 
-import boco.model.http.ProfileRequest;
-import boco.model.http.PrivateProfileResponse;
-import boco.model.http.PublicProfileResponse;
+import boco.model.http.profile.ProfileRequest;
+import boco.model.http.profile.PrivateProfileResponse;
+import boco.model.http.profile.PublicProfileResponse;
 import boco.service.profile.EmailService;
 import boco.service.profile.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;

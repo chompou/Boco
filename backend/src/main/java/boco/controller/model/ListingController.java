@@ -1,6 +1,6 @@
 package boco.controller.model;
 
-import boco.model.http.ListingResponse;
+import boco.model.http.rental.ListingResponse;
 import boco.service.profile.ProfileService;
 import boco.service.rental.ListingService;
 import org.springframework.beans.factory.annotation.Autowired;

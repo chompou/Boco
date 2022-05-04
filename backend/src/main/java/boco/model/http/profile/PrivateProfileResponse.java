@@ -1,4 +1,4 @@
-package boco.model.http;
+package boco.model.http.profile;
 
 import boco.model.profile.Profile;
 import lombok.Getter;
@@ -19,8 +19,8 @@ public class PrivateProfileResponse {
     private Boolean isVerified;
     private String tlf;
     private Double ratingListing;
-    private Double ratingProfile;
-    private Double ratingGiven;
+    private Double ratingAsLease;
+    private Double ratingAsOwner;
     private Timestamp deactivated;
 
     public PrivateProfileResponse(Profile profile) {
@@ -34,8 +34,8 @@ public class PrivateProfileResponse {
         this.isVerified = profile.getIsVerified();
         this.tlf = profile.getTlf();
         this.ratingListing = profile.getRatingListing();
-        this.ratingProfile = profile.getRatingProfile();
-        this.ratingGiven = profile.getRatingGiven();
+        this.ratingAsLease = profile.getRatingAsLeasee();
+        this.ratingAsOwner = profile.getRatingAsOwner();
         this.deactivated = profile.getDeactivated();
     }
 

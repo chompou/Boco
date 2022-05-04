@@ -1,6 +1,9 @@
 package boco.controller.model;
 
-import boco.model.http.*;
+import boco.model.http.notification.NotificationReadRequest;
+import boco.model.http.profile.PrivateProfileResponse;
+import boco.model.http.profile.UpdateProfileRequest;
+import boco.model.http.rental.*;
 import boco.service.profile.NotificationService;
 import boco.service.profile.ProfileService;
 import boco.service.rental.LeaseService;

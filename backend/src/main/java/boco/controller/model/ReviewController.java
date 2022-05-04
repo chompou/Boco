@@ -1,6 +1,6 @@
 package boco.controller.model;
 
-import boco.model.http.ReviewResponse;
+import boco.model.http.rental.ReviewResponse;
 import boco.service.profile.ProfileService;
 import boco.service.rental.ListingService;
 import boco.service.rental.ReviewService;

@@ -1,7 +1,7 @@
 package boco.service.profile;
 
 import boco.component.BocoHasher;
-import boco.model.http.UpdatePasswordRequest;
+import boco.model.http.profile.UpdatePasswordRequest;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
 import boco.model.profile.Profile;

@@ -1,12 +1,14 @@
 package boco.service.rental;
 
 import boco.component.Haversine;
-import boco.model.http.*;
+import boco.model.http.rental.ListingRequest;
+import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ReviewResponse;
+import boco.model.http.rental.UpdateListingRequest;
 import boco.model.profile.Profile;
 import boco.model.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
-import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -183,7 +185,7 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest,MultipartFile multipartFile, String token) {
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
@@ -192,8 +194,7 @@ public class ListingService {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
-                    listingRequest.getAddress(), listingRequest.isAvailable(),
-                    listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
+                    listingRequest.getIsActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
             listingRepository.save(newListing);
             System.out.println(listingRequest.getCategoryNames().size());
@@ -243,9 +244,7 @@ public class ListingService {
         Listing listing = listingData.get();
         // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
-        listing.setAddress(updateListingRequest.getAddress());
-        listing.setAvailable(updateListingRequest.isAvailable());
-        listing.setActive(updateListingRequest.isActive());
+        listing.setIsActive(updateListingRequest.getIsActive());
         listing.setPrice(updateListingRequest.getPrice());
         listing.setPriceType(updateListingRequest.getPriceType());
 

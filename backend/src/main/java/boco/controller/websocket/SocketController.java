@@ -1,7 +1,7 @@
 package boco.controller.websocket;
 
 import boco.component.BocoSocket;
-import boco.model.http.MessageRequest;
+import boco.model.http.notification.MessageRequest;
 import boco.service.profile.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

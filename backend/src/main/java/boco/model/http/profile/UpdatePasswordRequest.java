@@ -1,4 +1,4 @@
-package boco.model.http;
+package boco.model.http.profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

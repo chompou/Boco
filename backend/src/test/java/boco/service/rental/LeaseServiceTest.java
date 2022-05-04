@@ -1,7 +1,7 @@
 package boco.service.rental;
 
-import boco.model.http.LeaseResponse;
-import boco.model.http.UpdateLeaseRequest;
+import boco.model.http.rental.LeaseResponse;
+import boco.model.http.rental.UpdateLeaseRequest;
 import boco.model.profile.Personal;
 import boco.model.profile.Profile;
 import boco.model.rental.Lease;
@@ -59,13 +59,13 @@ class LeaseServiceTest {
         p4.setId(4L);
         Optional<Profile> pd4 = Optional.of(p4);
 
-        Listing li1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);
+        Listing li1 = new Listing("house", "house", true, 100.0, "Month", p1);
         li1.setId(1L);
 
-        Listing li2 = new Listing("crypto", "crypto", "bitcoin", true, true, 100.0, "Month", p2);
+        Listing li2 = new Listing("crypto", "crypto", true, 100.0, "Month", p2);
         li2.setId(2L);
 
-        Listing li3 = new Listing("room", "room", "building", true, true, 1.0, "Week", p3);
+        Listing li3 = new Listing("room", "room", true, 1.0, "Week", p3);
         li3.setId(3L);
 
         Lease le1 = new Lease(
