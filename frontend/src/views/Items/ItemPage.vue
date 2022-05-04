@@ -14,19 +14,14 @@
           <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
-              v-if="item.active"
-              @click="changeStatus(false)"
-              class="editButtons boco-btn"
+              class="boco-btn"
+              :class="[active ? 'green' : 'red']"
+              @click="toggle"
+              id="status-btn"
             >
-              Active
+              {{ active ? "Active" : "Inactive" }}
             </button>
-            <button
-              v-else
-              @click="changeStatus(true)"
-              class="editButtons boco-btn"
-            >
-              Inactive
-            </button>
+
             <button @click="edit" class="editButtons boco-btn">Edit</button>
             <button class="editButtons boco-btn" @click="deleteItem">
               Delete
@@ -43,9 +38,9 @@
         <div id="About">
           <div id="About11">
             <div id="About1">
-              <h2>{{ item.name }}</h2>
+              <h1>{{ item.name }}</h1>
               <div id="category">
-                <label>Category: </label>
+                <h5>Category:</h5>
                 <label v-for="category in item.categoryTypes" :key="category"
                   >{{ category.name }},
                 </label>
@@ -66,13 +61,7 @@
       </div>
     </div>
     <div>
-      <router-link
-        id="profilebox"
-        class="link"
-        :to="{ name: 'profile', params: { id: profile.id } }"
-      >
-        <ProfileBoxComponent :profile="profile" />
-      </router-link>
+      <ProfileBoxComponent :profile="profile" />
       <ReviewComponent :reviews="reviews" />
     </div>
   </div>
@@ -86,7 +75,13 @@ import LeaseRequestComponent from "@/components/LeaseRequestComponent.vue";
 import apiService from "@/services/apiService";
 import axios from "axios";
 import priceService from "@/services/priceService";
+import { useToast } from "vue-toastification";
+
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   props: ["id"],
 
   components: {
@@ -104,6 +99,7 @@ export default {
       url: null,
       profileLoaded: false,
       imgSource: null,
+      active: null,
     };
   },
   computed: {
@@ -116,6 +112,22 @@ export default {
     },
   },
   methods: {
+    toggle() {
+      this.active = !this.active;
+      apiService
+        .updateItem({ ...this.item, isActive: this.active })
+        .catch((error) => {
+          console.log(error);
+        });
+      let toastStatus = "";
+      if (this.active) {
+        toastStatus = "Active";
+      } else toastStatus = "Inactive";
+
+      this.toast.info("Listing is now " + toastStatus, {
+        timeout: 2000,
+      });
+    },
     edit() {
       this.$router.push({ name: "editItem", params: { id: this.id } });
     },
@@ -132,6 +144,9 @@ export default {
         setTimeout(() => {
           this.$router.push({ name: "myItems" });
         }, 300);
+        this.toast.success("Item was successfully deleted", {
+          timeout: 2000,
+        });
       }
     },
     changeStatus(status) {
@@ -152,6 +167,9 @@ export default {
       setTimeout(() => {
         location.reload();
       }, 100);
+      this.toast.info("Listing is now " + status, {
+        timeout: 2000,
+      });
     },
     dataUrl() {
       return btoa(this.item.image);
@@ -162,6 +180,7 @@ export default {
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
+        this.active = this.item.isActive;
         setTimeout(() => {
           let image = this.item.image;
           this.imgSource = "data:image/jpeg;base64, " + image;
@@ -193,6 +212,14 @@ export default {
 <style scoped>
 .mainContainer {
   display: flex;
+}
+
+.green {
+  background-color: #008b8b;
+}
+
+.red {
+  background-color: red;
 }
 
 .container {

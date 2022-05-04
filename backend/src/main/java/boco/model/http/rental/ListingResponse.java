@@ -17,11 +17,11 @@ public class ListingResponse {
     private String description;
     private String address;
     private String location;
-    private boolean isActive;
-    private double price;
+    private Boolean isActive;
+    private Double price;
     private String priceType;
     private Timestamp lastChanged;
-    private double rating;
+    private Double rating;
     private List<CategoryType> categoryTypes;
     private Long profileId;
     private String image;
@@ -69,6 +69,7 @@ public class ListingResponse {
         try {
             this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
         this.distance =  distance;
