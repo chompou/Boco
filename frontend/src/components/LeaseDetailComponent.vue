@@ -118,7 +118,9 @@ export default {
     },
 
     displayPrice() {
-      return priceService.leasePrice(this.item, this.computedDuration);
+      return priceService.formattedPrice(
+        priceService.leasePrice(this.item, this.computedDuration)
+      );
     },
 
     fromDate() {

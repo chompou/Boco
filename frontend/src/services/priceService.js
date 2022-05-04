@@ -39,7 +39,11 @@ export default {
   },
 
   displayPrice(item) {
-    return formatter.format(scale(item.price, item.priceType));
+    return scale(item.price, item.priceType);
+  },
+
+  formattedPrice(value) {
+    return formatter.format(value);
   },
 
   displayDuration(hours, type) {

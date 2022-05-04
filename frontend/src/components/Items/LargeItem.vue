@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     displayPrice() {
-      return priceService.displayPrice(this.item);
+      return priceService.formattedPrice(priceService.displayPrice(this.item));
     },
 
     categoryString() {

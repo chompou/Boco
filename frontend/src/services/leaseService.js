@@ -1,10 +1,10 @@
 export default {
   fromDate(lease) {
-    return new Date(lease.fromDatetime * 1e3);
+    return new Date(lease.fromDatetime);
   },
 
   toDate(lease) {
-    return new Date(lease.toDatetime * 1e3);
+    return new Date(lease.toDatetime);
   },
 
   displayDate(date) {
