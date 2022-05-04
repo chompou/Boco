@@ -43,23 +43,23 @@ h3 {
 }
 
 img {
-  width: 240px;
-  height: 143px;
-  margin: 8px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  width: 280px;
+  height: 157px;
 }
 
 div {
-  border: 1px solid #39495c;
   border-radius: 10px;
+  background: #ececec;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 270px;
-  height: 250px;
+  width: 280px;
+  height: 220px;
   text-align: center;
   color: var(--text-color);
-  background: white;
   margin: 20px;
 }
 

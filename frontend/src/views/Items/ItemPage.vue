@@ -28,7 +28,7 @@
             </button>
           </div>
           <button
-            class="leaseButton boco-btn"
+            class="editButtons boco-btn book"
             v-else
             @click="leaseOverlay = true"
           >
@@ -237,11 +237,10 @@ export default {
 }
 
 img {
-  height: 278px;
-  min-width: 466px;
-  width: 466px;
-  padding: 10px;
-  border: 1px solid #39495c;
+  height: 281px;
+  min-width: 500px;
+  width: 500px;
+  border-radius: 20px;
 }
 
 .imageButtons {
@@ -295,6 +294,10 @@ button:hover {
   display: flex;
   flex-direction: column;
   font-size: 20px;
+}
+
+.book {
+  min-width: 150px;
 }
 
 #category label {

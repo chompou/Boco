@@ -9,7 +9,7 @@
             <input
               type="file"
               accept="image/*"
-              @change="test"
+              @change="imageCompressor"
               class="form-control-file"
               id="my-file"
             />
@@ -197,11 +197,11 @@ export default {
         timeout: 2000,
       });
     },
-    test(event) {
+    imageCompressor(event) {
       convert({
         file: event.target.files[0],
-        width: 200,
-        height: 200,
+        width: 1000,
+        height: 1000,
         type: "jpeg",
       })
         .then((resp) => {
@@ -216,8 +216,8 @@ export default {
       let input = event.target;
       if (input.files) {
         let reader = new FileReader();
-        reader.onload = (e) => {
-          this.preview = e.target.result;
+        reader.onload = (event) => {
+          this.preview = event.target.result;
         };
         this.image = event2;
         this.formData.append("file", this.image);
