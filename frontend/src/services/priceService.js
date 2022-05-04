@@ -3,9 +3,9 @@ function normalize(value, type) {
     case "Hour":
       return value;
     case "Day":
-      return Math.ceil(value / 24);
+      return value / 24;
     case "Week":
-      return Math.ceil(value / (24 * 7));
+      return value / (24 * 7);
     default:
       return null;
   }
@@ -43,10 +43,12 @@ export default {
   },
 
   displayDuration(hours, type) {
-    return normalize(hours, type);
+    return Math.ceil(normalize(hours, type));
   },
 
   leasePrice(item, hours) {
-    return this.displayPrice(item) * normalize(hours, item.priceType);
+    return (
+      this.displayPrice(item) * Math.ceil(normalize(hours, item.priceType))
+    );
   },
 };
