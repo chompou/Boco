@@ -10,7 +10,7 @@
             <p>Category: {{ categoryString }}</p>
             <p v-if="item.address.length < 8">Address:{{ item.address }}</p>
             <p v-else>Address:{{ item.address.substring(0, 16) + ".." }}</p>
-            <p>Price: {{ displayPrice }}kr/{{ item.priceType }}</p>
+            <p>Price: {{ displayPrice }} / {{ item.priceType }}</p>
           </div>
           <div id="About2">
             <div id="items">
