@@ -91,6 +91,7 @@ public class ListingService {
         String sortDir = sort.split(":")[1];
 
 
+
         if (sortBy.equals("distance")){
             distanceSort = true;
             sortBy = "id";
@@ -111,6 +112,9 @@ public class ListingService {
 
 
         if (distanceSort){
+            if (location == null || location.split(":").length != 2){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
             double lat1 = Double.valueOf(location.split(":")[0]);
             double long1 = Double.valueOf(location.split(":")[1]);
 
@@ -123,10 +127,14 @@ public class ListingService {
                 long2 = Double.valueOf(listing.getProfile().getLocation().split(":")[1]);
                 double distance = Haversine.distance(lat1, long1, lat2, long2);
                 responses.add(new ListingResponse(listing, distance));
-                System.out.println(distance);
             }
+
             Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
             Collections.sort(responses, distanceComp);
+            for (int i = 0; i < responses.size(); i++) {
+                System.out.println(i + ". Distance: " + responses.get(i).getDistance());
+            }
+            return new ResponseEntity<>(responses, HttpStatus.OK);
         }
 
 

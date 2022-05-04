@@ -69,6 +69,7 @@ public class ListingResponse {
         try {
             this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
         }catch (Exception e){
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
         this.distance =  distance;

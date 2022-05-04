@@ -29,6 +29,7 @@ public class ReviewResponse {
             }
         } catch (NullPointerException e) {
             // handle
+            e.printStackTrace();
         }
     }
 }

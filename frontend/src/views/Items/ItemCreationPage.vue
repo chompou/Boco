@@ -9,7 +9,7 @@
             <input
               type="file"
               accept="image/*"
-              @change="previewImage"
+              @change="imageCompressor"
               class="form-control-file"
               id="my-file"
             />
@@ -169,6 +169,7 @@
 import { useToast } from "vue-toastification";
 import apiService from "@/services/apiService";
 import priceService from "@/services/priceService";
+import convert from "image-file-resize";
 
 export default {
   setup() {
@@ -196,14 +197,29 @@ export default {
         timeout: 2000,
       });
     },
-    previewImage(event) {
+    imageCompressor(event) {
+      convert({
+        file: event.target.files[0],
+        width: 1000,
+        height: 1000,
+        type: "jpeg",
+      })
+        .then((resp) => {
+          this.previewImage(resp, event);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    previewImage(event2, event) {
+      console.log(event2);
       let input = event.target;
       if (input.files) {
         let reader = new FileReader();
-        reader.onload = (e) => {
-          this.preview = e.target.result;
+        reader.onload = (event) => {
+          this.preview = event.target.result;
         };
-        this.image = input.files[0];
+        this.image = event2;
         this.formData.append("file", this.image);
         reader.readAsDataURL(input.files[0]);
       }
@@ -312,8 +328,8 @@ select {
 }
 
 .img-fluid {
-  width: 300px;
-  height: 300px;
+  width: 360px;
+  height: 215px;
 }
 
 #inputFields {

@@ -66,8 +66,10 @@ export default {
 }
 
 img {
-  width: 200px;
-  height: 200px;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  width: 335px;
+  height: 188px;
 }
 
 p {
@@ -76,17 +78,14 @@ p {
 
 #main {
   display: flex;
-  border: 1px solid #39495c;
   border-radius: 10px;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 700px;
-  height: 225px;
+  width: 870px;
   color: var(--text-color);
-  padding: 10px 28px;
-  background: white;
+  background: var(--background-color-header-nav-footer);
   margin: 20px;
 }
 
@@ -107,7 +106,7 @@ p {
 
 #About2 {
   margin-top: 30px;
-  margin-left: 50px;
+  margin-left: 10px;
   width: 150px;
 }
 

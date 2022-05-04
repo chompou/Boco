@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <Sidebar />
+    <h1>{{ $route.query.category }}</h1>
     <div id="items" :style="{ 'margin-left': sidebarWidth }">
       <LargeItem v-for="item in items" :key="item" :item="item" />
     </div>
@@ -29,7 +30,7 @@ export default {
   methods: {
     fetchItems() {
       apiService
-        .getItems(this.filter, this.page, 15)
+        .getItems(this.$route.query, this.page, 15)
         .then((response) => {
           this.items.push(...response.data);
         })
@@ -69,5 +70,8 @@ export default {
 <style scoped>
 #items {
   transition: 0.3s ease;
+}
+h1 {
+  text-align: center;
 }
 </style>

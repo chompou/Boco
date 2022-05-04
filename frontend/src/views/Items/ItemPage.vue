@@ -11,34 +11,24 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img
-            v-if="imgSource === null"
-            alt="Vue logo"
-            src="@/assets/default.png"
-          />
-          <img v-else id="image" alt="Vue logo" :src="imgSource" />
+          <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
-              v-if="item.active"
-              @click="changeStatus(false)"
               class="editButtons boco-btn"
+              :class="[active ? 'boco-btn' : 'red']"
+              @click="toggle"
+              id="status-btn"
             >
-              Active
+              {{ active ? "Active" : "Inactive" }}
             </button>
-            <button
-              v-else
-              @click="changeStatus(true)"
-              class="editButtons boco-btn"
-            >
-              Inactive
-            </button>
+
             <button @click="edit" class="editButtons boco-btn">Edit</button>
             <button class="editButtons boco-btn" @click="deleteItem">
               Delete
             </button>
           </div>
           <button
-            class="leaseButton boco-btn"
+            class="editButtons boco-btn book"
             v-else
             @click="leaseOverlay = true"
           >
@@ -56,7 +46,7 @@
                 </label>
               </div>
               <p>Address: {{ item.address }}</p>
-              <p>Price: {{ displayPrice }} / {{ item.priceType }}</p>
+              <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
             </div>
             <div id="About2">
               <div id="items">
@@ -103,12 +93,13 @@ export default {
   data() {
     return {
       leaseOverlay: false,
-      item: { listingId: null, profileId: null, price: 0, priceType: null },
+      item: { id: null, profileId: null, price: 0, priceType: null },
       profile: { id: 0 },
       reviews: [],
       url: null,
       profileLoaded: false,
       imgSource: null,
+      active: null,
     };
   },
   computed: {
@@ -121,6 +112,22 @@ export default {
     },
   },
   methods: {
+    toggle() {
+      this.active = !this.active;
+      apiService
+        .updateItem({ ...this.item, isActive: this.active })
+        .catch((error) => {
+          console.log(error);
+        });
+      let toastStatus = "";
+      if (this.active) {
+        toastStatus = "Active";
+      } else toastStatus = "Inactive";
+
+      this.toast.info("Listing is now " + toastStatus, {
+        timeout: 2000,
+      });
+    },
     edit() {
       this.$router.push({ name: "editItem", params: { id: this.id } });
     },
@@ -173,6 +180,7 @@ export default {
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
+        this.active = this.item.isActive;
         setTimeout(() => {
           let image = this.item.image;
           this.imgSource = "data:image/jpeg;base64, " + image;
@@ -206,6 +214,13 @@ export default {
   display: flex;
 }
 
+.red {
+  background-color: red;
+}
+.red:hover {
+  background-color: #ac0000;
+}
+
 .container {
   margin-top: 20px;
   width: 600px;
@@ -222,11 +237,10 @@ export default {
 }
 
 img {
-  height: 300px;
-  min-width: 300px;
-  width: 300px;
-  padding: 10px;
-  border: 1px solid #39495c;
+  height: 281px;
+  min-width: 500px;
+  width: 500px;
+  border-radius: 20px;
 }
 
 .imageButtons {
@@ -280,6 +294,10 @@ button:hover {
   display: flex;
   flex-direction: column;
   font-size: 20px;
+}
+
+.book {
+  min-width: 150px;
 }
 
 #category label {

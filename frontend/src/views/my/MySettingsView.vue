@@ -19,10 +19,10 @@
         <input style="height: 100px" v-model="profile.description" />
 
         <label> New Password </label>
-        <input v-model="newPass" />
+        <input type="password" v-model="newPass" />
 
         <label> Confirm New Password </label>
-        <input v-model="confirmPass" />
+        <input type="password" v-model="confirmPass" />
       </div>
 
       <div>
@@ -43,7 +43,7 @@
     </div>
     <div id="buttons" class="button-container">
       <button class="boco-btn" @click="onSave">Save</button>
-      <button class="boco-btn" @click="onReset">Reset</button>
+      <button id="reset-btn" class="boco-btn" @click="onReset">Reset</button>
     </div>
   </div>
 </template>
@@ -51,7 +51,13 @@
 <script>
 import apiService from "@/services/apiService";
 import axios from "axios";
+import { useToast } from "vue-toastification";
+
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   data() {
     return {
       profile: {
@@ -106,6 +112,18 @@ export default {
       apiService
         .updateMyProfile(this.profile)
         .catch((error) => console.log(error));
+      this.toast.success("Changes were saved!", {
+        timeout: 2000,
+      });
+    },
+    onReset() {
+      apiService
+        .getMyProfile()
+        .then((response) => (this.profile = response.data))
+        .catch((error) => console.log(error));
+      this.toast.error("Changes were discarded!", {
+        timeout: 2000,
+      });
     },
   },
   created() {
@@ -132,6 +150,14 @@ export default {
 
 #information {
   grid-area: info;
+}
+
+#reset-btn {
+  background-color: red;
+}
+
+#reset-btn:hover {
+  background-color: #ac0000;
 }
 
 #buttons {
