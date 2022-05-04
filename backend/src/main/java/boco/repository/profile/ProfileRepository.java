@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ public interface ProfileRepository extends JpaRepository <Profile, Long> {
             "(SELECT p1 FROM Profile p1 WHERE EXISTS " +
             "(SELECT li FROM Listing li WHERE li.profile.id = p1.id AND EXISTS" +
             "(SELECT le FROM Lease le WHERE le.listing.id = li.id AND le.profile.id = ?1)))" +
-            "OR p IN " +
+            "OR p.id = ?2  AND p IN " +
             "(SELECT p1 FROM Profile p1 WHERE EXISTS " +
             "(SELECT li FROM Listing li WHERE li.profile.id = ?1 AND EXISTS" +
             "(SELECT le FROM Lease le WHERE le.listing.id = li.id AND le.profile.id = p1.id)))")
@@ -69,4 +69,6 @@ public interface ProfileRepository extends JpaRepository <Profile, Long> {
 
 
     Optional<Profile> findProfileById(Long id);
+
+    List<Profile> getAllByDeactivatedBefore(Timestamp time);
 }

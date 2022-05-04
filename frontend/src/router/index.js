@@ -127,14 +127,20 @@ const router = createRouter({
 });
 
 router.beforeEach(async function (to) {
-  if (!store.state.loggedIn && storageService.getToken() != null) {
-    try {
-      let response = await apiService.getMyProfile();
-      store.state.loggedIn = true;
-      store.state.loggedInUser = response.data.id;
-      store.dispatch("UPDATE_USERNAME", response.data.displayName);
-    } catch (error) {
-      console.log(error);
+  if (!store.state.loggedIn) {
+    if (storageService.getToken() != null) {
+      try {
+        let response = await apiService.getMyProfile();
+        store.state.loggedIn = true;
+        store.state.loggedInUser = response.data.id;
+        store.dispatch("UPDATE_USERNAME", response.data.displayName);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      store.state.loggedIn = false;
+      store.state.loggedInuser = null;
+      store.dispatch("UPDATE_USERNAME", null);
     }
   }
 
