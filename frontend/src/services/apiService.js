@@ -75,4 +75,12 @@ export default {
   getMyLeases(owned) {
     return apiClient.get("/my/lease", { params: { is_owner: owned } });
   },
+
+  updateMyLease(lease) {
+    return apiClient.put("/my/lease", lease);
+  },
+
+  deleteMyLease(leaseId) {
+    return apiClient.delete("my/lease/" + leaseId);
+  },
 };

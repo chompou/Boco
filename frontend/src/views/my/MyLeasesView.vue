@@ -36,7 +36,11 @@
       </div>
     </div>
     <transition name="overlay">
-      <lease-detail-component v-if="showOverlay" :lease="selectedLease" />
+      <lease-detail-component
+        v-if="showOverlay"
+        :lease="selectedLease"
+        @close-overlay="showOverlay = false"
+      />
     </transition>
   </div>
 </template>

@@ -35,20 +35,20 @@
       <div class="lease-footer">
         <h2>Status: Lease {{ status }}</h2>
         <div class="lease-button-container" v-if="buttons == 'approve'">
-          <button class="boco-btn">Approve</button>
-          <button class="boco-btn">Decline</button>
+          <button class="boco-btn" @click="onButton">Approve</button>
+          <button class="boco-btn" @click="onButton">Decline</button>
         </div>
 
         <div class="lease-button-container" v-if="buttons == 'cancel'">
-          <button class="boco-btn">Cancel</button>
+          <button class="boco-btn" @click="oButton">Cancel</button>
         </div>
 
         <div class="lease-button-container" v-if="buttons == 'remove'">
-          <button class="boco-btn">Remove</button>
+          <button class="boco-btn" @click="onButton">Remove</button>
         </div>
 
         <div class="lease-button-container" v-if="buttons == 'complete'">
-          <button class="boco-btn">Complete</button>
+          <button class="boco-btn" @click="onButton">Complete</button>
         </div>
       </div>
     </div>
@@ -71,6 +71,37 @@ export default {
         price: null,
       },
     };
+  },
+
+  methods: {
+    onButton(event) {
+      switch (event.target.innerHTML) {
+        case "Approve":
+          apiService
+            .updateMyLease({
+              ...this.lease,
+              leaseId: this.lease.id,
+              isApproved: true,
+            })
+            .catch((error) => console.log(error));
+          break;
+        case "Complete":
+          apiService
+            .updateMyLease({
+              ...this.lease,
+              leaseId: this.lease.id,
+              isCompleted: true,
+            })
+            .catch((error) => console.log(error));
+          break;
+        default:
+          apiService
+            .deleteMyLease(this.lease.id)
+            .catch((error) => console.log(error));
+      }
+
+      this.$emit("close-overlay");
+    },
   },
 
   computed: {
@@ -153,7 +184,7 @@ export default {
       handler() {
         setTimeout(() => {
           if (this.remaining > 0) {
-            this.remaining = new Date(this.lease.toDatetime * 1e3) - Date.now();
+            this.remaining = new Date(this.lease.toDatetime) - Date.now();
           } else if (this.remaining < 0) {
             this.remaining = 0;
           }
