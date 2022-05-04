@@ -283,7 +283,7 @@ public class TempUserAddV2 {
                     profileRepository.save(np);
                 }
 
-                File file = new File("src/main/resources/testbilde2.png");
+                java.io.File file = new File("src/main/resources/testbilde2.png");
                 byte[] imageBytes = Files.readAllBytes(file.toPath());
 
 
