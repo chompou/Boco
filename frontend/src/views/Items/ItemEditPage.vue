@@ -28,7 +28,7 @@
         <h5>Price:</h5>
         <div id="pricePicker">
           <input
-            v-model="price"
+            v-model="item.price"
             placeholder="100"
             class="price"
             type="number"
