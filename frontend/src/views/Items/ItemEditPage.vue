@@ -170,6 +170,8 @@ export default {
         this.item.priceType
       );
 
+      console.log(standardPrice);
+
       apiService
         .updateItem({
           listingId: this.id,
