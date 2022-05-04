@@ -77,7 +77,7 @@ p {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 650px;
+  width: 700px;
   height: 225px;
   color: var(--text-color);
   padding: 10px 28px;
