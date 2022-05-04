@@ -15,7 +15,7 @@
           <div v-if="my">
             <button
               class="editButtons boco-btn"
-              :class="[active ? 'green' : 'red']"
+              :class="[active ? 'boco-btn' : 'red']"
               @click="toggle"
               id="status-btn"
             >
@@ -212,10 +212,6 @@ export default {
 <style scoped>
 .mainContainer {
   display: flex;
-}
-
-.green {
-  background-color: #008b8b;
 }
 
 .red {
