@@ -1,6 +1,6 @@
 package boco.controller.security;
 
-import boco.models.security.LoginRequest;
+import boco.model.security.LoginRequest;
 import boco.service.security.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

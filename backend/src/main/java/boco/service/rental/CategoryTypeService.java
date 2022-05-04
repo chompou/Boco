@@ -1,6 +1,6 @@
 package boco.service.rental;
 
-import boco.models.rental.CategoryType;
+import boco.model.rental.CategoryType;
 import boco.repository.rental.CategoryTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

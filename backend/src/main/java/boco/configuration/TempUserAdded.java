@@ -1,22 +1,11 @@
 package boco.configuration;
 
-import boco.component.BocoHasher;
-import boco.models.profile.Notification;
-import boco.models.profile.Personal;
-import boco.models.profile.Professional;
-import boco.models.profile.Profile;
-import boco.models.rental.*;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Configuration

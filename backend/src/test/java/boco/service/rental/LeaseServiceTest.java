@@ -1,11 +1,11 @@
 package boco.service.rental;
 
-import boco.models.http.LeaseResponse;
-import boco.models.http.UpdateLeaseRequest;
-import boco.models.profile.Personal;
-import boco.models.profile.Profile;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
+import boco.model.http.rental.LeaseResponse;
+import boco.model.http.rental.UpdateLeaseRequest;
+import boco.model.profile.Personal;
+import boco.model.profile.Profile;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -43,29 +43,29 @@ class LeaseServiceTest {
 
     @BeforeEach
     public void setup() {
-        Profile p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "12345678");
+        Profile p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "6:6", "12345678");
         p1.setId(1L);
         Optional<Profile> pd1 = Optional.of(p1);
 
-        Profile p2 = new Personal("usr", "usr@mail.com", "x", "USR", "x", "World", "12345678");
+        Profile p2 = new Personal("usr", "usr@mail.com", "x", "USR", "x", "World", "7:7", "12345678");
         p2.setId(2L);
         Optional<Profile> pd2 = Optional.of(p2);
 
-        Profile p3 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "12345678");
+        Profile p3 = new Personal("ron", "ron@gmail.com", "x", "RON", "x", "Wrld", "1:1", "12345678");
         p3.setId(3L);
         Optional<Profile> pd3 = Optional.of(p3);
 
-        Profile p4 = new Personal("si", "si@mail.com", "x", "SI", "x", "si", "12345678");
+        Profile p4 = new Personal("si", "si@mail.com", "x", "SI", "x", "si", "5:5", "12345678");
         p4.setId(4L);
         Optional<Profile> pd4 = Optional.of(p4);
 
-        Listing li1 = new Listing("house", "house", "los", true, true, 100.0, "Month", p1);
+        Listing li1 = new Listing("house", "house", true, 100.0, "Month", p1);
         li1.setId(1L);
 
-        Listing li2 = new Listing("crypto", "crypto", "bitcoin", true, true, 100.0, "Month", p2);
+        Listing li2 = new Listing("crypto", "crypto", true, 100.0, "Month", p2);
         li2.setId(2L);
 
-        Listing li3 = new Listing("room", "room", "building", true, true, 1.0, "Week", p3);
+        Listing li3 = new Listing("room", "room", true, 1.0, "Week", p3);
         li3.setId(3L);
 
         Lease le1 = new Lease(

@@ -1,8 +1,8 @@
 package boco.service.security;
 
-import boco.models.profile.Personal;
-import boco.models.profile.Professional;
-import boco.models.profile.Profile;
+import boco.model.profile.Personal;
+import boco.model.profile.Professional;
+import boco.model.profile.Profile;
 import boco.repository.profile.ProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

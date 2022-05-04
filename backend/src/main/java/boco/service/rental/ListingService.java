@@ -1,12 +1,14 @@
 package boco.service.rental;
 
 import boco.component.Haversine;
-import boco.models.http.*;
-import boco.models.profile.Profile;
-import boco.models.rental.*;
+import boco.model.http.rental.ListingRequest;
+import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ReviewResponse;
+import boco.model.http.rental.UpdateListingRequest;
+import boco.model.profile.Profile;
+import boco.model.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
-import boco.repository.rental.ImageRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -14,8 +16,6 @@ import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +91,6 @@ public class ListingService {
         String sortDir = sort.split(":")[1];
 
 
-        System.out.println("Sort by " + sortBy + ", order: " + sortDir);
         if (sortBy.equals("distance")){
             distanceSort = true;
             sortBy = "id";
@@ -112,7 +111,6 @@ public class ListingService {
 
 
         if (distanceSort){
-            System.out.println("Test");
             double lat1 = Double.valueOf(location.split(":")[0]);
             double long1 = Double.valueOf(location.split(":")[1]);
             double lat2;
@@ -121,8 +119,8 @@ public class ListingService {
             List<ListingResponse> responses = new ArrayList<>();
             for (Listing listing: listings) {
 
-                lat2 = Double.valueOf(listing.getAddress().split(":")[0]);
-                long2 = Double.valueOf(listing.getAddress().split(":")[0]);
+                lat2 = Double.valueOf(listing.getProfile().getLocation().split(":")[0]);
+                long2 = Double.valueOf(listing.getProfile().getLocation().split(":")[1]);
                 double distance = Haversine.distance(lat1, long1, lat2, long2);
                 responses.add(new ListingResponse(listing, distance));
                 System.out.println(distance);
@@ -187,7 +185,7 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest,MultipartFile multipartFile, String token) {
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
             Optional<Profile> profile = profileRepository.findProfileByUsername(username);
@@ -196,8 +194,7 @@ public class ListingService {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
-                    listingRequest.getAddress(), listingRequest.isAvailable(),
-                    listingRequest.isActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
+                    listingRequest.getIsActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
                     profile.get());
             listingRepository.save(newListing);
             System.out.println(listingRequest.getCategoryNames().size());
@@ -247,9 +244,7 @@ public class ListingService {
         Listing listing = listingData.get();
         // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
-        listing.setAddress(updateListingRequest.getAddress());
-        listing.setAvailable(updateListingRequest.isAvailable());
-        listing.setActive(updateListingRequest.isActive());
+        listing.setIsActive(updateListingRequest.getIsActive());
         listing.setPrice(updateListingRequest.getPrice());
         listing.setPriceType(updateListingRequest.getPriceType());
 
