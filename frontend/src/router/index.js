@@ -18,6 +18,8 @@ import SupportFormView from "@/views/SupportFormView";
 import { createRouter, createWebHistory } from "vue-router";
 import FrontPage from "../views/FrontPageView.vue";
 import GiveRating from "@/components/RateReview/GiveRating";
+import NProgress from "nprogress";
+NProgress.configure({ easing: "ease", speed: 500 });
 
 // const routerGuard = {
 // beforeEnter: (to, from) => {
@@ -127,6 +129,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async function (to) {
+  NProgress.start();
   if (!store.state.loggedIn) {
     if (storageService.getToken() != null) {
       try {
@@ -160,6 +163,10 @@ router.beforeEach(async function (to) {
       return { name: "home" };
     }
   }
+});
+
+router.afterEach(() => {
+  NProgress.done();
 });
 
 export default router;

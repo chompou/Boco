@@ -11,7 +11,12 @@
     <div class="container">
       <div>
         <div class="imageButtons">
-          <img id="image3" alt="Vue logo" :src="imgSource" />
+          <img
+            v-if="imgSource === null"
+            alt="Vue logo"
+            src="@/assets/default.png"
+          />
+          <img v-else id="image" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
               v-if="item.active"

@@ -1,7 +1,12 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div>
-      <img id="image" alt="Vue logo" :src="imgSource" />
+      <img
+        v-if="imgSource === null"
+        alt="Vue logo"
+        src="@/assets/default.png"
+      />
+      <img v-else id="image" alt="Vue logo" :src="imgSource" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
       <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
     </div>

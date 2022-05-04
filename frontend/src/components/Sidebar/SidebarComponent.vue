@@ -102,13 +102,15 @@
         </transition>
       </div>
     </div>
-    <span
-      class="collapse-icon"
-      :class="{ 'rotate-180': collapsed }"
-      @click="toggleSidebar"
-    >
-      <h2 class="fas fa-angle-double-left">⬅</h2>
-    </span>
+    <transition>
+      <span
+        class="collapse-icon"
+        :class="{ 'rotate-180': collapsed }"
+        @click="toggleSidebar"
+      >
+        <font-awesome-icon icon="angles-left" />
+      </span>
+    </transition>
   </div>
 </template>
 
@@ -170,7 +172,7 @@ export default {
   color: white;
 
   float: left;
-  position: sticky;
+  position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
@@ -191,6 +193,7 @@ export default {
   position: relative;
   bottom: 0;
   padding: 0.75em;
+  font-size: 30px;
 
   color: rgba(255, 255, 255, 0.7);
 
