@@ -24,13 +24,22 @@ function scale(value, type) {
   }
 }
 
+var formatter = new Intl.NumberFormat("nb-NO", {
+  style: "currency",
+  currency: "NOK",
+});
+
 export default {
   parseHours(fromTime, toTime) {
     return Math.ceil((new Date(toTime) - new Date(fromTime)) / 36e5);
   },
 
+  parsePrice(price, priceType) {
+    return normalize(price, priceType);
+  },
+
   displayPrice(item) {
-    return scale(item.price, item.priceType);
+    return formatter.format(scale(item.price, item.priceType));
   },
 
   displayDuration(hours, type) {

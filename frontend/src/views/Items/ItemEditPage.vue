@@ -148,6 +148,7 @@
 <script>
 import apiService from "@/services/apiService";
 import { useToast } from "vue-toastification";
+import priceService from "@/services/priceService";
 
 export default {
   setup() {
@@ -164,11 +165,16 @@ export default {
   },
   methods: {
     update() {
+      let standardPrice = priceService.parsePrice(
+        this.item.price,
+        this.item.priceType
+      );
+
       apiService
         .updateItem({
           listingId: this.id,
           address: this.item.address,
-          price: this.item.price,
+          price: standardPrice,
           priceType: this.item.priceType,
           description: this.item.description,
           categoryType: [this.category],
