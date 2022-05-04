@@ -14,7 +14,7 @@
           <img id="image3" alt="Vue logo" :src="imgSource" />
           <div v-if="my">
             <button
-              class="boco-btn"
+              class="editButtons boco-btn"
               :class="[active ? 'green' : 'red']"
               @click="toggle"
               id="status-btn"
