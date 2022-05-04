@@ -1,30 +1,35 @@
 <template>
   <div id="container">
     <h1>Create a new Item</h1>
-    <div class="col-md-5">
-      <form>
-        <div class="form-group">
-          <h5 for="my-file">Select Image</h5>
-          <input
-            type="file"
-            accept="image/*"
-            @change="previewImage"
-            class="form-control-file"
-            id="my-file"
-          />
-
-          <div class="border p-2 mt-3">
-            <p>Preview Here:</p>
-            <template v-if="preview">
-              <img alt="image" :src="preview" class="img-fluid" />
-              <p class="mb-0">file name: {{ image.name }}</p>
-              <p class="mb-0">size: {{ image.size / 1024 }}KB</p>
-            </template>
-          </div>
-        </div>
-      </form>
-    </div>
     <div id="inputFields">
+      <div class="col-md-5">
+        <form>
+          <div class="form-group ItemId">
+            <h5 for="my-file">Select Image</h5>
+            <input
+              type="file"
+              accept="image/*"
+              @change="previewImage"
+              class="form-control-file"
+              id="my-file"
+            />
+
+            <div class="border p-2 mt-3">
+              <p>Preview Here:</p>
+              <template v-if="preview">
+                <img alt="image" :src="preview" class="img-fluid" />
+                <p class="mb-0">file name: {{ image.name }}</p>
+                <p class="mb-0">size: {{ image.size / 1024 }}KB</p>
+              </template>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-12 mt-3 text-center">
+        <button class="CreateButton" id="reset" @click="reset">
+          Clear All
+        </button>
+      </div>
       <div class="ItemId">
         <h5 id="ItemNameHeader">Title:</h5>
         <input
@@ -38,6 +43,7 @@
         <h5>Address:</h5>
         <input
           class="baseInput"
+          v-if="dataReady"
           v-model="this.address"
           placeholder="Address"
           id="Address"
@@ -171,6 +177,7 @@ export default {
   },
   data() {
     return {
+      dataReady: false,
       formData: new FormData(),
       preview: null,
       image: null,
@@ -189,7 +196,7 @@ export default {
         timeout: 2000,
       });
     },
-    previewImage: function (event) {
+    previewImage(event) {
       let input = event.target;
       if (input.files) {
         let reader = new FileReader();
@@ -201,6 +208,11 @@ export default {
         reader.readAsDataURL(input.files[0]);
       }
     },
+    reset() {
+      this.image = null;
+      this.preview = null;
+    },
+
     submit() {
       let standardPrice = priceService.parsePrice(this.price, this.leaseType);
 
@@ -244,6 +256,12 @@ export default {
       }
       return priceInHours;
     },
+  },
+  created() {
+    apiService.getMyProfile().then((response) => {
+      this.address = response.data.address;
+      this.dataReady = true;
+    });
   },
 };
 </script>
