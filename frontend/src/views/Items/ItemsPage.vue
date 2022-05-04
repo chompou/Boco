@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <h1>{{ $route.query.category }}</h1>
     <Sidebar />
+    <h1>{{ $route.query.category }}</h1>
     <div id="items" :style="{ 'margin-left': sidebarWidth }">
       <LargeItem v-for="item in items" :key="item" :item="item" />
     </div>
@@ -70,5 +70,8 @@ export default {
 <style scoped>
 #items {
   transition: 0.3s ease;
+}
+h1 {
+  text-align: center;
 }
 </style>
