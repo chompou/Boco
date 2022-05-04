@@ -43,8 +43,6 @@ export default {
     onMounted(() => {
       webSocket.addEventListener("open", () => {
         console.log("WebSocket connected");
-        console.log("ID connect", id);
-        console.log("URL", wsURL);
         webSocket.send("Hei from Vue");
       });
       webSocket.addEventListener("message", (event) => {
@@ -55,7 +53,6 @@ export default {
     });
     /*Lifecycle hook to close websocket when notification component gets unmounted*/
     onUnmounted(() => {
-      console.log("hest");
       webSocket.close();
     });
   },
