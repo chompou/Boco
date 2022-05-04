@@ -1,10 +1,10 @@
 package boco.service.rental;
 
-import boco.models.http.ReviewResponse;
-import boco.models.profile.Personal;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.ReviewResponse;
+import boco.model.profile.Personal;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
+import boco.model.rental.Review;
 import boco.repository.rental.ReviewRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

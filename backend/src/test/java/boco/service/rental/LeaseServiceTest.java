@@ -1,11 +1,11 @@
 package boco.service.rental;
 
-import boco.models.http.LeaseResponse;
-import boco.models.http.UpdateLeaseRequest;
-import boco.models.profile.Personal;
-import boco.models.profile.Profile;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
+import boco.model.http.LeaseResponse;
+import boco.model.http.UpdateLeaseRequest;
+import boco.model.profile.Personal;
+import boco.model.profile.Profile;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;

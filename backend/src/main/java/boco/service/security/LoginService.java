@@ -2,8 +2,8 @@ package boco.service.security;
 
 import boco.component.BocoHasher;
 import boco.controller.security.LoginController;
-import boco.models.security.LoginRequest;
-import boco.models.security.LoginResponse;
+import boco.model.security.LoginRequest;
+import boco.model.security.LoginResponse;
 import boco.service.profile.ProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

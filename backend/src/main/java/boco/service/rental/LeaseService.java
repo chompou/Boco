@@ -1,10 +1,10 @@
 package boco.service.rental;
 
-import boco.models.http.*;
-import boco.models.profile.Profile;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.*;
+import boco.model.profile.Profile;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
+import boco.model.rental.Review;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
@@ -205,7 +205,7 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setOwnerReview(newReview);
             savedLease = leaseRepository.save(lease);
-            leaseRepository.save(lease);
+
 
         } else if (reviewType.equals("leasee")) {
             if (profile.getId() != lease.getOwner().getId()) {

@@ -1,17 +1,14 @@
 package boco.service.rental;
 
-import boco.models.http.ListingResponse;
-import boco.models.http.ReviewResponse;
-import boco.models.profile.Profile;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.ReviewResponse;
+import boco.model.profile.Profile;
+import boco.model.rental.Review;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.ReviewRepository;
 import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;

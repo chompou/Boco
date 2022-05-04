@@ -1,14 +1,14 @@
 package boco.service.rental;
 
-import boco.models.http.ListingRequest;
-import boco.models.http.ListingResponse;
-import boco.models.http.ReviewResponse;
-import boco.models.profile.Personal;
-import boco.models.profile.Profile;
-import boco.models.rental.CategoryType;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.ListingRequest;
+import boco.model.http.ListingResponse;
+import boco.model.http.ReviewResponse;
+import boco.model.profile.Personal;
+import boco.model.profile.Profile;
+import boco.model.rental.CategoryType;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
+import boco.model.rental.Review;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ListingRepository;
@@ -19,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.internal.util.collections.ListUtil;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,15 +26,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.swing.plaf.ListUI;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 

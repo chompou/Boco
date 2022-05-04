@@ -1,9 +1,8 @@
 package boco.repository.rental;
 
-import boco.models.profile.Profile;
-import boco.models.rental.CategoryType;
-import boco.models.rental.Listing;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import boco.model.profile.Profile;
+import boco.model.rental.CategoryType;
+import boco.model.rental.Listing;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

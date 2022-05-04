@@ -1,9 +1,9 @@
 package boco.configuration;
 
 import boco.component.BocoHasher;
-import boco.models.profile.Personal;
-import boco.models.profile.Profile;
-import boco.models.rental.*;
+import boco.model.profile.Personal;
+import boco.model.profile.Profile;
+import boco.model.rental.*;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.*;

@@ -1,13 +1,13 @@
 package boco.service.profile;
 
 import boco.component.BocoHasher;
-import boco.models.http.*;
-import boco.models.profile.Personal;
-import boco.models.profile.Professional;
-import boco.models.profile.Profile;
-import boco.models.rental.Lease;
-import boco.models.rental.Listing;
-import boco.models.rental.Review;
+import boco.model.http.*;
+import boco.model.profile.Personal;
+import boco.model.profile.Professional;
+import boco.model.profile.Profile;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
+import boco.model.rental.Review;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;

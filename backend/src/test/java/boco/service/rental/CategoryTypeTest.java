@@ -1,8 +1,7 @@
 package boco.service.rental;
 
-import boco.models.rental.CategoryType;
+import boco.model.rental.CategoryType;
 import boco.repository.rental.CategoryTypeRepository;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

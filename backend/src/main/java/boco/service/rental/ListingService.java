@@ -1,9 +1,9 @@
 package boco.service.rental;
 
 import boco.component.Haversine;
-import boco.models.http.*;
-import boco.models.profile.Profile;
-import boco.models.rental.*;
+import boco.model.http.*;
+import boco.model.profile.Profile;
+import boco.model.rental.*;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ImageRepository;
@@ -13,8 +13,6 @@ import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

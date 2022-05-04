@@ -1,15 +1,13 @@
 package boco.service.profile;
 
 import boco.component.BocoSocket;
-import boco.models.http.MyNotificationsResponse;
-import boco.models.http.NotificationResponse;
-import boco.models.profile.Notification;
-import boco.models.profile.Profile;
+import boco.model.http.MyNotificationsResponse;
+import boco.model.http.NotificationResponse;
+import boco.model.profile.Notification;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

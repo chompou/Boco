@@ -1,10 +1,10 @@
 package boco.service.profile;
 
 import boco.component.BocoHasher;
-import boco.models.http.UpdatePasswordRequest;
-import boco.models.profile.Personal;
-import boco.models.profile.Professional;
-import boco.models.profile.Profile;
+import boco.model.http.UpdatePasswordRequest;
+import boco.model.profile.Personal;
+import boco.model.profile.Professional;
+import boco.model.profile.Profile;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;

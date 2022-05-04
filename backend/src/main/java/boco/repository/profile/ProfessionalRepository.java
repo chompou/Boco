@@ -1,6 +1,6 @@
 package boco.repository.profile;
 
-import boco.models.profile.Professional;
+import boco.model.profile.Professional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
