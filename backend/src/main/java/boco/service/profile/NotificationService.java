@@ -4,8 +4,10 @@ import boco.component.BocoSocket;
 import boco.model.http.MyNotificationsResponse;
 import boco.model.http.NotificationResponse;
 import boco.model.profile.Notification;
+import boco.model.rental.Lease;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
+import boco.repository.rental.LeaseRepository;
 import boco.service.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +25,7 @@ import java.util.List;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final ProfileRepository profileRepository;
+    private final LeaseRepository leaseRepository;
     private final BocoSocket webSocket;
     private final JwtUtil jwtUtil;
 
@@ -34,9 +38,11 @@ public class NotificationService {
      * @param webSocket              the web socket
      */
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository, ProfileRepository profileRepository, JwtUtil jwtUtil, BocoSocket webSocket) {
+    public NotificationService(NotificationRepository notificationRepository, ProfileRepository profileRepository,
+                               LeaseRepository leaseRepository, JwtUtil jwtUtil, BocoSocket webSocket) {
         this.profileRepository = profileRepository;
         this.notificationRepository = notificationRepository;
+        this.leaseRepository = leaseRepository;
         this.jwtUtil = jwtUtil;
         this.webSocket = webSocket;
     }
@@ -144,6 +150,68 @@ public class NotificationService {
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void dailyReminders(){
+        Date now = new Date();
+        Date tomorrow = new Date(now.getTime() + (1000*60*60*24));
+        List<Lease> leases = leaseRepository.findAll();
+        for (Lease lease:leases) {
+            boolean approved = lease.getIsApproved();
+            boolean completed = lease.getIsCompleted();
+            if (approved && !completed){
+                Date from = new Date(lease.getFromDatetime());
+                Date to = new Date(lease.getToDatetime());
+                if (from.before(tomorrow) && from.after(now) && to.before(tomorrow) && from.after(now)){
+                    try{
+                        Notification ownerNotification = new Notification();
+                        ownerNotification.setMessage("You have a lease tomorrow, remember to deliver and receive it");
+                        ownerNotification.setProfile(lease.getOwner());
+                        ownerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        addNewNotification(ownerNotification);
+                    }catch (Exception ignored){}
+                    try {
+                        Notification customerNotification = new Notification();
+                        customerNotification.setMessage("You have a lease tomorrow, remember to pick it up and give it back");
+                        customerNotification.setProfile(lease.getProfile());
+                        customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        addNewNotification(customerNotification);
+                    }catch (Exception ignored){}
+                }else if (from.before(tomorrow) && from.after(now)){
+                    try{
+                        Notification ownerNotification = new Notification();
+                        ownerNotification.setMessage("You have a lease starting tomorrow, remember to deliver it");
+                        ownerNotification.setProfile(lease.getOwner());
+                        ownerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        addNewNotification(ownerNotification);
+                    }catch (Exception ignored){}
+                    try {
+                        Notification customerNotification = new Notification();
+                        customerNotification.setMessage("You have a lease starting tomorrow, remember to pick it up");
+                        customerNotification.setProfile(lease.getProfile());
+                        customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        addNewNotification(customerNotification);
+                    }catch (Exception ignored){}
+                }else if (to.before(tomorrow) && from.after(now)){
+                    try{
+                        Notification ownerNotification = new Notification();
+                        ownerNotification.setMessage("You have a lease finishing tomorrow, remember to receive it");
+                        ownerNotification.setProfile(lease.getOwner());
+                        ownerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        addNewNotification(ownerNotification);
+                    }catch (Exception ignored){}
+                    try {
+                        Notification customerNotification = new Notification();
+                        customerNotification.setMessage("You have a lease finishing tomorrow, remember to give it back");
+                        customerNotification.setProfile(lease.getProfile());
+                        customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        addNewNotification(customerNotification);
+                    }catch (Exception ignored){}
+                }
+
+            }
+
         }
     }
 }

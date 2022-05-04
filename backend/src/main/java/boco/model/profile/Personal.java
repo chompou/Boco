@@ -10,8 +10,8 @@ import javax.persistence.Entity;
 @Entity
 public class  Personal extends Profile {
     public Personal(String username, String email, String description, String displayName,
-                        String passwordHash, String address, String tlf) {
-        super(username, email, description, displayName, passwordHash, address, tlf);
+                        String passwordHash, String address, String location, String tlf) {
+        super(username, email, description, displayName, passwordHash, address, location, tlf);
     }
 
 }

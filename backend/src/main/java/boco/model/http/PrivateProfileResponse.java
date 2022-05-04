@@ -14,6 +14,7 @@ public class PrivateProfileResponse {
     private String email;
     private String description;
     private String displayName;
+    private String location;
     private String address;
     private Boolean isVerified;
     private String tlf;
@@ -29,6 +30,7 @@ public class PrivateProfileResponse {
         this.description = profile.getDescription();
         this.displayName = profile.getDisplayName();
         this.address = profile.getAddress();
+        this.location = profile.getLocation();
         this.isVerified = profile.getIsVerified();
         this.tlf = profile.getTlf();
         this.ratingListing = profile.getRatingListing();

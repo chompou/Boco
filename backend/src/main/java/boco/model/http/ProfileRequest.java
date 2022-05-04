@@ -13,6 +13,7 @@ public class ProfileRequest {
     private String displayName;
     private String passwordHash;
     private String address;
+    private String location;
     private String tlf;
     private Boolean isPersonal;
 }

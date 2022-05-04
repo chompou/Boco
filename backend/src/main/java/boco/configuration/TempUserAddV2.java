@@ -4,6 +4,7 @@ import boco.component.BocoHasher;
 import boco.model.profile.Personal;
 import boco.model.profile.Profile;
 import boco.model.rental.*;
+import boco.model.profile.Notification;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.*;
@@ -104,7 +105,7 @@ public class TempUserAddV2 {
                         .description("This user does not exist")
                         .displayName("Deleted User")
                         .passwordHash("donothashthispassword")
-                        .address("")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("")
                         .isVerified(false)
                         .ratingGiven(0d)
@@ -119,7 +120,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Emil")
                         .passwordHash(letmepassHash)
-                        .address("Baerum")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -133,7 +134,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Olav")
                         .passwordHash(letmepassHash)
-                        .address("Baerum")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("48329432")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -147,7 +148,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Ask")
                         .passwordHash(letmepassHash)
-                        .address("Baerum")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("13718237")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -161,7 +162,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Elias")
                         .passwordHash(letmepassHash)
-                        .address("Bergen")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("94729333")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -175,7 +176,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Tobias")
                         .passwordHash(letmepassHash)
-                        .address("Oslo")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("87234823")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -189,7 +190,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Fanuel")
                         .passwordHash(letmepassHash)
-                        .address("Vik")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12777777")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -203,7 +204,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Jon Martin")
                         .passwordHash(letmepassHash)
-                        .address("Oslo")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -217,7 +218,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Sindre")
                         .passwordHash(letmepassHash)
-                        .address("Auuuuuure")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -231,7 +232,7 @@ public class TempUserAddV2 {
                         .description(faker.country().capital())
                         .displayName("Oyvind")
                         .passwordHash(letmepassHash)
-                        .address("Ottestad")
+                        .address(faker.address().latitude() + ":" + faker.address().longitude())
                         .tlf("12345678")
                         .isVerified(false)
                         .ratingGiven((double) faker.random().nextInt(0, 5))
@@ -267,7 +268,7 @@ public class TempUserAddV2 {
                     Name name = faker.name();
                     var np = Personal.builder()
                             .username(name.username())
-                            .address(faker.address().fullAddress())
+                            .address(faker.address().latitude() + ":" + faker.address().longitude())
                             .deactivated(null)
                             .description(faker.lorem().characters(10))
                             .displayName(name.fullName())
@@ -287,6 +288,11 @@ public class TempUserAddV2 {
 
 
                 // Making listings
+                var deletedListing = Listing.builder().description("deleted listing")
+                        .isActive(false).isAvailable(false).name("Deleted listing").build();
+                listingRepository.save(deletedListing);
+
+
                 for (int i = 0; i < listings; i++) {
                     String name;
                     if (i % 4 == 0) {
@@ -301,7 +307,7 @@ public class TempUserAddV2 {
                     ArrayList<Image> images = new ArrayList<>();
 
                     var l = Listing.builder()
-                            .address(faker.address().fullAddress())
+                            .address(faker.address().latitude() + ":" + faker.address().longitude())
                             .name(name)
                             .price((double) faker.random().nextInt(10, 10000))
                             .description(faker.lorem().characters(faker.random().nextInt(3, 200)))
@@ -343,7 +349,6 @@ public class TempUserAddV2 {
                             .ownerReview(null)
                             .build();
                     leaseRepository.save(l);
-                    System.out.println(l.toString());
 
 
                     if (includeReviews) {
@@ -364,6 +369,22 @@ public class TempUserAddV2 {
                         leaseRepository.save(l);
                     }
                 }
+
+
+                // Making notifications
+                int numberOfReadAndUnreadNotifications = 10;
+                List<Notification> notifications = new ArrayList<>();
+                for (Profile profile:profileList) {
+                    for (int i = 0; i < numberOfReadAndUnreadNotifications; i++) {
+                        Notification read = new Notification().builder().isRead(true).profile(profile)
+                                .message("Read :").url(faker.beer().name()).build();
+                        notifications.add(read);
+                        Notification unread = new Notification().builder().isRead(false).profile(profile)
+                                .message("unread :").url(faker.twinPeaks().quote()).build();
+                        notifications.add(unread);
+                    }
+                }
+                notificationRepository.saveAll(notifications);
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());

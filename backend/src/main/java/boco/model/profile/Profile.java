@@ -24,12 +24,14 @@ public class Profile {
     private String description;
     private String displayName;
     private String passwordHash;
+    private String location;
     private String address;
     private Boolean isVerified;
     private String tlf;
     private Double ratingListing;
     private Double ratingAsOwner;
     private Double ratingAsLeasee;
+    //Time profile was deactivated by user
     private Timestamp deactivated;
 
     @OneToMany(mappedBy = "profile")
@@ -49,13 +51,14 @@ public class Profile {
     private List<Notification> notifications;
 
     public Profile(String username, String email, String description, String displayName,
-                   String passwordHash, String address, String tlf){
+                   String passwordHash, String address, String location, String tlf){
         this.username = username;
         this.email = email;
         this.description = description;
         this.displayName = displayName;
         this.passwordHash = BocoHasher.encode(passwordHash);
         this.address = address;
+        this.location = location;
         this.tlf = tlf;
 
         // Setting some default values
@@ -77,6 +80,7 @@ public class Profile {
                 ", description='" + description + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +
+                ", location=" + location +
                 ", address='" + address + '\'' +
                 ", isVerified=" + isVerified +
                 ", tlf='" + tlf + '\'' +
