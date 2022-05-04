@@ -4,39 +4,40 @@
     <div class="input-container">
       <div id="information" class="input-grid">
         <label> Display Name </label>
-        <input :value="profile.displayName" />
+        <input v-model="profile.displayName" />
 
         <label> E-Mail </label>
-        <input type="email" :value="profile.email" />
+        <input type="email" v-model="profile.email" />
 
         <label> Address </label>
         <input v-model="profile.address" />
 
         <label> Telephone </label>
-        <input :value="profile.tlf" />
+        <input v-model="profile.tlf" />
 
         <label> Description </label>
-        <input style="height: 100px" :value="profile.description" />
+        <input style="height: 100px" v-model="profile.description" />
 
         <label> New Password </label>
-        <input :value="newPass" />
+        <input v-model="newPass" />
 
         <label> Confirm New Password </label>
-        <input :value="confirmPass" />
+        <input v-model="confirmPass" />
       </div>
 
       <div>
-        <h3>Your location</h3>
+        <h3>Your address</h3>
         <div>
           <GMapMap
             :center="{ lat: position.lat, lng: position.lng }"
             :zoom="9"
-            map-type-id="terrain"
             style="width: 600px; height: 400px"
           >
             <GMapMarker :position="position" :clickable="true" />
           </GMapMap>
-          <button @click="getPoint">Check your address</button>
+          <button v-if="profile.address !== null" @click="getPoint">
+            Check your address
+          </button>
         </div>
       </div>
     </div>
@@ -60,12 +61,13 @@ export default {
         tlf: null,
         description: null,
         password: null,
+        latLng: null,
       },
       newPass: null,
       confirmPass: null,
       position: {
-        lat: 63.3,
-        lng: 10,
+        lat: 63.4305149,
+        lng: 10.3950528,
       },
     };
   },
@@ -77,8 +79,14 @@ export default {
           this.profile.address +
           "&key=AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4"
       );
+      console.log(data.results[0].geometry.location.lat);
+      console.log(data.results[0].geometry.location.lng);
       this.position.lat = data.results[0].geometry.location.lat;
       this.position.lng = data.results[0].geometry.location.lng;
+      this.profile.latLng =
+        data.results[0].geometry.location.lat +
+        ":" +
+        data.results[0].geometry.location.lng;
     },
     fetchProfile() {
       apiService
@@ -86,7 +94,9 @@ export default {
         .then((response) => (this.profile = response.data))
         .catch((error) => console.log(error));
     },
-
+    updateProfile() {
+      apiService.updateMyProfile(this.profile);
+    },
     onSave() {
       if (this.newPass != this.confirmPass) {
         return alert("Passwords do not match");

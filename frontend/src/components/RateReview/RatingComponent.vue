@@ -1,6 +1,21 @@
 <template>
   <div id="items">
+    <div v-if="rating === 0">No rating</div>
     <star-rating
+      v-else-if="rating === 5"
+      :rating="rating"
+      :read-only="true"
+      v-bind:max-rating="5"
+      inactive-color="#d8d8d8"
+      active-color="#fffb00"
+      :rounded-corners="true"
+      v-bind:star-size="20"
+      border-color="#2986cc"
+      :border-width="3"
+    >
+    </star-rating>
+    <star-rating
+      v-else
       :rating="rating"
       :read-only="true"
       v-bind:max-rating="5"

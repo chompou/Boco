@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UpdateProfileRequest {
     private String email;

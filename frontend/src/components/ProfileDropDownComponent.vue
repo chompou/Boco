@@ -7,7 +7,7 @@
   </div>
   <div v-if="$store.state.loggedIn">
     <button class="profileButtons" key="on" @click="show = !show">
-      <font-awesome-icon icon="user" />
+      <font-awesome-icon icon="user" class="userIcon" />
     </button>
     <transition name="bounce">
       <div class="dropdownMenu" v-if="show">
@@ -49,8 +49,13 @@
 
 <script>
 import storageService from "@/services/storageService";
+import { useToast } from "vue-toastification";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   name: "ProfileComponent",
   data() {
     return {
@@ -68,6 +73,9 @@ export default {
       this.$store.dispatch("RESET_NOTIFICATION");
       this.show = false;
       this.$router.push({ path: "/" });
+      this.toast.info("Signed out", {
+        timeout: 2000,
+      });
     },
   },
   computed: {
@@ -130,6 +138,12 @@ export default {
   box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
+.userIcon {
+  color: var(--navbar-icons);
+  height: 40px;
+  width: 40px;
+}
+
 /*Style profile button (buttons that come after login) */
 .profileButtons {
   display: block;
@@ -137,12 +151,11 @@ export default {
   width: 40px;
   border-radius: 50%;
   border: none;
-  background-color: #5eeb5b;
+  background-color: var(--background-color-header-nav-footer);
 }
 
-.profileButtons:hover,
-.profileButtons:focus {
-  background-color: DodgerBlue;
+.profileButtons:hover {
+  background-color: var(--background-color-header-nav-footer);
   transform: scale(1.2);
 }
 

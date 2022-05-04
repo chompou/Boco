@@ -59,6 +59,7 @@ export default {
   --text-color: #2c3e50;
   --text-color2: white;
   --background-color-header-nav-footer: #ececec;
+  --navbar-icons: #0048ae;
 }
 
 #app {

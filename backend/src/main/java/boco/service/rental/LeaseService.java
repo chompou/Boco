@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,7 +115,7 @@ public class LeaseService {
             }
             Lease lease = leaseData.get();
 
-            if (lease.isCompleted()) {
+            if (lease.getIsCompleted()) {
                 logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
@@ -165,8 +166,8 @@ public class LeaseService {
 
 
             // Setting the new data
-            lease.setApproved(updateLeaseRequest.getIsApproved());
-            lease.setCompleted(updateLeaseRequest.getIsCompleted());
+            lease.setIsApproved(updateLeaseRequest.getIsApproved());
+            lease.setIsCompleted(updateLeaseRequest.getIsCompleted());
 
             Lease savedLease = leaseRepository.save(lease);
             logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
@@ -248,5 +249,19 @@ public class LeaseService {
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
         return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
+    }
+
+    public void removeDangling() {
+        Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
+        List<Lease> leases = leaseRepository.findAll();
+        for (Lease lease:leases) {
+            if (!lease.getIsApproved() && new Date(lease.getToDatetime()).before(aWeekAgo)){
+                try {
+                    leaseRepository.delete(lease);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

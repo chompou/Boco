@@ -1,6 +1,7 @@
 package boco.configuration;
 
 import boco.component.BocoHasher;
+import boco.models.profile.Notification;
 import boco.models.profile.Personal;
 import boco.models.profile.Profile;
 import boco.models.rental.*;
@@ -287,6 +288,11 @@ public class TempUserAddV2 {
 
 
                 // Making listings
+                var deletedListing = Listing.builder().description("deleted listing")
+                        .isActive(false).isAvailable(false).name("Deleted listing").build();
+                listingRepository.save(deletedListing);
+
+
                 for (int i = 0; i < listings; i++) {
                     String name;
                     if (i % 4 == 0) {
@@ -363,6 +369,22 @@ public class TempUserAddV2 {
                         leaseRepository.save(l);
                     }
                 }
+
+
+                // Making notifications
+                int numberOfReadAndUnreadNotifications = 10;
+                List<Notification> notifications = new ArrayList<>();
+                for (Profile profile:profileList) {
+                    for (int i = 0; i < numberOfReadAndUnreadNotifications; i++) {
+                        Notification read = new Notification().builder().isRead(true).profile(profile)
+                                .message("Read :").url(faker.beer().name()).build();
+                        notifications.add(read);
+                        Notification unread = new Notification().builder().isRead(false).profile(profile)
+                                .message("unread :").url(faker.twinPeaks().quote()).build();
+                        notifications.add(unread);
+                    }
+                }
+                notificationRepository.saveAll(notifications);
 
             } catch (Exception e) {
                 System.out.println(e.getMessage());
