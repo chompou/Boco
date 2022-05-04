@@ -12,7 +12,6 @@ import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.service.security.JwtUtil;
-import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,11 +85,7 @@ public class NotificationService {
      * @param userId the user id
      */
     public void pushToProfile(Long userId){
-        try {
-            webSocket.sendOneMessage(userId +"", unreadForUser(userId) + "");
-        }catch (Exception ignored){
-
-        }
+        webSocket.sendOneMessage(userId +"", unreadForUser(userId) + "");
     }
 
     /**
