@@ -9,5 +9,5 @@ import lombok.Setter;
 public class LeaseRequest {
     private Long fromDatetime;
     private Long toDatetime;
-    private Long listingId;
+    private Long id;
 }

@@ -91,6 +91,7 @@ public class ListingService {
         String sortDir = sort.split(":")[1];
 
 
+
         if (sortBy.equals("distance")){
             distanceSort = true;
             sortBy = "id";
