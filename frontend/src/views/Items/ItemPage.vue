@@ -237,9 +237,9 @@ export default {
 }
 
 img {
-  height: 300px;
-  min-width: 300px;
-  width: 300px;
+  height: 278px;
+  min-width: 466px;
+  width: 466px;
   padding: 10px;
   border: 1px solid #39495c;
 }

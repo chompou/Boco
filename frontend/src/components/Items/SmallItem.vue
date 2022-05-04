@@ -9,6 +9,7 @@
       <img v-else id="image" alt="Vue logo" :src="imgSource" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
       <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
+      <p>{{ item.price }}kr/{{ item.priceType }}</p>
     </div>
   </router-link>
 </template>
@@ -37,9 +38,13 @@ export default {
   text-decoration: none;
 }
 
+h3 {
+  font-size: 23px;
+}
+
 img {
-  width: 200px;
-  height: 200px;
+  width: 240px;
+  height: 143px;
   margin: 8px;
 }
 
@@ -50,7 +55,7 @@ div {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 250px;
+  width: 270px;
   height: 250px;
   text-align: center;
   color: var(--text-color);

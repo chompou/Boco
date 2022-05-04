@@ -66,7 +66,7 @@ export default {
 }
 
 img {
-  width: 200px;
+  width: 335px;
   height: 200px;
 }
 
@@ -82,7 +82,7 @@ p {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 700px;
+  width: 870px;
   height: 225px;
   color: var(--text-color);
   padding: 10px 28px;
@@ -107,7 +107,7 @@ p {
 
 #About2 {
   margin-top: 30px;
-  margin-left: 50px;
+  margin-left: 10px;
   width: 150px;
 }
 
