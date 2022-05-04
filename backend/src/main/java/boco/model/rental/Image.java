@@ -17,7 +17,7 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 15000)
+    @Column(length = 4000000)
     private byte[] image;
     public Image(byte[] image, Listing listing){
         this.image = image;
