@@ -13,7 +13,7 @@
         </div>
         <div class="items">
           <p class="ratingText">Lease in</p>
-          <RatingComponent :rating="3" />
+          <RatingComponent :rating="0" />
         </div>
       </div>
     </div>

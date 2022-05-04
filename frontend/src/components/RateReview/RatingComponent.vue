@@ -1,7 +1,8 @@
 <template>
   <div id="items">
+    <div v-if="rating === 0">No rating</div>
     <star-rating
-      v-if="rating === 5"
+      v-else-if="rating === 5"
       :rating="rating"
       :read-only="true"
       v-bind:max-rating="5"

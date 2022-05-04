@@ -26,12 +26,11 @@
       </div>
 
       <div>
-        <h3>Your location</h3>
+        <h3>Your address</h3>
         <div>
           <GMapMap
             :center="{ lat: position.lat, lng: position.lng }"
             :zoom="9"
-            map-type-id="terrain"
             style="width: 600px; height: 400px"
           >
             <GMapMarker :position="position" :clickable="true" />
@@ -67,8 +66,8 @@ export default {
       newPass: null,
       confirmPass: null,
       position: {
-        lat: 63.3,
-        lng: 10,
+        lat: 63.4305149,
+        lng: 10.3950528,
       },
     };
   },
@@ -80,6 +79,8 @@ export default {
           this.profile.address +
           "&key=AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4"
       );
+      console.log(data.results[0].geometry.location.lat);
+      console.log(data.results[0].geometry.location.lng);
       this.position.lat = data.results[0].geometry.location.lat;
       this.position.lng = data.results[0].geometry.location.lng;
       this.profile.latLng =
