@@ -341,7 +341,7 @@ public class TempUserAddV2 {
                 // Making leases
                 for (int i = 0; i < leases; i++) {
                     long fromDate = 1651478864*1000 + faker.random().nextInt(10000, 100000);
-                    long toDate = fromDate + faker.random().nextInt(10, 10000);
+                    long toDate = fromDate + faker.random().nextInt(10, 10000)*1000;
                     Listing listing = listingList.get(faker.random().nextInt(0, listings - 1));
 
 
