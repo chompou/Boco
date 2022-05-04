@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       leaseOverlay: false,
-      item: { id: null, profileId: null, price: 0, priceType: null },
+      item: { listingId: null, profileId: null, price: 0, priceType: null },
       profile: { id: 0 },
       reviews: [],
       url: null,

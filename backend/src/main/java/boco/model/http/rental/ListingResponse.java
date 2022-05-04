@@ -12,23 +12,23 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 public class ListingResponse {
-    private Long id;
+    private Long listingId;
     private String name;
     private String description;
     private String address;
     private String location;
-    private boolean isActive;
-    private double price;
+    private Boolean isActive;
+    private Double price;
     private String priceType;
     private Timestamp lastChanged;
-    private double rating;
+    private Double rating;
     private List<CategoryType> categoryTypes;
     private Long profileId;
     private String image;
     private Double distance;
 
     public ListingResponse(Listing listing) {
-        this.id = listing.getId();
+        this.listingId = listing.getId();
         this.name = listing.getName();
         this.description = listing.getDescription();
         this.address = listing.getProfile().getAddress();
@@ -56,7 +56,7 @@ public class ListingResponse {
     }
 
     public ListingResponse(Listing listing, double distance){
-        this.id = listing.getId();
+        this.listingId = listing.getId();
         this.name = listing.getName();
         this.description = listing.getDescription();
         this.isActive = listing.getIsActive();
