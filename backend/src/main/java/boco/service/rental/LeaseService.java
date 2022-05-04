@@ -120,6 +120,11 @@ public class LeaseService {
             }
             Lease lease = leaseData.get();
 
+            if (profileIsOwnerOfLease(profile, lease)){
+                leaseRepository.deleteById(leaseId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
             if (lease.getIsCompleted()) {
                 logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -256,6 +261,10 @@ public class LeaseService {
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
         return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
+    }
+
+    private boolean profileIsOwnerOfLease(Profile profile, Lease lease){
+        return (lease.getOwner().getId() == profile.getId());
     }
 
     public void removeDangling() {
