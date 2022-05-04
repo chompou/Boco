@@ -31,18 +31,20 @@
 </template>
 <script>
 import store from "@/store";
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 
 export default {
   setup() {
-    const id = store.state.loggedInUser;
+    let id = store.state.loggedInUser;
     const wsURL = "ws://localhost:8080/websocket/" + id;
 
     const webSocket = new WebSocket(wsURL);
-
+    /*Lifecycle hook to start websocket that handles notifications*/
     onMounted(() => {
       webSocket.addEventListener("open", () => {
         console.log("WebSocket connected");
+        console.log("ID connect", id);
+        console.log("URL", wsURL);
         webSocket.send("Hei from Vue");
       });
       webSocket.addEventListener("message", (event) => {
@@ -50,6 +52,11 @@ export default {
         console.log(event.data);
         store.dispatch("UPDATE_COUNT_NOTIFICATION");
       });
+    });
+    /*Lifecycle hook to close websocket when notification component gets unmounted*/
+    onUnmounted(() => {
+      console.log("hest");
+      webSocket.close();
     });
   },
   data() {
