@@ -23,7 +23,7 @@
       <GMapMarker v-if="marker" :position="position" :clickable="true" />
       <GMapMarker
         v-if="marker"
-        strokeColor="#000000"
+        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
         :position="myPosition"
         :clickable="true"
       />
