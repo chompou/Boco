@@ -28,6 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.Mockito.lenient;
@@ -106,12 +109,25 @@ class ProfileServiceTest {
         lenient().when(jwtUtil.extractUsername("ronaldo")).thenReturn("ronaldo");
         lenient().when(jwtUtil.extractUsername("kaka")).thenReturn("kaka");
         lenient().when(jwtUtil.extractUsername("ramos")).thenReturn("ramos");
+        lenient().when(jwtUtil.extractUsername("r9")).thenReturn("r9");
+        lenient().when(jwtUtil.extractUsername("karim")).thenReturn("karim");
 
         lenient().when(profileRepository.getIfContact(1L, 2L)).thenReturn(Optional.empty());
         lenient().when(profileRepository.getIfContact(2L, 1L)).thenReturn(Optional.empty());
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
+    }
+
+    @Test
+    public void deactivateProfileTest(){
+        var res = profileService.deactivateProfile("Bearer ronaldo");
+        Assertions.assertEquals(LocalDateTime.now().getDayOfMonth(), res.getBody().getDeactivated().getDate());
+    }
+    @Test
+    public void failedToDeactivateProfile(){
+        var res = profileService.deactivateProfile("NotBearing ronaldo");
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
     }
 
     @Test

@@ -26,13 +26,11 @@ public class ForgotPasswordController {
 
     @GetMapping("/{email}")
     public ResponseEntity<HttpStatus> sendForgotPasswordMail(@PathVariable(value = "email") String email) throws MalformedURLException {
-        /**
         if (profileService.checkIfProfileEmailExists(email) != null){
-            String url = "http://localhost:8080/api/forgot-password/change/"+ email;
+            String url = "http://localhost:3000/newPwd";
             emailService.sendResetPasswordMessage(email, url);
             return new ResponseEntity<>(HttpStatus.OK);
         }
-         */
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

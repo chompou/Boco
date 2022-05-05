@@ -254,7 +254,6 @@ public class ProfileService {
         Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
         if (!profileData.isPresent()) {
-            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Profile profile = profileData.get();
@@ -310,9 +309,9 @@ public class ProfileService {
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (checkIfProfileEmailExists(email) != null) {
-            if (updatePasswordRequest.getPasswordHash2().equals(updatePasswordRequest.getPasswordHash1())) {
+            if (updatePasswordRequest.getGeneratedCode().equals(updatePasswordRequest.getPasswordHash())) {
                 Profile profile = checkIfProfileEmailExists(email).getBody();
-                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash1()));
+                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
                 profileRepository.save(profile);
                 return new ResponseEntity<>(profile, HttpStatus.OK);
             }
