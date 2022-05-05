@@ -93,6 +93,7 @@ export default {
         data.results[0].geometry.location.lat +
         ":" +
         data.results[0].geometry.location.lng;
+      console.log(this.profile.latLng);
     },
     fetchProfile() {
       apiService
