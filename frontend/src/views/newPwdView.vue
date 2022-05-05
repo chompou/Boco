@@ -77,7 +77,7 @@ export default {
 
     const submit = handleSubmit(() => {
       apiService
-        .newPassword(props.email, code.value, password.value.value)
+        .newPassword(props.email, code.value.value, password.value.value)
         .catch((error) => {
           console.log(error);
         });

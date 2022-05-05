@@ -4,9 +4,11 @@ import boco.component.BocoHasher;
 import boco.model.http.profile.PrivateProfileResponse;
 import boco.model.http.profile.ProfileRequest;
 import boco.model.http.profile.UpdatePasswordRequest;
+import boco.model.profile.PasswordCode;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
 import boco.model.profile.Profile;
+import boco.repository.profile.PasswordCodeRepository;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
@@ -53,6 +55,8 @@ class ProfileServiceTest {
     private ListingRepository listingRepository;
     @Mock
     private JwtUtil jwtUtil;
+    @Mock
+    private PasswordCodeRepository passwordCodeRepository;
 
 
 
@@ -117,6 +121,9 @@ class ProfileServiceTest {
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
+        PasswordCode passwordCode = new PasswordCode(p1, "codecode");
+
+        lenient().when(passwordCodeRepository.findPasswordCodeByProfile(Mockito.any())).thenReturn(Optional.of(passwordCode));
     }
 
     @Test
@@ -175,21 +182,6 @@ class ProfileServiceTest {
         Assertions.assertEquals(null, profileService.checkIfProfileUsernameExists("emil"));
     }
 
-    @Test
-    public void testChangePassword(){
-        UpdatePasswordRequest goodRequest = new UpdatePasswordRequest("letmepass", "letmepass");
-        var res = profileService.changePassword(goodRequest, "leo@psg.fr");
-        Assertions.assertEquals(BocoHasher.encode("letmepass"), res.getBody().getPasswordHash());
-
-
-        UpdatePasswordRequest badRequest = new UpdatePasswordRequest("letmepass", "dontletmepass");
-        var res1 = profileService.changePassword(badRequest, "leo@psg.fr");
-        Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.NOT_ACCEPTABLE), res1);
-
-        UpdatePasswordRequest forbiddenRequest = new UpdatePasswordRequest("letmepass", "letmepass");
-        var res2 = profileService.changePassword(forbiddenRequest, "emil@mail.fr");
-        Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.FORBIDDEN), res2);
-    }
 
     /**
      * Tests if getPublicProfile hides data when two profiles is not contacts.
