@@ -2,7 +2,7 @@
   <div id="container">
     <h1>Edit item</h1>
     <div>
-      <img id="image" alt="Vue logo" :src="imgSource" />
+      <img id="image" alt="Vue logo" :src="imageSource" />
     </div>
     <div id="inputFields">
       <div class="ItemId">
@@ -14,6 +14,15 @@
           id="ItemName"
           disabled
         />
+      </div>
+      <div id="descriptionField">
+        <h5>Description</h5>
+        <textarea
+          v-model="item.description"
+          placeholder="Description"
+          id="description"
+          name="description"
+        ></textarea>
       </div>
       <div class="ItemId">
         <h5>Address:</h5>
@@ -28,7 +37,7 @@
         <h5>Price:</h5>
         <div id="pricePicker">
           <input
-            v-model="item.price"
+            v-model="inputPrice"
             placeholder="100"
             class="price"
             type="number"
@@ -42,99 +51,7 @@
           </select>
         </div>
       </div>
-      <div class="ItemId">
-        <h5>Categories (Multi-select):</h5>
-        <form class="checkBoxForm">
-          <input
-            type="checkbox"
-            id="tools"
-            value="Tools"
-            v-model="this.category"
-          />
-          <label for="tools">Tools</label>
 
-          <input
-            type="checkbox"
-            id="sport"
-            value="Sport/Hiking"
-            v-model="this.category"
-          />
-          <label for="sport">Sport/Hiking</label>
-
-          <input
-            type="checkbox"
-            id="electronics"
-            value="Electronics"
-            v-model="this.category"
-          />
-          <label for="electronics">Electronics</label>
-
-          <input
-            type="checkbox"
-            id="interior"
-            value="Interior"
-            v-model="this.category"
-          />
-          <label for="interior">Interior</label>
-
-          <input
-            type="checkbox"
-            id="hobby"
-            value="Hobby/Entertainment"
-            v-model="this.category"
-          />
-          <label for="hobby">Hobby/Entertainment</label>
-
-          <input
-            type="checkbox"
-            id="school"
-            value="School/Office"
-            v-model="this.category"
-          />
-          <label for="school">School/Office</label>
-
-          <input
-            type="checkbox"
-            id="musical"
-            value="Musical Instruments"
-            v-model="this.category"
-          />
-          <label for="musical">Musical Instruments</label>
-
-          <input
-            type="checkbox"
-            id="home"
-            value="Home/Garden"
-            v-model="this.category"
-          />
-          <label for="home">Home/Garden</label>
-
-          <input
-            type="checkbox"
-            id="vehicle"
-            value="Vehicle"
-            v-model="this.category"
-          />
-          <label for="vehicle">Vehicle</label>
-
-          <input
-            type="checkbox"
-            id="fashion"
-            value="Fashion"
-            v-model="this.category"
-          />
-          <label for="fashion">Fashion</label>
-        </form>
-      </div>
-      <div id="descriptionField">
-        <h5>Description</h5>
-        <textarea
-          v-model="this.item.description"
-          placeholder="Description"
-          id="description"
-          name="description"
-        ></textarea>
-      </div>
       <div id="CreateButtons" class="element">
         <button class="CreateButton" v-on:click="update">Update</button>
         <button id="Delete" class="CreateButton" v-on:click="dismiss">
@@ -158,15 +75,22 @@ export default {
   props: ["id"],
   data() {
     return {
-      item: null,
-      imgSource: null,
-      category: [this.category],
+      item: {},
+      inputPrice: null,
     };
   },
+
+  computed: {
+    imageSource() {
+      if (!this.item.image) return null;
+      return "data:image/jpeg;base64, " + this.item.image;
+    },
+  },
+
   methods: {
     update() {
       let standardPrice = priceService.parsePrice(
-        this.item.price,
+        this.inputPrice,
         this.item.priceType
       );
 
@@ -174,12 +98,8 @@ export default {
 
       apiService
         .updateItem({
-          listingId: this.id,
-          address: this.item.address,
+          ...this.item,
           price: standardPrice,
-          priceType: this.item.priceType,
-          description: this.item.description,
-          categoryType: [this.category],
         })
         .catch((error) => {
           console.log(error);
@@ -198,31 +118,15 @@ export default {
       });
     },
   },
-  computed: {
-    price() {
-      let actuallyPrice = this.item.price;
-      if (this.item.priceType === "Week") {
-        actuallyPrice = this.item.price * 7 * 24;
-      }
-      if (this.item.priceType === "Day") {
-        actuallyPrice = this.item.price * 24;
-      }
-      return actuallyPrice;
-    },
-  },
+
   created() {
     apiService
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
+        this.inputPrice = priceService.displayPrice(this.item);
       })
-      .catch((error) => {
-        console.log(error);
-      });
-    setTimeout(() => {
-      let image = this.item.image;
-      this.imgSource = "data:image/jpeg;base64, " + image;
-    }, 100);
+      .catch((error) => console.log(error));
   },
 };
 </script>

@@ -34,17 +34,26 @@
         <h5 id="ItemNameHeader">Title:</h5>
         <input
           class="baseInput"
-          v-model="this.title"
+          v-model="item.name"
           placeholder="Name"
           id="ItemName"
         />
+      </div>
+      <div id="descriptionField">
+        <h5>Description</h5>
+        <textarea
+          v-model="item.description"
+          placeholder="Description"
+          id="description"
+          name="description"
+        ></textarea>
       </div>
       <div class="ItemId">
         <h5>Address:</h5>
         <input
           class="baseInput"
           v-if="dataReady"
-          v-model="this.address"
+          v-model="item.address"
           placeholder="Address"
           id="Address"
         />
@@ -53,14 +62,14 @@
         <h5>Price:</h5>
         <div id="pricePicker">
           <input
-            v-model="price"
+            v-model="inputPrice"
             placeholder="100"
             class="price"
             type="number"
             min="0"
           />
           <label id="valuta">kr/</label>
-          <select v-model="leaseType">
+          <select v-model="item.priceType">
             <option>Hour</option>
             <option>Day</option>
             <option>Week</option>
@@ -70,14 +79,19 @@
       <div class="ItemId">
         <h5>Categories (Multi-select):</h5>
         <form class="checkBoxForm">
-          <input type="checkbox" id="tools" value="Tools" v-model="category" />
+          <input
+            type="checkbox"
+            id="tools"
+            value="Tools"
+            v-model="item.categoryNames"
+          />
           <label for="tools">Tools</label>
 
           <input
             type="checkbox"
             id="sport"
             value="Sport/Hiking"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="sport">Sport/Hiking</label>
 
@@ -85,7 +99,7 @@
             type="checkbox"
             id="electronics"
             value="Electronics"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="electronics">Electronics</label>
 
@@ -93,7 +107,7 @@
             type="checkbox"
             id="interior"
             value="Interior"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="interior">Interior</label>
 
@@ -101,7 +115,7 @@
             type="checkbox"
             id="hobby"
             value="Hobby/Entertainment"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="hobby">Hobby/Entertainment</label>
 
@@ -109,7 +123,7 @@
             type="checkbox"
             id="school"
             value="School/Office"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="school">School/Office</label>
 
@@ -117,7 +131,7 @@
             type="checkbox"
             id="musical"
             value="Musical Instruments"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="musical">Musical Instruments</label>
 
@@ -125,7 +139,7 @@
             type="checkbox"
             id="home"
             value="Home/Garden"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="home">Home/Garden</label>
 
@@ -133,7 +147,7 @@
             type="checkbox"
             id="vehicle"
             value="Vehicle"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="vehicle">Vehicle</label>
 
@@ -141,19 +155,10 @@
             type="checkbox"
             id="fashion"
             value="Fashion"
-            v-model="category"
+            v-model="item.categoryNames"
           />
           <label for="fashion">Fashion</label>
         </form>
-      </div>
-      <div id="descriptionField">
-        <h5>Description</h5>
-        <textarea
-          v-model="this.description"
-          placeholder="Description"
-          id="description"
-          name="description"
-        ></textarea>
       </div>
       <div id="CreateButtons" class="element">
         <button class="CreateButton" v-on:click="submit">Create</button>
@@ -182,13 +187,9 @@ export default {
       formData: new FormData(),
       preview: null,
       image: null,
-      title: this.title,
-      address: this.address,
-      price: 0,
-      leaseType: "Hour",
-      category: [],
+      item: { categoryNames: [] },
+      inputPrice: 0,
       checked: false,
-      description: this.description,
     };
   },
   methods: {
@@ -230,7 +231,10 @@ export default {
     },
 
     submit() {
-      let standardPrice = priceService.parsePrice(this.price, this.leaseType);
+      let standardPrice = priceService.parsePrice(
+        this.inputPrice,
+        this.item.priceType
+      );
 
       console.log(this.image);
       console.log(this.leaseType);
@@ -239,12 +243,10 @@ export default {
         new Blob(
           [
             JSON.stringify({
-              name: this.title,
-              address: this.address,
-              description: this.description,
+              ...this.item,
               price: standardPrice,
-              priceType: this.leaseType,
-              categoryNames: this.category,
+              isActive: true,
+              profileId: this.$store.state.loggedInUser,
             }),
           ],
           {
@@ -261,21 +263,10 @@ export default {
       this.$router.push("/my/items");
     },
   },
-  computed: {
-    leasePrice() {
-      let priceInHours = this.price;
-      if (this.leaseType === "Week") {
-        priceInHours = this.price / (7 * 24);
-      }
-      if (this.leaseType === "Day") {
-        priceInHours = this.price / 24;
-      }
-      return priceInHours;
-    },
-  },
+
   created() {
     apiService.getMyProfile().then((response) => {
-      this.address = response.data.address;
+      this.item.address = response.data.address;
       this.dataReady = true;
     });
   },
