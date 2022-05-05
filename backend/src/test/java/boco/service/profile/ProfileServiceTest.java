@@ -1,6 +1,8 @@
 package boco.service.profile;
 
 import boco.component.BocoHasher;
+import boco.model.http.profile.PrivateProfileResponse;
+import boco.model.http.profile.ProfileRequest;
 import boco.model.http.profile.UpdatePasswordRequest;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
@@ -9,13 +11,19 @@ import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
+import boco.repository.rental.ListingRepository;
+import boco.service.rental.ListingService;
 import boco.service.security.JwtUtil;
+import org.hamcrest.core.IsAnything;
+import org.hibernate.mapping.Any;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +46,8 @@ class ProfileServiceTest {
     private ProfessionalRepository professionalRepository;
     @Mock
     private LeaseRepository leaseRepository;
-
+    @Mock
+    private ListingRepository listingRepository;
     @Mock
     private JwtUtil jwtUtil;
 
@@ -48,26 +57,33 @@ class ProfileServiceTest {
     public void setup() {
         Personal p1 = new Personal("messi", "leo@psg.fr", "ligue 1", "LEO", "x", "Argentina", "5:5", "12345678");
         p1.setId(1L);
-        Professional p2 = new Professional("ronaldo", "cr7@manu.uk", "premier league", "CR7", "x", "Portugal", "2:2", "12345678");
+        Professional p2 = new Professional("ronaldo", "cr7@mufc.uk", "premier league", "CR7", "x", "Portugal", "2:2", "12345678");
         p2.setId(2L);
 
         Personal  p3 = new Personal("kaka", "kaka@br.br", "x", "KAKA", "retired", "Brazil", "2:2", "84267483");
         p3.setId(3L);
         Personal p4 = new Personal("ramos", "ramos@psg.fr", "x", "SERGIO", "spain", "Spain", "4:4", "78592384");
         p4.setId(4L);
-
-
+        Personal p5 = new Personal("r9", "r9@gmail.com","bald", "OG ronny", "lethimpass", "brazil", "brazil", "66669999");
+        p5.setId(5L);
+        Professional p6 = new Professional("Karim", "karim@benzema.real", "top", "Karim", "goodbyeCity", "france", "france", "12312312");
+        p6.setId(6L);
         lenient().when(personalRepository.save(p1)).thenReturn(p1);
+        lenient().when(personalRepository.save(Mockito.any())).thenReturn(p5);
         lenient().when(professionalRepository.save(p2)).thenReturn(p2);
+        lenient().when(professionalRepository.save(Mockito.any())).thenReturn(p6);
 
         lenient().when(profileRepository.save(p1)).thenReturn(p1);
         lenient().when(profileRepository.save(p2)).thenReturn(p2);
+        lenient().when(profileRepository.save(p5)).thenReturn(p5);
+
 
 
         lenient().when(profileRepository.findById(1L)).thenReturn(Optional.of(p1));
         lenient().when(profileRepository.findById(2L)).thenReturn(Optional.of(p2));
         lenient().when(profileRepository.findById(3L)).thenReturn(Optional.of(p3));
         lenient().when(profileRepository.findById(4L)).thenReturn(Optional.of(p4));
+        lenient().when(profileRepository.findById(5L)).thenReturn(Optional.of(p5));
 
         lenient().when(profileRepository.findProfileById(1L)).thenReturn(Optional.of(p1));
         lenient().when(profileRepository.findProfileById(2L)).thenReturn(Optional.of(p2));
@@ -76,11 +92,15 @@ class ProfileServiceTest {
         lenient().when(profileRepository.findProfileByEmail("cr7@manu.uk")).thenReturn(Optional.of(p2));
         lenient().when(profileRepository.findProfileByEmail("kaka@br.br")).thenReturn(Optional.of(p3));
         lenient().when(profileRepository.findProfileByEmail("ramos@psg.fr")).thenReturn(Optional.of(p4));
+        lenient().when(profileRepository.findProfileByEmail("r9@gmail.com")).thenReturn(Optional.empty());
+        lenient().when(profileRepository.findProfileByEmail("karim@benzema.real")).thenReturn(Optional.empty());
 
         lenient().when(profileRepository.findProfileByUsername("messi")).thenReturn(Optional.of(p1));
         lenient().when(profileRepository.findProfileByUsername("ronaldo")).thenReturn(Optional.of(p2));
         lenient().when(profileRepository.findProfileByUsername("kaka")).thenReturn(Optional.of(p3));
         lenient().when(profileRepository.findProfileByUsername("ramos")).thenReturn(Optional.of(p4));
+        lenient().when(profileRepository.findProfileByUsername("r9")).thenReturn(Optional.empty());
+        lenient().when(profileRepository.findProfileByUsername("karim")).thenReturn(Optional.empty());
 
         lenient().when(jwtUtil.extractUsername("messi")).thenReturn("messi");
         lenient().when(jwtUtil.extractUsername("ronaldo")).thenReturn("ronaldo");
@@ -92,6 +112,27 @@ class ProfileServiceTest {
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
+    }
+
+    @Test
+    public void createProfilePersonalTest(){
+        ProfileRequest profileRequest = new ProfileRequest("r9", "r9@gmail.com","bald",
+                "OG ronny", "lethimpass", "brazil", "brazil", "66669999", true);
+        var res = profileService.createProfile(profileRequest);
+        Assertions.assertEquals(HttpStatus.CREATED, res.getStatusCode());
+        Assertions.assertEquals("r9@gmail.com", res.getBody().getEmail());
+    }
+    @Test
+    public void createProfileProfessionalTest(){
+        ProfileRequest profileRequest = new ProfileRequest("Karim", "karim@benzema.real", "top", "Karim", "goodbyeCity", "france", "france", "12312312", false);
+        var res = profileService.createProfile(profileRequest);
+        Assertions.assertEquals(HttpStatus.CREATED, res.getStatusCode());
+        Assertions.assertEquals("karim@benzema.real", res.getBody().getEmail());
+    }
+    @Test
+    public void unsuccessfulCreationOfProfile(){
+        var res = profileService.createProfile(null);
+        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, res.getStatusCode());
     }
 
     @Test
@@ -200,7 +241,7 @@ class ProfileServiceTest {
 
         Assertions.assertEquals(2L, res2.getId());
         Assertions.assertEquals("ronaldo", res2.getUsername());
-        Assertions.assertEquals("cr7@manu.uk", res2.getEmail());
+        Assertions.assertEquals("cr7@mufc.uk", res2.getEmail());
         Assertions.assertEquals("premier league", res2.getDescription());
         Assertions.assertEquals("CR7", res2.getDisplayName());
         Assertions.assertEquals("Portugal", res2.getAddress());
