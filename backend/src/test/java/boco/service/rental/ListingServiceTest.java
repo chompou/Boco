@@ -61,24 +61,24 @@ class ListingServiceTest {
         Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "6:3", "12345678");
         List<Profile> profiles = new ArrayList<>(Arrays.asList(p1, p2, p3));
 
-        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1);
-        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2);
-        Listing l3 = new Listing("penthouse", "penthouse", true, 150.0, "Month", p3);
+        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1); l1.setId(1L);
+        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2); l2.setId(2L);
+        Listing l3 = new Listing("penthouse", "penthouse", true, 150.0, "Month", p3); l3.setId(3L);
         List<Listing> listings1 = new ArrayList<>(Arrays.asList(l1, l2, l3));
 
-        Listing l4 = new Listing("bench", "bench",  true, 100.0, "Month", p1);
-        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 50.0, "Month", p2);
-        Listing l6 = new Listing("pencil", "pencil",  true, 150.0, "Month", p3);
+        Listing l4 = new Listing("bench", "bench",  true, 99.0, "Month", p1); l4.setId(4L);
+        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 51.0, "Month", p2); l5.setId(5L);
+        Listing l6 = new Listing("pencil", "pencil",  true, 150.0, "Month", p3); l6.setId(6L);
         listings2 = new ArrayList<>(Arrays.asList(l4, l5, l6));
 
-        Listing l7 = new Listing("tree", "tree",  true, 200.0, "Month", p1);
-        Listing l8 = new Listing("bottle", "bottle",  true, 250.0, "Month", p2);
-        Listing l9 = new Listing("phone", "phone",  true, 300.0, "Month", p3);
+        Listing l7 = new Listing("tree", "tree",  true, 200.0, "Month", p1); l7.setId(7L);
+        Listing l8 = new Listing("bottle", "bottle",  true, 250.0, "Month", p2); l8.setId(8L);
+        Listing l9 = new Listing("phone", "phone",  true, 300.0, "Month", p3); l9.setId(9L);
         List<Listing> listings3 = new ArrayList<>(Arrays.asList(l7, l8, l9));
 
-        Listing l10 = new Listing("cup", "cup",  true, 400.0, "Month", p1);
-        Listing l11 = new Listing("city", "city", true, 500.0, "Month", p2);
-        Listing l12 = new Listing("north", "north",  true, 1500.0, "Month", p3);
+        Listing l10 = new Listing("cup", "cup",  true, 400.0, "Month", p1); l10.setId(10L);
+        Listing l11 = new Listing("city", "city", true, 500.0, "Month", p2); l11.setId(11L);
+        Listing l12 = new Listing("north", "north",  true, 1500.0, "Month", p3); l12.setId(12L);
         List<Listing> listings4 = new ArrayList<>(Arrays.asList(l10, l11, l12));
 
         List<Listing> listings5 = Stream.of(listings1, listings2, listings3, listings4)
@@ -149,7 +149,9 @@ class ListingServiceTest {
         lenient()
                 .when(profileRepository.findProfileByUsername("miami"))
                 .thenReturn(Optional.of(p2));
-
+        lenient()
+                .when(listingRepository.findAllByIsActiveTrue())
+                .thenReturn(List.of(l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12));
 
 
 
@@ -200,20 +202,29 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithPriceRange() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "id:ASC", 175.0, 2000.0, "", "");
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(0, 100, "", "id:ASC", 175.0, 2000.0, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
-        Assertions.assertEquals(5, listingResponses.size());
-        Assertions.assertEquals( "pencil", listingResponses.get(0).getName());
+        Assertions.assertEquals(6, listingResponses.size());
+        //Assertions.assertEquals(5, listingResponses.size());
+        Assertions.assertEquals( "tree", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bottle", listingResponses.get(1).getName());
+        Assertions.assertEquals( "phone", listingResponses.get(2).getName());
+        Assertions.assertEquals( "cup", listingResponses.get(3).getName());
+        Assertions.assertEquals( "city", listingResponses.get(4).getName());
+        Assertions.assertEquals( "north", listingResponses.get(5).getName());
     }
 
     @Test
-    public void testGetListingsWithDesc() {
-        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(1, pageSize, "", "price:DESC", 50.0, 100.0, "", "");
+    public void testGetListingsWithPricesDesc() {
+        ResponseEntity<List<ListingResponse>> responseEntity = service.getListings(0, 100, "", "price:DESC", 50.0, 100.0, "", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody();
-        Assertions.assertEquals(5, listingResponses.size());
-        Assertions.assertEquals( "tree", listingResponses.get(0).getName());
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "house", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(1).getName());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(2).getName());
+        Assertions.assertEquals( "parking lot", listingResponses.get(3).getName());
     }
 
     @Test
