@@ -83,4 +83,11 @@ export default {
   deleteMyLease(leaseId) {
     return apiClient.delete("my/lease/" + leaseId);
   },
+
+  getNotifications() {
+    return apiClient.get("/my/notifications");
+  },
+  removeNotificationAfterRead(notification) {
+    return apiClient.put("my/notifications", { toBeRead: [notification] });
+  },
 };

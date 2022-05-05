@@ -7,7 +7,7 @@
       /></router-link>
       <div class="gridContainer">
         <div>
-          <NotificationComponent v-if="$store.state.loggedIn" />
+          <NotificationBellComponent v-if="$store.state.loggedIn" />
         </div>
         <div>
           <ProfileDropDownComponent />
@@ -38,14 +38,14 @@
 </template>
 
 <script>
-import NotificationComponent from "@/components/NotificationComponent";
+import NotificationBellComponent from "@/components/NotificationBellComponent";
 import HeaderComponent from "@/components/HeaderComponent";
 import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
     HeaderComponent,
     ProfileDropDownComponent,
-    NotificationComponent,
+    NotificationBellComponent,
   },
   methods: {},
 };

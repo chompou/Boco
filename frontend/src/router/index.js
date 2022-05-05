@@ -19,6 +19,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import FrontPage from "../views/FrontPageView.vue";
 import GiveRating from "@/components/RateReview/GiveRating";
 import NProgress from "nprogress";
+import newPwdView from "@/views/newPwdView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
 // const routerGuard = {
@@ -45,6 +46,11 @@ const routes = [
     path: "/forgottenPwd",
     name: "forgottenPwd",
     component: forgottenPwdView,
+  },
+  {
+    path: "/newPwd",
+    name: "newPwd",
+    component: newPwdView,
   },
   {
     path: "/support",
@@ -159,7 +165,7 @@ router.beforeEach(async function (to) {
       default:
     }
   } else {
-    if (to.path == "/login") {
+    if (to.path === "/login") {
       return { name: "home" };
     }
   }

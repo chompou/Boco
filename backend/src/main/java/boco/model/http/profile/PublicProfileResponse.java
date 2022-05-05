@@ -18,6 +18,8 @@ public class PublicProfileResponse {
     private String email;
     private String description;
     private String displayName;
+    private String location;
+    private String address;
     private Boolean isVerified;
     private String tlf;
     private Timestamp deactivated;
@@ -30,5 +32,7 @@ public class PublicProfileResponse {
         this.isVerified = profile.getIsVerified();
         this.tlf = profile.getTlf();
         this.deactivated = profile.getDeactivated();
+        this.address = profile.getAddress();
+        this.location = profile.getLocation();
     }
 }
