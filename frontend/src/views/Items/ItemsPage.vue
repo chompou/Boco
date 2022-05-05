@@ -63,11 +63,12 @@ export default {
     },
 
     applyFilter() {
+      let query = this.$route.query;
       this.$router.push("/").then(() => {
         this.$router.replace({
           name: "items",
           query: {
-            ...this.$route.query,
+            ...query,
             sort: this.sort + ":" + this.sortOrder,
           },
         });
