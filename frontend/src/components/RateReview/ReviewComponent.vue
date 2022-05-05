@@ -1,5 +1,5 @@
 <template>
-  <h3>Reviews</h3>
+  <h3 id="reviews">Reviews</h3>
   <div v-for="review in reviews" :key="review" id="container">
     <b id="name">{{ review.name }}</b>
     <br />
@@ -45,5 +45,10 @@ export default {
 <style>
 #container {
   margin-top: 20px;
+  justify-items: center;
+}
+
+#reviews {
+  text-align: center;
 }
 </style>

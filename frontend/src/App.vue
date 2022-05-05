@@ -1,50 +1,48 @@
 <template>
-  <header-component />
   <nav id="navbar" class="navbar sticky-top">
     <div class="container-fluid">
       <router-link to="/">
         <img id="logo" src="@/assets/mainLogo.png" alt="logo"
       /></router-link>
-      <NotificationComponent v-if="$store.state.loggedIn" />
-      <ProfileDropDownComponent />
+      <div class="gridContainer">
+        <div>
+          <NotificationBellComponent v-if="$store.state.loggedIn" />
+        </div>
+        <div>
+          <ProfileDropDownComponent />
+        </div>
+      </div>
     </div>
   </nav>
 
-  <div class="container-fluid">
-    <router-view />
-    <div style="height: 20px" />
+  <div id="routerViewWrap" class="container-fluid">
+    <router-view :key="$route.fullPath" />
   </div>
-  <div id="footer">
-    <footer>
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-sm-4 col-md-3 item">
-            <h4><a href="#">About us</a></h4>
-          </div>
-          <div class="col-sm-4 col-md-3 item">
-            <router-link to="/support"><h4>Contact us</h4></router-link>
-          </div>
-          <div class="col-sm-4 col-md-3 item">
-            <h4><a href="#">F.A.Q</a></h4>
-          </div>
-          <div class="col-lg-3 item social">
-            <p class="copyright">Borrow Community © 2022</p>
-          </div>
-        </div>
+  <footer id="footer" class="container-fluid sticky">
+    <div class="row text-center">
+      <div class="col-sm-4 col-md-3 item">
+        <h4><a href="#">About us</a></h4>
       </div>
-    </footer>
-  </div>
+      <div class="col-sm-4 col-md-3 item">
+        <router-link to="/support"><h4>Contact us</h4></router-link>
+      </div>
+      <div class="col-sm-4 col-md-3 item">
+        <h4><a href="#">F.A.Q</a></h4>
+      </div>
+      <div class="col-md-3 item social">
+        <p class="copyright">Borrow Community © 2022</p>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <script>
-import NotificationComponent from "@/components/NotificationComponent";
-import HeaderComponent from "@/components/HeaderComponent";
+import NotificationBellComponent from "@/components/NotificationBellComponent";
 import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
-    NotificationComponent,
-    HeaderComponent,
     ProfileDropDownComponent,
+    NotificationBellComponent,
   },
   methods: {},
 };
@@ -58,6 +56,7 @@ export default {
   --text-color: #2c3e50;
   --text-color2: white;
   --background-color-header-nav-footer: #ececec;
+  --navbar-icons: #0048ae;
 }
 
 #app {
@@ -67,7 +66,14 @@ export default {
   color: #2c3e50;
 }
 
-#footer,
+#routerViewWrap {
+  min-height: 892px;
+}
+
+a {
+  text-decoration: none;
+}
+
 #header {
   background-color: #ececec;
 }
@@ -99,26 +105,21 @@ export default {
 
 #footer {
   align-items: center;
-  display: flex;
   width: 100%;
-  padding: 2rem 2rem 0;
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-
-.footer-row {
-  display: flex;
-}
-
-#footer-ul {
-  display: inline-grid;
-  grid-auto-flow: row;
-  grid-gap: 24px;
-  justify-items: center;
-  margin: auto;
+  padding: 1.5rem 2rem 0;
+  background-color: #ececec;
+  bottom: 0;
+  height: auto;
 }
 
 /* FOOTER style END */
+
+/* Profile icon and notification*/
+.gridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 15px;
+}
 
 #log-out-button {
   background: none;

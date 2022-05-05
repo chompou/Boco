@@ -27,23 +27,57 @@
       </form>
     </div>
     <div class="mt-5">
-      <router-link to="items">
-        <font-awesome-icon icon="car" class="icon" />
+      <router-link :to="{ name: 'items', query: { category: 'Tools' } }">
+        <font-awesome-icon icon="wrench" class="icon" title="TOOLS" />
       </router-link>
-      <router-link to="items">
-        <font-awesome-icon icon="wrench" class="icon" />
+      <router-link :to="{ name: 'items', query: { category: 'Electronics' } }">
+        <font-awesome-icon icon="plug" class="icon" title="ELECTRONICS" />
       </router-link>
-      <router-link to="items">
-        <font-awesome-icon icon="umbrella" class="icon" />
+      <router-link
+        :to="{ name: 'items', query: { category: 'Hobby/Entertainment' } }"
+      >
+        <font-awesome-icon
+          icon="palette"
+          class="icon"
+          title="HOBBY/ENTERTAINMENT"
+        />
       </router-link>
-      <router-link to="items">
-        <font-awesome-icon icon="lemon" class="icon" />
+      <router-link
+        :to="{ name: 'items', query: { category: 'Musical Instruments' } }"
+      >
+        <font-awesome-icon
+          icon="guitar"
+          class="icon"
+          title="MUSICAL INSTRUMENT"
+        />
       </router-link>
-      <router-link to="items">
-        <font-awesome-icon icon="children" class="icon" />
+      <router-link :to="{ name: 'items', query: { category: 'Vehicle' } }">
+        <font-awesome-icon icon="car" class="icon" title="VEHICLE" />
       </router-link>
-      <router-link to="items">
-        <font-awesome-icon icon="toilet-paper" class="icon" />
+      <router-link :to="{ name: 'items', query: { category: 'Sport/Hiking' } }">
+        <font-awesome-icon
+          icon="basketball"
+          class="icon"
+          title="SPORT/HIKING"
+        />
+      </router-link>
+      <router-link :to="{ name: 'items', query: { category: 'Interior' } }">
+        <font-awesome-icon icon="couch" class="icon" title="INTERIOR" />
+      </router-link>
+      <router-link
+        :to="{ name: 'items', query: { category: 'School/Office' } }"
+      >
+        <font-awesome-icon
+          icon="graduation-cap"
+          class="icon"
+          title="SCHOOL/OFFICE"
+        />
+      </router-link>
+      <router-link :to="{ name: 'items', query: { category: 'Home/Garden' } }">
+        <font-awesome-icon icon="house" class="icon" title="HOME/GARDEN" />
+      </router-link>
+      <router-link :to="{ name: 'items', query: { category: 'Fashion' } }">
+        <font-awesome-icon icon="shirt" class="icon" title="FASHION" />
       </router-link>
     </div>
     <div class="items">
@@ -73,7 +107,6 @@ export default {
       .getItems({}, 0, 15)
       .then((response) => {
         this.items = response.data;
-        console.log(this.items);
       })
       .catch((error) => console.log(error));
   },

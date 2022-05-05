@@ -18,6 +18,9 @@ import SupportFormView from "@/views/SupportFormView";
 import { createRouter, createWebHistory } from "vue-router";
 import FrontPage from "../views/FrontPageView.vue";
 import GiveRating from "@/components/RateReview/GiveRating";
+import NProgress from "nprogress";
+import newPwdView from "@/views/newPwdView";
+NProgress.configure({ easing: "ease", speed: 500 });
 
 // const routerGuard = {
 // beforeEnter: (to, from) => {
@@ -43,6 +46,11 @@ const routes = [
     path: "/forgottenPwd",
     name: "forgottenPwd",
     component: forgottenPwdView,
+  },
+  {
+    path: "/newPwd",
+    name: "newPwd",
+    component: newPwdView,
   },
   {
     path: "/support",
@@ -127,14 +135,21 @@ const router = createRouter({
 });
 
 router.beforeEach(async function (to) {
-  if (!store.state.loggedIn && storageService.getToken() != null) {
-    try {
-      let response = await apiService.getMyProfile();
-      store.state.loggedIn = true;
-      store.state.loggedInUser = response.data.id;
-      store.dispatch("UPDATE_USERNAME", response.data.displayName);
-    } catch (error) {
-      console.log(error);
+  NProgress.start();
+  if (!store.state.loggedIn) {
+    if (storageService.getToken() != null) {
+      try {
+        let response = await apiService.getMyProfile();
+        store.state.loggedIn = true;
+        store.state.loggedInUser = response.data.id;
+        store.dispatch("UPDATE_USERNAME", response.data.displayName);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      store.state.loggedIn = false;
+      store.state.loggedInuser = null;
+      store.dispatch("UPDATE_USERNAME", null);
     }
   }
 
@@ -150,10 +165,14 @@ router.beforeEach(async function (to) {
       default:
     }
   } else {
-    if (to.path == "/login") {
+    if (to.path === "/login") {
       return { name: "home" };
     }
   }
+});
+
+router.afterEach(() => {
+  NProgress.done();
 });
 
 export default router;

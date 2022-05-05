@@ -2,7 +2,13 @@
   <div class="profileBox">
     <div class="profile">
       <div class="profileBoxText">
-        <h3>{{ profile.displayName }}</h3>
+        <router-link
+          id="profilebox"
+          class="link"
+          :to="{ name: 'profile', params: { id: profile.id } }"
+        >
+          <h3>{{ profile.displayName }}</h3>
+        </router-link>
         <p>Phone nr: {{ profile.tlf }}</p>
         <p>Email: {{ profile.email }}</p>
       </div>
@@ -13,21 +19,49 @@
         </div>
       </div>
     </div>
-    <img id="map" alt="Map" src="@/assets/map.png" />
+    <GMapMap :center="position" :zoom="9" style="width: 350px; height: 200px">
+      <GMapMarker v-if="marker" :position="position" :clickable="true" />
+    </GMapMap>
   </div>
 </template>
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
+import axios from "axios";
 export default {
   props: ["profile"],
+  data() {
+    return {
+      marker: false,
+      position: {
+        lat: 40,
+        lng: 40,
+      },
+    };
+  },
   components: { RatingComponent },
+  methods: {
+    async getPosition(position) {
+      const { data } = await axios.get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          position +
+          "&key=AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4"
+      );
+      this.position.lat = data.results[0].geometry.location.lat;
+      this.position.lng = data.results[0].geometry.location.lng;
+      this.marker = true;
+    },
+  },
+  created() {
+    setTimeout(() => {
+      this.getPosition(this.profile.address);
+    }, 1000);
+  },
 };
 </script>
 
 <style scoped>
 .profileBox {
-  border: 1px solid #39495c;
   font-size: 17px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -40,17 +74,14 @@ export default {
   margin: 20px;
 }
 
-.profileBox:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
-}
-
 .profile {
   display: flex;
 }
 
 .profileBoxText {
   text-align: left;
+  min-width: 160px;
+  min-height: 150px;
 }
 
 #rating {
