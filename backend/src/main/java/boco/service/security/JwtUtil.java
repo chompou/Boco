@@ -1,14 +1,18 @@
 package boco.service.security;
 
+import boco.model.profile.Profile;
+import boco.repository.profile.ProfileRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -17,6 +21,12 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
     private final String SECRET_KEY = "secret";
+    private final ProfileRepository profileRepository;
+
+    @Autowired
+    public JwtUtil(ProfileRepository profileRepository) {
+        this.profileRepository = profileRepository;
+    }
 
     private String createToken(Map<String, Object> claims, String subject){
         int VALID_TIME_MS = 1000 * 60 * 60 * 10;
@@ -90,6 +100,21 @@ public class JwtUtil {
      */
     public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
+    }
+
+    /**
+     * Extracts profile object from an HTTP Authorization header
+     *
+     * @param authHeader Authorization header value. This field should include "Bearer "
+     * @return Profile of Authorization header.
+     * Null is returned if there is no profile belonging to authHeader
+     */
+    public Profile extractProfileFromAuthHeader(String authHeader) {
+        String token = authHeader.substring(7);
+        String username = extractClaim(token, Claims::getSubject);
+        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
+        if (profile.isEmpty()) return null;
+        return profile.get();
     }
 
 }

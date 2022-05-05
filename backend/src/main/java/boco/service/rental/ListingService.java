@@ -206,32 +206,33 @@ public class ListingService {
         }
     }
 
-
-    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()){
-            logger.debug("profileId=" + profile.get().getId() + " was not found.");
+    /**
+     *
+     *
+     * @param updateListingRequest
+     * @param authHeader
+     * @return
+     */
+    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getId());
-
-        if (!listingData.isPresent()) {
-            logger.debug("listingId=" + updateListingRequest.getId() + " was not found.");
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", updateListingRequest.getId());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Listing listing = listingData.get();
 
-        if (listingData.get().getProfile().getId() != profile.get().getId()){
+        if (isProfileListingOwner(listing, profile)){
             logger.debug("UserId is not the owner of listing.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-
-
         // Setting the new data
-        Listing listing = listingData.get();
         // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
         listing.setIsActive(updateListingRequest.getIsActive());
@@ -239,7 +240,7 @@ public class ListingService {
         listing.setPriceType(updateListingRequest.getPriceType());
 
         Listing savedListing = listingRepository.save(listing);
-        logger.debug("listingId=" + updateListingRequest.getId() + " was updated to:\n" + savedListing);
+        logger.info("listingId={} was updated to: {}", updateListingRequest.getId(), savedListing);
         return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
@@ -321,6 +322,10 @@ public class ListingService {
         return listingResponses;
     }
 
+    private boolean isProfileListingOwner(Listing listing, Profile profile) {
+        return listing.getProfile().getId().intValue() == profile.getId().intValue();
+    }
+    //listingData.get().getProfile().getId() != profile.get().getId()
 
     private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
         double lat1 = Double.valueOf(location.split(":")[0]);
