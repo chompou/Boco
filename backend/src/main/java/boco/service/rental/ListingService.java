@@ -135,10 +135,8 @@ public class ListingService {
 
             Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
             Collections.sort(responses, distanceComp);
-            for (int i = 0; i < responses.size(); i++) {
-                System.out.println(i + ". Distance: " + responses.get(i).getDistance());
-            }
-            return new ResponseEntity<>(responses, HttpStatus.OK);
+            List<ListingResponse> responseListingsSublist = responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
+            return new ResponseEntity<>(responseListingsSublist, HttpStatus.OK);
         }
 
 
