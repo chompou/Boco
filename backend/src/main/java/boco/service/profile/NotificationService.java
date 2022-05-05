@@ -3,12 +3,16 @@ package boco.service.profile;
 import boco.component.BocoSocket;
 import boco.model.http.notification.MyNotificationsResponse;
 import boco.model.http.notification.NotificationResponse;
+import boco.model.http.rental.LeaseResponse;
+import boco.model.http.rental.UpdateLeaseRequest;
 import boco.model.profile.Notification;
+import boco.model.profile.Profile;
 import boco.model.rental.Lease;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.service.security.JwtUtil;
+import org.aspectj.bridge.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,6 +107,60 @@ public class NotificationService {
 
         }
     }
+    public Notification newLeaseNotification(ResponseEntity<LeaseResponse> responseEntity){
+        if (responseEntity.getBody() == null || !responseEntity.getStatusCode().is2xxSuccessful()){
+            try {
+                Profile profile = profileRepository.findProfileById(responseEntity.getBody().getProfileId()).get();
+                String message = "Your lease request i created for item: " + responseEntity.getBody().getItemName();
+                String url = "undefined for item: " + responseEntity.getBody().getItemName();
+                return getNotification(profile,message, url);
+
+            }catch(Exception ignored){
+
+            }
+        }
+        return null;
+    }
+
+    public Notification canceledLeaseForLease(Long leaseId){
+        Lease lease = leaseRepository.findById(leaseId).get();
+        String message = "The item you tried to lease was canceled: " + lease.getListing().getName();
+        String url = "undefined url: " + lease.getListing().getName();
+        return getNotification(lease.getProfile(), message, url);
+    }
+
+    public Notification canceledLeaseForOwner(Long leaseId){
+        Lease lease = leaseRepository.findById(leaseId).get();
+        String message = "The item you tried to rent out was canceled: " + lease.getListing().getName();
+        String url = "undefined url: " + lease.getListing().getName();
+        return getNotification(lease.getOwner(), message, url);
+    }
+
+    private Notification getNotification(Profile profile, String message, String url){
+        Notification notification = new Notification();
+        notification.setProfile(profile);
+        notification.setMessage(message);
+        notification.setUrl(url);
+        return notification;
+    }
+    public Notification approveLeaseNotification(UpdateLeaseRequest updateLeaseRequest){
+        Lease lease = leaseRepository.findById(updateLeaseRequest.getLeaseId()).get();
+        Profile profile = profileRepository.findProfileById(lease.getProfile().getId()).get();
+        String message = "Your Lease was approved for item: " + lease.getListing().getName();
+        String url = "undefined url: " + lease.getListing().getName();
+        return getNotification(profile, message, url);
+    }
+
+    public Notification completedLeaseNotification(UpdateLeaseRequest updateLeaseRequest){
+        Lease lease = leaseRepository.findById(updateLeaseRequest.getLeaseId()).get();
+        Profile profile = profileRepository.findProfileById(lease.getProfile().getId()).get();
+        String message = "Your lease was set to complete by the owner of the item: " + lease.getListing().getName();
+        String url = "undefined url: " + lease.getListing().getName();
+        return getNotification(profile, message, url);
+    }
+
+
+
 
     /**
      * Convert notifications from notification to notification response
