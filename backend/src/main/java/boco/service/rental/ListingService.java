@@ -8,7 +8,6 @@ import boco.model.http.rental.ReviewResponse;
 import boco.model.http.rental.UpdateListingRequest;
 import boco.model.profile.Profile;
 import boco.model.rental.*;
-import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
@@ -25,31 +24,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service responsible for operations on listings.
+ * This includes getting, creating, updating, deleting listings.
+ */
 @Service
 public class ListingService {
     private final ListingRepository listingRepository;
-    private final ProfileRepository profileRepository;
     private final CategoryTypeRepository categoryTypeRepository;
     private final LeaseRepository leaseRepository;
     private final ImageRepository imageRepository;
+    private final JwtUtil jwtUtil;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
-    private JwtUtil jwtUtil;
-
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
+    public ListingService(ListingRepository listingRepository, CategoryTypeRepository categoryTypeRepository,
+                          LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
         this.listingRepository = listingRepository;
-        this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
         this.leaseRepository = leaseRepository;
         this.imageRepository = imageRepository;
         this.jwtUtil = jwtUtil;
-    }
-
-
-    public List<ListingResponse> getAllListings(){
-        return convertListings(listingRepository.findAll());
     }
 
     /**
@@ -66,9 +62,11 @@ public class ListingService {
      *                -1 if not used. priceTo and priceFrom must be used together.
      * @param category The category of items we are looking for
      *                 Empty string if not used.
-     * @return A responseEntity with a list of listingresponses.
+     * @return A responseEntity with a list of listing responses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location) {
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort,
+                                                             double priceFrom, double priceTo, String category,
+                                                             String location) {
         List<Listing> allListings = listingRepository.findAllByIsActiveTrue();
 
         // Filtering by Category
