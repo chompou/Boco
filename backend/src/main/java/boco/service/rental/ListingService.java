@@ -105,7 +105,7 @@ public class ListingService {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
                 // sort by distance
-                return new ResponseEntity<>(sortListingsByDistance(location, allListings), HttpStatus.OK);
+                return new ResponseEntity<>(sortListingsByDistance(page, perPage, location, allListings), HttpStatus.OK);
             case "rating":
                 sortListingsByRating(allListings);
                 break;
@@ -322,7 +322,7 @@ public class ListingService {
     }
 
 
-    private List<ListingResponse> sortListingsByDistance(String location, List<Listing> listings) {
+    private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
         double lat1 = Double.valueOf(location.split(":")[0]);
         double long1 = Double.valueOf(location.split(":")[1]);
 
@@ -339,7 +339,7 @@ public class ListingService {
 
         Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
         Collections.sort(responses, distanceComp);
-        return responses;
+        return responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
     }
 
     private List<Listing> sortListingsByRating(List<Listing> listings) {
