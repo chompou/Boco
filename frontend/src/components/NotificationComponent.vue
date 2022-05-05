@@ -1,169 +1,50 @@
 <template>
-  <button class="notificationButton" key="on" @click="show = !show">
-    <div class="notification" :style="notificationStyle">
-      <div :width="size" :height="size">
-        <font-awesome-icon icon="bell" class="bellIcon" />
-      </div>
-      <div
-        class="notificationCounter"
-        v-if="$store.state.countNotifications > 0"
-        :style="notificationCounterLocation"
-      >
-        <div class="counterWrapper">
-          <span v-if="$store.state.countNotifications <= 10">{{
-            $store.state.countNotifications
-          }}</span>
-          <span v-if="$store.state.countNotifications > 10"> 10+</span>
-        </div>
-      </div>
-    </div>
-  </button>
-  <transition name="bounce">
-    <div class="dropdownMenu" v-if="show">
-      <div class="gridContainer">
-        <div>
-          <p class="title">Notifications</p>
-        </div>
-      </div>
-      <hr />
-    </div>
-  </transition>
+  <div class="notificationWrapper">
+    <div :id="id" class="left"></div>
+    <div :id="id" class="notificationContent">{{ text }}</div>
+  </div>
 </template>
 <script>
-import store from "@/store";
-import { onMounted, onUnmounted } from "vue";
+import apiService from "@/services/apiService";
 
 export default {
-  setup() {
-    let id = store.state.loggedInUser;
-    const wsURL = "ws://localhost:8080/websocket/" + id;
-
-    const webSocket = new WebSocket(wsURL);
-    /*Lifecycle hook to start websocket that handles notifications*/
-    onMounted(() => {
-      webSocket.addEventListener("open", () => {
-        console.log("WebSocket connected");
-        webSocket.send("Hei from Vue");
-      });
-      webSocket.addEventListener("message", (event) => {
-        console.log("Incoming data");
-        console.log(event.data);
-        store.dispatch("UPDATE_COUNT_NOTIFICATION");
-      });
-    });
-    /*Lifecycle hook to close websocket when notification component gets unmounted*/
-    onUnmounted(() => {
-      webSocket.close();
-    });
-  },
-  data() {
-    return {
-      show: false,
-    };
-  },
   props: {
-    size: {
-      type: Number,
-      default: 30,
-    },
+    text: String,
+    id: Number,
   },
-  computed: {
-    notificationStyle() {
-      return {
-        display: "grid",
-        position: "relative",
-        width: `${this.size}px`,
-        height: `${this.size}px`,
-      };
-    },
-    notificationCounterLocation() {
-      return {
-        position: "absolute",
-        left: `calc(100% - ${this.size * 0.45}px)`,
-        transform: "translateY(-40%)",
-        fontSize: `${this.size * 0.5}px`,
-      };
-    },
-  },
-  watch: {
-    $route: {
-      handler() {
-        //Close notification box at route change
-        this.show = false;
-      },
-    },
+  mounted() {
+    addEventListener("click", (event) => {
+      let id = event.target.id;
+      if (id !== null || id !== "") {
+        if (!isNaN(id) && id !== "") {
+          apiService.removeNotificationAfterRead(id);
+        }
+      }
+    });
   },
 };
 </script>
 <style scoped>
-.notificationButton {
-  align-items: center;
-  margin-top: 0.1rem;
-  border: none;
-  background-color: var(--background-color-header-nav-footer);
+.notificationWrapper {
+  display: flex;
+  width: 400px;
+  border-radius: 49px 50px 50px 49px;
 }
 
-button:hover {
-  transform: scale(1.2);
-  box-shadow: 0 3px 12px 0 var(--background-color-header-nav-footer);
+.notificationWrapper:hover {
+  background-color: #e1eeff;
+  cursor: pointer;
 }
 
-.counterWrapper {
-  display: grid;
-  grid-auto-flow: column;
+.left {
+  width: 20px;
+  background-color: #0048ae;
+  border-radius: 50px 0 0 50px;
 }
 
-.bellIcon {
-  color: var(--navbar-icons);
-  height: 40px;
-  width: 40px;
-}
-
-.notificationCounter {
-  width: 30px;
-  text-align: center;
-  border-radius: 100%;
-  background-color: red;
-  color: white;
-}
-
-/* Dropdown menu styling*/
-.dropdownMenu {
-  right: 0;
-  position: absolute;
-  z-index: 10;
-  height: 25rem;
-  min-width: 30rem;
-  margin-top: 1rem;
-  overflow-y: auto;
-  padding: 2rem 1rem 2rem 0;
-  border-radius: 12px;
-  background-color: white;
-  border: 1px solid black;
-  background-clip: padding-box;
-}
-
-.title {
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
-/*Dropdown Menu Animation */
-.bounce-enter-active {
-  animation: bounce-in 0.3s;
-}
-.bounce-leave-active {
-  animation: bounce-in 0.2s reverse;
-}
-@keyframes bounce-in {
-  0% {
-    transform: scale(0.8);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+.notificationContent {
+  overflow-wrap: anywhere;
+  flex-grow: 1;
+  padding: 0.5rem;
 }
 </style>

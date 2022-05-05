@@ -1,6 +1,6 @@
 <template>
-  <h2>Register new user</h2>
   <div class="registerContainer">
+    <h1>Register new user</h1>
     <form>
       <label>Username</label>
       <BaseInput
@@ -172,7 +172,9 @@ export default {
 <style scoped>
 .registerContainer {
   width: 30%;
-  display: flex;
+  justify-items: center;
+  text-align: center;
+  display: grid;
   flex-direction: column;
   margin: 0 auto;
 }

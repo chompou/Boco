@@ -11,6 +11,7 @@ import "vue-toastification/dist/index.css";
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import {
   faRightToBracket,
+  faAnglesLeft,
   faUser,
   faSignOutAlt,
   faPlus,
@@ -21,6 +22,7 @@ import {
   faChildren,
   faToiletPaper,
   faBell,
+  faCircleCheck,
   /**ICONS main categories*/
   faWrench,
   faPlug,
@@ -37,6 +39,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
   faRightToBracket,
+  faAnglesLeft,
   faUser,
   faSignOutAlt,
   faPlus,
@@ -47,6 +50,7 @@ library.add(
   faChildren,
   faToiletPaper,
   faBell,
+  faCircleCheck,
   /**ICONS main categories*/
   faWrench,
   faPlug,

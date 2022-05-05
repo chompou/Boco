@@ -1,6 +1,6 @@
 <template>
   <div id="items">
-    <div v-if="rating === 0">No rating</div>
+    <div v-if="rating < 1">No rating</div>
     <star-rating
       v-else-if="rating === 5"
       :rating="rating"
@@ -44,6 +44,7 @@ export default {
 
 <style scoped>
 #items {
+  min-width: 100px;
   margin-right: 20px;
   display: flex;
   flex-direction: column;
