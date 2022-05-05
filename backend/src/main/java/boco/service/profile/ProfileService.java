@@ -247,6 +247,7 @@ public class ProfileService {
         profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
         profile.setAddress(updateProfileRequest.getAddress());
         profile.setTlf(updateProfileRequest.getTlf());
+        profile.setLocation(updateProfileRequest.getLocation());
 
         Profile savedProfile = profileRepository.save(profile);
         logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
