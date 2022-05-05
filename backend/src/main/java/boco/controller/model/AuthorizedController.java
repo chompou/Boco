@@ -4,6 +4,7 @@ import boco.model.http.notification.NotificationReadRequest;
 import boco.model.http.profile.PrivateProfileResponse;
 import boco.model.http.profile.UpdateProfileRequest;
 import boco.model.http.rental.*;
+import boco.model.profile.Notification;
 import boco.service.profile.NotificationService;
 import boco.service.profile.ProfileService;
 import boco.service.rental.LeaseService;
@@ -98,19 +99,39 @@ public class AuthorizedController {
     @PostMapping("/lease")
     public ResponseEntity<LeaseResponse> createLease(@RequestBody LeaseRequest leaseRequest,
                                              @RequestHeader(name="Authorization") String token) {
-        return leaseService.createLease(leaseRequest, token);
+        ResponseEntity<LeaseResponse> leaseResponseResponseEntity = leaseService.createLease(leaseRequest, token);
+        Notification notification = notificationService.newLeaseNotification(leaseResponseResponseEntity);
+        if (notification != null){
+            notificationService.addNewNotification(notification);
+        }
+        return leaseResponseResponseEntity;
     }
 
     @PutMapping("/lease")
     public ResponseEntity<LeaseResponse> updateLease(@RequestBody UpdateLeaseRequest updateLeaseRequest,
                                                      @RequestHeader(name="Authorization") String token) {
+        if (updateLeaseRequest.getIsApproved()!= null){
+            Notification notification = notificationService.approveLeaseNotification(updateLeaseRequest);
+            notificationService.addNewNotification(notification);
+        }
+        if (updateLeaseRequest.getIsCompleted()!= null){
+            Notification notification = notificationService.completedLeaseNotification(updateLeaseRequest);
+            notificationService.addNewNotification(notification);
+        }
         return leaseService.updateLease(updateLeaseRequest, token);
     }
 
     @DeleteMapping("/lease/{lease_id}")
     public ResponseEntity<HttpStatus> deleteLease(@PathVariable(value = "lease_id") Long leaseId,
                                                   @RequestHeader(name="Authorization") String token) {
-        return leaseService.deleteLease(leaseId, token);
+        Notification notificationLeasee = notificationService.canceledLeaseForLease(leaseId);
+        Notification notificationOwner = notificationService.canceledLeaseForOwner(leaseId);
+        ResponseEntity<HttpStatus> response = leaseService.deleteLease(leaseId, token);
+        if (response.getStatusCode().is2xxSuccessful()){
+            notificationService.addNewNotification(notificationLeasee);
+            notificationService.addNewNotification(notificationOwner);
+        }
+        return response;
     }
 
     @GetMapping("/notifications")

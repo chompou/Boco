@@ -36,11 +36,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT avg(r.rating) FROM Review r WHERE r IN" +
             "(SELECT l.profile.id FROM Lease l WHERE l.profile.id = ?1)")
-    Double getProfileRating(Long profileId);
+    Double getLeaseeRating(Long profileId);
 
     @Query("SELECT avg(r.rating) FROM Review r WHERE r IN" +
             "(SELECT l.listing.id FROM Lease l WHERE l.listing.id = ?1)")
-    Double getItemRating(Long profileId);
+    Double getItemRating(Long listingId);
+
+    @Query("SELECT avg(r.rating) FROM Review r WHERE r IN" +
+            "(SELECT l.listing.id FROM Lease l WHERE l.listing.profile.id = ?1)")
+    Double getAverageItemRatingForProfile(Long profileId);
 
 
     List<Review> getAllByLeaseListingId(Long listingId);

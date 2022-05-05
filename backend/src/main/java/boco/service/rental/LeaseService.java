@@ -93,6 +93,7 @@ public class LeaseService {
                     profile, listing, owner);
             Lease savedLease = leaseRepository.save(newLease);
 
+
             return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,6 +125,12 @@ public class LeaseService {
                 logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
+
+            if (profileIsOwnerOfLease(profile, lease)){
+                leaseRepository.deleteById(leaseId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
 
             if (isLessThanDayBeforeLeaseStart(lease)) {
                 logger.debug("There is less than 24 hours before " + lease.getFromDatetime().toString()
@@ -172,8 +179,12 @@ public class LeaseService {
 
 
             // Setting the new data
-            lease.setIsApproved(updateLeaseRequest.getIsApproved());
-            lease.setIsCompleted(updateLeaseRequest.getIsCompleted());
+            if (updateLeaseRequest.getIsApproved() != null){
+                lease.setIsApproved(updateLeaseRequest.getIsApproved());
+            }
+            if (updateLeaseRequest.getIsCompleted() != null){
+                lease.setIsCompleted(updateLeaseRequest.getIsCompleted());
+            }
 
             Lease savedLease = leaseRepository.save(lease);
             logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
@@ -213,6 +224,9 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setOwnerReview(newReview);
             savedLease = leaseRepository.save(lease);
+            Profile owner = lease.getOwner();
+            owner.setRatingAsOwner(reviewRepository.getOwnerRating(owner.getId()));
+            profileRepository.save(owner);
 
 
         } else if (reviewType.equals("leasee")) {
@@ -223,6 +237,9 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setLeaseeReview(newReview);
             savedLease = leaseRepository.save(lease);
+            Profile leasee = lease.getProfile();
+            leasee.setRatingAsLeasee(reviewRepository.getLeaseeRating(leasee.getId()));
+            profileRepository.save(leasee);
 
         } else if (reviewType.equals("item")) {
             if (profile.getId() != lease.getProfile().getId()) {
@@ -232,6 +249,12 @@ public class LeaseService {
             reviewRepository.save(newReview);
             lease.setItemReview(newReview);
             savedLease = leaseRepository.save(lease);
+            Listing listing = lease.getListing();
+            listing.setRating(reviewRepository.getItemRating(listing.getId()));
+            listingRepository.save(listing);
+            Profile owner = lease.getOwner();
+            owner.setRatingListing(reviewRepository.getAverageItemRatingForProfile(owner.getId()));
+            profileRepository.save(owner);
 
         } else {
             logger.debug("reviewType=" + reviewType + " does not match owner/leasee/item");
@@ -256,6 +279,10 @@ public class LeaseService {
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
         return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
+    }
+
+    private boolean profileIsOwnerOfLease(Profile profile, Lease lease){
+        return (lease.getOwner().getId() == profile.getId());
     }
 
     public void removeDangling() {
