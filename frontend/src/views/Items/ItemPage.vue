@@ -9,54 +9,53 @@
     </Transition>
 
     <div class="container">
-      <div>
-        <div class="imageButtons">
-          <img id="image3" alt="Vue logo" :src="imgSource" />
-          <div v-if="my">
-            <button
-              class="editButtons boco-btn"
-              :class="[active ? 'boco-btn' : 'red']"
-              @click="toggle"
-              id="status-btn"
-            >
-              {{ active ? "Active" : "Inactive" }}
-            </button>
-
-            <button @click="edit" class="editButtons boco-btn">Edit</button>
-            <button class="editButtons boco-btn" @click="deleteItem">
-              Delete
-            </button>
-          </div>
+      <div class="imageButtons">
+        <img id="image3" alt="Vue logo" :src="imgSource" />
+        <div v-if="my">
           <button
-            class="editButtons boco-btn book"
-            v-else
-            @click="leaseOverlay = true"
+            class="editButtons boco-btn"
+            :class="[active ? 'boco-btn' : 'red']"
+            @click="toggle"
+            id="status-btn"
           >
-            Book
+            {{ active ? "Active" : "Inactive" }}
+          </button>
+          <button @click="edit" class="editButtons boco-btn">Edit</button>
+          <button class="editButtons boco-btn" @click="deleteItem">
+            Delete
           </button>
         </div>
-        <div id="About">
-          <div id="About11">
-            <div id="About1">
-              <h1>{{ item.name }}</h1>
-              <div id="category">
-                <h5>Category:</h5>
-                <label v-for="category in item.categoryTypes" :key="category"
-                  >{{ category.name }},
-                </label>
-              </div>
-              <p>Address: {{ item.address }}</p>
-              <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
+        <button
+          class="editButtons boco-btn book"
+          v-else
+          @click="leaseOverlay = true"
+        >
+          Book
+        </button>
+      </div>
+      <div id="About">
+        <div id="About11">
+          <div id="About1">
+            <h1>{{ item.name }}</h1>
+            <div id="category">
+              <h5>Category:</h5>
+              <label v-for="category in item.categoryTypes" :key="category"
+              >{{ category.name }},
+              </label>
             </div>
-            <div id="About2">
-              <div id="items">
-                <p>Rating:</p>
-                <RatingComponent :rating="item.rating" />
-              </div>
+            <p>Address: {{ item.address }}</p>
+            <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
+          </div>
+          <div id="About2">
+            <div id="items">
+              <p>Rating:</p>
+              <RatingComponent :rating="item.rating" />
             </div>
           </div>
+        </div>
+        <div id="About3">
           <h2>Description</h2>
-          <p>{{ item.description }}</p>
+          <label id="description">{{ item.description }}</label>
         </div>
       </div>
     </div>
@@ -263,7 +262,6 @@ button:hover {
 
 #About {
   margin-top: 30px;
-  text-align: left;
 }
 
 #About11 {
@@ -292,6 +290,10 @@ button:hover {
 
 #category label {
   display: inline;
+}
+
+#description {
+  max-width: 600px;
 }
 
 #profilebox {
