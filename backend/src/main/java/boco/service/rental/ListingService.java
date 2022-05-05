@@ -175,6 +175,7 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
+
     public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
@@ -290,31 +291,28 @@ public class ListingService {
     }
 
     public void deleteListing(Listing listing) {
-        try {
-            Optional<Listing> listingData = listingRepository.findById(listing.getId());
             Optional<Listing> emptyListing = listingRepository.findById(1L);
-            if (!emptyListing.isPresent()){
-                return;
-            }
+            if (emptyListing.isEmpty()) return;
+
+        try {
             setListingWhenDeleted(listing.getId(), emptyListing.get());
             listingRepository.deleteById(listing.getId());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Error in ListingService.deleteListing: {}", e.getMessage());
         }
     }
 
     public void setListingWhenDeleted(Long listingId, Listing emptyListing){
         List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
 
-        for (Lease lease :
-                leases) {
+        for (Lease lease : leases) {
             lease.setListing(emptyListing);
         }
         leaseRepository.saveAll(leases);
 
         List<Image> images = imageRepository.getImageByListing_Id(listingId);
 
-        for (Image image :
-                images) {
+        for (Image image : images) {
             image.setListing(emptyListing);
         }
         imageRepository.saveAll(images);
@@ -332,7 +330,6 @@ public class ListingService {
     private boolean isProfileListingOwner(Listing listing, Profile profile) {
         return listing.getProfile().getId().intValue() == profile.getId().intValue();
     }
-    //listingData.get().getProfile().getId() != profile.get().getId()
 
     private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
         double lat1 = Double.valueOf(location.split(":")[0]);
