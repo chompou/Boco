@@ -9,12 +9,13 @@
       <img v-else id="image" alt="Vue logo" :src="imgSource" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
       <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
-      <p>{{ item.price }}kr/{{ item.priceType }}</p>
+      <p>{{ displayPrice }} / {{ item.priceType }}</p>
     </div>
   </router-link>
 </template>
 
 <script>
+import priceService from "@/services/priceService";
 export default {
   props: ["item"],
 
@@ -23,6 +24,13 @@ export default {
       imgSource: null,
     };
   },
+
+  computed: {
+    displayPrice() {
+      return priceService.formattedPrice(priceService.displayPrice(this.item));
+    },
+  },
+
   created() {
     let image = this.item.image;
     setTimeout(() => {
