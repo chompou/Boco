@@ -26,7 +26,7 @@ public class ListingController {
                                      @RequestParam int page,
                                      @RequestParam(defaultValue  = "") String search,
                                      @RequestParam(defaultValue  = "id:DESC") String sort,
-                                     @RequestParam(defaultValue = "") String location,
+                                     @RequestParam(defaultValue = "") String location, // latitude:longitude
                                      @RequestParam(defaultValue  =  "-1") double priceFrom,
                                      @RequestParam(defaultValue  = "-1") double priceTo,
                                      @RequestParam(defaultValue = "") String category,

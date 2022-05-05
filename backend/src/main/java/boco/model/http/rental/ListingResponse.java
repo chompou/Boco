@@ -61,6 +61,8 @@ public class ListingResponse {
         this.description = listing.getDescription();
         this.isActive = listing.getIsActive();
         this.price = listing.getPrice();
+        this.address = listing.getProfile().getAddress();
+        this.location = listing.getProfile().getLocation();
         this.priceType = listing.getPriceType();
         this.lastChanged = listing.getLastChanged();
         this.rating = listing.getRating();
