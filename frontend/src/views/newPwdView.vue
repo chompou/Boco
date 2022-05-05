@@ -34,7 +34,9 @@
         id="verifyPassword"
         :error="errors.verifyPassword"
       />
-      <button type="submit" class="boco-btn submit" @click="submit">Submit</button>
+      <button type="submit" class="boco-btn submit" @click="submit">
+        Submit
+      </button>
     </form>
   </div>
 </template>

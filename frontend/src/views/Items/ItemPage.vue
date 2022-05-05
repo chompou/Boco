@@ -40,7 +40,7 @@
             <div id="category">
               <h5>Category:</h5>
               <label v-for="category in item.categoryTypes" :key="category"
-              >{{ category.name }},
+                >{{ category.name }},
               </label>
             </div>
             <p>Address: {{ item.address }}</p>

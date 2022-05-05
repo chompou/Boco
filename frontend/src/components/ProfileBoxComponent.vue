@@ -27,7 +27,6 @@
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
-import MapTest from "@/components/Map/MapComponent";
 import axios from "axios";
 export default {
   props: ["profile"],
