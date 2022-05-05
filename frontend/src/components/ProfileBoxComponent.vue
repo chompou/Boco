@@ -19,17 +19,45 @@
         </div>
       </div>
     </div>
-    <map-test></map-test>
+    <GMapMap :center="position" :zoom="9" style="width: 350px; height: 200px">
+      <GMapMarker v-if="marker" :position="position" :clickable="true" />
+    </GMapMap>
   </div>
 </template>
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
 import "vue3-openlayers/dist/vue3-openlayers.css";
-import MapTest from "@/components/Map/MapComponent";
+import axios from "axios";
 export default {
   props: ["profile"],
-  components: { MapTest, RatingComponent },
+  data() {
+    return {
+      marker: false,
+      position: {
+        lat: 40,
+        lng: 40,
+      },
+    };
+  },
+  components: { RatingComponent },
+  methods: {
+    async getPosition(position) {
+      const { data } = await axios.get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+          position +
+          "&key=AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4"
+      );
+      this.position.lat = data.results[0].geometry.location.lat;
+      this.position.lng = data.results[0].geometry.location.lng;
+      this.marker = true;
+    },
+  },
+  created() {
+    setTimeout(() => {
+      this.getPosition(this.profile.address);
+    }, 1000);
+  },
 };
 </script>
 

@@ -351,6 +351,11 @@ public class TempUserAddV2 {
 
                 // Making leases
                 for (int i = 0; i < leases; i++) {
+                    if(i%3==0){
+                        includeReviews = true;
+                    } else {
+                        includeReviews = false;
+                    }
                     long fromDate = 1651478864L*1000L + faker.random().nextInt(10000, 100000);
                     long toDate = fromDate + faker.random().nextInt(10, 10000)*1000L;
                     Listing listing = listingList.get(faker.random().nextInt(0, listings - 1));
@@ -360,7 +365,7 @@ public class TempUserAddV2 {
                             .fromDatetime(fromDate)
                             .toDatetime(toDate)
                             .isApproved(i % 2 == 0)
-                            .isCompleted(false)
+                            .isCompleted(includeReviews)
                             .listing(listing)
                             .owner(listing.getProfile())
                             .profile(profileList.get(faker.random().nextInt(1, totalProfiles - 1)))
