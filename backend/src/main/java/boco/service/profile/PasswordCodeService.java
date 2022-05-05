@@ -2,15 +2,20 @@ package boco.service.profile;
 
 import boco.model.http.profile.UpdatePasswordRequest;
 import boco.model.profile.PasswordCode;
+import boco.model.rental.Lease;
 import boco.repository.profile.PasswordCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Service
 public class PasswordCodeService {
+    @Autowired
+    private PasswordCodeRepository passwordCodeRepository;
 
     public String generateCode() {
         int leftLimit = 97; // letter 'a'
@@ -25,5 +30,18 @@ public class PasswordCodeService {
         }
         String generatedString = buffer.toString();
         return generatedString;
+    }
+    public void removeDangling() {
+        Date aHourAgo = new Date(new Date().getTime() - (1000*60*60));
+        List<PasswordCode> passwordCodes = passwordCodeRepository.findAll();
+        for (PasswordCode passwordCode:passwordCodes) {
+            if (passwordCode.getTimestamp().before(aHourAgo)){
+                try {
+                    passwordCodeRepository.delete(passwordCode);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
