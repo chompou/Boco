@@ -32,10 +32,12 @@ import {
   faCouch,
   faGraduationCap,
   faHouse,
+  faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(
+  faArrowDown,
   faRightToBracket,
   faUser,
   faSignOutAlt,

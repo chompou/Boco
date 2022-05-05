@@ -38,7 +38,8 @@ export default {
     return normalize(price, priceType);
   },
 
-  displayPrice(item) {
+  displayPrice(item, type = null) {
+    if (type != null) return scale(item, type);
     return scale(item.price, item.priceType);
   },
 

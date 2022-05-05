@@ -6,7 +6,7 @@
         <div class="priceHolder" v-if="collapsed === false">
           <p>From:</p>
           <input
-            v-model="priceFrom"
+            v-model="filters.priceFrom"
             placeholder="0"
             class="price"
             type="number"
@@ -14,7 +14,7 @@
           />
           <p>To:</p>
           <input
-            v-model="priceTo"
+            v-model="filters.priceTo"
             placeholder="0"
             class="price"
             type="number"
@@ -32,7 +32,8 @@
               name="options"
               id="option1"
               autocomplete="off"
-              v-model="leaseType"
+              v-model="filters.priceType"
+              value="Hour"
               checked
             />
             <label class="btn btn-secondary" for="option1">Hour</label>
@@ -42,7 +43,8 @@
               class="btn-check"
               name="options"
               id="option2"
-              v-model="leaseType"
+              v-model="filters.priceType"
+              value="Day"
               autocomplete="off"
             />
             <label class="btn btn-secondary" for="option2">Day</label>
@@ -52,7 +54,8 @@
               class="btn-check"
               name="options"
               id="option3"
-              v-model="leaseType"
+              v-model="filters.priceType"
+              value="Week"
               autocomplete="off"
             />
             <label class="btn btn-secondary" for="option3">Week</label>
@@ -65,7 +68,7 @@
           <div v-if="collapsed === false">
             <input
               class="baseInput"
-              v-model="search"
+              v-model="filters.search"
               placeholder="Search"
               id="ItemName"
             />
@@ -79,7 +82,7 @@
           <select
             v-if="collapsed === false"
             name="Category"
-            v-bind="selectedCategory"
+            v-model="filters.category"
           >
             <option
               v-for="category in categories"
@@ -117,51 +120,69 @@
 <script>
 import apiService from "@/services/apiService";
 import { collapsed, toggleSidebar, sidebarWidth } from "./state";
+import priceService from "@/services/priceService";
 
 export default {
   data() {
     return {
-      filters: {
-        search: "",
-        sort: "id",
-        priceFrom: -1,
-        priceTo: -1,
-        category: "",
-      },
-      priceFrom: 0,
-      priceTo: 0,
-      leaseType: null,
-      search: "",
-      categories: [{ id: 0, name: "All" }],
+      filters: {},
+      categories: [],
     };
   },
+
+  methods: {
+    onSubmit() {
+      console.log(this.filters);
+
+      if (this.filters.priceFrom != null) {
+        this.filters.priceFrom = priceService.parsePrice(
+          this.filters.priceFrom,
+          this.filters.priceType
+        );
+      }
+
+      if (this.filters.priceTo != null) {
+        this.filters.priceTo = priceService.parsePrice(
+          this.filters.priceTo,
+          this.filters.priceType
+        );
+      }
+
+      if (this.filters.priceType == null) this.filters.priceType = "Hour";
+
+      this.$router.push("/").then(() => {
+        this.$router.replace({ name: "items", query: this.filters });
+      });
+    },
+  },
+
   setup() {
     return { collapsed, toggleSidebar, sidebarWidth };
   },
-  methods: {
-    filter() {
-      if (this.leaseType === "Day") {
-        this.filters.priceFrom = this.priceFrom / 24;
-        this.filters.priceTo = this.priceTo / 24;
-      }
-      if (this.leaseType === "Week") {
-        this.filters.priceFrom = this.priceFrom / (24 * 7);
-        this.filters.priceTo = this.priceTo / (24 * 7);
-      }
-    },
-  },
+
   created() {
     apiService
       .getCategories()
       .then((response) => {
-        this.categories.push(...response.data);
-        console.log(this.categories);
+        this.categories = response.data;
       })
       .catch((error) => console.log(error));
 
-    this.priceFrom = this.$route.query.priceFrom;
-    this.priceTo = this.$route.query.priceTo;
-    this.search = this.$route.query.search;
+    this.filters = this.$route.query;
+
+    if (this.filters.priceFrom != null) {
+      this.filters.priceFrom = priceService.displayPrice(
+        this.filters.priceFrom,
+        this.filters.priceType
+      );
+    }
+
+    if (this.filters.priceTo != null) {
+      this.filters.priceTo = priceService.displayPrice(
+        this.filters.priceTo,
+        this.filters.priceType
+      );
+    }
   },
 };
 </script>
