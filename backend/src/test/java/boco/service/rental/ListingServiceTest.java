@@ -59,26 +59,41 @@ class ListingServiceTest {
         Personal p1 = new Personal("los", "la@la.com", "city", "LA", "pass","US", "4:2", "12345678");
         Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "4:", "12345678");
         Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "6:3", "12345678");
+        p1.setId(1L);
+        p2.setId(2L);
+        p3.setId(3L);
         List<Profile> profiles = new ArrayList<>(Arrays.asList(p1, p2, p3));
 
         Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1); l1.setId(1L);
         Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2); l2.setId(2L);
         Listing l3 = new Listing("penthouse", "penthouse", true, 150.0, "Month", p3); l3.setId(3L);
+        l1.setId(1L);
+        l2.setId(2L);
+        l3.setId(3L);
         List<Listing> listings1 = new ArrayList<>(Arrays.asList(l1, l2, l3));
 
         Listing l4 = new Listing("bench", "bench",  true, 99.0, "Month", p1); l4.setId(4L);
         Listing l5 = new Listing("bulldozer", "bulldozer",  true, 51.0, "Month", p2); l5.setId(5L);
         Listing l6 = new Listing("pencil", "pencil",  true, 150.0, "Month", p3); l6.setId(6L);
+        l4.setId(4L);
+        l5.setId(5L);
+        l6.setId(6L);
         listings2 = new ArrayList<>(Arrays.asList(l4, l5, l6));
 
         Listing l7 = new Listing("tree", "tree",  true, 200.0, "Month", p1); l7.setId(7L);
         Listing l8 = new Listing("bottle", "bottle",  true, 250.0, "Month", p2); l8.setId(8L);
         Listing l9 = new Listing("phone", "phone",  true, 300.0, "Month", p3); l9.setId(9L);
+        l7.setId(7L);
+        l8.setId(8L);
+        l9.setId(9L);
         List<Listing> listings3 = new ArrayList<>(Arrays.asList(l7, l8, l9));
 
         Listing l10 = new Listing("cup", "cup",  true, 400.0, "Month", p1); l10.setId(10L);
         Listing l11 = new Listing("city", "city", true, 500.0, "Month", p2); l11.setId(11L);
         Listing l12 = new Listing("north", "north",  true, 1500.0, "Month", p3); l12.setId(12L);
+        l10.setId(10L);
+        l11.setId(11L);
+        l12.setId(12L);
         List<Listing> listings4 = new ArrayList<>(Arrays.asList(l10, l11, l12));
 
         List<Listing> listings5 = Stream.of(listings1, listings2, listings3, listings4)
@@ -96,11 +111,20 @@ class ListingServiceTest {
         Lease le4 = new Lease(1650008914L, 1650959314L, p2, l1, null);
         Lease le5 = new Lease(1650008914L, 1650959314L, p2, l2, null);
         Lease le6 = new Lease(1650008914L, 1650959314L, p2, l2, null);
+        le1.setId(1L);
+        le2.setId(2L);
+        le3.setId(3L);
+        le4.setId(4L);
+        le5.setId(5L);
+        le6.setId(6L);
         l1.setLeases(new ArrayList<>(Arrays.asList(le1, le2, le3, le4)));
 
         Review r1 = new Review(4.0, "test");
         Review r2 = new Review(2.0, "Test2");
         Review r3 = new Review(3.5, "Litt sein i levering");
+        r1.setId(1L);
+        r2.setId(2L);
+        r3.setId(3L);
 
         r1.setLease(le1);
         r2.setLease(le2);
