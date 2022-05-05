@@ -40,7 +40,7 @@
         </div>
 
         <div class="lease-button-container" v-if="buttons == 'cancel'">
-          <button class="boco-btn" @click="oButton">Cancel</button>
+          <button class="boco-btn" @click="onButton">Cancel</button>
         </div>
 
         <div class="lease-button-container" v-if="buttons == 'remove'">
@@ -111,7 +111,7 @@ export default {
       if (this.$store.state.loggedInUser == this.lease.ownerId) {
         switch (status) {
           case "Pending Approval":
-            return "accept";
+            return "approve";
           case "Upcoming":
             return "cancel";
           case "Expired":

@@ -35,15 +35,17 @@ export default {
 <style scoped>
 .lease-container {
   display: flex;
-  border: 3px solid;
   border-radius: 10px;
-  padding: 15px;
+  padding: 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   text-align: left;
   gap: 50px;
   cursor: pointer;
+
+  color: var(--text-color);
+  background: var(--background-color-header-nav-footer);
 }
 
 .lease-container:hover {
