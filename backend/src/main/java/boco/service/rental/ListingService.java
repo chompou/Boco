@@ -86,7 +86,6 @@ public class ListingService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        //TODO Validate sort name
         String sortBy = sort.split(":")[0];
         String sortDir = sort.split(":")[1];
 
@@ -96,6 +95,11 @@ public class ListingService {
             distanceSort = true;
             sortBy = "id";
         }
+        List<String> sortTypes = new ArrayList<>(Arrays.asList("name", "id", "price", "search", "rating"));
+        if (!sortTypes.contains(sortBy)){
+            sortBy = "id";
+        }
+
 
 
         List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
