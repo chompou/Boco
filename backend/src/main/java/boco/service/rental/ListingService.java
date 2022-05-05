@@ -175,6 +175,7 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
+
     public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
         try {
             String username = jwtUtil.extractUsername(token.substring(7));
@@ -206,32 +207,35 @@ public class ListingService {
         }
     }
 
-
-    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()){
-            logger.debug("profileId=" + profile.get().getId() + " was not found.");
+    /**
+     * Updates a listing with the values in updateListingRequest. Values are updated even if
+     * the new value is null.
+     * Only the owner of the listing can update it
+     *
+     * @param updateListingRequest New values of listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The saved listing
+     */
+    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getId());
-
-        if (!listingData.isPresent()) {
-            logger.debug("listingId=" + updateListingRequest.getId() + " was not found.");
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", updateListingRequest.getId());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Listing listing = listingData.get();
 
-        if (listingData.get().getProfile().getId() != profile.get().getId()){
-            logger.debug("UserId is not the owner of listing.");
+        if (!isProfileListingOwner(listing, profile)){
+            logger.debug("profileId is not the owner of listing.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-
-
         // Setting the new data
-        Listing listing = listingData.get();
         // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
         listing.setIsActive(updateListingRequest.getIsActive());
@@ -239,76 +243,77 @@ public class ListingService {
         listing.setPriceType(updateListingRequest.getPriceType());
 
         Listing savedListing = listingRepository.save(listing);
-        logger.debug("listingId=" + updateListingRequest.getId() + " was updated to:\n" + savedListing);
+        logger.info("listingId={} was updated to: {}", updateListingRequest.getId(), savedListing);
         return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
-    public ResponseEntity<HttpStatus> deleteListing(Long listingId, String token) {
+    /**
+     * Deletes a listing with listingId. Only the owner of the listing can delete it.
+     *
+     * @param listingId ID of the listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return Status indicating if the listing was successfully deleted
+     */
+    public ResponseEntity<HttpStatus> deleteListing(Long listingId, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-            if (!profile.isPresent()){
-                logger.debug("profileId=" + profile.get().getId() + " was not found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
             Optional<Listing> listingData = listingRepository.findById(listingId);
-
-            if (!listingData.isPresent()) {
-                logger.debug("listingId=" + listingId + " was not found.");
+            if (listingData.isEmpty()) {
+                logger.debug("listingId={} was not found.", listingId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            Listing listing = listingData.get();
 
-            if (listingData.get().getProfile().getId() != profile.get().getId()){
-                logger.debug("UserId is not the owner of listing.");
+            if (!isProfileListingOwner(listing, profile)){
+                logger.debug("profileId is not the owner of listing.");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-
-            System.out.println("Your id: " + profile.get().getId() + ", database id: " + listingData.get().getProfile().getId());
-
-            Optional<Listing> emptyListing = listingRepository.findById(1L);
-            if (!emptyListing.isPresent()){
+            Optional<Listing> emptyListingData = listingRepository.findById(1L);
+            if (emptyListingData.isEmpty()){
+                logger.error("Error retrieving empty listing (listingId=1)");
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            setListingWhenDeleted(listingId, emptyListing.get());
+            Listing emptyListing = emptyListingData.get();
+
+            setListingWhenDeleted(listingId, emptyListing);
             listingRepository.deleteById(listingId);
-            System.out.println("Updated stuff" );
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
+            logger.error("Error deleting listing: {}", e.getMessage());
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public void deleteListing(Listing listing) {
-        try {
-            Optional<Listing> listingData = listingRepository.findById(listing.getId());
             Optional<Listing> emptyListing = listingRepository.findById(1L);
-            if (!emptyListing.isPresent()){
-                return;
-            }
+            if (emptyListing.isEmpty()) return;
+
+        try {
             setListingWhenDeleted(listing.getId(), emptyListing.get());
             listingRepository.deleteById(listing.getId());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error in ListingService.deleteListing: {}", e.getMessage());
         }
     }
 
     public void setListingWhenDeleted(Long listingId, Listing emptyListing){
         List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
 
-        for (Lease lease :
-                leases) {
+        for (Lease lease : leases) {
             lease.setListing(emptyListing);
         }
         leaseRepository.saveAll(leases);
 
         List<Image> images = imageRepository.getImageByListing_Id(listingId);
 
-        for (Image image :
-                images) {
+        for (Image image : images) {
             image.setListing(emptyListing);
         }
         imageRepository.saveAll(images);
@@ -323,6 +328,9 @@ public class ListingService {
         return listingResponses;
     }
 
+    private boolean isProfileListingOwner(Listing listing, Profile profile) {
+        return listing.getProfile().getId().intValue() == profile.getId().intValue();
+    }
 
     private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
         double lat1 = Double.valueOf(location.split(":")[0]);
