@@ -34,7 +34,9 @@
         id="verifyPassword"
         :error="errors.verifyPassword"
       />
-      <button type="submit" class="boco-btn submit" @click="submit">Submit</button>
+      <button type="submit" class="boco-btn submit" @click="submit">
+        Submit
+      </button>
     </form>
   </div>
 </template>
@@ -49,10 +51,14 @@ import router from "@/router";
 import { useToast } from "vue-toastification";
 
 export default {
+  props: ["email"],
   components: {
     BaseInput,
   },
   setup() {
+    setTimeout(() => {
+      console.log(this);
+    }, 1000);
     const validationSchema = object({
       code: string().required("This field is required!"),
       password: string().required("This field is required!"),
@@ -72,10 +78,7 @@ export default {
 
     const submit = handleSubmit(() => {
       apiService
-        .createProfile({
-          code: code.value,
-          passwordHash: password.value.value,
-        })
+        .newPassword(this.email, code.value, password.value.value)
         .catch((error) => {
           console.log(error);
         });

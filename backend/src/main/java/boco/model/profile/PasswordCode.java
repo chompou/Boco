@@ -2,6 +2,7 @@ package boco.model.profile;
 
 import lombok.*;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter@Setter@NoArgsConstructor@AllArgsConstructor@Builder
+@Entity
 public class PasswordCode {
     @Id
     @GeneratedValue
