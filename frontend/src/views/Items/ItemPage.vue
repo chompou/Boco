@@ -292,6 +292,7 @@ button:hover {
 
 #items {
   display: flex;
+  text-align: center;
   flex-direction: column;
   font-size: 20px;
 }
