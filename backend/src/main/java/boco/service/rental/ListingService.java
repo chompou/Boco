@@ -175,35 +175,44 @@ public class ListingService {
         return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
     }
 
-
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
+    /**
+     * Creates a listing in the database based on the data from listingRequest.
+     *
+     * @param listingRequest Request containing listing data
+     * @param multipartFile Image of listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The created listing
+     */
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            // Saving the listing without images or categories
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
                     listingRequest.getIsActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
-                    profile.get());
+                    profile);
             listingRepository.save(newListing);
-            System.out.println(listingRequest.getCategoryNames().size());
+
+            // Adding categories to new listing
             for (int i = 0; i<listingRequest.getCategoryNames().size(); i++){
                 Optional<CategoryType> categoryType = categoryTypeRepository.findCategoryTypeByNameEquals(listingRequest.getCategoryNames().get(i));
-                if (categoryType.isPresent()){
-                    newListing.getCategoryTypes().add(categoryType.get());
-                }
+                if (categoryType.isPresent()) newListing.getCategoryTypes().add(categoryType.get());
             }
             listingRepository.save(newListing);
+
+            // Adding images to new listing
             Image image = new Image(multipartFile.getBytes(), newListing);
             Image savedImage = imageRepository.save(image);
             newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
+
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error creating listing: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
