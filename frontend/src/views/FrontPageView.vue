@@ -106,7 +106,7 @@ export default {
     apiService
       .getItems({}, 0, 15)
       .then((response) => {
-        this.items = response.data;
+        this.items = response.data.listingResponses;
       })
       .catch((error) => console.log(error));
   },

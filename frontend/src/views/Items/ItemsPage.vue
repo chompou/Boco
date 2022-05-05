@@ -57,7 +57,7 @@ export default {
       apiService
         .getItems(this.$route.query, this.page, 15)
         .then((response) => {
-          this.items.push(...response.data);
+          this.items.push(...response.data.listingResponses);
         })
         .catch((error) => console.log(error));
     },
