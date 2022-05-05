@@ -4,9 +4,11 @@ import boco.component.BocoHasher;
 import boco.model.http.profile.PrivateProfileResponse;
 import boco.model.http.profile.ProfileRequest;
 import boco.model.http.profile.UpdatePasswordRequest;
+import boco.model.profile.PasswordCode;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
 import boco.model.profile.Profile;
+import boco.repository.profile.PasswordCodeRepository;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
@@ -28,6 +30,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.Mockito.lenient;
@@ -50,6 +55,8 @@ class ProfileServiceTest {
     private ListingRepository listingRepository;
     @Mock
     private JwtUtil jwtUtil;
+    @Mock
+    private PasswordCodeRepository passwordCodeRepository;
 
 
 
@@ -106,12 +113,28 @@ class ProfileServiceTest {
         lenient().when(jwtUtil.extractUsername("ronaldo")).thenReturn("ronaldo");
         lenient().when(jwtUtil.extractUsername("kaka")).thenReturn("kaka");
         lenient().when(jwtUtil.extractUsername("ramos")).thenReturn("ramos");
+        lenient().when(jwtUtil.extractUsername("r9")).thenReturn("r9");
+        lenient().when(jwtUtil.extractUsername("karim")).thenReturn("karim");
 
         lenient().when(profileRepository.getIfContact(1L, 2L)).thenReturn(Optional.empty());
         lenient().when(profileRepository.getIfContact(2L, 1L)).thenReturn(Optional.empty());
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
+        PasswordCode passwordCode = new PasswordCode(p1, "codecode");
+
+        lenient().when(passwordCodeRepository.findPasswordCodeByProfile(Mockito.any())).thenReturn(Optional.of(passwordCode));
+    }
+
+    @Test
+    public void deactivateProfileTest(){
+        var res = profileService.deactivateProfile("Bearer ronaldo");
+        Assertions.assertEquals(LocalDateTime.now().getDayOfMonth(), res.getBody().getDeactivated().getDate());
+    }
+    @Test
+    public void failedToDeactivateProfile(){
+        var res = profileService.deactivateProfile("NotBearing ronaldo");
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
     }
 
     @Test
@@ -159,21 +182,6 @@ class ProfileServiceTest {
         Assertions.assertEquals(null, profileService.checkIfProfileUsernameExists("emil"));
     }
 
-    @Test
-    public void testChangePassword(){
-        UpdatePasswordRequest goodRequest = new UpdatePasswordRequest("letmepass", "letmepass");
-        var res = profileService.changePassword(goodRequest, "leo@psg.fr");
-        Assertions.assertEquals(BocoHasher.encode("letmepass"), res.getBody().getPasswordHash());
-
-
-        UpdatePasswordRequest badRequest = new UpdatePasswordRequest("letmepass", "dontletmepass");
-        var res1 = profileService.changePassword(badRequest, "leo@psg.fr");
-        Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.NOT_ACCEPTABLE), res1);
-
-        UpdatePasswordRequest forbiddenRequest = new UpdatePasswordRequest("letmepass", "letmepass");
-        var res2 = profileService.changePassword(forbiddenRequest, "emil@mail.fr");
-        Assertions.assertEquals(new ResponseEntity<Profile>(HttpStatus.FORBIDDEN), res2);
-    }
 
     /**
      * Tests if getPublicProfile hides data when two profiles is not contacts.

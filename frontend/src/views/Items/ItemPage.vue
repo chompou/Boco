@@ -9,54 +9,53 @@
     </Transition>
 
     <div class="container">
-      <div>
-        <div class="imageButtons">
-          <img id="image3" alt="Vue logo" :src="imgSource" />
-          <div v-if="my">
-            <button
-              class="boco-btn"
-              :class="[active ? 'green' : 'red']"
-              @click="toggle"
-              id="status-btn"
-            >
-              {{ active ? "Active" : "Inactive" }}
-            </button>
-
-            <button @click="edit" class="editButtons boco-btn">Edit</button>
-            <button class="editButtons boco-btn" @click="deleteItem">
-              Delete
-            </button>
-          </div>
+      <div class="imageButtons">
+        <img id="image3" alt="Vue logo" :src="imgSource" />
+        <button
+          class="editButtons boco-btn book"
+          v-if="!my"
+          @click="isBookingAvailable"
+        >
+          Book
+        </button>
+        <div v-else>
           <button
-            class="leaseButton boco-btn"
-            v-else
-            @click="leaseOverlay = true"
+            class="editButtons boco-btn"
+            :class="[active ? 'boco-btn' : 'red']"
+            @click="toggle"
+            id="status-btn"
           >
-            Book
+            {{ active ? "Active" : "Inactive" }}
+          </button>
+          <button @click="edit" class="editButtons boco-btn">Edit</button>
+          <button class="editButtons boco-btn" @click="deleteItem">
+            Delete
           </button>
         </div>
-        <div id="About">
-          <div id="About11">
-            <div id="About1">
-              <h1>{{ item.name }}</h1>
-              <div id="category">
-                <h5>Category:</h5>
-                <label v-for="category in item.categoryTypes" :key="category"
-                  >{{ category.name }},
-                </label>
-              </div>
-              <p>Address: {{ item.address }}</p>
-              <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
+      </div>
+      <div id="About">
+        <div id="About11">
+          <div id="About1">
+            <h1>{{ item.name }}</h1>
+            <div id="category">
+              <h5>Category:</h5>
+              <label v-for="category in item.categoryTypes" :key="category"
+                >{{ category.name }},
+              </label>
             </div>
-            <div id="About2">
-              <div id="items">
-                <p>Rating:</p>
-                <RatingComponent :rating="item.rating" />
-              </div>
+            <p>Address: {{ item.address }}</p>
+            <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
+          </div>
+          <div id="About2">
+            <div id="items">
+              <p>Rating:</p>
+              <RatingComponent :rating="item.rating" />
             </div>
           </div>
+        </div>
+        <div id="About3">
           <h2>Description</h2>
-          <p>{{ item.description }}</p>
+          <label id="description">{{ item.description }}</label>
         </div>
       </div>
     </div>
@@ -104,10 +103,11 @@ export default {
   },
   computed: {
     displayPrice() {
-      return priceService.displayPrice(this.item);
+      return priceService.formattedPrice(priceService.displayPrice(this.item));
     },
 
     my() {
+      if (!this.$store.state.loggedIn) return false;
       return this.item.profileId === this.$store.state.loggedInUser;
     },
   },
@@ -174,6 +174,13 @@ export default {
     dataUrl() {
       return btoa(this.item.image);
     },
+    isBookingAvailable() {
+      if (this.$store.state.loggedIn) {
+        this.leaseOverlay = true;
+      } else {
+        return this.$router.push({ name: "login" });
+      }
+    },
   },
   created() {
     apiService
@@ -214,12 +221,11 @@ export default {
   display: flex;
 }
 
-.green {
-  background-color: #008b8b;
-}
-
 .red {
   background-color: red;
+}
+.red:hover {
+  background-color: #ac0000;
 }
 
 .container {
@@ -238,26 +244,14 @@ export default {
 }
 
 img {
-  height: 300px;
-  min-width: 300px;
-  width: 300px;
-  padding: 10px;
-  border: 1px solid #39495c;
+  height: 281px;
+  min-width: 500px;
+  width: 500px;
+  border-radius: 20px;
 }
 
 .imageButtons {
   display: flex;
-}
-
-.leaseButton {
-  border: 1px solid #39495c;
-  width: 150px;
-  height: 50px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  padding: 5px;
-  margin: 50px;
 }
 
 .editButtons {
@@ -276,7 +270,6 @@ button:hover {
 
 #About {
   margin-top: 30px;
-  text-align: left;
 }
 
 #About11 {
@@ -294,12 +287,21 @@ button:hover {
 
 #items {
   display: flex;
+  text-align: center;
   flex-direction: column;
   font-size: 20px;
 }
 
+.book {
+  min-width: 150px;
+}
+
 #category label {
   display: inline;
+}
+
+#description {
+  max-width: 600px;
 }
 
 #profilebox {

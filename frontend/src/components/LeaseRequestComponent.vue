@@ -42,7 +42,7 @@ export default {
         .createLease({
           fromDatetime: new Date(this.fromTime).getTime(),
           toDatetime: new Date(this.toTime).getTime(),
-          listingId: this.item.id,
+          id: this.item.id,
         })
         .catch((error) => console.log(error))
         .then(() => this.$emit("close-overlay"));

@@ -2,13 +2,9 @@ package boco.service.rental;
 
 import boco.component.Haversine;
 import boco.component.SimilarStringSort;
-import boco.model.http.rental.ListingRequest;
-import boco.model.http.rental.ListingResponse;
-import boco.model.http.rental.ReviewResponse;
-import boco.model.http.rental.UpdateListingRequest;
+import boco.model.http.rental.*;
 import boco.model.profile.Profile;
 import boco.model.rental.*;
-import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
@@ -25,31 +21,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service responsible for operations on listings.
+ * This includes getting, creating, updating, deleting listings.
+ */
 @Service
 public class ListingService {
     private final ListingRepository listingRepository;
-    private final ProfileRepository profileRepository;
     private final CategoryTypeRepository categoryTypeRepository;
     private final LeaseRepository leaseRepository;
     private final ImageRepository imageRepository;
+    private final JwtUtil jwtUtil;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
-    private JwtUtil jwtUtil;
-
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
+    public ListingService(ListingRepository listingRepository, CategoryTypeRepository categoryTypeRepository,
+                          LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
         this.listingRepository = listingRepository;
-        this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
         this.leaseRepository = leaseRepository;
         this.imageRepository = imageRepository;
         this.jwtUtil = jwtUtil;
-    }
-
-
-    public List<ListingResponse> getAllListings(){
-        return convertListings(listingRepository.findAll());
     }
 
     /**
@@ -66,9 +59,11 @@ public class ListingService {
      *                -1 if not used. priceTo and priceFrom must be used together.
      * @param category The category of items we are looking for
      *                 Empty string if not used.
-     * @return A responseEntity with a list of listingresponses.
+     * @return A responseEntity with a list of listing responses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location) {
+    public ResponseEntity<ListingResultsResponse> getListings(int page, int perPage, String search, String sort,
+                                                              double priceFrom, double priceTo, String category,
+                                                              String location) {
         List<Listing> allListings = listingRepository.findAllByIsActiveTrue();
 
         // Filtering by Category
@@ -126,11 +121,13 @@ public class ListingService {
 
         List<Listing> listingsSublist = allListings.subList(page*perPage,
                 Math.min((page+1)*perPage, allListings.size()));
-        return new ResponseEntity<>(convertListings(listingsSublist), HttpStatus.OK);
+
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(convertListings(listingsSublist), allListings.size());
+        return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
     }
 
     /**
-     * gets the reviews of a listing given by Id.
+     * gets the reviews of a listing given by id.
      * @param listingId The id of the listing.
      * @param perPage The number of reviews to be returned.
      * @param page The page number to be returned
@@ -139,17 +136,16 @@ public class ListingService {
     public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
         Optional<Listing> listingData = listingRepository.findById(listingId);
 
-        if (!listingData.isPresent()) {
-            logger.debug("listingId=" + listingId + " was not found.");
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", listingId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Listing listing = listingData.get();
+        List<Lease> listingLeases = listing.getLeases();
 
-        if (listingData.get().getLeases() == null) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-        }
+        if (listingLeases == null) return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
 
-        List<Lease> listingLeases = listingData.get().getLeases();
-
+        // Getting the reviews of the listings leases
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
             Review  newReview = listingLeases.get(i).getItemReview();
@@ -163,75 +159,89 @@ public class ListingService {
 
     /**
      * Gets the listing response of a listing given its id.
+     *
      * @param listingId The id of the listing we are looking for.
      * @return The listing response we are looking for.
      */
     public ResponseEntity<ListingResponse> getListingById(Long listingId){
-        Optional<Listing> listing = listingRepository.findById(listingId);
-        if (!listing.isPresent()) {
-            logger.debug("listingId=" + listingId + " was not found.");
+        Optional<Listing> listingData = listingRepository.findById(listingId);
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", listingId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
+        Listing listing = listingData.get();
+        return new ResponseEntity<>(new ListingResponse(listing), HttpStatus.OK);
     }
 
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
+    /**
+     * Creates a listing in the database based on the data from listingRequest.
+     *
+     * @param listingRequest Request containing listing data
+     * @param multipartFile Image of listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The created listing
+     */
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            // Saving the listing without images or categories
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
                     listingRequest.getIsActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
-                    profile.get());
+                    profile);
             listingRepository.save(newListing);
-            System.out.println(listingRequest.getCategoryNames().size());
+
+            // Adding categories to new listing
             for (int i = 0; i<listingRequest.getCategoryNames().size(); i++){
                 Optional<CategoryType> categoryType = categoryTypeRepository.findCategoryTypeByNameEquals(listingRequest.getCategoryNames().get(i));
-                if (categoryType.isPresent()){
-                    newListing.getCategoryTypes().add(categoryType.get());
-                }
+                if (categoryType.isPresent()) newListing.getCategoryTypes().add(categoryType.get());
             }
             listingRepository.save(newListing);
+
+            // Adding images to new listing
             Image image = new Image(multipartFile.getBytes(), newListing);
             Image savedImage = imageRepository.save(image);
             newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
+
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error creating listing: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-
-    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()){
-            logger.debug("profileId=" + profile.get().getId() + " was not found.");
+    /**
+     * Updates a listing with the values in updateListingRequest. Values are updated even if
+     * the new value is null.
+     * Only the owner of the listing can update it
+     *
+     * @param updateListingRequest New values of listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The saved listing
+     */
+    public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getId());
-
-        if (!listingData.isPresent()) {
-            logger.debug("listingId=" + updateListingRequest.getId() + " was not found.");
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", updateListingRequest.getId());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Listing listing = listingData.get();
 
-        if (listingData.get().getProfile().getId() != profile.get().getId()){
-            logger.debug("UserId is not the owner of listing.");
+        if (!isProfileListingOwner(listing, profile)){
+            logger.debug("profileId is not the owner of listing.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-
-
         // Setting the new data
-        Listing listing = listingData.get();
         // Update all values, even null from request?
         listing.setDescription(updateListingRequest.getDescription());
         listing.setIsActive(updateListingRequest.getIsActive());
@@ -239,74 +249,77 @@ public class ListingService {
         listing.setPriceType(updateListingRequest.getPriceType());
 
         Listing savedListing = listingRepository.save(listing);
-        logger.debug("listingId=" + updateListingRequest.getId() + " was updated to:\n" + savedListing);
+        logger.info("listingId={} was updated to: {}", updateListingRequest.getId(), savedListing);
         return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.OK);
     }
 
-    public ResponseEntity<HttpStatus> deleteListing(Long listingId, String token) {
+    /**
+     * Deletes a listing with listingId. Only the owner of the listing can delete it.
+     *
+     * @param listingId ID of the listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return Status indicating if the listing was successfully deleted
+     */
+    public ResponseEntity<HttpStatus> deleteListing(Long listingId, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-            if (!profile.isPresent()){
-                logger.debug("profileId=" + profile.get().getId() + " was not found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
             Optional<Listing> listingData = listingRepository.findById(listingId);
-
-            if (!listingData.isPresent()) {
-                logger.debug("listingId=" + listingId + " was not found.");
+            if (listingData.isEmpty()) {
+                logger.debug("listingId={} was not found.", listingId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            Listing listing = listingData.get();
 
-            if (listingData.get().getProfile().getId() != profile.get().getId()){
-                logger.debug("UserId is not the owner of listing.");
+            if (!isProfileListingOwner(listing, profile)){
+                logger.debug("profileId is not the owner of listing.");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-
-            System.out.println("Your id: " + profile.get().getId() + ", database id: " + listingData.get().getProfile().getId());
-
-            Optional<Listing> emptyListing = listingRepository.findById(1L);
-            if (!emptyListing.isPresent()){
+            Optional<Listing> emptyListingData = listingRepository.findById(1L);
+            if (emptyListingData.isEmpty()){
+                logger.error("Error retrieving empty listing (listingId=1)");
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            setListingWhenDeleted(listingId, emptyListing.get());
+            Listing emptyListing = emptyListingData.get();
+
+            setListingWhenDeleted(listingId, emptyListing);
             listingRepository.deleteById(listingId);
-            System.out.println("Updated stuff" );
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
+            logger.error("Error deleting listing: {}", e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public void deleteListing(Listing listing) {
-        try {
-            Optional<Listing> listingData = listingRepository.findById(listing.getId());
             Optional<Listing> emptyListing = listingRepository.findById(1L);
-            if (!emptyListing.isPresent()){
-                return;
-            }
+            if (emptyListing.isEmpty()) return;
+
+        try {
             setListingWhenDeleted(listing.getId(), emptyListing.get());
             listingRepository.deleteById(listing.getId());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Error in ListingService.deleteListing: {}", e.getMessage());
         }
     }
 
     public void setListingWhenDeleted(Long listingId, Listing emptyListing){
         List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
 
-        for (Lease lease :
-                leases) {
+        for (Lease lease : leases) {
             lease.setListing(emptyListing);
         }
         leaseRepository.saveAll(leases);
 
         List<Image> images = imageRepository.getImageByListing_Id(listingId);
 
-        for (Image image :
-                images) {
+        for (Image image : images) {
             image.setListing(emptyListing);
         }
         imageRepository.saveAll(images);
@@ -321,8 +334,11 @@ public class ListingService {
         return listingResponses;
     }
 
+    private boolean isProfileListingOwner(Listing listing, Profile profile) {
+        return listing.getProfile().getId().intValue() == profile.getId().intValue();
+    }
 
-    private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
+    private ListingResultsResponse sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
         double lat1 = Double.valueOf(location.split(":")[0]);
         double long1 = Double.valueOf(location.split(":")[1]);
 
@@ -339,7 +355,10 @@ public class ListingService {
 
         Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
         Collections.sort(responses, distanceComp);
-        return responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
+
+        List<ListingResponse> listingResponsesSubList = responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(listingResponsesSubList, responses.size());
+        return listingResultsResponse;
     }
 
     private List<Listing> sortListingsByRating(List<Listing> listings) {

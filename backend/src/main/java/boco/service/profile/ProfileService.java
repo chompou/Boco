@@ -3,13 +3,16 @@ package boco.service.profile;
 import boco.component.BocoHasher;
 import boco.model.http.profile.*;
 import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ListingResultsResponse;
 import boco.model.http.rental.ReviewResponse;
+import boco.model.profile.PasswordCode;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
 import boco.model.profile.Profile;
 import boco.model.rental.Lease;
 import boco.model.rental.Listing;
 import boco.model.rental.Review;
+import boco.repository.profile.PasswordCodeRepository;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
@@ -39,6 +42,7 @@ public class ProfileService {
     private final LeaseRepository leaseRepository;
     private final ListingRepository listingRepository;
     private final ListingService listingService;
+    private final PasswordCodeRepository passwordCodeRepository;
 
 
     private final JwtUtil jwtUtil;
@@ -51,13 +55,14 @@ public class ProfileService {
                           ProfessionalRepository professionalRepository,
                           LeaseRepository leaseRepository,
                           JwtUtil jwtUtil, ListingRepository listingRepository,
-                          ListingService listingService) {
+                          ListingService listingService, PasswordCodeRepository passwordCodeRepository) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
         this.leaseRepository = leaseRepository;
         this.jwtUtil = jwtUtil;
         this.listingRepository = listingRepository;
+        this.passwordCodeRepository = passwordCodeRepository;
         this.listingService = listingService;
     }
 
@@ -150,7 +155,7 @@ public class ProfileService {
         }
     }
 
-    public ResponseEntity<List<ListingResponse>> getProfileListings(Long profileId, int perPage, int page){
+    public ResponseEntity<ListingResultsResponse> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()){
@@ -166,7 +171,8 @@ public class ProfileService {
         }
 
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
-        return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
+        return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
 
     }
 
@@ -255,7 +261,6 @@ public class ProfileService {
         Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
         if (!profileData.isPresent()) {
-            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Profile profile = profileData.get();
@@ -311,10 +316,12 @@ public class ProfileService {
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (checkIfProfileEmailExists(email) != null) {
-            if (updatePasswordRequest.getPasswordHash2().equals(updatePasswordRequest.getPasswordHash1())) {
-                Profile profile = checkIfProfileEmailExists(email).getBody();
-                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash1()));
+            Profile profile = profileRepository.findProfileByEmail(email).get();
+            PasswordCode passwordCode = passwordCodeRepository.findPasswordCodeByProfile(profile).get();
+            if (updatePasswordRequest.getGeneratedCode().equals(passwordCode.getGeneratedCode())) {
+                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
                 profileRepository.save(profile);
+                passwordCodeRepository.delete(passwordCode);
                 return new ResponseEntity<>(profile, HttpStatus.OK);
             }
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);

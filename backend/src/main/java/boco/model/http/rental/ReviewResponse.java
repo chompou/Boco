@@ -20,7 +20,7 @@ public class ReviewResponse {
         this.comment = review.getComment();
 
         try {
-            if (this.id == review.getLease().getLeaseeReview().getId()) {
+            if (review.getLease().getLeaseeReview() != null && this.id == review.getLease().getLeaseeReview().getId()) {
                 this.profile_id = review.getLease().getOwner().getId();
                 this.displayName = review.getLease().getOwner().getDisplayName();
             } else {
@@ -28,7 +28,7 @@ public class ReviewResponse {
                 this.displayName = review.getLease().getProfile().getDisplayName();
             }
         } catch (NullPointerException e) {
-            // handle
+            // Should never reach here
             e.printStackTrace();
         }
     }

@@ -2,11 +2,11 @@
   <div id="container">
     <h1>Edit item</h1>
     <div>
-      <img id="image" alt="Vue logo" :src="imgSource" />
+      <img id="image" alt="Vue logo" :src="imageSource" />
     </div>
     <div id="inputFields">
       <div class="ItemId">
-        <p id="ItemNameHeader">Title:</p>
+        <h5 id="ItemNameHeader">Title:</h5>
         <input
           class="baseInput"
           v-model="item.name"
@@ -15,8 +15,17 @@
           disabled
         />
       </div>
+      <div id="descriptionField">
+        <h5>Description</h5>
+        <textarea
+          v-model="item.description"
+          placeholder="Description"
+          id="description"
+          name="description"
+        ></textarea>
+      </div>
       <div class="ItemId">
-        <p>Address:</p>
+        <h5>Address:</h5>
         <input
           class="baseInput"
           v-model="item.address"
@@ -25,10 +34,10 @@
         />
       </div>
       <div class="ItemId">
-        <p>price:</p>
+        <h5>Price:</h5>
         <div id="pricePicker">
           <input
-            v-model="price"
+            v-model="inputPrice"
             placeholder="100"
             class="price"
             type="number"
@@ -42,46 +51,7 @@
           </select>
         </div>
       </div>
-      <div class="ItemId">
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Tools"
-            value="Tools"
-            v-model="item.category"
-          />
-          <label for="Tools">Tools</label>
-        </div>
 
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Vehicle"
-            value="Vehicle"
-            v-model="item.category"
-          />
-          <label for="Vehicle">Vehicle</label>
-        </div>
-
-        <div class="checkboxItem">
-          <input
-            type="checkbox"
-            id="Electronics"
-            value="Electronics"
-            v-model="item.category"
-          />
-          <label for="Electronics">Electronics</label>
-        </div>
-      </div>
-      <div id="descriptionField">
-        <p>Description</p>
-        <textarea
-          v-model="item.description"
-          placeholder="Description"
-          id="description"
-          name="description"
-        ></textarea>
-      </div>
       <div id="CreateButtons" class="element">
         <button class="CreateButton" v-on:click="update">Update</button>
         <button id="Delete" class="CreateButton" v-on:click="dismiss">
@@ -94,24 +64,42 @@
 
 <script>
 import apiService from "@/services/apiService";
+import { useToast } from "vue-toastification";
+import priceService from "@/services/priceService";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   props: ["id"],
   data() {
     return {
-      item: null,
-      imgSource: null,
+      item: {},
+      inputPrice: null,
     };
   },
+
+  computed: {
+    imageSource() {
+      if (!this.item.image) return null;
+      return "data:image/jpeg;base64, " + this.item.image;
+    },
+  },
+
   methods: {
     update() {
+      let standardPrice = priceService.parsePrice(
+        this.inputPrice,
+        this.item.priceType
+      );
+
+      console.log(standardPrice);
+
       apiService
         .updateItem({
-          listingId: this.id,
-          address: this.item.address,
-          price: this.item.price,
-          priceType: this.item.priceType,
-          description: this.item.description,
+          ...this.item,
+          price: standardPrice,
         })
         .catch((error) => {
           console.log(error);
@@ -119,36 +107,26 @@ export default {
       setTimeout(() => {
         this.$router.push({ name: "item", params: { id: this.id } });
       }, 100);
+      this.toast.success("Item listing was updated", {
+        timeout: 2000,
+      });
     },
     dismiss() {
       this.$router.push({ name: "item", params: { id: this.id } });
+      this.toast.error("Changes were discarded", {
+        timeout: 2000,
+      });
     },
   },
-  computed: {
-    price() {
-      let actuallyPrice = this.item.price;
-      if (this.item.priceType === "Week") {
-        actuallyPrice = this.item.price * 7 * 24;
-      }
-      if (this.item.priceType === "Day") {
-        actuallyPrice = this.item.price * 24;
-      }
-      return actuallyPrice;
-    },
-  },
+
   created() {
     apiService
       .getItem(this.id)
       .then((response) => {
         this.item = response.data;
+        this.inputPrice = priceService.displayPrice(this.item);
       })
-      .catch((error) => {
-        console.log(error);
-      });
-    setTimeout(() => {
-      let image = this.item.image;
-      this.imgSource = "data:image/jpeg;base64, " + image;
-    }, 100);
+      .catch((error) => console.log(error));
   },
 };
 </script>
@@ -158,6 +136,15 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.checkBoxForm {
+  display: inline-grid;
+  grid-template-rows: repeat(5, min-content);
+  grid-template-columns: repeat(4, min-content);
+  grid-row-gap: 10px;
+  grid-column-gap: 40px;
+  margin: 10px;
 }
 
 #image {
@@ -216,12 +203,6 @@ select {
 }
 
 #pricePicker {
-  display: flex;
-  align-items: center;
-}
-
-.checkboxItem {
-  width: 200px;
   display: flex;
   align-items: center;
 }
