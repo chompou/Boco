@@ -50,5 +50,6 @@ public class EmailService extends SimpleMailMessage {
         message.setTo("idatt2106.4@gmail.com");
         message.setSubject("Issue from " + name);
         message.setText(issue);
+        emailSender.send(message);
     }
 }
