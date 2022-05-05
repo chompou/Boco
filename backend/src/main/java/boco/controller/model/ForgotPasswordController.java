@@ -1,7 +1,10 @@
 package boco.controller.model;
 
 import boco.model.http.profile.UpdatePasswordRequest;
+import boco.model.profile.PasswordCode;
 import boco.model.profile.Profile;
+import boco.repository.profile.PasswordCodeRepository;
+import boco.service.profile.PasswordCodeService;
 import boco.service.profile.ProfileService;
 import boco.service.profile.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,15 @@ import java.net.MalformedURLException;
 public class ForgotPasswordController {
     private final EmailService emailService;
     private final ProfileService profileService;
+    private final PasswordCodeService passwordCodeService;
+    private final PasswordCodeRepository passwordCodeRepository;
 
     @Autowired
-    public ForgotPasswordController(EmailService emailService, ProfileService profileService){
+    public ForgotPasswordController(EmailService emailService, ProfileService profileService, PasswordCodeService passwordCodeService, PasswordCodeRepository passwordCodeRepository){
         this.emailService = emailService;
         this.profileService = profileService;
+        this.passwordCodeService = passwordCodeService;
+        this.passwordCodeRepository = passwordCodeRepository;
 
     }
 
@@ -28,7 +35,10 @@ public class ForgotPasswordController {
     public ResponseEntity<HttpStatus> sendForgotPasswordMail(@PathVariable(value = "email") String email) throws MalformedURLException {
         if (profileService.checkIfProfileEmailExists(email) != null){
             String url = "http://localhost:3000/newPwd";
-            emailService.sendResetPasswordMessage(email, url);
+            String code = passwordCodeService.generateCode();
+            PasswordCode passwordCode = new PasswordCode(profileService.checkIfProfileEmailExists(email).getBody(), code);
+            passwordCodeRepository.save(passwordCode);
+            emailService.sendResetPasswordMessage(email, url, code);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
