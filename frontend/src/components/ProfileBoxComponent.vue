@@ -25,7 +25,6 @@
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
-import "vue3-openlayers/dist/vue3-openlayers.css";
 import MapTest from "@/components/Map/MapComponent";
 export default {
   props: ["profile"],
