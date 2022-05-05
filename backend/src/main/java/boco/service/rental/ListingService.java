@@ -2,10 +2,7 @@ package boco.service.rental;
 
 import boco.component.Haversine;
 import boco.component.SimilarStringSort;
-import boco.model.http.rental.ListingRequest;
-import boco.model.http.rental.ListingResponse;
-import boco.model.http.rental.ReviewResponse;
-import boco.model.http.rental.UpdateListingRequest;
+import boco.model.http.rental.*;
 import boco.model.profile.Profile;
 import boco.model.rental.*;
 import boco.repository.rental.CategoryTypeRepository;
@@ -64,9 +61,9 @@ public class ListingService {
      *                 Empty string if not used.
      * @return A responseEntity with a list of listing responses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort,
-                                                             double priceFrom, double priceTo, String category,
-                                                             String location) {
+    public ResponseEntity<ListingResultsResponse> getListings(int page, int perPage, String search, String sort,
+                                                              double priceFrom, double priceTo, String category,
+                                                              String location) {
         List<Listing> allListings = listingRepository.findAllByIsActiveTrue();
 
         // Filtering by Category
@@ -124,7 +121,9 @@ public class ListingService {
 
         List<Listing> listingsSublist = allListings.subList(page*perPage,
                 Math.min((page+1)*perPage, allListings.size()));
-        return new ResponseEntity<>(convertListings(listingsSublist), HttpStatus.OK);
+
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(convertListings(listingsSublist), allListings.size());
+        return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
     }
 
     /**
@@ -230,7 +229,6 @@ public class ListingService {
             logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         Optional<Listing> listingData = listingRepository.findById(updateListingRequest.getId());
         if (listingData.isEmpty()) {
             logger.warn("listingId={} was not found.", updateListingRequest.getId());
@@ -340,7 +338,7 @@ public class ListingService {
         return listing.getProfile().getId().intValue() == profile.getId().intValue();
     }
 
-    private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
+    private ListingResultsResponse sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
         double lat1 = Double.valueOf(location.split(":")[0]);
         double long1 = Double.valueOf(location.split(":")[1]);
 
@@ -357,7 +355,10 @@ public class ListingService {
 
         Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
         Collections.sort(responses, distanceComp);
-        return responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
+
+        List<ListingResponse> listingResponsesSubList = responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(listingResponsesSubList, responses.size());
+        return listingResultsResponse;
     }
 
     private List<Listing> sortListingsByRating(List<Listing> listings) {

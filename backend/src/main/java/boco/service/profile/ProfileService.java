@@ -3,6 +3,7 @@ package boco.service.profile;
 import boco.component.BocoHasher;
 import boco.model.http.profile.*;
 import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ListingResultsResponse;
 import boco.model.http.rental.ReviewResponse;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
@@ -150,7 +151,7 @@ public class ProfileService {
         }
     }
 
-    public ResponseEntity<List<ListingResponse>> getProfileListings(Long profileId, int perPage, int page){
+    public ResponseEntity<ListingResultsResponse> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()){
@@ -166,7 +167,8 @@ public class ProfileService {
         }
 
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
-        return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
+        return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
 
     }
 

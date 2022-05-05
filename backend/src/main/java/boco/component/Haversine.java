@@ -12,9 +12,6 @@ public class Haversine {
         double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
                 Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
                  * Math.sin(deltaLong / 2) * Math.sin(deltaLong / 2);
-
-        System.out.println(Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) + " + " + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
-                * Math.sin(deltaLong / 2) * Math.sin(deltaLong / 2));
         double c = 2* Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         if (deltaLat == 0.0 && (lat1 == 90 || lat2 == -90)){ //If both positions are on the north pole
