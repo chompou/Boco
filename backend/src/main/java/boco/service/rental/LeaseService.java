@@ -202,6 +202,15 @@ public class LeaseService {
         }
     }
 
+    /**
+     * Add a review to a lease relationship between an item owner and leasee. Either
+     * the item, owner of item or leasee is reviewed.
+     *
+     * @param reviewRequest Review to be added along. Also includes the leaseId to add review to
+     * @param reviewType Type of review: owner/item/leasee
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The updated lease
+     */
     public ResponseEntity<LeaseResponse> createLeaseReview(ReviewRequest reviewRequest, String reviewType, String authHeader) {
         Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
         if (profile == null){
