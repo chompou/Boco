@@ -277,6 +277,7 @@ public class ListingService {
             System.out.println("Updated stuff" );
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -290,7 +291,8 @@ public class ListingService {
             }
             setListingWhenDeleted(listing.getId(), emptyListing.get());
             listingRepository.deleteById(listing.getId());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
