@@ -51,14 +51,13 @@ import router from "@/router";
 import { useToast } from "vue-toastification";
 
 export default {
-  props: ["email"],
+  props: {
+    email: String,
+  },
   components: {
     BaseInput,
   },
-  setup() {
-    setTimeout(() => {
-      console.log(this);
-    }, 1000);
+  setup(props) {
     const validationSchema = object({
       code: string().required("This field is required!"),
       password: string().required("This field is required!"),
@@ -78,7 +77,7 @@ export default {
 
     const submit = handleSubmit(() => {
       apiService
-        .newPassword(this.email, code.value, password.value.value)
+        .newPassword(props.email, code.value, password.value.value)
         .catch((error) => {
           console.log(error);
         });

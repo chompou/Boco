@@ -44,8 +44,9 @@ public class ForgotPasswordController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/change/{email}")
+    @PutMapping("/change/{email}")
     public ResponseEntity<Profile> changePassword(@PathVariable(value = "email") String email, @RequestBody UpdatePasswordRequest updatePasswordRequest){
+        System.out.println("her");
         return profileService.changePassword(updatePasswordRequest, email);
     }
 

@@ -90,13 +90,13 @@ export default {
   removeNotificationAfterRead(notification) {
     return apiClient.put("my/notifications", { toBeRead: [notification] });
   },
-  newPassword(email, code, password) {
-    return apiClient.post("forgot-password/change/" + email, {
-      code,
-      password,
+  newPassword(email, generatedCode, passwordHash) {
+    return apiClient.put("/forgot-password/change/" + email, {
+      generatedCode,
+      passwordHash,
     });
   },
   sendEmail(email) {
-    return apiClient.get("forgot-password/" + email);
+    return apiClient.get("/forgot-password/" + email);
   },
 };

@@ -314,7 +314,9 @@ public class ProfileService {
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (checkIfProfileEmailExists(email) != null) {
             Profile profile = profileRepository.findProfileByEmail(email).get();
+            System.out.println(email);
             String code = passwordCodeRepository.findPasswordCodeByProfile(profile).get().getCode();
+            System.out.println(code);
             if (updatePasswordRequest.getGeneratedCode().equals(code)) {
                 profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
                 profileRepository.save(profile);
