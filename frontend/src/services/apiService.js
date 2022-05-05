@@ -91,7 +91,6 @@ export default {
     return apiClient.put("my/notifications", { toBeRead: [notification] });
   },
   newPassword(email, generatedCode, passwordHash) {
-    console.log(email + generatedCode + passwordHash);
     return apiClient.put("/forgot-password/change/" + email, {
       generatedCode,
       passwordHash,
