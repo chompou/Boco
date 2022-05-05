@@ -159,7 +159,7 @@ router.beforeEach(async function (to) {
       default:
     }
   } else {
-    if (to.path == "/login") {
+    if (to.path === "/login") {
       return { name: "home" };
     }
   }

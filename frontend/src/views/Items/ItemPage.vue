@@ -30,7 +30,7 @@
           <button
             class="editButtons boco-btn book"
             v-else
-            @click="leaseOverlay = true"
+            @click="isBookingAvailable"
           >
             Book
           </button>
@@ -173,6 +173,13 @@ export default {
     },
     dataUrl() {
       return btoa(this.item.image);
+    },
+    isBookingAvailable() {
+      if (this.$store.state.loggedIn) {
+        this.leaseOverlay = true;
+      } else {
+        return this.$router.push({ name: "login" });
+      }
     },
   },
   created() {
