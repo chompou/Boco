@@ -1,6 +1,7 @@
 package boco.service.rental;
 
 import boco.component.Haversine;
+import boco.component.SimilarStringSort;
 import boco.model.http.rental.ListingRequest;
 import boco.model.http.rental.ListingResponse;
 import boco.model.http.rental.ReviewResponse;
@@ -16,7 +17,6 @@ import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -68,84 +68,66 @@ public class ListingService {
      *                 Empty string if not used.
      * @return A responseEntity with a list of listingresponses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location){
-        boolean distanceSort = false;
-        CategoryType catType = null;
-        if (!category.equals("")){
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location) {
+        List<Listing> allListings = listingRepository.findAllByIsActiveTrue();
+
+        // Filtering by Category
+        if (!category.equals("")) {
             Optional<CategoryType> catTypeData = categoryTypeRepository.findCategoryTypeByNameEquals(category);
-            if (!catTypeData.isPresent()){
+            if (!catTypeData.isPresent()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            catType = catTypeData.get();
+            CategoryType finalCatType = catTypeData.get();
+            allListings = allListings.stream()
+                    .filter(l -> (l.getCategoryTypes().contains(finalCatType))).collect(Collectors.toList());
         }
 
-        if (priceTo == -1){
-            priceTo = Double.MAX_VALUE;
-        }
-        if (sort.split(":").length != 2){
+        // Filtering by price
+        double finalPriceTo = (priceTo == -1) ? Double.MAX_VALUE : priceTo;
+        allListings = allListings.stream()
+                .filter(l -> (l.getPrice() <= finalPriceTo && l.getPrice() >= priceFrom)).collect(Collectors.toList());
+
+        // Search
+        if (!search.equals(""))
+            allListings = SimilarStringSort.searchListings(allListings, search, 40);
+
+        // Sort
+        if (sort.split(":").length != 2) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        //TODO Validate sort name
         String sortBy = sort.split(":")[0];
         String sortDir = sort.split(":")[1];
 
-
-
-        if (sortBy.equals("distance")){
-            distanceSort = true;
-            sortBy = "id";
+        switch (sortBy) {
+            case "distance":
+                if (location == null || location.split(":").length != 2) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+                // sort by distance
+                return new ResponseEntity<>(sortListingsByDistance(page, perPage, location, allListings), HttpStatus.OK);
+            case "rating":
+                sortListingsByRating(allListings);
+                break;
+            case "lastChanged":
+                sortListingsByLastChanged(allListings);
+                break;
+            case "id":
+                sortListingsById(allListings);
+                break;
+            case "price":
+                sortListingsByPrice(allListings);
+                break;
+            default:
+                break;
         }
 
+        if (!sortDir.equals("ASC")) Collections.reverse(allListings);
 
-        List<Listing> listings = listingRepository.getListingByPriceRange(priceFrom, priceTo, Sort.by(sortBy).ascending());
-
-        if (!category.equals("")){
-            CategoryType finalCatType = catType;
-            listings = listings.stream().filter(l -> (l.getCategoryTypes().contains(finalCatType))).collect(Collectors.toList());
-        }
-
-        if (!search.equals("")){
-            //TODO add more advanced searching
-            listings = listings.stream().filter(l -> (l.getName().contains(search) || l.getDescription().contains(search))).collect(Collectors.toList());
-        }
-
-
-        if (distanceSort){
-            if (location == null || location.split(":").length != 2){
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            double lat1 = Double.valueOf(location.split(":")[0]);
-            double long1 = Double.valueOf(location.split(":")[1]);
-
-            double lat2;
-            double long2;
-            List<ListingResponse> responses = new ArrayList<>();
-            for (Listing listing: listings) {
-
-                lat2 = Double.valueOf(listing.getProfile().getLocation().split(":")[0]);
-                long2 = Double.valueOf(listing.getProfile().getLocation().split(":")[1]);
-                double distance = Haversine.distance(lat1, long1, lat2, long2);
-                responses.add(new ListingResponse(listing, distance));
-            }
-
-            Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
-            Collections.sort(responses, distanceComp);
-            for (int i = 0; i < responses.size(); i++) {
-                System.out.println(i + ". Distance: " + responses.get(i).getDistance());
-            }
-            return new ResponseEntity<>(responses, HttpStatus.OK);
-        }
-
-
-        if (!sortDir.equals("ASC")){
-            Collections.reverse(listings);
-        }
-
-        List<Listing> listingsSublist = listings.subList(page*perPage, Math.min((page+1)*perPage, listings.size()));
+        List<Listing> listingsSublist = allListings.subList(page*perPage,
+                Math.min((page+1)*perPage, allListings.size()));
         return new ResponseEntity<>(convertListings(listingsSublist), HttpStatus.OK);
     }
-
 
     /**
      * gets the reviews of a listing given by Id.
@@ -337,6 +319,79 @@ public class ListingService {
             listingResponses.add(new ListingResponse(listing));
         }
         return listingResponses;
+    }
+
+
+    private List<ListingResponse> sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
+        double lat1 = Double.valueOf(location.split(":")[0]);
+        double long1 = Double.valueOf(location.split(":")[1]);
+
+        double lat2;
+        double long2;
+        List<ListingResponse> responses = new ArrayList<>();
+        for (Listing listing: listings) {
+
+            lat2 = Double.valueOf(listing.getProfile().getLocation().split(":")[0]);
+            long2 = Double.valueOf(listing.getProfile().getLocation().split(":")[1]);
+            double distance = Haversine.distance(lat1, long1, lat2, long2);
+            responses.add(new ListingResponse(listing, distance));
+        }
+
+        Comparator<ListingResponse> distanceComp = Comparator.comparingDouble(ListingResponse::getDistance);
+        Collections.sort(responses, distanceComp);
+        return responses.subList(page*perPage, Math.min((page+1)*perPage, responses.size()));
+    }
+
+    private List<Listing> sortListingsByRating(List<Listing> listings) {
+        var ratingComp = new Comparator<Listing>() {
+            @Override
+            public int compare(Listing l1, Listing l2) {
+                if (l1.getRating() > l2.getRating()) return 1;
+                if (l1.getRating() < l2.getRating()) return -1;
+                return 0;
+            }
+        };
+        listings.sort(ratingComp);
+        return listings;
+    }
+
+    private List<Listing> sortListingsByLastChanged(List<Listing> listings) {
+        var lastChangedComp = new Comparator<Listing>() {
+            @Override
+            public int compare(Listing l1, Listing l2) {
+                if (l1.getLastChanged().after(l2.getLastChanged())) return 1;
+                if (l1.getLastChanged().before(l2.getLastChanged())) return -1;
+                return 0;
+            }
+        };
+        listings.sort(lastChangedComp);
+        return listings;
+    }
+
+    private List<Listing> sortListingsById(List<Listing> listings) {
+        var idComp = new Comparator<Listing>() {
+            @Override
+            public int compare(Listing l1, Listing l2) {
+                if (l1.getId() > l2.getId()) return 1;
+                if (l1.getId() < l2.getId()) return -1;
+                return 0;
+            }
+        };
+        listings.sort(idComp);
+        return listings;
+    }
+
+    private List<Listing> sortListingsByPrice(List<Listing> listings) {
+        var priceComp = new Comparator<Listing>() {
+            @Override
+            public int compare(Listing l1, Listing l2) {
+                if (l1.getPrice() > l2.getPrice()) return 1;
+                if (l1.getPrice() < l2.getPrice()) return -1;
+                return 0;
+            }
+        };
+        listings.sort(priceComp);
+        return listings;
     }
 
 }

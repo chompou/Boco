@@ -12,7 +12,7 @@
         >
           <font-awesome-icon icon="arrow-down" />
         </div>
-        <select id="sort-dropdown">
+        <select id="sort-dropdown" v-model="sort" @change="onSortUpdate">
           <option value="id">Created</option>
           <option value="price">Price</option>
         </select>
@@ -37,6 +37,7 @@ export default {
       page: 0,
       lastUpdate: Date.now(),
       items: [],
+      sort: null,
       ascending: true,
     };
   },
@@ -46,26 +47,40 @@ export default {
       return this.ascending ? "" : "transform: rotate(180deg)";
     },
 
-    filters() {
-      let query = this.$route.query;
-
-      return { ...query, sort: query.sort };
+    sortOrder() {
+      return this.ascending ? "ASC" : "DESC";
     },
   },
 
   methods: {
-    onSortArrow() {
-      this.ascending = !this.ascending;
-      this.$router.push({ name: "items", params: this.filters });
-    },
-
     fetchItems() {
       apiService
-        .getItems(this.filters, this.page, 15)
+        .getItems(this.$route.query, this.page, 15)
         .then((response) => {
           this.items.push(...response.data);
         })
         .catch((error) => console.log(error));
+    },
+
+    applyFilter() {
+      this.$router.push("/").then(() => {
+        this.$router.replace({
+          name: "items",
+          query: {
+            ...this.$route.query,
+            sort: this.sort + ":" + this.sortOrder,
+          },
+        });
+      });
+    },
+
+    onSortArrow() {
+      this.ascending = !this.ascending;
+      this.applyFilter();
+    },
+
+    onSortUpdate() {
+      this.applyFilter();
     },
 
     handleScroll() {
@@ -85,6 +100,13 @@ export default {
   },
 
   created() {
+    let sort = this.$route.query.sort;
+    if (sort != null) {
+      let sortArray = sort.split(":");
+      this.sort = sortArray[0];
+      this.ascending = sortArray[1] == "ASC";
+    }
+
     this.fetchItems();
   },
 

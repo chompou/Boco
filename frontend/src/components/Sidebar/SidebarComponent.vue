@@ -132,8 +132,6 @@ export default {
 
   methods: {
     onSubmit() {
-      console.log(this.filters);
-
       if (this.filters.priceFrom != null) {
         this.filters.priceFrom = priceService.parsePrice(
           this.filters.priceFrom,
