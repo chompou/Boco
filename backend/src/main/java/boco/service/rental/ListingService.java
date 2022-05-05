@@ -8,7 +8,6 @@ import boco.model.http.rental.ReviewResponse;
 import boco.model.http.rental.UpdateListingRequest;
 import boco.model.profile.Profile;
 import boco.model.rental.*;
-import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.CategoryTypeRepository;
 import boco.repository.rental.ImageRepository;
 import boco.repository.rental.LeaseRepository;
@@ -25,31 +24,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service responsible for operations on listings.
+ * This includes getting, creating, updating, deleting listings.
+ */
 @Service
 public class ListingService {
     private final ListingRepository listingRepository;
-    private final ProfileRepository profileRepository;
     private final CategoryTypeRepository categoryTypeRepository;
     private final LeaseRepository leaseRepository;
     private final ImageRepository imageRepository;
+    private final JwtUtil jwtUtil;
 
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
-    private JwtUtil jwtUtil;
-
     @Autowired
-    public ListingService(ListingRepository listingRepository, ProfileRepository profileRepository, CategoryTypeRepository categoryTypeRepository, LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
+    public ListingService(ListingRepository listingRepository, CategoryTypeRepository categoryTypeRepository,
+                          LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
         this.listingRepository = listingRepository;
-        this.profileRepository = profileRepository;
         this.categoryTypeRepository = categoryTypeRepository;
         this.leaseRepository = leaseRepository;
         this.imageRepository = imageRepository;
         this.jwtUtil = jwtUtil;
-    }
-
-
-    public List<ListingResponse> getAllListings(){
-        return convertListings(listingRepository.findAll());
     }
 
     /**
@@ -66,9 +62,11 @@ public class ListingService {
      *                -1 if not used. priceTo and priceFrom must be used together.
      * @param category The category of items we are looking for
      *                 Empty string if not used.
-     * @return A responseEntity with a list of listingresponses.
+     * @return A responseEntity with a list of listing responses.
      */
-    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort, double priceFrom, double priceTo, String category, String location) {
+    public ResponseEntity<List<ListingResponse>> getListings(int page, int perPage, String search, String sort,
+                                                             double priceFrom, double priceTo, String category,
+                                                             String location) {
         List<Listing> allListings = listingRepository.findAllByIsActiveTrue();
 
         // Filtering by Category
@@ -130,7 +128,7 @@ public class ListingService {
     }
 
     /**
-     * gets the reviews of a listing given by Id.
+     * gets the reviews of a listing given by id.
      * @param listingId The id of the listing.
      * @param perPage The number of reviews to be returned.
      * @param page The page number to be returned
@@ -139,17 +137,16 @@ public class ListingService {
     public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
         Optional<Listing> listingData = listingRepository.findById(listingId);
 
-        if (!listingData.isPresent()) {
-            logger.debug("listingId=" + listingId + " was not found.");
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", listingId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Listing listing = listingData.get();
+        List<Lease> listingLeases = listing.getLeases();
 
-        if (listingData.get().getLeases() == null) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-        }
+        if (listingLeases == null) return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
 
-        List<Lease> listingLeases = listingData.get().getLeases();
-
+        // Getting the reviews of the listings leases
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
             Review  newReview = listingLeases.get(i).getItemReview();
@@ -163,47 +160,58 @@ public class ListingService {
 
     /**
      * Gets the listing response of a listing given its id.
+     *
      * @param listingId The id of the listing we are looking for.
      * @return The listing response we are looking for.
      */
     public ResponseEntity<ListingResponse> getListingById(Long listingId){
-        Optional<Listing> listing = listingRepository.findById(listingId);
-        if (!listing.isPresent()) {
-            logger.debug("listingId=" + listingId + " was not found.");
+        Optional<Listing> listingData = listingRepository.findById(listingId);
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", listingId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
+        Listing listing = listingData.get();
+        return new ResponseEntity<>(new ListingResponse(listing), HttpStatus.OK);
     }
 
-
-    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String token) {
+    /**
+     * Creates a listing in the database based on the data from listingRequest.
+     *
+     * @param listingRequest Request containing listing data
+     * @param multipartFile Image of listing
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The created listing
+     */
+    public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            // Saving the listing without images or categories
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
                     listingRequest.getIsActive(), listingRequest.getPrice(), listingRequest.getPriceType(),
-                    profile.get());
+                    profile);
             listingRepository.save(newListing);
-            System.out.println(listingRequest.getCategoryNames().size());
+
+            // Adding categories to new listing
             for (int i = 0; i<listingRequest.getCategoryNames().size(); i++){
                 Optional<CategoryType> categoryType = categoryTypeRepository.findCategoryTypeByNameEquals(listingRequest.getCategoryNames().get(i));
-                if (categoryType.isPresent()){
-                    newListing.getCategoryTypes().add(categoryType.get());
-                }
+                if (categoryType.isPresent()) newListing.getCategoryTypes().add(categoryType.get());
             }
             listingRepository.save(newListing);
+
+            // Adding images to new listing
             Image image = new Image(multipartFile.getBytes(), newListing);
             Image savedImage = imageRepository.save(image);
             newListing.getImages().add(savedImage);
             Listing savedListing = listingRepository.save(newListing);
+
             return new ResponseEntity<>(new ListingResponse(savedListing), HttpStatus.CREATED);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error creating listing: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
