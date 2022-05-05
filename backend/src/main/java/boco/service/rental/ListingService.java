@@ -227,7 +227,7 @@ public class ListingService {
         }
         Listing listing = listingData.get();
 
-        if (isProfileListingOwner(listing, profile)){
+        if (!isProfileListingOwner(listing, profile)){
             logger.debug("UserId is not the owner of listing.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
