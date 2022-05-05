@@ -11,7 +11,14 @@
     <div class="container">
       <div class="imageButtons">
         <img id="image3" alt="Vue logo" :src="imgSource" />
-        <div v-if="my">
+        <button
+          class="editButtons boco-btn book"
+          v-if="!my"
+          @click="isBookingAvailable"
+        >
+          Book
+        </button>
+        <div v-else>
           <button
             class="editButtons boco-btn"
             :class="[active ? 'boco-btn' : 'red']"
@@ -25,13 +32,6 @@
             Delete
           </button>
         </div>
-        <button
-          class="editButtons boco-btn book"
-          v-else
-          @click="isBookingAvailable"
-        >
-          Book
-        </button>
       </div>
       <div id="About">
         <div id="About11">
@@ -107,6 +107,7 @@ export default {
     },
 
     my() {
+      if (!this.$store.state.loggedIn) return false;
       return this.item.profileId === this.$store.state.loggedInUser;
     },
   },
