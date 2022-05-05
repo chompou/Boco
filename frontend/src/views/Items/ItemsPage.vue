@@ -1,22 +1,23 @@
 <template>
   <div class="container">
     <Sidebar />
-    <div class="items-header">
+    <div class="items-header" :style="{ 'margin-left': sidebarWidth }">
       <h1>{{ $route.query.category }}</h1>
+      <h2>Results found: {{ numResults }}</h2>
+    </div>
 
-      <div>
-        <div
-          :style="arrowStyle"
-          style="display: inline-block; cursor: pointer"
-          @click="onSortArrow"
-        >
-          <font-awesome-icon icon="arrow-down" />
-        </div>
-        <select id="sort-dropdown" v-model="sort" @change="onSortUpdate">
-          <option value="id">Created</option>
-          <option value="price">Price</option>
-        </select>
+    <div class="sortBar">
+      <div
+        :style="arrowStyle"
+        style="display: inline-block; cursor: pointer"
+        @click="onSortArrow"
+      >
+        <font-awesome-icon icon="arrow-down" />
       </div>
+      <select id="sort-dropdown" v-model="sort" @change="onSortUpdate">
+        <option value="id">Created</option>
+        <option value="price">Price</option>
+      </select>
     </div>
     <div id="items" :style="{ 'margin-left': sidebarWidth }">
       <LargeItem v-for="item in items" :key="item" :item="item" />
@@ -37,6 +38,7 @@ export default {
       page: 0,
       lastUpdate: Date.now(),
       items: [],
+      numResults: null,
       sort: null,
       ascending: true,
     };
@@ -58,6 +60,7 @@ export default {
         .getItems(this.$route.query, this.page, 15)
         .then((response) => {
           this.items.push(...response.data.listingResponses);
+          this.numResults = response.data.totalListings;
         })
         .catch((error) => console.log(error));
     },
@@ -139,8 +142,13 @@ export default {
 
 .items-header {
   display: flex;
-  margin-left: 50%;
-  margin-right: 7%;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sortBar {
+  position: absolute;
+  top: 50px;
+  right: 10px;
 }
 </style>
