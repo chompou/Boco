@@ -75,4 +75,11 @@ export default {
   getMyLeases(owned) {
     return apiClient.get("/my/lease", { params: { is_owner: owned } });
   },
+
+  getNotifications() {
+    return apiClient.get("/my/notifications");
+  },
+  removeNotificationAfterRead(notification) {
+    return apiClient.put("my/notifications", { toBeRead: [notification] });
+  },
 };
