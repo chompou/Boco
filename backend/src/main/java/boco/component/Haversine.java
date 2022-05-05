@@ -13,6 +13,10 @@ public class Haversine {
                 Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
                  * Math.sin(deltaLong / 2) * Math.sin(deltaLong / 2);
         double c = 2* Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        if (deltaLat == 0.0 && (lat1 == 90 || lat2 == -90)){ //If both positions are on the north pole
+            return 0;
+        }
         return c * EARTH_RAD;
 
     }
