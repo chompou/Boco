@@ -25,14 +25,14 @@ public class EmailService extends SimpleMailMessage {
         emailSender.send(message);
     }
 
-    public void sendResetPasswordMessage(String to, String url) throws MalformedURLException {
+    public void sendResetPasswordMessage(String to, String url, String code) throws MalformedURLException {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("idatt2106.4@gmail.com");
         message.setTo(to);
         message.setSubject("Reset Your Password");
         URL myUrl = new URL(url);
-        message.setText("To reset your password, click the link below:\n" + myUrl + "\nIf you don't want to reset " +
-                "your password, you can ignore this message");
+        message.setText("To reset your password, click the link below:\n" + myUrl + "\nAnd use this code: " +
+                code +"\nIf you don't want to reset your password, you can ignore this message");
         emailSender.send(message);
     }
 
