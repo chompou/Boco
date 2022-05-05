@@ -42,5 +42,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
 
     List<Listing> getListingsByProfile(Profile profile);
 
+    List<Listing> findAllByIsActiveTrue();
+
 
 }
