@@ -117,6 +117,7 @@ p {
 }
 
 #ratingText {
+  text-align: center;
   margin-right: 30px;
 }
 
