@@ -127,6 +127,12 @@ class LeaseServiceTest {
         lenient().when(jwtUtil.extractUsername("si")).thenReturn("si");
         lenient().when(jwtUtil.extractUsername("notfound")).thenReturn("notfound");
 
+        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer messi")).thenReturn(p1);
+        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer usr")).thenReturn(p2);
+        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer ron")).thenReturn(p3);
+        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer si")).thenReturn(p4);
+        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer notfound")).thenReturn(null);
+
         lenient().when(leaseRepository.getLeasesByOwner(pd1.get())).thenReturn(leases1);
         lenient().when(leaseRepository.getLeasesByOwner(pd2.get())).thenReturn(leases2);
         lenient().when(leaseRepository.getLeasesByOwner(pd3.get())).thenReturn(leases3);
