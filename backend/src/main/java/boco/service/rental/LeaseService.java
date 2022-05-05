@@ -126,6 +126,12 @@ public class LeaseService {
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
+            if (profileIsOwnerOfLease(profile, lease)){
+                leaseRepository.deleteById(leaseId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+
             if (isLessThanDayBeforeLeaseStart(lease)) {
                 logger.debug("There is less than 24 hours before " + lease.getFromDatetime().toString()
                         + ", could not delete lease.");
@@ -273,6 +279,10 @@ public class LeaseService {
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
         return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
+    }
+
+    private boolean profileIsOwnerOfLease(Profile profile, Lease lease){
+        return (lease.getOwner().getId() == profile.getId());
     }
 
     public void removeDangling() {
