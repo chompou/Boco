@@ -99,11 +99,11 @@ public class NotificationService {
             this.notificationRepository.save(notification);
             pushToProfile(notification.getId());
         }catch (Exception ignored){
-
         }
     }
+
     public Notification newLeaseNotification(ResponseEntity<LeaseResponse> responseEntity){
-        if (responseEntity.getBody() == null || !responseEntity.getStatusCode().is2xxSuccessful()){
+        if ((responseEntity.getBody()!=null) || responseEntity.getStatusCode().is2xxSuccessful()){
             try {
                 Profile profile = profileRepository.findProfileById(responseEntity.getBody().getProfileId()).get();
                 String message = "Your lease request i created for item: " + responseEntity.getBody().getItemName();
@@ -191,11 +191,8 @@ public class NotificationService {
             for (Integer i:toBeUpdated) {
                 Notification currentNotification = notificationRepository.getOne((long) i);
                 if (currentNotification.getProfile().getUsername().equals(username)){
-                    System.out.println("ok username for notification: " + i);
                     currentNotification.setIsRead(true);
                     notificationRepository.save(currentNotification);
-                }else {
-                    System.out.println("not ok for noti: " +i);
                 }
             }
             pushNotificationsFromJWT(token.substring(7));
@@ -216,7 +213,7 @@ public class NotificationService {
             if (approved && !completed){
                 Date from = new Date(lease.getFromDatetime());
                 Date to = new Date(lease.getToDatetime());
-                if (from.before(tomorrow) && from.after(now) && to.before(tomorrow) && from.after(now)){
+                if (from.before(tomorrow) && from.after(now) && to.before(tomorrow) && to.after(now)){
                     try{
                         Notification ownerNotification = new Notification();
                         ownerNotification.setMessage("You have a lease tomorrow, remember to deliver and receive it");
@@ -246,7 +243,7 @@ public class NotificationService {
                         customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
                         addNewNotification(customerNotification);
                     }catch (Exception ignored){}
-                }else if (to.before(tomorrow) && from.after(now)){
+                }else if (to.before(tomorrow) && to.after(now)){
                     try{
                         Notification ownerNotification = new Notification();
                         ownerNotification.setMessage("You have a lease finishing tomorrow, remember to receive it");
