@@ -87,7 +87,12 @@ export default {
             timeout: 2000,
           });
         })
-        .catch(() => (this.failedLogin = true));
+        .catch(() => {
+          this.failedLogin = true;
+          this.toast.error("Wrong credentials try again", {
+            timeout: 2000,
+          });
+        });
     },
   },
 
