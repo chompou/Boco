@@ -120,15 +120,16 @@ public class LeaseService {
             }
             Lease lease = leaseData.get();
 
+            if (lease.getIsCompleted()) {
+                logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
+                return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+
             if (profileIsOwnerOfLease(profile, lease)){
                 leaseRepository.deleteById(leaseId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            if (lease.getIsCompleted()) {
-                logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
-                return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-            }
 
             if (isLessThanDayBeforeLeaseStart(lease)) {
                 logger.debug("There is less than 24 hours before " + lease.getFromDatetime().toString()
