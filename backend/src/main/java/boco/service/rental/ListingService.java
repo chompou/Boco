@@ -130,7 +130,7 @@ public class ListingService {
     }
 
     /**
-     * gets the reviews of a listing given by Id.
+     * gets the reviews of a listing given by id.
      * @param listingId The id of the listing.
      * @param perPage The number of reviews to be returned.
      * @param page The page number to be returned
@@ -139,17 +139,16 @@ public class ListingService {
     public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
         Optional<Listing> listingData = listingRepository.findById(listingId);
 
-        if (!listingData.isPresent()) {
-            logger.debug("listingId=" + listingId + " was not found.");
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", listingId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Listing listing = listingData.get();
+        List<Lease> listingLeases = listing.getLeases();
 
-        if (listingData.get().getLeases() == null) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
-        }
+        if (listingLeases == null) return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
 
-        List<Lease> listingLeases = listingData.get().getLeases();
-
+        // Getting the reviews of the listings leases
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < listingLeases.size(); i++) {
             Review  newReview = listingLeases.get(i).getItemReview();
@@ -163,16 +162,18 @@ public class ListingService {
 
     /**
      * Gets the listing response of a listing given its id.
+     *
      * @param listingId The id of the listing we are looking for.
      * @return The listing response we are looking for.
      */
     public ResponseEntity<ListingResponse> getListingById(Long listingId){
-        Optional<Listing> listing = listingRepository.findById(listingId);
-        if (!listing.isPresent()) {
-            logger.debug("listingId=" + listingId + " was not found.");
+        Optional<Listing> listingData = listingRepository.findById(listingId);
+        if (listingData.isEmpty()) {
+            logger.warn("listingId={} was not found.", listingId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new ListingResponse(listing.get()), HttpStatus.OK);
+        Listing listing = listingData.get();
+        return new ResponseEntity<>(new ListingResponse(listing), HttpStatus.OK);
     }
 
     /**
