@@ -247,17 +247,6 @@ img {
   display: flex;
 }
 
-.leaseButton {
-  border: 1px solid #39495c;
-  width: 150px;
-  height: 50px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  padding: 5px;
-  margin: 50px;
-}
-
 .editButtons {
   border: 1px solid #39495c;
   width: 150px;

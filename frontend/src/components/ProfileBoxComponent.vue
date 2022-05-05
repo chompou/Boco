@@ -63,7 +63,6 @@ export default {
 
 <style scoped>
 .profileBox {
-  border: 1px solid #39495c;
   font-size: 17px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
