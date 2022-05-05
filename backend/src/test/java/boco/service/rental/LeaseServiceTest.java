@@ -1,6 +1,8 @@
 package boco.service.rental;
 
+import boco.model.http.rental.LeaseRequest;
 import boco.model.http.rental.LeaseResponse;
+import boco.model.http.rental.ReviewRequest;
 import boco.model.http.rental.UpdateLeaseRequest;
 import boco.model.profile.Personal;
 import boco.model.profile.Profile;
@@ -9,6 +11,7 @@ import boco.model.rental.Listing;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
+import boco.repository.rental.ReviewRepository;
 import boco.service.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +42,8 @@ class LeaseServiceTest {
     @Mock
     private ProfileRepository profileRepository;
     @Mock
+    private ReviewRepository reviewRepository;
+    @Mock
     private JwtUtil jwtUtil;
 
     @BeforeEach
@@ -62,11 +67,14 @@ class LeaseServiceTest {
         Listing li1 = new Listing("house", "house", true, 100.0, "Month", p1);
         li1.setId(1L);
 
+
         Listing li2 = new Listing("crypto", "crypto", true, 100.0, "Month", p2);
         li2.setId(2L);
 
+
         Listing li3 = new Listing("room", "room", true, 1.0, "Week", p3);
         li3.setId(3L);
+
 
         Lease le1 = new Lease(
                 Timestamp.valueOf("2030-07-01 10:00:00").getTime(),
@@ -138,6 +146,7 @@ class LeaseServiceTest {
         lenient().when(leaseRepository.findById(5L)).thenReturn(Optional.of(le5));
         lenient().when(leaseRepository.findById(6L)).thenReturn(Optional.of(le6));
         lenient().when(leaseRepository.findById(7L)).thenReturn(Optional.of(le7));
+        lenient().when(leaseRepository.findById(8L)).thenReturn(Optional.empty());
 
         lenient().when(listingRepository.findById(1L)).thenReturn(Optional.of(li1));
         lenient().when(listingRepository.findById(2L)).thenReturn(Optional.of(li2));
@@ -312,4 +321,64 @@ class LeaseServiceTest {
     }
 
 
+    @Test
+    void createLease() {
+        Date soon = new Date(new Date().getTime() + 1000*60*60*24);
+        Date later = new Date(soon.getTime() + 1000*60*60*48);
+        LeaseRequest toBeCreated = new LeaseRequest();
+        toBeCreated.setId(1l);
+        toBeCreated.setFromDatetime(soon.getTime());
+        toBeCreated.setToDatetime(later.getTime());
+
+        ResponseEntity response = service.createLease(toBeCreated, "Bearer messi");
+        assertTrue(response.getStatusCode().is2xxSuccessful());
+        assertTrue(response.getBody() instanceof LeaseResponse);
+        LeaseResponse body = (LeaseResponse) response.getBody();
+
+        assertEquals(2, body.getProfileId());
+        assertEquals(1, body.getId());
+        assertFalse(body.getIsApproved());
+        assertFalse(body.getIsCompleted());
+        assertFalse(body.getIsApproved());
+        assertNotNull(body.getToDatetime());
+        assertNotNull(body.getFromDatetime());
+        assertEquals("house", body.getItemName());
+
+
+        ResponseEntity errorResponse = service.createLease(toBeCreated, "Bearer not found");
+        assertTrue(errorResponse.getStatusCode().isError());
+        assertNull(errorResponse.getBody());
+
+
+        toBeCreated.setId(8l);
+        errorResponse = service.createLease(toBeCreated, "Bearer messi");
+        assertTrue(errorResponse.getStatusCode().isError());
+        assertNull(errorResponse.getBody());
+
+        toBeCreated.setId(9l);
+        errorResponse = service.createLease(toBeCreated, "Bearer something unexpected");
+        assertTrue(errorResponse.getStatusCode().isError());
+        assertNull(errorResponse.getBody());
+    }
+
+    @Test
+    void createLeaseReview() {
+        ReviewRequest request = new ReviewRequest();
+        request.setLeaseId(1l);
+        request.setRating(5.0);
+        request.setComment("Very good");
+
+
+        ResponseEntity response1 = service.createLeaseReview(request, "owner", "Bearer usr");
+        //ResponseEntity response2 = service.createLeaseReview(request, "leasee", "Bearer messi");
+        //ResponseEntity response3 = service.createLeaseReview(request, "item", "Bearer messi");
+        assertTrue(response1.getStatusCode().is2xxSuccessful());
+
+
+
+    }
+
+    @Test
+    void removeDangling() {
+    }
 }
