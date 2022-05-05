@@ -25,6 +25,7 @@
 
 <script>
 import { useToast } from "vue-toastification";
+import apiService from "@/services/apiService";
 
 export default {
   setup() {
@@ -39,10 +40,12 @@ export default {
   },
   methods: {
     submit() {
+      apiService.sendEmail(this.email);
       this.emailSent = true;
       this.toast.info("A mail has been sent to " + this.email, {
         timeout: 4000,
       });
+      this.$router.push({ name: "newPwd", params: { email: this.email } });
     },
   },
 };

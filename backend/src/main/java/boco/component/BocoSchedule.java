@@ -2,6 +2,7 @@ package boco.component;
 
 import boco.controller.security.LoginController;
 import boco.service.profile.NotificationService;
+import boco.service.profile.PasswordCodeService;
 import boco.service.profile.ProfileService;
 import boco.service.rental.LeaseService;
 import org.slf4j.Logger;
@@ -18,15 +19,18 @@ public class BocoSchedule {
     private final ProfileService profileService;
     private final NotificationService notificationService;
     private final LeaseService leaseService;
+    private final PasswordCodeService passwordCodeService;
     private final static int DAILY = 1000*60*60*24;
+    private final static int HOURLY = 1000*60*60;
 
     @Autowired
     public BocoSchedule(ProfileService profileService, NotificationService notificationService,
-                        LeaseService leaseService){
+                        LeaseService leaseService, PasswordCodeService passwordCodeService){
         this.logger = LoggerFactory.getLogger(LoginController.class);
         this.profileService = profileService;
         this.notificationService = notificationService;
         this.leaseService = leaseService;
+        this.passwordCodeService = passwordCodeService;
     }
 
     @Scheduled(fixedDelay = DAILY, initialDelay = 360000)
@@ -50,5 +54,10 @@ public class BocoSchedule {
         logger.info("Deleting dangling leases");
         leaseService.removeDangling();
 
+    }
+    @Scheduled(fixedDelay = HOURLY, initialDelay = HOURLY)
+    public void deleteUnusedPasswordCodes(){
+        logger.info("deleting unused passwordcodes");
+        passwordCodeService.removeDangling();
     }
 }

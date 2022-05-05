@@ -51,6 +51,7 @@ const routes = [
     path: "/newPwd",
     name: "newPwd",
     component: newPwdView,
+    props: true,
   },
   {
     path: "/support",
