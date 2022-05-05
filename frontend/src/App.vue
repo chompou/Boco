@@ -1,5 +1,4 @@
 <template>
-  <header-component />
   <nav id="navbar" class="navbar sticky-top">
     <div class="container-fluid">
       <router-link to="/">
@@ -39,11 +38,9 @@
 
 <script>
 import NotificationBellComponent from "@/components/NotificationBellComponent";
-import HeaderComponent from "@/components/HeaderComponent";
 import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
-    HeaderComponent,
     ProfileDropDownComponent,
     NotificationBellComponent,
   },
