@@ -21,6 +21,7 @@ import {
   faChildren,
   faToiletPaper,
   faBell,
+  faCircleCheck,
   /**ICONS main categories*/
   faWrench,
   faPlug,
@@ -47,6 +48,7 @@ library.add(
   faChildren,
   faToiletPaper,
   faBell,
+  faCircleCheck,
   /**ICONS main categories*/
   faWrench,
   faPlug,
