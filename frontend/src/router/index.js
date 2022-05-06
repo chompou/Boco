@@ -132,6 +132,7 @@ const routes = [
   {
     path: "/newRating",
     name: "newRating",
+    props: true,
     component: GiveRating,
   },
 ];

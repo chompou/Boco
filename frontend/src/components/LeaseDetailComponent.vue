@@ -98,6 +98,15 @@ export default {
             })
             .catch((error) => console.log(error));
           break;
+        case "Review":
+          this.$router.push({
+            name: "newRating",
+            params: {
+              id: this.lease.id,
+              leasedIn: this.$store.state.loggedInUser != this.lease.ownerId,
+            },
+          });
+          break;
         default:
           apiService
             .deleteMyLease(this.lease.id)
