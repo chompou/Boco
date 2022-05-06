@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor
 public class UpdatePasswordRequest {
-    String passwordHash1;
-    String passwordHash2;
+    String passwordHash;
+    String generatedCode;
 }

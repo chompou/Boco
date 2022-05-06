@@ -8,40 +8,32 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-/**
- * JPA entity representing an image
- */
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Unique ID of the image (primary key)
-    @Column(length = 4000000)
-    private byte[] image; // The image, stored as array of bytes
-
+    private Long id;
+    @Column(length = 1048576)
+    private byte[] image;
+    public Image(byte[] image, Listing listing){
+        this.image = image;
+        this.listing = listing;
+    }
     @ManyToOne
     @JoinColumn(name = "listing_id")
     @JsonManagedReference
     private Listing listing;
 
-    /**
-     * Constructor of image with fields image and listing
-     *
-     * @param image Byte representation of an image
-     * @param listing The listing the image belongs to
-     */
-    public Image(byte[] image, Listing listing){
-        this.image = image;
-        this.listing = listing;
-    }
 
-    /**
-     * Constructor of image with field bytes
-     *
-     * @param bytes Bytes of image
-     */
     public Image(byte[] bytes) {
         this.image = bytes;
+    }
+
+    public Image(long size) {
+        this.id = size;
     }
 }

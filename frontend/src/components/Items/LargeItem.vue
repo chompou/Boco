@@ -1,15 +1,21 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div id="main">
-      <img id="image3" alt="Vue logo" :src="imgSource" />
+      <img
+        v-if="imgSource === null"
+        alt="Vue logo"
+        src="@/assets/default.png"
+      />
+      <img v-else id="image" alt="Vue logo" :src="imgSource" />
       <div id="texts">
         <div id="About11">
           <div id="About1">
             <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
             <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
             <p>Category: {{ categoryString }}</p>
-            <p>Address: {{ item.address }}</p>
-            <p>Price: {{ displayPrice }}kr/{{ item.priceType }}</p>
+            <p v-if="item.address.length < 8">Address:{{ item.address }}</p>
+            <p v-else>Address:{{ item.address.substring(0, 16) + ".." }}</p>
+            <p>Price: {{ displayPrice }} / {{ item.priceType }}</p>
           </div>
           <div id="About2">
             <div id="items">
@@ -37,7 +43,7 @@ export default {
   },
   computed: {
     displayPrice() {
-      return priceService.displayPrice(this.item);
+      return priceService.formattedPrice(priceService.displayPrice(this.item));
     },
 
     categoryString() {
@@ -60,23 +66,26 @@ export default {
 }
 
 img {
-  width: 200px;
-  height: 200px;
-  border: 1px solid #39495c;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  width: 335px;
+  height: 188px;
+}
+
+p {
+  font-size: 17px;
 }
 
 #main {
   display: flex;
-  border: 1px solid #39495c;
+  border-radius: 10px;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 650px;
-  height: 225px;
+  width: 870px;
   color: var(--text-color);
-  padding: 10px 28px;
-  background: white;
+  background: var(--background-color-header-nav-footer);
   margin: 20px;
 }
 
@@ -92,12 +101,12 @@ img {
 #About1 {
   margin-left: 30px;
   text-align: left;
-  width: 200px;
+  width: 250px;
 }
 
 #About2 {
   margin-top: 30px;
-  margin-left: 50px;
+  margin-left: 10px;
   width: 150px;
 }
 
@@ -108,6 +117,7 @@ img {
 }
 
 #ratingText {
+  text-align: center;
   margin-right: 30px;
 }
 

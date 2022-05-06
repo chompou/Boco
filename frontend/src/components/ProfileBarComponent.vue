@@ -1,7 +1,14 @@
 <template>
   <div class="profile-bar">
     <div class="profile-bar-text">
-      <h3 id="username">{{ profile.displayName }}</h3>
+      <div id="verified">
+        <font-awesome-icon
+          v-if="profile.isVerified"
+          icon="circle-check"
+          id="icon"
+        />
+        <h3 id="username">{{ profile.displayName }}</h3>
+      </div>
       <p id="phone-number">Phone nr: {{ profile.tlf }}</p>
       <p id="email">Email: {{ profile.email }}</p>
     </div>
@@ -57,6 +64,11 @@ export default {
     isMe() {
       return this.$store.state.loggedInUser == this.profile.id;
     },
+  },
+  created() {
+    setTimeout(() => {
+      console.log(this.profile);
+    }, 1000);
   },
 };
 </script>
@@ -134,6 +146,15 @@ export default {
   cursor: not-allowed;
   background: rgba(0, 0, 0, 0.08);
   color: rgba(0, 0, 0, 0.3);
+}
+
+#verified {
+  display: flex;
+}
+
+#icon {
+  font-size: 30px;
+  margin-right: 10px;
 }
 
 .all-buttons {

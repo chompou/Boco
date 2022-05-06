@@ -1,52 +1,50 @@
 <template>
-  <div class="notif">
-    <div id="count">{{ $store.state.countNotifications }}</div>
-    <div>
-      <font-awesome-icon icon="bell" class="icon">Test</font-awesome-icon>
-    </div>
+  <div class="notificationWrapper">
+    <div :id="id" class="left"></div>
+    <div :id="id" class="notificationContent">{{ text }}</div>
   </div>
 </template>
-
 <script>
-import { onMounted } from "vue";
-import store from "@/store";
+import apiService from "@/services/apiService";
+
 export default {
-  setup() {
-    const id = store.state.loggedInUser;
-    const wsURL = "ws://localhost:8080/websocket/" + id;
-
-    const webSocket = new WebSocket(wsURL);
-
-    onMounted(() => {
-      webSocket.addEventListener("open", () => {
-        console.log("WebSocket connected");
-        webSocket.send("Hei from Vue");
-      });
-      webSocket.addEventListener("message", (event) => {
-        console.log("Incoming data");
-        console.log(event.data);
-        store.dispatch("UPDATE_COUNT_NOTIFICATION");
-      });
+  props: {
+    text: String,
+    id: Number,
+  },
+  mounted() {
+    addEventListener("click", (event) => {
+      let id = event.target.id;
+      if (id !== null || id !== "") {
+        if (!isNaN(id) && id !== "") {
+          apiService.removeNotificationAfterRead(id);
+        }
+      }
     });
   },
 };
 </script>
 <style scoped>
-.notif {
-  width: 100px;
+.notificationWrapper {
   display: flex;
+  width: 400px;
+  border-radius: 49px 50px 50px 49px;
 }
 
-.icon {
-  height: 30px;
-  width: 30px;
-  font-size: 2vw;
-  color: #0048ae;
+.notificationWrapper:hover {
+  background-color: #e1eeff;
+  cursor: pointer;
 }
 
-#count {
-  color: red;
-  font-size: 20px;
-  font-weight: bold;
+.left {
+  width: 20px;
+  background-color: #0048ae;
+  border-radius: 50px 0 0 50px;
+}
+
+.notificationContent {
+  overflow-wrap: anywhere;
+  flex-grow: 1;
+  padding: 0.5rem;
 }
 </style>

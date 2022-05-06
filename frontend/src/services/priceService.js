@@ -3,9 +3,9 @@ function normalize(value, type) {
     case "Hour":
       return value;
     case "Day":
-      return Math.ceil(value / 24);
+      return value / 24;
     case "Week":
-      return Math.ceil(value / (24 * 7));
+      return value / (24 * 7);
     default:
       return null;
   }
@@ -24,20 +24,36 @@ function scale(value, type) {
   }
 }
 
+var formatter = new Intl.NumberFormat("nb-NO", {
+  style: "currency",
+  currency: "NOK",
+});
+
 export default {
   parseHours(fromTime, toTime) {
     return Math.ceil((new Date(toTime) - new Date(fromTime)) / 36e5);
   },
 
-  displayPrice(item) {
+  parsePrice(price, priceType) {
+    return normalize(price, priceType);
+  },
+
+  displayPrice(item, type = null) {
+    if (type != null) return scale(item, type);
     return scale(item.price, item.priceType);
   },
 
+  formattedPrice(value) {
+    return formatter.format(value);
+  },
+
   displayDuration(hours, type) {
-    return normalize(hours, type);
+    return Math.ceil(normalize(hours, type));
   },
 
   leasePrice(item, hours) {
-    return this.displayPrice(item) * normalize(hours, item.priceType);
+    return (
+      this.displayPrice(item) * Math.ceil(normalize(hours, item.priceType))
+    );
   },
 };

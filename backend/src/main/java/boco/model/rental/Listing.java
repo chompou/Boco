@@ -57,6 +57,7 @@ public class Listing {
         this.price = price;
         this.priceType = priceType;
         this.profile = profile;
+        this.rating = -1.0;
 
         // Setting lastChanged to creation time
         Date date = new Date();

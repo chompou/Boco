@@ -20,7 +20,7 @@ export default {
     apiService
       .getItems({ profileId: this.$store.state.loggedInUser }, 0, 15)
       .then((response) => {
-        this.items = response.data;
+        this.items = response.data.listingResponses;
         console.log(this.items);
       })
       .catch((error) => {
