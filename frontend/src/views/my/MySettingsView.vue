@@ -16,7 +16,7 @@
         <input v-model="profile.tlf" />
 
         <label> Description </label>
-        <input style="height: 100px" v-model="profile.description" />
+        <textarea style="height: 100px" v-model="profile.description" />
 
         <label> New Password </label>
         <input type="password" v-model="newPass" />

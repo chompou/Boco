@@ -109,4 +109,8 @@ export default {
   sendEmail(email) {
     return apiClient.get("/forgot-password/" + email);
   },
+
+  submitTicket(ticket) {
+    return apiClient.post("/contact", ticket);
+  },
 };

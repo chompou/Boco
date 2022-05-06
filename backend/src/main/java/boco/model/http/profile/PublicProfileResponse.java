@@ -25,6 +25,8 @@ public class PublicProfileResponse {
     private Boolean isVerified;
     private String tlf;
     private Timestamp deactivated;
+    private Double ratingAsLease;
+    private Double ratingAsOwner;
 
     /**
      * Constructs a public profile response based on a profile entity
@@ -41,5 +43,7 @@ public class PublicProfileResponse {
         this.deactivated = profile.getDeactivated();
         this.address = profile.getAddress();
         this.location = profile.getLocation();
+        this.ratingAsLease = profile.getRatingAsLeasee();
+        this.ratingAsOwner = profile.getRatingAsOwner();
     }
 }
