@@ -18,7 +18,7 @@ public class PasswordCode {
     @OneToOne
     Profile profile; // The profile the passwordcode is attached to
     String generatedCode; // The code itself
-    Timestamp timestamp; //
+    Timestamp timestamp; // The time at which the password code was requested.
 
     public PasswordCode(Profile profile, String generatedCode){
         this.profile = profile;
