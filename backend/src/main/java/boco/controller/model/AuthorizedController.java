@@ -111,18 +111,17 @@ public class AuthorizedController {
     public ResponseEntity<LeaseResponse> updateLease(@RequestBody UpdateLeaseRequest updateLeaseRequest,
                                                      @RequestHeader(name="Authorization") String token) {
         ResponseEntity<Boolean> leaseIsLegal = leaseService.checkIfUpdatingLeaseIsLegal(updateLeaseRequest, token);
-        if (!leaseIsLegal.getBody()){
+        if (!leaseIsLegal.getBody()) {
             return new ResponseEntity<>(leaseIsLegal.getStatusCode());
         }
 
-        if (updateLeaseRequest.getIsApproved()!= null){
-        System.out.println("approved: " + updateLeaseRequest.getIsApproved());
-        System.out.println("Complete: " + updateLeaseRequest.getIsCompleted());
-        if (updateLeaseRequest.getIsApproved()!= null || !updateLeaseRequest.getIsApproved()){
+        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved()) {
+            System.out.println("1");
             Notification notification = notificationService.approveLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
         }
-        if (updateLeaseRequest.getIsCompleted()!= null || !updateLeaseRequest.getIsCompleted()){
+        if (updateLeaseRequest.getIsCompleted() != null && updateLeaseRequest.getIsCompleted()) {
+            System.out.println("2");
             Notification notification = notificationService.completedLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
         }
