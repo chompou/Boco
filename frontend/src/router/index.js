@@ -23,15 +23,6 @@ import newPwdView from "@/views/newPwdView";
 import aboutView from "@/views/AboutView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
-// const routerGuard = {
-// beforeEnter: (to, from) => {
-//   console.log(from.name);
-//   if (!store.state.loggedIn && to.name !== "login") {
-//     return { name: "login" };
-//   }
-// },
-// };
-
 const routes = [
   {
     path: "/",
