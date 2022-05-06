@@ -69,7 +69,7 @@ export default {
         address: null,
         tlf: null,
         description: null,
-        password: null,
+        passwordHash: null,
         location: null,
       },
       newPass: null,
@@ -122,7 +122,7 @@ export default {
           timeout: 2000,
         });
       } else {
-        this.profile.password = this.newPass;
+        this.profile.passwordHash = this.newPass;
         apiService
           .updateMyProfile(this.profile)
           .catch((error) => console.log(error));
@@ -142,7 +142,10 @@ export default {
     },
   },
   created() {
-    this.fetchProfile();
+    apiService
+      .getMyProfile()
+      .then((response) => (this.profile = response.data))
+      .catch((error) => console.log(error));
     setTimeout(() => {
       this.getPoint();
     }, 1000);
