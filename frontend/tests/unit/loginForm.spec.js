@@ -3,6 +3,8 @@ import LoginView from "@/views/LoginView";
 import store from "@/store";
 import router from "@/router";
 
+afterEach(() => jest.clearAllMocks());
+
 describe("Login form", () => {
   it("Wrong credentials message is visible if login fail", async () => {
     const wrapper = shallowMount(LoginView);
