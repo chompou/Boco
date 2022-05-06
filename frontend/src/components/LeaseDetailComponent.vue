@@ -50,6 +50,10 @@
         <div class="lease-button-container" v-if="buttons == 'complete'">
           <button class="boco-btn" @click="onButton">Complete</button>
         </div>
+
+        <div class="lease-button-container" v-if="buttons == 'review'">
+          <button class="boco-btn" @click="onButton">Review</button>
+        </div>
       </div>
     </div>
   </div>
@@ -106,9 +110,10 @@ export default {
 
   computed: {
     buttons() {
-      let status = leaseService.getStatus(this.lease);
+      let owner = this.$store.state.loggedInUser == this.lease.ownerId;
+      let status = leaseService.getStatus(this.lease, owner);
 
-      if (this.$store.state.loggedInUser == this.lease.ownerId) {
+      if (owner) {
         switch (status) {
           case "Pending Approval":
             return "approve";
@@ -119,6 +124,8 @@ export default {
           case "In Progress":
           case "Overdue":
             return "complete";
+          case "Pending Review":
+            return "review";
           case "Completed":
           default:
             return "";
@@ -128,6 +135,8 @@ export default {
           case "Pending Approval":
           case "Upcoming":
             return "cancel";
+          case "Pending Review":
+            return "review";
           default:
             return "";
         }

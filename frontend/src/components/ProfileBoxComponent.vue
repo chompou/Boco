@@ -93,7 +93,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 400px;
-  height: 400px;
+  min-height: 400px;
   color: #2c3e50;
   padding: 10px 28px;
   background-color: rgba(0, 139, 139, 0.4);
@@ -121,6 +121,7 @@ export default {
 }
 
 #ratingText {
+  text-align: center;
   margin-right: 30px;
 }
 
