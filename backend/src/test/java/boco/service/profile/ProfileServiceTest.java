@@ -121,9 +121,6 @@ class ProfileServiceTest {
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
-        PasswordCode passwordCode = new PasswordCode(p1, "codecode");
-
-        lenient().when(passwordCodeRepository.findPasswordCodeByProfile(Mockito.any())).thenReturn(Optional.of(passwordCode));
     }
 
     @Test

@@ -241,13 +241,28 @@ public class ProfileService {
         // Setting the new data
         Profile profile = profileData.get();
         // Update all values, even null from request?
-        profile.setEmail(updateProfileRequest.getEmail());
-        profile.setDescription(updateProfileRequest.getDescription());
-        profile.setDisplayName(updateProfileRequest.getDisplayName());
-        profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
-        profile.setAddress(updateProfileRequest.getAddress());
-        profile.setTlf(updateProfileRequest.getTlf());
-        profile.setLocation(updateProfileRequest.getLocation());
+        if(updateProfileRequest.getEmail()!=null && !updateProfileRequest.getEmail().isEmpty()){
+            profile.setEmail(updateProfileRequest.getEmail());
+        }
+        if (updateProfileRequest.getDescription()!=null && !updateProfileRequest.getEmail().isEmpty()){
+            profile.setDescription(updateProfileRequest.getDescription());
+        }
+        if (updateProfileRequest.getDisplayName()!=null && !updateProfileRequest.getDisplayName().isEmpty()){
+            profile.setDisplayName(updateProfileRequest.getDisplayName());
+        }
+        if (updateProfileRequest.getPasswordHash()!=null && !updateProfileRequest.getPasswordHash().isEmpty()){
+            profile.setPasswordHash(updateProfileRequest.getPasswordHash());
+        }
+        if (updateProfileRequest.getAddress()!=null && !updateProfileRequest.getAddress().isEmpty()){
+            profile.setAddress(updateProfileRequest.getAddress());
+        }
+        if (updateProfileRequest.getTlf()!=null && !updateProfileRequest.getTlf().isEmpty()){
+            profile.setTlf(updateProfileRequest.getTlf());
+        }
+        if (updateProfileRequest.getLocation()!=null && !updateProfileRequest.getLocation().isEmpty()){
+            profile.setLocation(updateProfileRequest.getLocation());
+        }
+
 
         Profile savedProfile = profileRepository.save(profile);
         logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
