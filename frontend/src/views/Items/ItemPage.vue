@@ -21,11 +21,11 @@
         <div v-else>
           <button
             class="editButtons boco-btn"
-            :class="[active ? 'boco-btn' : 'red']"
+            :class="[active ? 'red' : 'boco-btn']"
             @click="toggle"
             id="status-btn"
           >
-            {{ active ? "Active" : "Inactive" }}
+            {{ active ? "Set inactive" : "Set active" }}
           </button>
           <button @click="edit" class="editButtons boco-btn">Edit</button>
           <button class="editButtons boco-btn" @click="deleteItem">
