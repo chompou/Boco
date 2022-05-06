@@ -34,11 +34,10 @@ public class ForgotPasswordController {
     @GetMapping("/{email}")
     public ResponseEntity<HttpStatus> sendForgotPasswordMail(@PathVariable(value = "email") String email) throws MalformedURLException {
         if (profileService.checkIfProfileEmailExists(email) != null){
-            String url = "http://localhost:3000/newPwd";
             String code = passwordCodeService.generateCode();
             PasswordCode passwordCode = new PasswordCode(profileService.checkIfProfileEmailExists(email).getBody(), code);
             passwordCodeRepository.save(passwordCode);
-            emailService.sendResetPasswordMessage(email, url, code);
+            emailService.sendResetPasswordMessage(email, code);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -46,7 +45,6 @@ public class ForgotPasswordController {
 
     @PutMapping("/change/{email}")
     public ResponseEntity<Profile> changePassword(@PathVariable(value = "email") String email, @RequestBody UpdatePasswordRequest updatePasswordRequest){
-        System.out.println("her");
         return profileService.changePassword(updatePasswordRequest, email);
     }
 

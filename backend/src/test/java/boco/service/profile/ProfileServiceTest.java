@@ -122,6 +122,27 @@ class ProfileServiceTest {
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
+
+        PasswordCode passwordCode = new PasswordCode(p2, "code");
+        lenient().when(passwordCodeRepository.findPasswordCodeByProfile(p2)).thenReturn(Optional.of(passwordCode));
+    }
+    @Test
+    public void changePassword(){
+        UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest("newPassword", "code");
+        var res = profileService.changePassword(updatePasswordRequest, "cr7@manu.uk");
+        Assertions.assertEquals(BocoHasher.encode("newPassword"), res.getBody().getPasswordHash());
+    }
+    @Test
+    public void changePasswordWrongSecurityCode(){
+        UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest("newPassword", "wrongcode");
+        var res = profileService.changePassword(updatePasswordRequest, "cr7@manu.uk");
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, res.getStatusCode());
+    }
+    @Test
+    public void changePasswordWithNoExistingUserWithThatMail(){
+        UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest("newPassword", "code");
+        var res = profileService.changePassword(updatePasswordRequest, "notCr7");
+        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, res.getStatusCode());
     }
 
 
@@ -138,6 +159,7 @@ class ProfileServiceTest {
         Assertions.assertEquals("Portugal", profile.getAddress());
         Assertions.assertEquals("12345678", profile.getTlf());
     }
+
     @Test
     public void updateProfileTestWithActualFieldData(){
         UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("changed", "changed", "changed",

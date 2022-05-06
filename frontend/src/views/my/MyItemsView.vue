@@ -1,6 +1,11 @@
 <template>
   <div class="item-list-container">
-    <large-item class="item" v-for="item in items" :key="item" :item="item" />
+    <large-item
+      class="item"
+      v-for="item in items.slice().reverse()"
+      :key="item"
+      :item="item"
+    />
   </div>
 </template>
 
