@@ -3,7 +3,7 @@
     <div class="ratingAndText">
       <h5>Rate user</h5>
       <star-rating
-        :rating="userRate"
+        :rating="ownerReview.userRate"
         :animate="true"
         v-bind:max-rating="5"
         inactive-color="#d8d8d8"
@@ -17,7 +17,7 @@
     <div>
       <h5>Description for user</h5>
       <textarea
-        v-model="descriptionUser"
+        v-model="ownerReview.descriptionUser"
         placeholder="Description"
         class="description"
         name="description"
@@ -26,7 +26,7 @@
     <div class="ratingAndText" v-if="leasedIn">
       <h5>Rate item</h5>
       <star-rating
-        :rating="itemRate"
+        :rating="itemReview.itemRate"
         :animate="true"
         v-bind:max-rating="5"
         inactive-color="#d8d8d8"
@@ -40,14 +40,14 @@
     <div v-if="leasedIn">
       <h5>Description for item</h5>
       <textarea
-        v-model="descriptionItem"
+        v-model="itemReview.descriptionItem"
         placeholder="Description"
         class="description"
         name="description"
       ></textarea>
     </div>
     <div id="CreateButtons" class="element">
-      <button class="CreateButton" v-on:click="update">Submit</button>
+      <button class="CreateButton" v-on:click="onsubmit">Submit</button>
       <button id="Delete" class="CreateButton" v-on:click="dismiss">
         Dismiss
       </button>
@@ -57,18 +57,41 @@
 
 <script>
 import StarRating from "vue-star-rating";
+import apiService from "@/services/apiService";
 export default {
+  props: [
+    {
+      id: null,
+      leasedIn: null,
+    },
+  ],
   components: {
     StarRating,
   },
   data() {
     return {
       leasedIn: true,
-      userRate: 0,
-      itemRate: 0,
-      descriptionUser: "",
-      descriptionItem: "",
+      itemReview: {
+        itemRate: 0,
+        descriptionItem: "",
+        id: this.props.id,
+      },
+      ownerReview: {
+        userRate: 0,
+        descriptionUser: "",
+        id: this.props.id,
+      },
     };
+  },
+  methods: {
+    onSubmit() {
+      if (this.leasedIn === true) {
+        apiService.giveReview(this.itemReview, "leasee");
+        apiService.giveReview(this.ownerReview, "leasee");
+      } else {
+        apiService.giveReview(this.ownerReview, "owner");
+      }
+    },
   },
 };
 </script>
