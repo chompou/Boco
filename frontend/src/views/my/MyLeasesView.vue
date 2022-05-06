@@ -117,8 +117,6 @@ export default {
 
     closeOverlay() {
       this.showOverlay = false;
-
-      this.$router.replace("/").then(() => this.$router.replace("/my/leases"));
     },
 
     filterLeases(leases, filter) {
@@ -136,7 +134,6 @@ export default {
           case "Past":
             return new Date(lease.toDatetime) < Date.now();
           default:
-            console.log("default sorting");
             return true;
         }
       });

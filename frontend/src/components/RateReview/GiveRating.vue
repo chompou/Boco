@@ -59,33 +59,29 @@
 import StarRating from "vue-star-rating";
 import apiService from "@/services/apiService";
 export default {
-  props: [
-    {
-      id: null,
-      leasedIn: null,
-    },
-  ],
+  props: ["id", "leasedIn"],
+
   components: {
     StarRating,
   },
   data() {
     return {
-      leasedIn: true,
       itemReview: {
         itemRate: 0,
         descriptionItem: "",
-        id: this.props.id,
+        id: this.id,
       },
       ownerReview: {
         userRate: 0,
         descriptionUser: "",
-        id: this.props.id,
+        id: this.id,
       },
     };
   },
+
   methods: {
     onSubmit() {
-      if (this.leasedIn === true) {
+      if (this.leasedIn) {
         apiService.giveReview(this.itemReview, "leasee");
         apiService.giveReview(this.ownerReview, "leasee");
       } else {
