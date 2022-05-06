@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <img id="us" src="@/assets/default.png" alt="us" />
+    <img id="us" src="@/assets/mainLogo.png" alt="us" />
     <div id="text">
       <div id="head">
         <h1>Boco</h1>
@@ -33,7 +33,7 @@ export default {};
 
 #us {
   width: 500px;
-  height: 500px;
+  height: 400px;
 }
 
 #gitlab {
