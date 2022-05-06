@@ -110,11 +110,13 @@ public class AuthorizedController {
     @PutMapping("/lease")
     public ResponseEntity<LeaseResponse> updateLease(@RequestBody UpdateLeaseRequest updateLeaseRequest,
                                                      @RequestHeader(name="Authorization") String token) {
-        if (updateLeaseRequest.getIsApproved()!= null){
+        System.out.println("approved: " + updateLeaseRequest.getIsApproved());
+        System.out.println("Complete: " + updateLeaseRequest.getIsCompleted());
+        if (updateLeaseRequest.getIsApproved()!= null || !updateLeaseRequest.getIsApproved()){
             Notification notification = notificationService.approveLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
         }
-        if (updateLeaseRequest.getIsCompleted()!= null){
+        if (updateLeaseRequest.getIsCompleted()!= null || !updateLeaseRequest.getIsCompleted()){
             Notification notification = notificationService.completedLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
         }
