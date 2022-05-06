@@ -203,7 +203,7 @@ public class ProfileService {
     public ResponseEntity<List<ReviewResponse>> getReviewsAsOwner(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
         if (profileData.isEmpty()) {
-            logger.debug("profileId={} was not found.", profileId);
+            logger.warn("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -216,7 +216,7 @@ public class ProfileService {
                 leasesFromProfile.addAll(listingsByProfile.get(i).getLeases());
             }
 
-            // Get reviews for leases on listings of profile
+            // Getting owner reviews for leases on listings of profile
             List<Review> reviews = new ArrayList<>();
             for (int i = 0; i < leasesFromProfile.size(); i++) {
                 Review newReview = leasesFromProfile.get(i).getOwnerReview();
@@ -234,23 +234,21 @@ public class ProfileService {
     }
 
     public ResponseEntity<List<ReviewResponse>> getReviewsAsLeasee(Long profileId, int perPage, int page) {
-       Optional<Profile> profileData = profileRepository.findProfileById(profileId);
-
-        if (!profileData.isPresent()) {
-            logger.debug("profile of token not found found.");
+        Optional<Profile> profileData = profileRepository.findById(profileId);
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
-
-        if (leases == null) {
-            logger.debug("leases is null");
+        List<Lease> profileLeases = leaseRepository.getLeasesByProfile_Id(profileId);
+        if (profileLeases == null) {
+            logger.warn("profileId={} has no leases", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         List<Review> reviews = new ArrayList<>();
-        for (int i = 0; i < leases.size(); i++) {
-            Review newReview = leases.get(i).getLeaseeReview();
+        for (int i = 0; i < profileLeases.size(); i++) {
+            Review newReview = profileLeases.get(i).getLeaseeReview();
             if (newReview != null) reviews.add(newReview);
         }
 
