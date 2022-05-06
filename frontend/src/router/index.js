@@ -20,6 +20,7 @@ import FrontPage from "../views/FrontPageView.vue";
 import GiveRating from "@/components/RateReview/GiveRating";
 import NProgress from "nprogress";
 import newPwdView from "@/views/newPwdView";
+import aboutView from "@/views/AboutView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
 // const routerGuard = {
@@ -36,6 +37,11 @@ const routes = [
     path: "/",
     name: "home",
     component: FrontPage,
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: aboutView,
   },
   {
     path: "/login",
