@@ -49,9 +49,8 @@ export default {
   },
 
   giveReview(reviewRequest, reviewType) {
-    return apiClient.post("/my/lease/review", {
-      reviewRequest: reviewRequest,
-      reviewType: reviewType,
+    return apiClient.post("/my/lease/review", reviewRequest, {
+      params: { review_type: reviewType },
     });
   },
 
