@@ -70,7 +70,7 @@ export default {
         tlf: null,
         description: null,
         password: null,
-        latLng: null,
+        location: null,
       },
       newPass: null,
       confirmPass: null,
@@ -88,15 +88,13 @@ export default {
           this.profile.address +
           "&key=AIzaSyDqtG0SjobFXqse13BVXAHPZPMQ87utTd4"
       );
-      console.log(data.results[0].geometry.location.lat);
-      console.log(data.results[0].geometry.location.lng);
       this.position.lat = data.results[0].geometry.location.lat;
       this.position.lng = data.results[0].geometry.location.lng;
-      this.profile.latLng =
+      this.profile.location =
         data.results[0].geometry.location.lat +
         ":" +
         data.results[0].geometry.location.lng;
-      console.log(this.profile.latLng);
+      console.log(this.profile.location);
     },
     fetchProfile() {
       apiService
@@ -145,6 +143,9 @@ export default {
   },
   created() {
     this.fetchProfile();
+    setTimeout(() => {
+      this.getPoint();
+    }, 1000);
   },
 };
 </script>
