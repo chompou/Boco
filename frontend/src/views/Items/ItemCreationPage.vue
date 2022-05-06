@@ -251,13 +251,15 @@ export default {
           }
         )
       );
-      apiService.createItem(this.formData).catch((error) => {
-        console.log(error);
-      });
+      apiService
+        .createItem(this.formData)
+        .catch((error) => {
+          console.log(error);
+        })
+        .then(() => this.$router.push("/my/items"));
       this.toast.success("Item was successfully created", {
         timeout: 2000,
       });
-      this.$router.push("/my/items");
     },
   },
 
