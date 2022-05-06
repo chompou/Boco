@@ -100,7 +100,11 @@ public class ListingService {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
                 // sort by distance
-                return new ResponseEntity<>(sortListingsByDistance(page, perPage, location, allListings), HttpStatus.OK);
+                ListingResultsResponse listingResultsResponse = sortListingsByDistance(page, perPage, location, allListings);
+                if (listingResultsResponse == null){
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+                return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
             case "rating":
                 sortListingsByRating(allListings);
                 break;
@@ -339,8 +343,15 @@ public class ListingService {
     }
 
     private ListingResultsResponse sortListingsByDistance(int page, int perPage, String location, List<Listing> listings) {
-        double lat1 = Double.valueOf(location.split(":")[0]);
-        double long1 = Double.valueOf(location.split(":")[1]);
+        double lat1;
+        double long1;
+        try{
+            lat1 = Double.valueOf(location.split(":")[0]);
+            long1 = Double.valueOf(location.split(":")[1]);
+        } catch (Exception e){
+            logger.error("Error deleting listing: {}", e.getMessage());
+            return null;
+        }
 
         double lat2;
         double long2;

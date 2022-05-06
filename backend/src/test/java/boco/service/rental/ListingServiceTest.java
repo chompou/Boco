@@ -314,7 +314,18 @@ class ListingServiceTest {
         Assertions.assertTrue(listingResponses.get(0).getDistance() <= listingResponses.get(1).getDistance());
         Assertions.assertTrue(listingResponses.get(1).getDistance() <= listingResponses.get(2).getDistance());
         Assertions.assertTrue(listingResponses.get(2).getDistance() <= listingResponses.get(3).getDistance());
+    }
 
+    @Test
+    public void testGetListingsByDistanceWithoutLocation() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance:DESC", 50.0, 100.0, "", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testGetListingsByDistanceWithBadLocation() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance:DESC", 50.0, 100.0, "", "hei:test");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
     @Test
