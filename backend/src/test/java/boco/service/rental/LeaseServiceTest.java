@@ -332,7 +332,6 @@ class LeaseServiceTest {
         assertEquals(400, r2.getStatusCodeValue());
         assertEquals(400, r3.getStatusCodeValue());
         assertEquals(400, r4.getStatusCodeValue());
-
     }
 
     @Test

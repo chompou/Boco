@@ -227,7 +227,7 @@ public class LeaseService {
     public List<Lease> getOverlappingLeases(Lease lease){
         List<Lease> leases = leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(lease.getListing().getId());
         return leases.stream()
-                .filter(lease1 -> (lease1.getToDatetime() > lease.getFromDatetime() && lease1.getToDatetime() < lease.getToDatetime()) || (lease1.getFromDatetime() > lease.getFromDatetime() && lease1.getFromDatetime() < lease.getToDatetime()))
+                .filter(lease1 -> (lease1.getToDatetime() > lease.getFromDatetime() && lease1.getToDatetime() < lease.getToDatetime()) || (lease1.getFromDatetime() > lease.getToDatetime() && lease1.getFromDatetime() < lease.getToDatetime()) || (lease1.getFromDatetime() > lease.getFromDatetime() && lease1.getFromDatetime() < lease.getToDatetime()))
                 .collect(Collectors.toList());
     }
 
