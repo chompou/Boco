@@ -105,8 +105,8 @@ public class NotificationService {
     public Notification newLeaseNotification(ResponseEntity<LeaseResponse> responseEntity){
         if ((responseEntity.getBody()!=null) || responseEntity.getStatusCode().is2xxSuccessful()){
             try {
-                Profile profile = profileRepository.findProfileById(responseEntity.getBody().getProfileId()).get();
-                String message = "Your lease request i created for item: " + responseEntity.getBody().getItemName();
+                Profile profile = profileRepository.findProfileById(responseEntity.getBody().getOwnerId()).get();
+                String message = "Someone wants to lease your item: " + responseEntity.getBody().getItemName();
                 String url = "undefined for item: " + responseEntity.getBody().getItemName();
                 return getNotification(profile,message, url);
 
