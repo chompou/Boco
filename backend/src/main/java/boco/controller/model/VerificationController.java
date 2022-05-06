@@ -26,7 +26,7 @@ public class VerificationController {
     @GetMapping("/verification/{profile_id}")
     public void sendVerificationMail(@PathVariable(value = "profile_id") Long profileId) {
         String url = "http://localhost:8080/api/my/verification/getVerified/"+ profileId;
-        //TODO secure this endpoint better, (ask Elias)
+        //TODO secure this endpoint better, (SPRINT 3)
         /**
         try {
             emailService.sendVerificationMessage(profileService.getEmail(profileId).getBody(), url);
