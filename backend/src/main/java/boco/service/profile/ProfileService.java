@@ -104,16 +104,6 @@ public class ProfileService {
         return new ResponseEntity<>(profileResponse, HttpStatus.OK);
     }
 
-    public ResponseEntity<String> getEmail(Long id){
-        Optional<Profile> profile = profileRepository.findProfileById(id);
-
-        if (!profile.isPresent()) {
-            logger.debug("profile of token not found found.");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(profile.get().getEmail(), HttpStatus.OK);
-    }
-
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
@@ -320,16 +310,19 @@ public class ProfileService {
     }
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
-        if (checkIfProfileEmailExists(email) != null) {
-            Profile profile = profileRepository.findProfileByEmail(email).get();
-            PasswordCode passwordCode = passwordCodeRepository.findPasswordCodeByProfile(profile).get();
-            if (updatePasswordRequest.getGeneratedCode().equals(passwordCode.getGeneratedCode())) {
-                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
-                profileRepository.save(profile);
-                passwordCodeRepository.delete(passwordCode);
-                return new ResponseEntity<>(profile, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        if (updatePasswordRequest.getPasswordHash()== null || updatePasswordRequest.getPasswordHash().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (checkIfProfileEmailExists(email) == null) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        Profile profile = profileRepository.findProfileByEmail(email).get();
+        PasswordCode passwordCode = passwordCodeRepository.findPasswordCodeByProfile(profile).get();
+        if (updatePasswordRequest.getGeneratedCode().equals(passwordCode.getGeneratedCode())) {
+            profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
+            profileRepository.save(profile);
+            passwordCodeRepository.delete(passwordCode);
+            return new ResponseEntity<>(profile, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }

@@ -60,7 +60,7 @@ public class ProfileDetails implements UserDetails {
         if (profile.getDeactivated() == null){
             return true;
         }
-        return profile.getDeactivated().toLocalDateTime().isBefore(LocalDateTime.now());
+        return profile.getDeactivated().toLocalDateTime().isAfter(LocalDateTime.now());
     }
 }
 
