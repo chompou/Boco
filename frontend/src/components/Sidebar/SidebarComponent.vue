@@ -181,6 +181,9 @@ export default {
         this.filters.priceType
       );
     }
+
+    if (this.filters.priceFrom == 0) this.filters.priceTo = null;
+    if (this.filters.priceTo == 0) this.filters.priceTo = null;
   },
 };
 </script>

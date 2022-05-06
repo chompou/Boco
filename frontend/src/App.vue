@@ -16,7 +16,7 @@
   </nav>
 
   <div id="routerViewWrap" class="container-fluid">
-    <router-view :key="$route.fullPath" />
+    <router-view />
   </div>
   <footer id="footer" class="container-fluid sticky">
     <div class="row text-center">
