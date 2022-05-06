@@ -27,7 +27,7 @@
         <router-link to="/support"><h4>Contact us</h4></router-link>
       </div>
       <div class="col-sm-4 col-md-3 item">
-        <h4><a href="#">F.A.Q</a></h4>
+        <router-link to="/FAQ"><h4>F.A.Q</h4></router-link>
       </div>
       <div class="col-md-3 item social">
         <p class="copyright">Borrow Community © 2022</p>
