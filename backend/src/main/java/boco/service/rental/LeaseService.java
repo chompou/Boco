@@ -226,7 +226,7 @@ public class LeaseService {
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
 
-        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true) && updateLeaseRequest.getIsCompleted() != null && updateLeaseRequest.getIsCompleted().equals(true)) {
+        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true) && updateLeaseRequest.getIsCompleted() != null && updateLeaseRequest.getIsCompleted().equals(false)) {
             List<Lease> leases = getOverlappingLeases(lease);
             if (leases.size() != 0) {
                 logger.warn("Lease overlaps with other leases");

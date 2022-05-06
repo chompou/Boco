@@ -23,37 +23,33 @@
         name="description"
       ></textarea>
     </div>
-    <div v-if="!owner" class="itemRate">
-      <div class="ratingAndText">
-        <h5>Rate item</h5>
-        <star-rating
-          :rating="itemReview.rating"
-          :animate="true"
-          v-bind:max-rating="5"
-          inactive-color="#d8d8d8"
-          active-color="#ffd055"
-          v-bind:star-size="20"
-          border-color="#999"
-          :border-width="3"
-        >
-        </star-rating>
-      </div>
-      <div>
-        <h5>Description for item</h5>
-        <textarea
-          v-model="itemReview.comment"
-          placeholder="Description"
-          class="description"
-          name="description"
-        ></textarea>
-      </div>
+    <div v-if="!isOwner" class="ratingAndText">
+      <h5>Rate item</h5>
+      <star-rating
+        :rating="itemReview.rating"
+        :animate="true"
+        v-bind:max-rating="5"
+        inactive-color="#d8d8d8"
+        active-color="#ffd055"
+        v-bind:star-size="20"
+        border-color="#999"
+        :border-width="3"
+      >
+      </star-rating>
     </div>
-    <div id="CreateButtons" class="element">
-      <button class="CreateButton" @click="onSubmit">Submit</button>
-      <button id="Delete" class="CreateButton" @click="onDismiss">
-        Dismiss
-      </button>
+    <div v-if="!isOwner">
+      <h5>Description for item</h5>
+      <textarea
+        v-model="itemReview.comment"
+        placeholder="Description"
+        class="description"
+        name="description"
+      ></textarea>
     </div>
+  </div>
+  <div id="CreateButtons" class="element">
+    <button class="CreateButton" @click="onSubmit">Submit</button>
+    <button id="Delete" class="CreateButton" @click="onDismiss">Dismiss</button>
   </div>
 </template>
 
@@ -69,7 +65,6 @@ export default {
 
   data() {
     return {
-      own: false,
       itemReview: {
         rating: 1,
         comment: "",
@@ -85,22 +80,23 @@ export default {
 
   methods: {
     onSubmit() {
-      if (this.owner) {
+      if (this.isOwner) {
         apiService.giveReview(this.ownerReview, "leasee");
       } else {
-        apiService.giveReview(this.itemReview, "owner");
+        apiService.giveReview(this.ownerReview, "owner");
+        apiService.giveReview(this.itemReview, "item");
       }
     },
   },
 
+  computed: {
+    isOwner() {
+      return this.owner == "true" ? true : false;
+    },
+  },
+
   created() {
-    console.log(this.id);
     console.log(this.owner);
-    setTimeout(() => {
-      this.own = this.owner;
-      console.log(this.owner);
-      console.log(this.own);
-    }, 1000);
   },
 };
 </script>
