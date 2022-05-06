@@ -25,15 +25,6 @@ import aboutView from "@/views/AboutView";
 import faq from "@/views/faqView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
-// const routerGuard = {
-// beforeEnter: (to, from) => {
-//   console.log(from.name);
-//   if (!store.state.loggedIn && to.name !== "login") {
-//     return { name: "login" };
-//   }
-// },
-// };
-
 const routes = [
   {
     path: "/",
