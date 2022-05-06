@@ -7,6 +7,12 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
+/**
+ * This class represents data of a profile available for the profile itself. PasswordHash is never included.
+ * The class is used to send a response from a REST controller when receiving a get profile HTTP request.
+ *
+ * See boco.model.profile.Profile class for documentation of the fields of this class.
+ */
 @Getter @Setter @NoArgsConstructor
 public class PrivateProfileResponse {
     private Long id;
@@ -23,6 +29,11 @@ public class PrivateProfileResponse {
     private Double ratingAsOwner;
     private Timestamp deactivated;
 
+    /**
+     * Constructs a private profile response based on a profile entity
+     *
+     * @param profile The profile entity
+     */
     public PrivateProfileResponse(Profile profile) {
         this.id = profile.getId();
         this.username = profile.getUsername();
@@ -38,5 +49,4 @@ public class PrivateProfileResponse {
         this.ratingAsOwner = profile.getRatingAsOwner();
         this.deactivated = profile.getDeactivated();
     }
-
 }
