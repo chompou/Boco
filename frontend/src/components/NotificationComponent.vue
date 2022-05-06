@@ -11,8 +11,8 @@ export default {
   props: {
     text: String,
     id: Number,
-    width: Number,
-    height: Number,
+    width: String,
+    height: String,
     leftDivBgColor: {
       type: String,
       default: "blue",
