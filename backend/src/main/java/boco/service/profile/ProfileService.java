@@ -2,7 +2,6 @@ package boco.service.profile;
 
 import boco.component.BocoHasher;
 import boco.model.http.profile.*;
-import boco.model.http.rental.ListingResponse;
 import boco.model.http.rental.ListingResultsResponse;
 import boco.model.http.rental.ReviewResponse;
 import boco.model.profile.PasswordCode;
@@ -121,10 +120,6 @@ public class ProfileService {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        if (!isProfileRequestValid(profileRequest)) {
-            logger.debug("Profile is invalid and could not be created: " + profileRequest);
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
         if (checkIfProfileEmailExists(profileRequest.getEmail()) != null){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -176,7 +171,7 @@ public class ProfileService {
 
     }
 
-    public ResponseEntity<List<ReviewResponse>> getProfileReviews(Long profileId, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getReviewsAsOwner(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()) {
@@ -201,17 +196,13 @@ public class ProfileService {
         return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Review>> getMyProfileReviews(String token, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getReviewsAsLeasee(Long profileId, int perPage, int page) {
+       Optional<Profile> profileData = profileRepository.findProfileById(profileId);
 
-       String username = jwtUtil.extractUsername(token.substring(7));
-       Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()) {
+        if (!profileData.isPresent()) {
             logger.debug("profile of token not found found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-       Long profileId = profile.get().getId();
 
         List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
 
@@ -220,7 +211,6 @@ public class ProfileService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leases.size(); i++) {
             Review newReview = leases.get(i).getLeaseeReview();
@@ -228,7 +218,7 @@ public class ProfileService {
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
-        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
     public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String token) {
@@ -253,7 +243,7 @@ public class ProfileService {
             profile.setDisplayName(updateProfileRequest.getDisplayName());
         }
         if (updateProfileRequest.getPasswordHash()!=null && !updateProfileRequest.getPasswordHash().isEmpty()){
-            profile.setPasswordHash(updateProfileRequest.getPasswordHash());
+            profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
         }
         if (updateProfileRequest.getAddress()!=null && !updateProfileRequest.getAddress().isEmpty()){
             profile.setAddress(updateProfileRequest.getAddress());
@@ -342,15 +332,6 @@ public class ProfileService {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-
-    /**
-     * @param profileRequest ProfileRequest to be verified
-     * @return True if profile is valid, else false
-     */
-    private boolean isProfileRequestValid(ProfileRequest profileRequest) {
-        // TODO: IMPLEMENT
-        return true;
     }
 
     /**
