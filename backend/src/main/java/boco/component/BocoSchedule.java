@@ -20,8 +20,8 @@ public class BocoSchedule {
     private final NotificationService notificationService;
     private final LeaseService leaseService;
     private final PasswordCodeService passwordCodeService;
-    private final static int DAILY = 1000*60*60*24;
-    private final static int HOURLY = 1000*60*60;
+    private static final int DAILY = 1000*60*60*24;
+    private static final int HOURLY = 1000*60*60;
 
     @Autowired
     public BocoSchedule(ProfileService profileService, NotificationService notificationService,

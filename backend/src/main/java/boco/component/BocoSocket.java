@@ -1,6 +1,9 @@
 package boco.component;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -23,6 +26,7 @@ public class BocoSocket {
     private Session session;
     private static CopyOnWriteArraySet<BocoSocket> webSockets = new CopyOnWriteArraySet<>();
     private static Map<String, List<Session>> sessionPool = new HashMap<String, List<Session>>();
+    private Logger logger = LoggerFactory.getLogger(BocoSocket.class);
 
     /**
      * Adds new session to session pool
@@ -42,7 +46,7 @@ public class BocoSocket {
             sessionPool.get(userId).add(session);
         }
         webSockets.add(this);
-        System.out.println ("[websocket message] has new connections, total unique: "+webSockets.size());
+        logger.info ("[websocket message] has new connections, total unique: "+webSockets.size());
     }
 
     /**
@@ -53,7 +57,7 @@ public class BocoSocket {
         //ON close does not work in testing, this is not used elsewhere
         sessionPool.get(sessionId).remove(session);
         webSockets.remove(this);
-        System. out. println ("[websocket message] disconnected, total unique: "+webSockets.size());
+        logger.info("[websocket message] disconnected, total unique: "+webSockets.size());
     }
 
     /**
@@ -63,7 +67,7 @@ public class BocoSocket {
      */
     @OnMessage
     public void onMessage(String message){
-        System.out.println ("[websocket message] receives client message: "+message);
+        logger.info("[websocket message] receives client message: "+message);
     }
 
     /**
@@ -73,7 +77,7 @@ public class BocoSocket {
      */
     public void sendAllMessage(String message){
         for (BocoSocket socket:webSockets){
-            System.out.println ("[websocket message] broadcast message:"+message);
+            logger.info("[websocket message] broadcast message:"+message);
             try {
                 //socket.session.getAsyncRemote().sendText(message);
             }catch (Exception e){
@@ -90,10 +94,10 @@ public class BocoSocket {
      */
     public void sendOneMessage(String userId, String message){
         List<Session> sessionList = sessionPool.get(userId);
-        for (Session session:sessionList) {
-            if (session != null){
+        for (Session s:sessionList) {
+            if (s != null){
                 try {
-                    session.getAsyncRemote().sendText(message);
+                    s.getAsyncRemote().sendText(message);
                 }catch (Exception ignored){
                 }
             }

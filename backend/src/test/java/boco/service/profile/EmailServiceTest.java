@@ -53,9 +53,9 @@ class EmailServiceTest {
         int originalCaptureSize = valueCapture.getAllValues().size();
         emailService.sendVerificationMessage("test@test.no", "http://localhost:8080/testUrl");
         Assertions.assertTrue(valueCapture.getAllValues().size()>originalCaptureSize);
-        Assertions.assertEquals(valueCapture.getValue().getFrom(), "idatt2106.4@gmail.com");
-        Assertions.assertEquals(Objects.requireNonNull(valueCapture.getValue().getTo())[0], "test@test.no");
-        Assertions.assertEquals(valueCapture.getValue().getSubject(), "Verify Your Account");
+        Assertions.assertEquals("idatt2106.4@gmail.com", valueCapture.getValue().getFrom());
+        Assertions.assertEquals("test@test.no", Objects.requireNonNull(valueCapture.getValue().getTo())[0]);
+        Assertions.assertEquals("Verify Your Account", valueCapture.getValue().getSubject());
         Assertions.assertTrue(valueCapture.getValue().getText().contains("http://localhost:8080/testUrl"));
     }
 
@@ -67,9 +67,9 @@ class EmailServiceTest {
         int originalCaptureSize = valueCapture.getAllValues().size();
         emailService.sendResetPasswordMessage("test@test.no", "codecode");
         Assertions.assertTrue(valueCapture.getAllValues().size()>originalCaptureSize);
-        Assertions.assertEquals(valueCapture.getValue().getFrom(), "idatt2106.4@gmail.com");
-        Assertions.assertEquals(Objects.requireNonNull(valueCapture.getValue().getTo())[0], "test@test.no");
-        Assertions.assertEquals(valueCapture.getValue().getSubject(), "Reset Your Password");
+        Assertions.assertEquals("idatt2106.4@gmail.com", valueCapture.getValue().getFrom());
+        Assertions.assertEquals("test@test.no", Objects.requireNonNull(valueCapture.getValue().getTo())[0]);
+        Assertions.assertEquals("Reset Your Password", valueCapture.getValue().getSubject());
     }
 
     @Test
@@ -77,9 +77,9 @@ class EmailServiceTest {
         int originalCaptureSize = valueCapture.getAllValues().size();
         emailService.sendCreatedAccountMessage("test@test.no");
         Assertions.assertTrue(valueCapture.getAllValues().size()>originalCaptureSize);
-        Assertions.assertEquals(valueCapture.getValue().getFrom(), "idatt2106.4@gmail.com");
-        Assertions.assertEquals(Objects.requireNonNull(valueCapture.getValue().getTo())[0], "test@test.no");
-        Assertions.assertEquals(valueCapture.getValue().getSubject(), "New Account at Boco");
+        Assertions.assertEquals("idatt2106.4@gmail.com", valueCapture.getValue().getFrom());
+        Assertions.assertEquals("test@test.no", Objects.requireNonNull(valueCapture.getValue().getTo())[0]);
+        Assertions.assertEquals("New Account at Boco", valueCapture.getValue().getSubject());
     }
 
     @Test
@@ -87,8 +87,8 @@ class EmailServiceTest {
         int originalCaptureSize = valueCapture.getAllValues().size();
         emailService.sendContactFormFromUser("test@test.no", "test", "issue");
         Assertions.assertTrue(valueCapture.getAllValues().size()>originalCaptureSize);
-        Assertions.assertEquals(valueCapture.getValue().getFrom(), "test@test.no");
-        Assertions.assertEquals(Objects.requireNonNull(valueCapture.getValue().getTo())[0], "idatt2106.4@gmail.com");
-        Assertions.assertEquals(valueCapture.getValue().getSubject(), "Issue from test");
+        Assertions.assertEquals("test@test.no", valueCapture.getValue().getFrom());
+        Assertions.assertEquals("idatt2106.4@gmail.com", Objects.requireNonNull(valueCapture.getValue().getTo())[0]);
+        Assertions.assertEquals("Issue from test", valueCapture.getValue().getSubject());
     }
 }

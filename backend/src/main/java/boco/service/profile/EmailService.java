@@ -25,7 +25,7 @@ public class EmailService extends SimpleMailMessage {
         emailSender.send(message);
     }
 
-    public void sendResetPasswordMessage(String to, String code) throws MalformedURLException {
+    public void sendResetPasswordMessage(String to, String code){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("idatt2106.4@gmail.com");
         message.setTo(to);

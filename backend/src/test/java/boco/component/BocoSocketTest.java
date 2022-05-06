@@ -131,13 +131,13 @@ class BocoSocketTest {
 
     @Test
     void getWebSockets() {
-        assertTrue(BocoSocket.getWebSockets().getClass().equals(CopyOnWriteArraySet.class));
+        assertEquals(BocoSocket.getWebSockets().getClass(), CopyOnWriteArraySet.class);
         BocoSocket.getWebSockets().contains(socket);
     }
 
     @Test
     void getSessionPool() {
-        assertTrue(BocoSocket.getSessionPool() != null);
+        assertNotNull(BocoSocket.getSessionPool());
         socket.onOpen(session, "1");
         assertTrue(BocoSocket.getSessionPool().get("1").contains(session));
 
