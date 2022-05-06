@@ -8,7 +8,11 @@ export default {
   },
 
   displayDate(date) {
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    return (
+      date.toLocaleDateString() +
+      " " +
+      `${date.getHours()}.${("0" + date.getMinutes()).slice(-2)}`
+    );
   },
 
   getStatus(lease, owner) {
