@@ -17,8 +17,6 @@ beforeEach(() => {
   mockStorage = {};
 });
 
-afterEach(() => jest.clearAllMocks());
-
 afterAll(() => {
   global.Storage.prototype.setItem.mockReset();
   global.Storage.prototype.getItem.mockReset();

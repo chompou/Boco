@@ -1,7 +1,5 @@
 import priceService from "@/services/priceService";
 
-afterEach(() => jest.clearAllMocks());
-
 describe("ParseHours()", () => {
   test("calculating hour difference between two timestamps", () => {
     let hours;
