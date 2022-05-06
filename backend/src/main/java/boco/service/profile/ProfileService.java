@@ -46,7 +46,7 @@ public class ProfileService {
 
     private final JwtUtil jwtUtil;
 
-    Logger logger = LoggerFactory.getLogger(ListingService.class);
+    Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository,
@@ -65,31 +65,30 @@ public class ProfileService {
         this.listingService = listingService;
     }
 
-    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String token) {
+    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String authHeader) {
         Long userId = null;
-        if (token != null){
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found.");
+        if (authHeader != null){
+            Profile authHeaderProfile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (authHeaderProfile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            userId = profile.get().getId();
+            userId = authHeaderProfile.getId();
         }
-        var profileData = profileRepository.findById(profileId);
-        if (profileData.isPresent()) {
-            Profile profile = profileData.get();
-            PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
 
-            if (userId == null || !profileHasContactWithProfile(profileId, userId)){
-                publicProfile.setEmail(null);
-                publicProfile.setTlf(null);
-            }
-            return new ResponseEntity<>(publicProfile, HttpStatus.OK);
-        } else {
+        var profileData = profileRepository.findById(profileId);
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} not found", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Profile profile = profileData.get();
+
+        PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
+        if (userId == null || !profileHasContactWithProfile(profileId, userId)){
+            publicProfile.setEmail(null);
+            publicProfile.setTlf(null);
+        }
+        return new ResponseEntity<>(publicProfile, HttpStatus.OK);
     }
 
     public ResponseEntity<PrivateProfileResponse> getPrivateProfile(String token){
