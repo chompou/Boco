@@ -62,7 +62,6 @@ public class LeaseService {
                 logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            Profile profile = profileData.get();
 
             List<Lease> leases;
             if (Boolean.TRUE.equals(isOwner)) {
