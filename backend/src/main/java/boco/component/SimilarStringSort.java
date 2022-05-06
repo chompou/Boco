@@ -57,6 +57,7 @@ public class SimilarStringSort {
                                                  List<Listing> listings,
                                                  int includePercentage) {
         Arrays.sort(listingScores);
+        if (listingScores.length == 0 ||listingScores[0].getB() == 0) return new ArrayList<>();
         int numberOfListingsWithAnyMatch = 0;
         for (int i = 0; i < listingScores.length; i++) {
             if (listingScores[i].getB() > 0) numberOfListingsWithAnyMatch++;
