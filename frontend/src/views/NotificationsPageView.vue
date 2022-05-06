@@ -24,14 +24,7 @@
         <NotificationComponent
           height="70"
           leftDivBgColor="lightGray"
-          :text="
-            'ID: ' +
-            notification.id +
-            ' message: ' +
-            notification.message +
-            ' url: ' +
-            notification.url
-          "
+          :text="notification.message"
           :id="notification.id"
         />
       </li>

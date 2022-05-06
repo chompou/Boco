@@ -1,5 +1,6 @@
 <template>
   <div class="lease-detail-modal">
+    <p class="cross" @click="$emit('close-overlay')">X</p>
     <div class="lease-detail-container">
       <div class="lease-info-container">
         <div class="lease-info-list">
@@ -68,7 +69,7 @@ export default {
 
   data() {
     return {
-      remaining: null,
+      remaining: new Date(this.lease.toDatetime) - Date.now(),
       item: {
         title: null,
         priceType: null,
@@ -191,7 +192,9 @@ export default {
     displayRemaining() {
       let sec, min, hour, day;
 
-      sec = Math.floor(this.remaining / 1000);
+      let clampedValue = Math.max(0, this.remaining);
+
+      sec = Math.floor(clampedValue / 1000);
       min = Math.floor(sec / 60);
       hour = Math.floor(min / 60);
 
@@ -205,11 +208,7 @@ export default {
     remaining: {
       handler() {
         setTimeout(() => {
-          if (this.remaining == null || this.remaining > 0) {
-            this.remaining = new Date(this.lease.toDatetime) - Date.now();
-          } else if (this.remaining < 0) {
-            this.remaining = 0;
-          }
+          this.remaining = new Date(this.lease.toDatetime) - Date.now();
         }, 1000);
       },
       immediate: true,
@@ -271,5 +270,14 @@ export default {
 .lease-button-container {
   display: flex;
   gap: 10px;
+}
+
+.cross {
+  border-radius: 1000%;
+  position: fixed;
+  top: 2%;
+  right: 2%;
+  font-size: 25px;
+  cursor: default;
 }
 </style>
