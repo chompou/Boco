@@ -43,9 +43,6 @@ class EmailServiceTest {
         Assertions.assertThrows(MalformedURLException.class, () ->{
             emailService.sendVerificationMessage("test@test.no", "Not OK URL æøÅ");
         });
-        Assertions.assertThrows(MalformedURLException.class, () ->{
-            emailService.sendResetPasswordMessage("test@test.no", "Not OK URL æøÅ", "codecode");
-        });
     }
 
     @Test
@@ -65,15 +62,14 @@ class EmailServiceTest {
     @Test
     void sendResetPasswordMessage() throws MalformedURLException {
         Assertions.assertDoesNotThrow(() -> {
-            emailService.sendResetPasswordMessage("test@test.no", "http://localhost:8080/testUrl", "codecode");
+            emailService.sendResetPasswordMessage("test@test.no", "codecode");
         });
         int originalCaptureSize = valueCapture.getAllValues().size();
-        emailService.sendResetPasswordMessage("test@test.no", "http://localhost:8080/testUrl", "codecode");
+        emailService.sendResetPasswordMessage("test@test.no", "codecode");
         Assertions.assertTrue(valueCapture.getAllValues().size()>originalCaptureSize);
         Assertions.assertEquals(valueCapture.getValue().getFrom(), "idatt2106.4@gmail.com");
         Assertions.assertEquals(Objects.requireNonNull(valueCapture.getValue().getTo())[0], "test@test.no");
         Assertions.assertEquals(valueCapture.getValue().getSubject(), "Reset Your Password");
-        Assertions.assertTrue(valueCapture.getValue().getText().contains("http://localhost:8080/testUrl"));
     }
 
     @Test

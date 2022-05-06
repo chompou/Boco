@@ -310,16 +310,19 @@ public class ProfileService {
     }
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
-        if (checkIfProfileEmailExists(email) != null) {
-            Profile profile = profileRepository.findProfileByEmail(email).get();
-            PasswordCode passwordCode = passwordCodeRepository.findPasswordCodeByProfile(profile).get();
-            if (updatePasswordRequest.getGeneratedCode().equals(passwordCode.getGeneratedCode())) {
-                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
-                profileRepository.save(profile);
-                passwordCodeRepository.delete(passwordCode);
-                return new ResponseEntity<>(profile, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        if (updatePasswordRequest.getPasswordHash()== null || updatePasswordRequest.getPasswordHash().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (checkIfProfileEmailExists(email) == null) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        Profile profile = profileRepository.findProfileByEmail(email).get();
+        PasswordCode passwordCode = passwordCodeRepository.findPasswordCodeByProfile(profile).get();
+        if (updatePasswordRequest.getGeneratedCode().equals(passwordCode.getGeneratedCode())) {
+            profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
+            profileRepository.save(profile);
+            passwordCodeRepository.delete(passwordCode);
+            return new ResponseEntity<>(profile, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
