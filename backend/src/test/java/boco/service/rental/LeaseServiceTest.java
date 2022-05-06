@@ -13,6 +13,7 @@ import boco.repository.rental.LeaseRepository;
 import boco.repository.rental.ListingRepository;
 import boco.repository.rental.ReviewRepository;
 import boco.service.security.JwtUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -168,6 +169,8 @@ class LeaseServiceTest {
 
         // Any lease can be returned to avoid NullPointerException, le1 was chosen randomly
         lenient().when(leaseRepository.save(any())).thenReturn(le1);
+        lenient().when(leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(any())).thenReturn(leases);
+
 
     }
 
@@ -317,6 +320,8 @@ class LeaseServiceTest {
         assertEquals(200, r1.getStatusCodeValue(), 200);
     }
 
+
+
     @Test
     public void checkLeaseIsLegalReturns400WhenOwnerIsNotOwner() {
         // updater of lease is not the lease owner
@@ -332,6 +337,35 @@ class LeaseServiceTest {
         assertEquals(400, r2.getStatusCodeValue());
         assertEquals(400, r3.getStatusCodeValue());
         assertEquals(400, r4.getStatusCodeValue());
+    }
+
+    @Test
+    public void testCheckForOverlappingLeases(){
+        Listing l = new Listing("Elias", "En person", true, 20.0, "hour", null);
+
+        Lease l1 = new Lease(Timestamp.valueOf("2030-04-02 10:00:00").getTime(), Timestamp.valueOf("2031-02-03 10:00:00").getTime(), null, new Listing(), null);
+        List<Lease> leases = service.getOverlappingLeases(l1);
+        Assertions.assertEquals(1, leases.size());
+
+        Lease l2 = new Lease(Timestamp.valueOf("2030-04-02 10:00:00").getTime(), Timestamp.valueOf("2030-11-03 10:00:00").getTime(), null, new Listing(), null);
+        List<Lease> leases2 = service.getOverlappingLeases(l2);
+        Assertions.assertEquals(1, leases2.size());
+
+        Lease l3 = new Lease(Timestamp.valueOf("2030-08-02 10:00:00").getTime(), Timestamp.valueOf("2031-02-03 10:00:00").getTime(), null, new Listing(), null);
+        List<Lease> leases3 = service.getOverlappingLeases(l3);
+        Assertions.assertEquals(1, leases3.size());
+
+        Lease l4 = new Lease(Timestamp.valueOf("2030-08-02 10:00:00").getTime(), Timestamp.valueOf("2030-09-03 10:00:00").getTime(), null, new Listing(), null);
+        List<Lease> leases4 = service.getOverlappingLeases(l4);
+        Assertions.assertEquals(1, leases4.size());
+
+        Lease l5 = new Lease(Timestamp.valueOf("2030-04-02 10:00:00").getTime(), Timestamp.valueOf("2030-05-03 10:00:00").getTime(), null, new Listing(), null);
+        List<Lease> leases5 = service.getOverlappingLeases(l5);
+        Assertions.assertEquals(0, leases5.size());
+
+        Lease l6 = new Lease(Timestamp.valueOf("2030-04-02 10:00:00").getTime(), Timestamp.valueOf("2030-05-03 10:00:00").getTime(), null, new Listing(), null);
+        List<Lease> leases6 = service.getOverlappingLeases(l6);
+        Assertions.assertEquals(0, leases6.size());
     }
 
 
