@@ -3,8 +3,10 @@ package boco.configuration;
 import boco.component.BocoHasher;
 import boco.model.profile.Personal;
 import boco.model.profile.Profile;
-import boco.model.rental.*;
-import boco.model.profile.Notification;
+import boco.model.rental.CategoryType;
+import boco.model.rental.Image;
+import boco.model.rental.Lease;
+import boco.model.rental.Listing;
 import boco.repository.profile.NotificationRepository;
 import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.*;
@@ -348,76 +350,6 @@ public class TempUserAddV2 {
                     listingRepository.save(l);
                     listingList.add(l);
                 }
-
-                // Making leases
-                for (int i = 0; i < leases; i++) {
-                    if(i%3==0){
-                        includeReviews = true;
-                    } else {
-                        includeReviews = false;
-                    }
-                    long fromDate = 1651478864L*1000L + faker.random().nextInt(10000, 100000);
-                    long toDate = fromDate + faker.random().nextInt(10, 10000)*1000L;
-                    Listing listing = listingList.get(faker.random().nextInt(0, listings - 1));
-
-
-                    var l = Lease.builder()
-                            .fromDatetime(fromDate)
-                            .toDatetime(toDate)
-                            .isApproved(i % 2 == 0)
-                            .isCompleted(includeReviews)
-                            .listing(listing)
-                            .owner(listing.getProfile())
-                            .profile(profileList.get(faker.random().nextInt(1, totalProfiles - 1)))
-                            .itemReview(null)
-                            .leaseeReview(null)
-                            .ownerReview(null)
-                            .build();
-                    leaseRepository.save(l);
-
-
-                    if (includeReviews) {
-                        Review r1 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
-                        Review r2 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
-                        Review r3 = new Review((double) faker.random().nextInt(0, 5), faker.music().genre());
-
-                        r1.setLease(l);
-                        r2.setLease(l);
-                        r3.setLease(l);
-                        reviewRepository.save(r1);
-                        reviewRepository.save(r2);
-                        reviewRepository.save(r3);
-
-                        l.setItemReview(r1);
-                        l.setLeaseeReview(r2);
-                        l.setOwnerReview(r3);
-                        leaseRepository.save(l);
-                    }
-                }
-
-                for (Profile p12:profileRepository.findAll()) {
-                    p12.setRatingAsOwner(reviewRepository.getOwnerRating(p12.getId()));
-                    p12.setRatingAsLeasee(reviewRepository.getLeaseeRating(p12.getId()));
-                    p12.setRatingListing(reviewRepository.getAverageItemRatingForProfile(p12.getId()));
-                    profileRepository.save(p12);
-
-                }
-
-                // Making notifications
-                int numberOfReadAndUnreadNotifications = 10;
-                List<Notification> notifications = new ArrayList<>();
-                for (Profile profile:profileList) {
-                    for (int i = 0; i < numberOfReadAndUnreadNotifications; i++) {
-                        Notification read = new Notification().builder().isRead(true).profile(profile)
-                                .message("Read :").url(faker.beer().name()).build();
-                        notifications.add(read);
-                        Notification unread = new Notification().builder().isRead(false).profile(profile)
-                                .message("unread :").url(faker.twinPeaks().quote()).build();
-                        notifications.add(unread);
-                    }
-                }
-                notificationRepository.saveAll(notifications);
-
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
