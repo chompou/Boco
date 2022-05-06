@@ -44,7 +44,7 @@
               </label>
             </div>
             <p>Address: {{ item.address }}</p>
-            <p>Price: {{ displayPrice }}kr / {{ item.priceType }}</p>
+            <p>Price: {{ displayPrice }} / {{ item.priceType }}</p>
           </div>
           <div id="About2">
             <div id="items">

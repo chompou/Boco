@@ -68,7 +68,7 @@ export default {
 
   data() {
     return {
-      remaining: 0,
+      remaining: null,
       item: {
         title: null,
         priceType: null,
@@ -205,7 +205,7 @@ export default {
     remaining: {
       handler() {
         setTimeout(() => {
-          if (this.remaining > 0) {
+          if (this.remaining == null || this.remaining > 0) {
             this.remaining = new Date(this.lease.toDatetime) - Date.now();
           } else if (this.remaining < 0) {
             this.remaining = 0;
