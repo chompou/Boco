@@ -32,6 +32,10 @@ export default {
     return apiClient.delete("my/listing/" + listingId.listingId, listingId);
   },
 
+  deleteAccount() {
+    return apiClient.put("/my/profile/deactivate/");
+  },
+
   getItems(filters, page, perPage) {
     return apiClient.get("/listing", {
       params: { ...filters, page: page, perPage: perPage },

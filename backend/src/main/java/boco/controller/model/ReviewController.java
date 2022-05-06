@@ -40,15 +40,18 @@ public class ReviewController {
     public ResponseEntity<List<ReviewResponse>> getReviews(@RequestParam(name = "listingId", defaultValue  = "") Long listingId,
                                                            @RequestParam(name = "profileId", defaultValue  = "") Long profileId,
                                                            @RequestParam(name = "perPage") int perPage,
-                                                           @RequestParam(name = "page") int page){
+                                                           @RequestParam(name = "page") int page,
+                                                           @RequestParam(name = "reviewType") String reviewType){
 
         if (listingId != null && profileId != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else if(listingId != null){
+        } else if(reviewType == "item"){
             return this.listingService.getListingReviews(listingId, perPage, page);
-        } else if(profileId != null){
-            return this.profileService.getProfileReviews(profileId, perPage, page);
-        } else{
+        } else if(reviewType == "owner"){
+            return this.profileService.getReviewsAsOwner(profileId, perPage, page);
+        } else if(reviewType == "leasee"){
+            return this.profileService.getReviewsAsLeasee(profileId, perPage, page);
+        }else{
             return reviewService.getAllReviews();
         }
     }

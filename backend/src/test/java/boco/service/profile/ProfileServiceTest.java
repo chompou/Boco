@@ -4,6 +4,7 @@ import boco.component.BocoHasher;
 import boco.model.http.profile.PrivateProfileResponse;
 import boco.model.http.profile.ProfileRequest;
 import boco.model.http.profile.UpdatePasswordRequest;
+import boco.model.http.profile.UpdateProfileRequest;
 import boco.model.profile.PasswordCode;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
@@ -121,9 +122,35 @@ class ProfileServiceTest {
 
         lenient().when(profileRepository.getIfContact(3L, 4L)).thenReturn(Optional.of(p4));
         lenient().when(profileRepository.getIfContact(4L, 3L)).thenReturn(Optional.of(p3));
-        PasswordCode passwordCode = new PasswordCode(p1, "codecode");
+    }
 
-        lenient().when(passwordCodeRepository.findPasswordCodeByProfile(Mockito.any())).thenReturn(Optional.of(passwordCode));
+
+    @Test
+    public void updateProfileTestWithNullFields(){
+        UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest();
+        var res = profileService.updateProfile(updateProfileRequest, "Bearer ronaldo");
+        Profile profile = profileRepository.findProfileById(res.getBody().getId()).get();
+        Assertions.assertEquals("cr7@mufc.uk", profile.getEmail());
+        Assertions.assertEquals("premier league", profile.getDescription());
+        Assertions.assertEquals("CR7", profile.getDisplayName());
+        Assertions.assertEquals(BocoHasher.encode("x"), profile.getPasswordHash());
+        Assertions.assertEquals("2:2", profile.getLocation());
+        Assertions.assertEquals("Portugal", profile.getAddress());
+        Assertions.assertEquals("12345678", profile.getTlf());
+    }
+    @Test
+    public void updateProfileTestWithActualFieldData(){
+        UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("changed", "changed", "changed",
+                "changed", "changed", "changed", "changed");
+        var res = profileService.updateProfile(updateProfileRequest, "Bearer ronaldo");
+        Profile profile = profileRepository.findProfileById(res.getBody().getId()).get();
+        Assertions.assertEquals("changed", profile.getEmail());
+        Assertions.assertEquals("changed", profile.getDescription());
+        Assertions.assertEquals("changed", profile.getDisplayName());
+        Assertions.assertEquals(BocoHasher.encode("changed"), profile.getPasswordHash());
+        Assertions.assertEquals("changed", profile.getLocation());
+        Assertions.assertEquals("changed", profile.getAddress());
+        Assertions.assertEquals("changed", profile.getTlf());
     }
 
     @Test
