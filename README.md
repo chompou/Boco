@@ -27,5 +27,5 @@ Idatt2106 2022 project group 4, BoCo web application
 ## Project initialization
 
 To initialize this project, please consult both the [frontend](frontend/README.md)
-and the [backend](backend/README.md) readme files, in order to initialize this project correctly.
+and the [backend](backend/ReadMe.md) readme files, in order to initialize this project correctly.
 
