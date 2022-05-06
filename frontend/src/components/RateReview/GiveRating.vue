@@ -68,12 +68,12 @@ export default {
       itemReview: {
         rating: 1,
         comment: "",
-        id: this.id,
+        leaseId: this.id,
       },
       ownerReview: {
         rating: 1,
         comment: "",
-        id: this.id,
+        leaseId: this.id,
       },
     };
   },
