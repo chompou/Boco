@@ -69,8 +69,8 @@ export default {
       filters: ["All", "Past", "Current", "Upcoming"],
       showOverlay: false,
       selectedLease: null,
-      ownedFilter: null,
-      leasedFilter: null,
+      ownedFilter: "All",
+      leasedFilter: "All",
       owned: [],
       leased: [],
     };

@@ -147,9 +147,11 @@ export default {
   margin: 10px;
 }
 
-#image {
-  width: 300px;
-  height: 300px;
+img {
+  height: 281px;
+  min-width: 500px;
+  width: 500px;
+  border-radius: 20px;
 }
 
 .ItemId {

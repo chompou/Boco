@@ -18,6 +18,7 @@
       <select id="sort-dropdown" v-model="sort" @change="onSortUpdate">
         <option value="id">Created</option>
         <option value="price">Price</option>
+        <option value="distance">Distance</option>
       </select>
     </div>
     <div id="items" :style="{ 'margin-left': sidebarWidth }">
@@ -72,13 +73,17 @@ export default {
 
     applyFilter() {
       let query = this.$route.query;
-      this.$router.push("/").then(() => {
-        this.$router.replace({
-          name: "items",
-          query: {
-            ...query,
-            sort: this.sort + ":" + this.sortOrder,
-          },
+
+      apiService.getMyProfile().then((response) => {
+        this.$router.push("/").then(() => {
+          this.$router.replace({
+            name: "items",
+            query: {
+              ...query,
+              sort: this.sort + ":" + this.sortOrder,
+              location: response.data.location,
+            },
+          });
         });
       });
     },

@@ -77,7 +77,7 @@
         </div>
       </div>
       <div class="ItemId">
-        <h5>Categories (Multi-select):</h5>
+        <h5>Categories:</h5>
         <form class="checkBoxForm">
           <input
             type="checkbox"
@@ -187,8 +187,8 @@ export default {
       formData: new FormData(),
       preview: null,
       image: null,
-      item: { categoryNames: [] },
-      inputPrice: 0,
+      item: { categoryNames: [], priceType: "Hour" },
+      inputPrice: 100,
       checked: false,
     };
   },
@@ -235,9 +235,6 @@ export default {
         this.inputPrice,
         this.item.priceType
       );
-
-      console.log(this.image);
-      console.log(this.leaseType);
       this.formData.append(
         "properties",
         new Blob(
@@ -254,13 +251,15 @@ export default {
           }
         )
       );
-      apiService.createItem(this.formData).catch((error) => {
-        console.log(error);
-      });
+      apiService
+        .createItem(this.formData)
+        .catch((error) => {
+          console.log(error);
+        })
+        .then(() => this.$router.push("/my/items"));
       this.toast.success("Item was successfully created", {
         timeout: 2000,
       });
-      this.$router.push("/my/items");
     },
   },
 

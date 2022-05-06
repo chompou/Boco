@@ -23,28 +23,30 @@
         name="description"
       ></textarea>
     </div>
-    <div class="ratingAndText" v-if="!own">
-      <h5>Rate item</h5>
-      <star-rating
-        :rating="itemReview.rating"
-        :animate="true"
-        v-bind:max-rating="5"
-        inactive-color="#d8d8d8"
-        active-color="#ffd055"
-        v-bind:star-size="20"
-        border-color="#999"
-        :border-width="3"
-      >
-      </star-rating>
-    </div>
-    <div v-if="!own">
-      <h5>Description for item</h5>
-      <textarea
-        v-model="itemReview.comment"
-        placeholder="Description"
-        class="description"
-        name="description"
-      ></textarea>
+    <div v-if="!owner" class="itemRate">
+      <div class="ratingAndText">
+        <h5>Rate item</h5>
+        <star-rating
+          :rating="itemReview.rating"
+          :animate="true"
+          v-bind:max-rating="5"
+          inactive-color="#d8d8d8"
+          active-color="#ffd055"
+          v-bind:star-size="20"
+          border-color="#999"
+          :border-width="3"
+        >
+        </star-rating>
+      </div>
+      <div>
+        <h5>Description for item</h5>
+        <textarea
+          v-model="itemReview.comment"
+          placeholder="Description"
+          class="description"
+          name="description"
+        ></textarea>
+      </div>
     </div>
     <div id="CreateButtons" class="element">
       <button class="CreateButton" @click="onSubmit">Submit</button>
@@ -64,6 +66,7 @@ export default {
   components: {
     StarRating,
   },
+
   data() {
     return {
       own: false,
