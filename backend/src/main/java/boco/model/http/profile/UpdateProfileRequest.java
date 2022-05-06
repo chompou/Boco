@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * This class represents new data of a profile to be updated. The class is used to send a response from a REST
- * controller when receiving a get profile HTTP request.
+ * This class represents a profile when sending an HTTP PUT request to a REST controller.
  *
  * See boco.model.profile.Profile class for documentation of the fields of this class.
  */
