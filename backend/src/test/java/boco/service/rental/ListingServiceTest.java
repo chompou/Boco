@@ -176,6 +176,9 @@ class ListingServiceTest {
                 .when(listingRepository.findById(eq(4L)))
                 .thenReturn(Optional.of(l3));
         lenient()
+                .when(listingRepository.findById(eq(7L)))
+                .thenReturn(Optional.of(l7));
+        lenient()
                 .when(jwtUtil.extractUsername(eq("1")))
                 .thenReturn("los");
         lenient()
@@ -391,28 +394,34 @@ class ListingServiceTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
-    @Test @Disabled
+    @Test
     public void deleteListingSuccessfully(){
-        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(2L, "Bearer 1");
+        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(7L, "Bearer 1");
         Assertions.assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        //Mockito.verify(listingRepository, Mockito.times(1)).save(any());
         Mockito.verify(leaseRepository, Mockito.times(1)).saveAll(any());
-        //Assertions.assertEquals(1L, responseEntity.getBody().getId());
+        Mockito.verify(listingRepository, Mockito.times(1)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(1)).saveAll(any());
     }
 
-    @Test @Disabled
+    @Test
     public void deleteListingInvalidToken(){
-        UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
-        ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 2");
+        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(1L, "Bearer 2");
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        Mockito.verify(leaseRepository, Mockito.times(0)).saveAll(any());
+        Mockito.verify(listingRepository, Mockito.times(0)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(0)).saveAll(any());
     }
 
-    @Test @Disabled
+    @Test
     public void deleteListingInvalidProfile(){
-        UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
-        ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 3");
+        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(2L, "Bearer 1");
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        Mockito.verify(leaseRepository, Mockito.times(0)).saveAll(any());
+        Mockito.verify(listingRepository, Mockito.times(0)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(0)).saveAll(any());
     }
+
+
 
 
 
