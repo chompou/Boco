@@ -175,7 +175,7 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void getMyLeasesReturnsCorrectNumberOfLeases() {
+    void getMyLeasesReturnsCorrectNumberOfLeases() {
         ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi", true);
         List<LeaseResponse> leases1 = res1.getBody();
         ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr", true);
@@ -187,14 +187,14 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void getMyLeasesReturnsStatusCode200() {
+    void getMyLeasesReturnsStatusCode200() {
         ResponseEntity<List<LeaseResponse>> res = service.getMyLeases("Bearer messi", true);
 
         assertEquals(200, res.getStatusCodeValue());
     }
 
     @Test
-    public void getMyLeasesReturnsCorrectLeases() {
+    void getMyLeasesReturnsCorrectLeases() {
         ResponseEntity<List<LeaseResponse>> res1 = service.getMyLeases("Bearer messi", true);
         ResponseEntity<List<LeaseResponse>> res2 = service.getMyLeases("Bearer usr", true);
         List<LeaseResponse> leases1 = res1.getBody();
@@ -248,13 +248,13 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void getMyLeasesReturnsStatusCode404() {
+    void getMyLeasesReturnsStatusCode404() {
         var res = service.getMyLeases("Bearer notfound", true);
         assertEquals(404, res.getStatusCodeValue());
     }
 
     @Test
-    public void deleteLeaseReturnsStatusCode204() {
+    void deleteLeaseReturnsStatusCode204() {
         // Owner deletes lease
         var r1 = service.deleteLease(1L, "Bearer messi");
         var r2 = service.deleteLease(2L, "Bearer messi");
@@ -283,7 +283,7 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void deleteLeaseReturnsStatusCode404() {
+    void deleteLeaseReturnsStatusCode404() {
         // Username not in database
         var r1 = service.deleteLease(1L, "Bearer notfound");
 
@@ -297,7 +297,7 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void deleteLeaseReturnsStatusCode422() {
+    void deleteLeaseReturnsStatusCode422() {
         // Completed lease
         var r1 = service.deleteLease(6L, "Bearer ron");
         // Trying to delete less than 24h before start
@@ -314,7 +314,7 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void updateLeaseReturnsStatusCode200() {
+    void updateLeaseReturnsStatusCode200() {
         var req = new UpdateLeaseRequest(true,true,1L);
         var r1 = service.updateLease(req, "Bearer messi");
         assertEquals(200, r1.getStatusCodeValue(), 200);
@@ -323,7 +323,7 @@ class LeaseServiceTest {
 
 
     @Test
-    public void checkLeaseIsLegalReturns400WhenOwnerIsNotOwner() {
+    void checkLeaseIsLegalReturns400WhenOwnerIsNotOwner() {
         // updater of lease is not the lease owner
         var req1 = new UpdateLeaseRequest(true,true,1L); // Owned by messi
         var req2 = new UpdateLeaseRequest(true,true,3L); // Owned by usr
@@ -340,7 +340,7 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void testCheckForOverlappingLeases(){
+    void testCheckForOverlappingLeases(){
         Listing l = new Listing("Elias", "En person", true, 20.0, "hour", null);
 
         Lease l1 = new Lease(Timestamp.valueOf("2030-04-02 10:00:00").getTime(), Timestamp.valueOf("2031-02-03 10:00:00").getTime(), null, new Listing(), null);

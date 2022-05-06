@@ -116,12 +116,10 @@ public class AuthorizedController {
         }
 
         if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved()) {
-            System.out.println("1");
             Notification notification = notificationService.approveLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
         }
         if (updateLeaseRequest.getIsCompleted() != null && updateLeaseRequest.getIsCompleted()) {
-            System.out.println("2");
             Notification notification = notificationService.completedLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
         }

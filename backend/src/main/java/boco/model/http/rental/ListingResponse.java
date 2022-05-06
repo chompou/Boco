@@ -56,11 +56,11 @@ public class ListingResponse {
         this.profileId = listing.getProfile().getId();
         this.distance = -1.0;
         try {
-            if (listing.getImages().size() != 0) {
+            if (!listing.getImages().isEmpty()) {
                 this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
             }
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
     }
@@ -84,12 +84,11 @@ public class ListingResponse {
         this.categoryTypes = listing.getCategoryTypes();
         this.profileId = listing.getProfile().getId();
         try {
-            if (listing.getImages().size() != 0) {
+            if (!listing.getImages().isEmpty()) {
                 this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
             }
         }catch (Exception e){
             e.printStackTrace();
-            System.out.println(e.getMessage());
         }
         this.distance =  distance;
 
