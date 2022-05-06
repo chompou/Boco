@@ -11,7 +11,7 @@
     </button>
     <transition name="bounce">
       <div class="dropdownMenu" v-if="show">
-        <div class="gridContainer">
+        <div class="header">
           <div>
             <p class="username">{{ $store.getters.getDisplayName }}</p>
           </div>
@@ -232,7 +232,7 @@ export default {
   font-size: 2em;
 }
 
-.gridContainer {
+.header {
   display: grid;
   grid-template-columns: 1fr 1fr;
   margin-bottom: -15px;

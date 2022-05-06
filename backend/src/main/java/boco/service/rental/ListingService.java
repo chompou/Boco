@@ -193,6 +193,12 @@ public class ListingService {
                 logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
+            if (listingRequest.getPrice() == null){
+                listingRequest.setPrice(0.0);
+            }
+            if (listingRequest.getPriceType()== null){
+                listingRequest.setPriceType("Hour");
+            }
             // Saving the listing without images or categories
             Listing newListing = new Listing(listingRequest.getName(), listingRequest.getDescription(),
                     listingRequest.getIsActive(), listingRequest.getPrice(), listingRequest.getPriceType(),

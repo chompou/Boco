@@ -69,15 +69,6 @@
         :error="errors.verifyPassword"
       />
       <br />
-
-      <div>Is this a personal account, or a company account?</div>
-
-      <select v-model="selected" id="is-personal-dropdown">
-        <option disabled value="">Please select one</option>
-        <option value="true">Personal</option>
-        <option value="false">Company</option>
-      </select>
-      <br />
       <button type="submit" class="boco-btn" @click="submit">Submit</button>
       <br />
     </form>
@@ -142,7 +133,7 @@ export default {
           passwordHash: password.value.value,
           address: address.value.value,
           tlf: phoneNumber.value.value,
-          isPersonal: document.getElementById("is-personal-dropdown").value,
+          isPersonal: true,
         })
         .catch((error) => {
           console.log(error);

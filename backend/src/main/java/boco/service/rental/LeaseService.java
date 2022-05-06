@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LeaseService {
@@ -167,24 +168,8 @@ public class LeaseService {
      */
     public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String authHeader) {
         try {
-            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
-            if (profile == null){
-                logger.warn("Profile of token not found");
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
             Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
-            if (leaseData.isEmpty()) {
-                logger.warn("leaseId={} was not found.", updateLeaseRequest.getLeaseId());
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
             Lease lease = leaseData.get();
-
-            if (!isProfileOwnerOfLease(profile, lease)) {
-                logger.warn("Profile of token not owner of lease");
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
             // Setting the new data
             if (updateLeaseRequest.getIsApproved() != null){
                 lease.setIsApproved(updateLeaseRequest.getIsApproved());
@@ -200,6 +185,56 @@ public class LeaseService {
             logger.error("Error when updating lease: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+    /**
+     * CHecks that the lease being updated exists, has the correct owner,
+     * and does not overlap with other approved leases.
+     * @param updateLeaseRequest The update request
+     * @param authHeader The authentication token
+     * @return boolean of if the update is legal
+     */
+    public ResponseEntity<Boolean> checkIfUpdatingLeaseIsLegal(UpdateLeaseRequest updateLeaseRequest, String authHeader){
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.NOT_FOUND);
+        }
+
+        Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
+        if (leaseData.isEmpty()) {
+            logger.warn("leaseId={} was not found.", updateLeaseRequest.getLeaseId());
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.NOT_FOUND);
+        }
+        Lease lease = leaseData.get();
+
+        if (!isProfileOwnerOfLease(profile, lease)) {
+            logger.warn("Profile of token not owner of lease");
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
+        }
+
+        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true)) {
+            List<Lease> leases = getOverlappingLeases(lease);
+            if (leases.size() != 0) {
+                logger.warn("Lease overlaps with other leases");
+                return new ResponseEntity<>(Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
+    }
+
+
+    /**
+     * Finds all leases that overlap with a given lease.
+     * @param lease The lease we are checking against
+     * @return all overlaping approved leases
+     */
+    public List<Lease> getOverlappingLeases(Lease lease){
+        List<Lease> leases = leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(lease.getListing().getId());
+        return leases.stream()
+                .filter(lease1 -> (lease1.getToDatetime() >= lease.getFromDatetime() && lease1.getToDatetime() <= lease.getToDatetime()) || (lease1.getFromDatetime() <= lease.getToDatetime() && lease1.getToDatetime() >= lease.getToDatetime()))
+                .collect(Collectors.toList());
     }
 
     /**
