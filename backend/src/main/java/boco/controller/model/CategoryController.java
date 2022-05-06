@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * This class defines endpoints for managing categories
+ */
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
@@ -21,6 +24,7 @@ public class CategoryController {
         this.categoryTypeService = categoryTypeService;
     }
 
+    /** @return List of categories */
     @GetMapping("")
     public ResponseEntity<List<CategoryType>> getCategories(){
         return ResponseEntity.ok(categoryTypeService.getAll());

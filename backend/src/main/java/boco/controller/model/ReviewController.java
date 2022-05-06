@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * This class defines endpoints for review operations
+ */
 @RestController
 @RequestMapping("/api/review")
 public class ReviewController {

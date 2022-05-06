@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+/**
+ * This class defines endpoints for listing operations
+ */
 @RestController
 @RequestMapping("/api/listing")
 public class ListingController {
@@ -22,6 +23,23 @@ public class ListingController {
         this.profileService = profileService;
     }
 
+    /**
+     * Gets listings based on search, sort and filters
+     *
+     * @param perPage Number of listings per page
+     * @param page Page number
+     * @param search String to search for
+     * @param sort Sort type on format TYPE:DIRECTION.
+     *             TYPE can be: distance/rating/lastChanged/id/price
+     *             DIRECTION can be: ASC or DESC
+     * @param location Location on format latitude:longitude
+     * @param priceFrom Starting price for price-filter
+     * @param priceTo Ending price for price-filter
+     * @param category Category to get listings for
+     * @param profileId ID of the profile to get listings of.
+     *                  If this field is provided any other parameters will be ignored.
+     * @return List of listings
+     */
     @GetMapping("")
     public ResponseEntity<ListingResultsResponse> getListings(@RequestParam int perPage,
                                                               @RequestParam int page,
@@ -41,11 +59,14 @@ public class ListingController {
         return listingService.getListings(page, perPage, search, sort, priceFrom, priceTo, category, location);
     }
 
+    /**
+     * Gets listing of ID
+     *
+     * @param listingId ID of the listing
+     * @return The listing
+     */
     @GetMapping("/{listing_id}")
     public ResponseEntity<ListingResponse> getListing(@PathVariable(value = "listing_id") Long listingId){
         return listingService.getListingById(listingId);
     }
-
-
-
 }
