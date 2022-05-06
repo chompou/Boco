@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class UpdateListingRequest {
-    private String description;
-    private Boolean isActive;
-    private Double price;
-    private String priceType;
+import java.util.List;
 
-    private Long id;
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+public class ListingResultsResponse {
+    private List<ListingResponse> listingResponses;
+    private int totalListings;
+
 }

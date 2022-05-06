@@ -21,19 +21,30 @@
     </div>
     <GMapMap :center="position" :zoom="9" style="width: 350px; height: 200px">
       <GMapMarker v-if="marker" :position="position" :clickable="true" />
+      <GMapMarker
+        v-if="marker"
+        icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+        :position="myPosition"
+        :clickable="true"
+      />
     </GMapMap>
   </div>
 </template>
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent";
-import "vue3-openlayers/dist/vue3-openlayers.css";
 import axios from "axios";
+import apiService from "@/services/apiService";
 export default {
   props: ["profile"],
   data() {
     return {
+      myProfile: null,
       marker: false,
+      myPosition: {
+        lat: 40,
+        lng: 40,
+      },
       position: {
         lat: 40,
         lng: 40,
@@ -52,10 +63,24 @@ export default {
       this.position.lng = data.results[0].geometry.location.lng;
       this.marker = true;
     },
+    getMyPosition() {
+      console.log(this.myProfile.location);
+      let latLngList = this.myProfile.location.split(":");
+      let latString = latLngList[0];
+      let lngString = latLngList[1];
+      let lat = parseFloat(latString);
+      let lng = parseFloat(lngString);
+      this.myPosition.lat = lat;
+      this.myPosition.lng = lng;
+    },
   },
   created() {
+    apiService.getMyProfile().then((response) => {
+      this.myProfile = response.data;
+    });
     setTimeout(() => {
       this.getPosition(this.profile.address);
+      this.getMyPosition(this.myPosition);
     }, 1000);
   },
 };

@@ -1,5 +1,4 @@
 <template>
-  <header-component />
   <nav id="navbar" class="navbar sticky-top">
     <div class="container-fluid">
       <router-link to="/">
@@ -17,7 +16,7 @@
   </nav>
 
   <div id="routerViewWrap" class="container-fluid">
-    <router-view />
+    <router-view :key="$route.fullPath" />
   </div>
   <footer id="footer" class="container-fluid sticky">
     <div class="row text-center">
@@ -39,11 +38,9 @@
 
 <script>
 import NotificationBellComponent from "@/components/NotificationBellComponent";
-import HeaderComponent from "@/components/HeaderComponent";
 import ProfileDropDownComponent from "@/components/ProfileDropDownComponent";
 export default {
   components: {
-    HeaderComponent,
     ProfileDropDownComponent,
     NotificationBellComponent,
   },

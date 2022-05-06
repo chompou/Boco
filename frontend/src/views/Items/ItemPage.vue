@@ -11,7 +11,14 @@
     <div class="container">
       <div class="imageButtons">
         <img id="image3" alt="Vue logo" :src="imgSource" />
-        <div v-if="my">
+        <button
+          class="editButtons boco-btn book"
+          v-if="!my"
+          @click="isBookingAvailable"
+        >
+          Book
+        </button>
+        <div v-else>
           <button
             class="editButtons boco-btn"
             :class="[active ? 'boco-btn' : 'red']"
@@ -25,13 +32,6 @@
             Delete
           </button>
         </div>
-        <button
-          class="editButtons boco-btn book"
-          v-else
-          @click="leaseOverlay = true"
-        >
-          Book
-        </button>
       </div>
       <div id="About">
         <div id="About11">
@@ -40,7 +40,7 @@
             <div id="category">
               <h5>Category:</h5>
               <label v-for="category in item.categoryTypes" :key="category"
-              >{{ category.name }},
+                >{{ category.name }},
               </label>
             </div>
             <p>Address: {{ item.address }}</p>
@@ -107,6 +107,7 @@ export default {
     },
 
     my() {
+      if (!this.$store.state.loggedIn) return false;
       return this.item.profileId === this.$store.state.loggedInUser;
     },
   },
@@ -172,6 +173,13 @@ export default {
     },
     dataUrl() {
       return btoa(this.item.image);
+    },
+    isBookingAvailable() {
+      if (this.$store.state.loggedIn) {
+        this.leaseOverlay = true;
+      } else {
+        return this.$router.push({ name: "login" });
+      }
     },
   },
   created() {
