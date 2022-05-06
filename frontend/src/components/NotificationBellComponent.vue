@@ -44,13 +44,7 @@
           >
             <router-link to="/my/notifications">
               <NotificationComponent
-                :text="
-                  'ID: ' +
-                  notification.id +
-                  ' message: ' +
-                  notification.message +
-                  notification.url
-                "
+                :text="notification.message"
                 :id="notification.id"
             /></router-link>
           </li>

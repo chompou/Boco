@@ -22,6 +22,7 @@ import NProgress from "nprogress";
 import newPwdView from "@/views/newPwdView";
 import NotificationsPageView from "@/views/NotificationsPageView";
 import aboutView from "@/views/AboutView";
+import faq from "@/views/faqView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
 const routes = [
@@ -132,11 +133,19 @@ const routes = [
     props: true,
     component: GiveRating,
   },
+  {
+    path: "/FAQ",
+    name: "faq",
+    component: faq,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  scrollBehavior() {
+    document.getElementById("app").scrollIntoView({ behavior: "smooth" });
+  },
 });
 
 router.beforeEach(async function (to) {

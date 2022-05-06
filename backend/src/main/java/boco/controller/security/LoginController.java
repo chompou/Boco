@@ -28,21 +28,6 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest)throws Exception{
         return loginService.verifyAndCreateToken(loginRequest);
-        /*
-        try {authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
-        }catch (BadCredentialsException e){
-            logger.info("bad login request denied");
-        }
-        final UserDetails userDetails = profileDetailsService.loadUserByUsername(loginRequest.getUsername());
-        if (userDetails.getPassword().equals(BocoHasher.encode(loginRequest.getPassword()))){
-            final String jwt = jwtUtil.generateToken(userDetails);
-            return ResponseEntity.ok(new LoginResponse(jwt, profileService.getProfileIdByUsername(jwtUtil.extractUsername(jwt))));
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-
-         */
     }
 
     /**

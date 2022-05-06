@@ -28,4 +28,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
      * @return List of unread notifications of a profile defined by username
      */
     List<Notification> findByProfileUsernameAndIsReadFalse(String username);
+    List<Notification> findByProfileUsernameAndIsReadNull(String username);
 }

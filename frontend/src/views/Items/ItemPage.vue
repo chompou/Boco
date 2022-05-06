@@ -59,7 +59,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div style="display: flex; align-items: center; flex-direction: column">
       <ProfileBoxComponent :profile="profile" />
       <ReviewComponent :reviews="reviews" />
     </div>
@@ -205,7 +205,7 @@ export default {
         console.log(error);
       });
     apiService
-      .getReviews({ listingId: this.id }, 0, 15)
+      .getReviews({ listingId: this.id, reviewType: "item" }, 0, 15)
       .then((response) => (this.reviews = response.data))
       .catch((error) => console.log(error));
 
@@ -283,6 +283,11 @@ button:hover {
 #About2 {
   width: 100px;
   margin-left: 50px;
+}
+
+#About3 {
+  width: 200px;
+  word-wrap: break-word;
 }
 
 #items {

@@ -110,10 +110,10 @@ class NotificationServiceTest {
         ResponseEntity<LeaseResponse> leaseResponseResponseEntity = new ResponseEntity<>(leaseResponse, HttpStatus.OK);
 
         Notification notification = notificationService.newLeaseNotification(leaseResponseResponseEntity);
-        assertEquals("Your lease request i created for item: test item", notification.getMessage());
+        assertEquals("Someone wants to lease your item: test item", notification.getMessage());
         assertEquals("undefined for item: test item", notification.getUrl());
         assertEquals(testProfile, notification.getProfile());
-        assertNull(notification.getIsRead());
+        assertFalse(notification.getIsRead());
         assertNull(notification.getId());
     }
 
@@ -123,7 +123,7 @@ class NotificationServiceTest {
         assertEquals("The item you tried to lease was canceled: testListing", notification.getMessage());
         assertEquals("undefined url: testListing", notification.getUrl());
         assertEquals(testProfile, notification.getProfile());
-        assertNull(notification.getIsRead());
+        assertFalse(notification.getIsRead());
         assertNull(notification.getId());
     }
 
@@ -133,7 +133,7 @@ class NotificationServiceTest {
         assertEquals("The item you tried to lease was canceled: testListing", notification.getMessage());
         assertEquals("undefined url: testListing", notification.getUrl());
         assertEquals(testProfile, notification.getProfile());
-        assertNull(notification.getIsRead());
+        assertFalse(notification.getIsRead());
         assertNull(notification.getId());
     }
 
@@ -145,7 +145,7 @@ class NotificationServiceTest {
         assertEquals("Your Lease was approved for item: testListing", notification.getMessage());
         assertEquals("undefined url: testListing", notification.getUrl());
         assertEquals(testProfile, notification.getProfile());
-        assertNull(notification.getIsRead());
+        assertFalse(notification.getIsRead());
         assertNull(notification.getId());
 
     }
@@ -158,7 +158,7 @@ class NotificationServiceTest {
         assertEquals("Your lease was set to complete by the owner of the item: testListing", notification.getMessage());
         assertEquals("undefined url: testListing", notification.getUrl());
         assertEquals(testProfile, notification.getProfile());
-        assertNull(notification.getIsRead());
+        assertFalse(notification.getIsRead());
         assertNull(notification.getId());
     }
 
