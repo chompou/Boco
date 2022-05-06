@@ -191,7 +191,6 @@ public class LeaseService {
     public ResponseEntity<Boolean> checkIfUpdatingLeaseIsLegal(UpdateLeaseRequest updateLeaseRequest, String authHeader){
         Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
         if (profile == null){
-            System.out.println("Profile of token not found");
             logger.warn("Profile of token not found");
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.NOT_FOUND);
         }
@@ -199,27 +198,21 @@ public class LeaseService {
         Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
         if (leaseData.isEmpty()) {
             logger.warn("leaseId={} was not found.", updateLeaseRequest.getLeaseId());
-
-            System.out.println("leaseId={} was not found.");
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.NOT_FOUND);
         }
         Lease lease = leaseData.get();
 
         if (!isProfileOwnerOfLease(profile, lease)) {
             logger.warn("Profile of token not owner of lease");
-
-            System.out.println("Profile of token not owner of lease");
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
 
         if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true)) {
             List<Lease> leases = getOverlappingLeases(lease);
             if (leases.size() != 0) {
-
-                System.out.println("Lease overlaps with other leases");
                 logger.warn("Lease overlaps with other leases");
+                return new ResponseEntity<>(Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
@@ -227,7 +220,7 @@ public class LeaseService {
     public List<Lease> getOverlappingLeases(Lease lease){
         List<Lease> leases = leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(lease.getListing().getId());
         return leases.stream()
-                .filter(lease1 -> (lease1.getToDatetime() > lease.getFromDatetime() && lease1.getToDatetime() < lease.getToDatetime()) || (lease1.getFromDatetime() > lease.getToDatetime() && lease1.getFromDatetime() < lease.getToDatetime()) || (lease1.getFromDatetime() > lease.getFromDatetime() && lease1.getFromDatetime() < lease.getToDatetime()))
+                .filter(lease1 -> (lease1.getToDatetime() >= lease.getFromDatetime() && lease1.getToDatetime() <= lease.getToDatetime()) || (lease1.getFromDatetime() <= lease.getToDatetime() && lease1.getToDatetime() >= lease.getToDatetime()))
                 .collect(Collectors.toList());
     }
 
