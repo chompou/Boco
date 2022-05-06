@@ -30,11 +30,11 @@ public class ReviewController {
      * Params listing_id or profile_id can be added to find reviews for a given
      * listing or profile, but not both at once.
      *
-     * @param listingId The optional id of the listing we are searching for reviews for.
-     * @param profileId The optional id of the profile we are searching for reviews for
+     * @param listingId The optional id of the listing we are serching for reviews for.
+     * @param profileId The optional id of the profile we are serching for reviews for
      * @param perPage The number of reviews to be returned
      * @param page The page number we are on
-     * @return A responseEntity containing a list of reviews.
+     * @return A responseEntity containg a list of reviews.
      */
     @GetMapping("")
     public ResponseEntity<List<ReviewResponse>> getReviews(@RequestParam(name = "listingId", defaultValue  = "") Long listingId,
@@ -45,11 +45,11 @@ public class ReviewController {
 
         if (listingId != null && profileId != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else if(reviewType.equals("item")){
+        } else if(reviewType == "item"){
             return this.listingService.getListingReviews(listingId, perPage, page);
-        } else if(reviewType.equals("owner")){
+        } else if(reviewType == "owner"){
             return this.profileService.getReviewsAsOwner(profileId, perPage, page);
-        } else if(reviewType.equals("leasee")){
+        } else if(reviewType == "leasee"){
             return this.profileService.getReviewsAsLeasee(profileId, perPage, page);
         }else{
             return reviewService.getAllReviews();

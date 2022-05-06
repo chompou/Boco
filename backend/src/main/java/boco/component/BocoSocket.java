@@ -94,8 +94,7 @@ public class BocoSocket {
             if (session != null){
                 try {
                     session.getAsyncRemote().sendText(message);
-                }catch (Exception e){
-                    e.printStackTrace();
+                }catch (Exception ignored){
                 }
             }
         }

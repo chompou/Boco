@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * The type Lease service.
+ */
 @Service
 public class LeaseService {
     private final LeaseRepository leaseRepository;
@@ -33,9 +36,17 @@ public class LeaseService {
     private final ProfileRepository profileRepository;
     private final ReviewRepository reviewRepository;
     private final JwtUtil jwtUtil;
+    private Logger logger = LoggerFactory.getLogger(LeaseService.class);
 
-    Logger logger = LoggerFactory.getLogger(LeaseService.class);
-
+    /**
+     * Instantiates a new Lease service.
+     *
+     * @param leaseRepository   the lease repository
+     * @param listingRepository the listing repository
+     * @param profileRepository the profile repository
+     * @param reviewRepository  the review repository
+     * @param jwtUtil           the jwt util
+     */
     @Autowired
     public LeaseService(LeaseRepository leaseRepository, ListingRepository listingRepository,
                         ProfileRepository profileRepository, ReviewRepository reviewRepository,
@@ -188,6 +199,7 @@ public class LeaseService {
     }
 
 
+
     /**
      * CHecks that the lease being updated exists, has the correct owner,
      * and does not overlap with other approved leases.
@@ -214,7 +226,7 @@ public class LeaseService {
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
 
-        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true)) {
+        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true) && updateLeaseRequest.getIsCompleted() != null && updateLeaseRequest.getIsCompleted().equals(false)) {
             List<Lease> leases = getOverlappingLeases(lease);
             if (leases.size() != 0) {
                 logger.warn("Lease overlaps with other leases");
@@ -312,6 +324,12 @@ public class LeaseService {
         return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
     }
 
+    /**
+     * Convert lease list.
+     *
+     * @param leases the leases
+     * @return the list
+     */
     public static List<LeaseResponse> convertLease(List<Lease> leases){
         List<LeaseResponse> leaseResponses = new ArrayList<>();
         for (Lease lease :
@@ -337,6 +355,9 @@ public class LeaseService {
         return profile.getId().longValue() == lease.getProfile().getId().longValue();
     }
 
+    /**
+     * Removes overdue leases that have not been approved, waits one week.
+     */
     public void removeDangling() {
         Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
         List<Lease> leases = leaseRepository.findAll();
