@@ -32,6 +32,10 @@ export default {
     return apiClient.delete("my/listing/" + listingId.listingId, listingId);
   },
 
+  deleteAccount() {
+    return apiClient.put("/my/profile/deactivate/");
+  },
+
   getItems(filters, page, perPage) {
     return apiClient.get("/listing", {
       params: { ...filters, page: page, perPage: perPage },
@@ -41,6 +45,12 @@ export default {
   getReviews(filters, page, perPage) {
     return apiClient.get("/review", {
       params: { ...filters, page: page, perPage: perPage },
+    });
+  },
+
+  giveReview(reviewRequest, reviewType) {
+    return apiClient.post("/my/lease/review", reviewRequest, {
+      params: { review_type: reviewType },
     });
   },
 
@@ -87,8 +97,8 @@ export default {
   getNotifications() {
     return apiClient.get("/my/notifications");
   },
-  removeNotificationAfterRead(notification) {
-    return apiClient.put("my/notifications", { toBeRead: [notification] });
+  markNotificationAsRead(notification) {
+    return apiClient.put("my/notifications", { toBeRead: notification });
   },
   newPassword(email, generatedCode, passwordHash) {
     return apiClient.put("/forgot-password/change/" + email, {

@@ -26,7 +26,10 @@ export default {
     },
 
     status() {
-      return leaseService.getStatus(this.lease);
+      return leaseService.getStatus(
+        this.lease,
+        this.$store.state.loggedInUser == this.lease.ownerId
+      );
     },
   },
 };
