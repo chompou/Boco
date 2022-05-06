@@ -9,6 +9,7 @@
     <div class="sortBar">
       <div
         :style="arrowStyle"
+        :title="arrowTitle"
         style="display: inline-block; cursor: pointer"
         @click="onSortArrow"
       >
@@ -47,6 +48,10 @@ export default {
   computed: {
     arrowStyle() {
       return this.ascending ? "" : "transform: rotate(180deg)";
+    },
+
+    arrowTitle() {
+      return this.ascending ? "Ascending" : "Descending";
     },
 
     sortOrder() {
