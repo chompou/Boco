@@ -14,7 +14,7 @@ describe("ParseHours()", () => {
     expect(hours).toBe(3);
 
     hours = priceService.parseHours("2022-03-02T12:00", "2022-03-29T15:00");
-    expect(hours).toBe(651);
+    expect(hours).toBe(650);
   });
 });
 
