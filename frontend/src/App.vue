@@ -21,7 +21,7 @@
   <footer id="footer" class="container-fluid sticky">
     <div class="row text-center">
       <div class="col-sm-4 col-md-3 item">
-        <h4><a href="#">About us</a></h4>
+        <router-link to="/about"><h4>About us</h4></router-link>
       </div>
       <div class="col-sm-4 col-md-3 item">
         <router-link to="/support"><h4>Contact us</h4></router-link>
