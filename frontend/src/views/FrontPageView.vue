@@ -1,31 +1,5 @@
 <template>
   <div class="frontPageWrap container position-relative mt-2">
-    <select id="categories" name="Category" v-bind="orderBy">
-      <option v-for="order in orderOptions" :key="order" :value="order.name">
-        {{ order.name }}
-      </option>
-    </select>
-    <div id="content">
-      <form class="form-inline">
-        <div class="input-group">
-          <input
-            type="text"
-            id="search"
-            class="form-control search-form"
-            placeholder="Search..."
-          />
-          <span class="input-group-btn" style="width: 39px">
-            <button
-              id="search-this"
-              type="button"
-              class="pull-right btn btn-default search-btn"
-            >
-              Search
-            </button>
-          </span>
-        </div>
-      </form>
-    </div>
     <div class="mt-5">
       <router-link :to="{ name: 'items', query: { category: 'Tools' } }">
         <font-awesome-icon icon="wrench" class="icon" title="TOOLS" />
@@ -94,17 +68,12 @@ export default {
   data() {
     return {
       items: [],
-      orderOptions: [
-        { name: "No filter" },
-        { name: "Price high to low" },
-        { name: "Price low to high" },
-      ],
     };
   },
 
   created() {
     apiService
-      .getItems({}, 0, 15)
+      .getItems({}, 0, 12)
       .then((response) => {
         this.items = response.data.listingResponses;
       })
@@ -181,42 +150,7 @@ export default {
   width: 40px;
 }
 
-#categories {
-  float: right;
-}
-
 .icon:hover {
   color: gray;
-}
-
-#content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.search-form {
-  border: 1px solid #39495c;
-  border-radius: 30px 0 0 30px;
-}
-
-.input-group {
-  width: 200px;
-}
-
-.input-group-btn {
-  max-width: 38px;
-}
-
-#search {
-  border: 1px solid #39495c;
-}
-
-.search-btn {
-  cursor: pointer;
-  border-radius: 0 30px 30px 0;
-  background-color: var(--main-color);
-  color: #ffffff;
 }
 </style>
