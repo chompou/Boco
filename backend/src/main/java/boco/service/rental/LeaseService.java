@@ -168,24 +168,8 @@ public class LeaseService {
      */
     public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String authHeader) {
         try {
-            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
-            if (profile == null){
-                logger.warn("Profile of token not found");
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
             Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
-            if (leaseData.isEmpty()) {
-                logger.warn("leaseId={} was not found.", updateLeaseRequest.getLeaseId());
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
             Lease lease = leaseData.get();
-
-            if (!isProfileOwnerOfLease(profile, lease)) {
-                logger.warn("Profile of token not owner of lease");
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
             // Setting the new data
             if (updateLeaseRequest.getIsApproved() != null){
                 lease.setIsApproved(updateLeaseRequest.getIsApproved());
@@ -207,30 +191,37 @@ public class LeaseService {
     public ResponseEntity<Boolean> checkIfUpdatingLeaseIsLegal(UpdateLeaseRequest updateLeaseRequest, String authHeader){
         Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
         if (profile == null){
+            System.out.println("Profile of token not found");
             logger.warn("Profile of token not found");
-            return new ResponseEntity<>(new Boolean(false), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.NOT_FOUND);
         }
 
         Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
         if (leaseData.isEmpty()) {
             logger.warn("leaseId={} was not found.", updateLeaseRequest.getLeaseId());
-            return new ResponseEntity<>(new Boolean(false), HttpStatus.NOT_FOUND);
+
+            System.out.println("leaseId={} was not found.");
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.NOT_FOUND);
         }
         Lease lease = leaseData.get();
 
         if (!isProfileOwnerOfLease(profile, lease)) {
             logger.warn("Profile of token not owner of lease");
-            return new ResponseEntity<>(new Boolean(false), HttpStatus.BAD_REQUEST);
+
+            System.out.println("Profile of token not owner of lease");
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
 
         if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true)) {
             List<Lease> leases = getOverlappingLeases(lease);
             if (leases.size() != 0) {
+
+                System.out.println("Lease overlaps with other leases");
                 logger.warn("Lease overlaps with other leases");
             }
-            return new ResponseEntity<>(new Boolean(false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new Boolean(true), HttpStatus.OK);
+        return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 
     public List<Lease> getOverlappingLeases(Lease lease){
