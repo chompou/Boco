@@ -4,7 +4,7 @@
       <router-link to="/">
         <img id="logo" src="@/assets/mainLogo.png" alt="logo"
       /></router-link>
-      <div class="gridContainer">
+      <div class="header">
         <div>
           <NotificationBellComponent v-if="$store.state.loggedIn" />
         </div>
@@ -16,7 +16,7 @@
   </nav>
 
   <div id="routerViewWrap" class="container-fluid">
-    <router-view :key="$route.fullPath" />
+    <router-view />
   </div>
   <footer id="footer" class="container-fluid sticky">
     <div class="row text-center">
@@ -115,7 +115,7 @@ a {
 /* FOOTER style END */
 
 /* Profile icon and notification*/
-.gridContainer {
+.header {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 15px;

@@ -19,26 +19,43 @@
     </div>
   </button>
   <transition name="bounce">
-    <div class="dropdownMenu" v-if="show">
-      <div class="gridContainer">
+    <div id="dropdownMenu" class="dropdownMenu" v-if="show">
+      <div class="header">
         <div>
           <p class="title">Notifications</p>
         </div>
+        <div>
+          <p class="markAsRead" @click="readAllNotifications">
+            Mark all as read
+          </p>
+        </div>
+        <div>
+          <router-link to="/my/notifications"
+            ><p class="viewAll">View all notifications</p></router-link
+          >
+        </div>
       </div>
       <hr />
-      <ul>
-        <li
-          v-for="notification in $store.getters.getUnreadNotifications"
-          :key="notification.id"
-        >
-          <NotificationComponent
-            :text="
-              'ID: ' + notification.id + ' message: ' + notification.message
-            "
-            :id="notification.id"
-          />
-        </li>
-      </ul>
+      <div class="content">
+        <ul>
+          <li
+            v-for="notification in $store.getters.getUnreadNotifications"
+            :key="notification.id"
+          >
+            <router-link to="/my/notifications">
+              <NotificationComponent
+                :text="
+                  'ID: ' +
+                  notification.id +
+                  ' message: ' +
+                  notification.message +
+                  notification.url
+                "
+                :id="notification.id"
+            /></router-link>
+          </li>
+        </ul>
+      </div>
     </div>
   </transition>
 </template>
@@ -47,40 +64,51 @@ import store from "@/store";
 import { onMounted, onUnmounted } from "vue";
 import apiService from "@/services/apiService";
 import NotificationComponent from "@/components/NotificationComponent";
-//import { ref } from "vue";
 
 export default {
   components: { NotificationComponent },
   setup() {
     let id = store.state.loggedInUser;
     const wsURL = "ws://localhost:8080/websocket/" + id;
-    //const unreadNotifications = ref([]);
 
     const webSocket = new WebSocket(wsURL);
     /*Lifecycle hook to start websocket that handles notifications*/
     onMounted(() => {
       webSocket.addEventListener("open", () => {
-        apiService.getNotifications().then((response) => {
-          response.data.unread.forEach((notification) => {
-            //unreadNotifications.value.push(notification);
-            store.dispatch("ADD_NOTIFICATION", notification);
-            store.dispatch(
-              "UPDATE_COUNT_NOTIFICATION",
-              store.getters.getUnreadNotifications.length
-            );
+        apiService
+          .getNotifications()
+          .then((response) => {
+            response.data.unread.forEach((notification) => {
+              store.dispatch("ADD_UNREAD_NOTIFICATION", notification);
+              store.dispatch(
+                "UPDATE_COUNT_NOTIFICATION",
+                store.getters.getUnreadNotifications.length
+              );
+            });
+            response.data.read.forEach((notification) => {
+              store.dispatch("ADD_READ_NOTIFICATION", notification);
+            });
+          })
+          .catch((error) => {
+            console.log(error);
           });
-        });
       });
       webSocket.addEventListener("message", (event) => {
         store.dispatch("UPDATE_COUNT_NOTIFICATION", event.data);
-        apiService.getNotifications().then((response) => {
-          store.dispatch("CLEAR_NOTIFICATIONS");
-          //unreadNotifications.value.length = 0;
-          response.data.unread.forEach((notification) => {
-            //unreadNotifications.value.push(notification);
-            store.dispatch("ADD_NOTIFICATION", notification);
+        apiService
+          .getNotifications()
+          .then((response) => {
+            store.dispatch("CLEAR_NOTIFICATIONS");
+            response.data.unread.forEach((notification) => {
+              store.dispatch("ADD_UNREAD_NOTIFICATION", notification);
+            });
+            response.data.read.forEach((notification) => {
+              store.dispatch("ADD_READ_NOTIFICATION", notification);
+            });
+          })
+          .catch((error) => {
+            console.log(error);
           });
-        });
       });
     });
     /*Lifecycle hook to close websocket when notification component gets unmounted*/
@@ -89,13 +117,22 @@ export default {
       store.dispatch("CLEAR_NOTIFICATIONS");
       webSocket.close();
     });
-
-    //return { unreadNotifications };
   },
   data() {
     return {
       show: false,
     };
+  },
+  methods: {
+    readAllNotifications() {
+      let id = [];
+      store.getters.getUnreadNotifications.forEach((notification) => {
+        id.push(notification.id);
+      });
+      apiService.markNotificationAsRead(id).catch((error) => {
+        console.log(error);
+      });
+    },
   },
   props: {
     size: {
@@ -140,6 +177,10 @@ ul li {
   margin: 8px;
 }
 
+hr {
+  margin-left: 10px;
+}
+
 .notificationButton {
   align-items: center;
   margin-top: 0.1rem;
@@ -179,7 +220,6 @@ button:hover {
   height: 25rem;
   min-width: 30rem;
   margin-top: 1rem;
-  overflow-y: auto;
   padding: 2rem 1rem 2rem 0;
   border-radius: 12px;
   background-color: white;
@@ -187,9 +227,32 @@ button:hover {
   background-clip: padding-box;
 }
 
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100%;
+}
+
+.content {
+  overflow-x: auto;
+  overflow-y: auto;
+  height: 15rem;
+  max-width: 30rem;
+}
+
 .title {
   margin-left: 10px;
   margin-top: 10px;
+}
+
+.viewAll,
+.markAsRead {
+  margin-top: 10px;
+}
+
+.viewAll:hover,
+.markAsRead:hover {
+  cursor: pointer;
 }
 
 /*Dropdown Menu Animation */
