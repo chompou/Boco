@@ -33,8 +33,20 @@ public class ListingService {
     private final ImageRepository imageRepository;
     private final JwtUtil jwtUtil;
 
+    /**
+     * The Logger.
+     */
     Logger logger = LoggerFactory.getLogger(ListingService.class);
 
+    /**
+     * Instantiates a new Listing service.
+     *
+     * @param listingRepository      the listing repository
+     * @param categoryTypeRepository the category type repository
+     * @param leaseRepository        the lease repository
+     * @param imageRepository        the image repository
+     * @param jwtUtil                the jwt util
+     */
     @Autowired
     public ListingService(ListingRepository listingRepository, CategoryTypeRepository categoryTypeRepository,
                           LeaseRepository leaseRepository, ImageRepository imageRepository, JwtUtil jwtUtil) {
@@ -47,18 +59,15 @@ public class ListingService {
 
     /**
      * Gets a page of listingResponses that fulfills the requirements given.
-     * @param page The page number of the search
-     * @param perPage The number of listingResponses to be returned
-     * @param search Requires the Listings to contain the search value in their name or description.
-     *               Empty string if not used
-     * @param sort The column we are sorting by.
-     *             "id" if not used.
-     * @param priceFrom The minimum price of item we are looking for.
-     *                  -1 if not used.
-     * @param priceTo The maximum price of item we are looking for.
-     *                -1 if not used. priceTo and priceFrom must be used together.
-     * @param category The category of items we are looking for
-     *                 Empty string if not used.
+     *
+     * @param page      The page number of the search
+     * @param perPage   The number of listingResponses to be returned
+     * @param search    Requires the Listings to contain the search value in their name or description.               Empty string if not used
+     * @param sort      The column we are sorting by.             "id" if not used.
+     * @param priceFrom The minimum price of item we are looking for.                  -1 if not used.
+     * @param priceTo   The maximum price of item we are looking for.                -1 if not used. priceTo and priceFrom must be used together.
+     * @param category  The category of items we are looking for                 Empty string if not used.
+     * @param location  the location
      * @return A responseEntity with a list of listing responses.
      */
     public ResponseEntity<ListingResultsResponse> getListings(int page, int perPage, String search, String sort,
@@ -133,9 +142,10 @@ public class ListingService {
 
     /**
      * gets the reviews of a listing given by id.
+     *
      * @param listingId The id of the listing.
-     * @param perPage The number of reviews to be returned.
-     * @param page The page number to be returned
+     * @param perPage   The number of reviews to be returned.
+     * @param page      The page number to be returned
      * @return A list of reviewResponses
      */
     public ResponseEntity<List<ReviewResponse>> getListingReviews(Long listingId, int perPage, int page) {
@@ -182,8 +192,8 @@ public class ListingService {
      * Creates a listing in the database based on the data from listingRequest.
      *
      * @param listingRequest Request containing listing data
-     * @param multipartFile Image of listing
-     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param multipartFile  Image of listing
+     * @param authHeader     Authorization header. JWT token with "Bearer " prefix.
      * @return The created listing
      */
     public ResponseEntity<ListingResponse> createListing(ListingRequest listingRequest, MultipartFile multipartFile, String authHeader) {
@@ -231,7 +241,7 @@ public class ListingService {
      * Only the owner of the listing can update it
      *
      * @param updateListingRequest New values of listing
-     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param authHeader           Authorization header. JWT token with "Bearer " prefix.
      * @return The saved listing
      */
     public ResponseEntity<ListingResponse> updateListing(UpdateListingRequest updateListingRequest, String authHeader) {
@@ -267,7 +277,7 @@ public class ListingService {
     /**
      * Deletes a listing with listingId. Only the owner of the listing can delete it.
      *
-     * @param listingId ID of the listing
+     * @param listingId  ID of the listing
      * @param authHeader Authorization header. JWT token with "Bearer " prefix.
      * @return Status indicating if the listing was successfully deleted
      */
@@ -308,6 +318,11 @@ public class ListingService {
         }
     }
 
+    /**
+     * Deatatches and deletes listing
+     *
+     * @param listing the listing
+     */
     public void deleteListing(Listing listing) {
             Optional<Listing> emptyListing = listingRepository.findById(1L);
             if (emptyListing.isEmpty()) return;
@@ -320,6 +335,12 @@ public class ListingService {
         }
     }
 
+    /**
+     * moves pointers to listing that should be deleted to deleted listing.
+     *
+     * @param listingId    the listing id
+     * @param emptyListing the empty listing
+     */
     public void setListingWhenDeleted(Long listingId, Listing emptyListing){
         List<Lease> leases = leaseRepository.getLeasesByListing_Id(listingId);
 
@@ -336,6 +357,12 @@ public class ListingService {
         imageRepository.saveAll(images);
     }
 
+    /**
+     * Convert listings list.
+     *
+     * @param listings the listings
+     * @return the list
+     */
     public static List<ListingResponse> convertListings(List<Listing> listings){
         List<ListingResponse> listingResponses = new ArrayList<>();
         for (Listing listing :

@@ -117,13 +117,6 @@ class ProfileServiceTest {
         lenient().when(jwtUtil.extractUsername("r9")).thenReturn("r9");
         lenient().when(jwtUtil.extractUsername("karim")).thenReturn("karim");
 
-        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer messi")).thenReturn(p1);
-        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer ronaldo")).thenReturn(p2);
-        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer kaka")).thenReturn(p3);
-        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer ramos")).thenReturn(p4);
-        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer r9")).thenReturn(p5);
-        lenient().when(jwtUtil.extractProfileFromAuthHeader("Bearer karim")).thenReturn(p6);
-
         lenient().when(profileRepository.getIfContact(1L, 2L)).thenReturn(Optional.empty());
         lenient().when(profileRepository.getIfContact(2L, 1L)).thenReturn(Optional.empty());
 

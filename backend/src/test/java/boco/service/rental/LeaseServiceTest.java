@@ -491,6 +491,7 @@ class LeaseServiceTest {
             leases.add(lease);
         }
         lenient().when(leaseRepository.findAll()).thenReturn(leases);
+
         service.removeDangling();
     }
 }
