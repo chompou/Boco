@@ -1,14 +1,21 @@
 <template>
   <router-link class="link" :to="{ name: 'item', params: { id: item.id } }">
     <div>
-      <img id="image" alt="Vue logo" :src="imgSource" />
+      <img
+        v-if="imgSource === null"
+        alt="Vue logo"
+        src="@/assets/default.png"
+      />
+      <img v-else id="image" alt="Vue logo" :src="imgSource" />
       <h3 v-if="item.name.length < 8">{{ item.name }}</h3>
       <h3 v-else>{{ item.name.substring(0, 16) + ".." }}</h3>
+      <p>{{ displayPrice }} / {{ item.priceType }}</p>
     </div>
   </router-link>
 </template>
 
 <script>
+import priceService from "@/services/priceService";
 export default {
   props: ["item"],
 
@@ -17,6 +24,13 @@ export default {
       imgSource: null,
     };
   },
+
+  computed: {
+    displayPrice() {
+      return priceService.formattedPrice(priceService.displayPrice(this.item));
+    },
+  },
+
   created() {
     let image = this.item.image;
     setTimeout(() => {
@@ -32,24 +46,28 @@ export default {
   text-decoration: none;
 }
 
+h3 {
+  font-size: 23px;
+}
+
 img {
-  width: 200px;
-  height: 200px;
-  margin: 8px;
-  border: 1px solid #39495c;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  width: 280px;
+  height: 157px;
 }
 
 div {
-  border: 1px solid #39495c;
+  border-radius: 10px;
+  background: #ececec;
   font-size: 20px;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  width: 250px;
-  height: 250px;
+  width: 280px;
+  height: 220px;
   text-align: center;
   color: var(--text-color);
-  background: white;
   margin: 20px;
 }
 

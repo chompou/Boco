@@ -5,7 +5,7 @@
       <div class="rating-box-container">
         <div class="items">
           <p class="ratingText">Lease out</p>
-          <RatingComponent :rating="3" />
+          <RatingComponent :rating="5" />
         </div>
         <div class="items">
           <p class="ratingText">Overall</p>
@@ -13,7 +13,7 @@
         </div>
         <div class="items">
           <p class="ratingText">Lease in</p>
-          <RatingComponent :rating="3" />
+          <RatingComponent :rating="0" />
         </div>
       </div>
     </div>

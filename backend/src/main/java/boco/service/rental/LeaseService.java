@@ -46,135 +46,145 @@ public class LeaseService {
         this.jwtUtil = jwtUtil;
     }
 
-    public ResponseEntity<List<LeaseResponse>> getMyLeases(String token, Boolean isOwner) {
+    /**
+     * Gets the leases of the profile of the authHeader. Either leases on items (listings) owned
+     * by profile or leases on items (listings) where the profile is the leasee
+     *
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param isOwner True: Get leases on items owned by profile.
+     *                False: Get leases on items (listings) where the profile is the leasee
+     * @return List of lease responses
+     */
+    public ResponseEntity<List<LeaseResponse>> getMyLeases(String authHeader, Boolean isOwner) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-            if (!profileData.isPresent()) {
-                logger.debug("profile of token not found found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Profile profile = profileData.get();
 
             List<Lease> leases;
-            if (isOwner) {
+            if (Boolean.TRUE.equals(isOwner)) {
                 leases = leaseRepository.getLeasesByOwner(profile);
             } else {
                 leases = leaseRepository.getLeasesByProfile(profile);
             }
+
             return new ResponseEntity<>(convertLease(leases), HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error when getting leases: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<LeaseResponse> createLease(LeaseRequest leaseRequest, String token) {
+    /**
+     * Creates a lease based on leaseRequest fields and profile of authHeader
+     *
+     * @param leaseRequest Request containing fields for the lease to be created
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The created lease
+     */
+    public ResponseEntity<LeaseResponse> createLease(LeaseRequest leaseRequest, String authHeader) {
         try {
-            // The person creating the lease is the person interested in the listing (not the listing owner)
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-            if (!profileData.isPresent()) {
-                logger.debug("profile of token not found found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
             Optional<Listing> listingData = listingRepository.findById(leaseRequest.getId());
-            if (!listingData.isPresent()) {
-                logger.debug("listingId=" + leaseRequest.getId() + " was not found");
+            if (listingData.isEmpty()) {
+                logger.warn("listingId={} was not found", leaseRequest.getId());
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-
             Listing listing = listingData.get();
-            Profile profile = profileData.get();
+
             Profile owner = listing.getProfile();
 
             Lease newLease = new Lease(leaseRequest.getFromDatetime(), leaseRequest.getToDatetime(),
                     profile, listing, owner);
             Lease savedLease = leaseRepository.save(newLease);
 
-
             return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.CREATED);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Error when creating lease: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<HttpStatus> deleteLease(Long leaseId, String token) {
+    /**
+     * Deletes a lease
+     *
+     * @param leaseId ID of the lease to be deleted
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return HTTP status of the deletion
+     */
+    public ResponseEntity<HttpStatus> deleteLease(Long leaseId, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-            if (!profileData.isPresent()){
-                logger.debug("profile of token was not found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            Profile profile = profileData.get();
 
             Optional<Lease> leaseData = leaseRepository.findById(leaseId);
-            if (!leaseData.isPresent()) {
-                logger.debug("leaseId=" + leaseId + " was not found.");
+            if (leaseData.isEmpty()) {
+                logger.warn("leaseId={} was not found.", leaseId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Lease lease = leaseData.get();
 
-            if (lease.getIsCompleted()) {
-                logger.debug("leaseId=" + leaseId + " is completed and cannot be deleted");
+            if (Boolean.TRUE.equals(lease.getIsCompleted())) {
+                logger.warn("leaseId={} is completed and cannot be deleted", leaseId);
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
-            if (profileIsOwnerOfLease(profile, lease)){
-                leaseRepository.deleteById(leaseId);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-
             if (isLessThanDayBeforeLeaseStart(lease)) {
-                logger.debug("There is less than 24 hours before " + lease.getFromDatetime().toString()
-                        + ", could not delete lease.");
+                logger.warn("There is less than 24 hours before the lease is set to start. " +
+                        "Could not delete lease.");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
             if (!isProfilePartOfLease(profile, lease)) {
-                logger.debug("profileId=" + profile.getId() +
-                        " could not delete lease with profileId=" +
-                        lease.getProfile().getId() + " and ownerId=" + lease.getOwner().getId());
+                logger.warn("Profile of token is not part of lease.");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
             leaseRepository.deleteById(leaseId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error when deleting lease: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String token) {
+    /**
+     * Updates a lease
+     *
+     * @param updateLeaseRequest Request with new values of lease
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The updated leases
+     */
+    public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String authHeader) {
         try {
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-            if (!profileData.isPresent()) {
-                logger.debug("profile of request was not found.");
+            Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (profile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            Profile profile = profileData.get();
 
             Optional<Lease> leaseData = leaseRepository.findById(updateLeaseRequest.getLeaseId());
-
-            if (!leaseData.isPresent()) {
-                logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was not found.");
+            if (leaseData.isEmpty()) {
+                logger.warn("leaseId={} was not found.", updateLeaseRequest.getLeaseId());
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Lease lease = leaseData.get();
 
-            if (lease.getOwner().getId() != profile.getId()) { // Owner of lease is not the profile trying to update
-                logger.debug("profileId is not the owner of listing.");
+            if (!isProfileOwnerOfLease(profile, lease)) {
+                logger.warn("Profile of token not owner of lease");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
 
             // Setting the new data
             if (updateLeaseRequest.getIsApproved() != null){
@@ -185,37 +195,44 @@ public class LeaseService {
             }
 
             Lease savedLease = leaseRepository.save(lease);
-            logger.debug("leaseId=" + updateLeaseRequest.getLeaseId() + " was updated to:\n" + lease);
+            logger.info("leaseId={} updated to: {}", updateLeaseRequest.getLeaseId(), lease);
             return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error when updating lease: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public ResponseEntity<LeaseResponse> createLeaseReview(ReviewRequest request, String reviewType, String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-        if (!profileData.isPresent()) {
-            logger.debug("profile of request was not found.");
+    /**
+     * Add a review to a lease relationship between an item owner and leasee. Either
+     * the item, owner of item or leasee is reviewed.
+     *
+     * @param reviewRequest Review to be added along. Also includes the leaseId to add review to
+     * @param reviewType Type of review: owner/item/leasee
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The updated lease
+     */
+    public ResponseEntity<LeaseResponse> createLeaseReview(ReviewRequest reviewRequest, String reviewType, String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Profile profile = profileData.get();
 
-        Optional<Lease> leaseData = leaseRepository.findById(request.getLeaseId());
-        if (!leaseData.isPresent()) {
-            logger.debug("leaseId=" + request.getLeaseId() + " was not found.");
+        Optional<Lease> leaseData = leaseRepository.findById(reviewRequest.getLeaseId());
+        if (leaseData.isEmpty()) {
+            logger.warn("leaseId={} was not found.", reviewRequest.getLeaseId());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Lease lease = leaseData.get();
 
-        Review newReview = new Review(request.getRating(), request.getComment());
+        Review newReview = new Review(reviewRequest.getRating(), reviewRequest.getComment());
         newReview.setLease(lease);
         Lease savedLease;
 
         if (reviewType.equals("owner")) {
-            if (profile.getId() != lease.getProfile().getId()) {
+            if (!isProfileLeaseeOfLease(profile, lease)) {
+                logger.warn("Profile writing a owner-review is not the leasee");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -226,9 +243,9 @@ public class LeaseService {
             owner.setRatingAsOwner(reviewRepository.getOwnerRating(owner.getId()));
             profileRepository.save(owner);
 
-
         } else if (reviewType.equals("leasee")) {
-            if (profile.getId() != lease.getOwner().getId()) {
+            if (!isProfileOwnerOfLease(profile, lease)) {
+                logger.warn("Profile writing a leasee-review is not the lease owner");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -240,7 +257,7 @@ public class LeaseService {
             profileRepository.save(leasee);
 
         } else if (reviewType.equals("item")) {
-            if (profile.getId() != lease.getProfile().getId()) {
+            if (!isProfileLeaseeOfLease(profile, lease)) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -255,11 +272,10 @@ public class LeaseService {
             profileRepository.save(owner);
 
         } else {
-            logger.debug("reviewType=" + reviewType + " does not match owner/leasee/item");
+            logger.warn("reviewType={} does not match owner/leasee/item", reviewType);
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
-
     }
 
     public static List<LeaseResponse> convertLease(List<Lease> leases){
@@ -276,18 +292,22 @@ public class LeaseService {
     }
 
     private boolean isProfilePartOfLease(Profile profile, Lease lease) {
-        return (lease.getProfile().getId() == profile.getId()) || (lease.getOwner().getId() == profile.getId());
+        return (lease.getProfile().getId().longValue() == profile.getId().longValue()) ||
+                (lease.getOwner().getId().longValue() == profile.getId().longValue());
     }
 
-    private boolean profileIsOwnerOfLease(Profile profile, Lease lease){
-        return (lease.getOwner().getId() == profile.getId());
+    private boolean isProfileOwnerOfLease(Profile profile, Lease lease){
+        return (lease.getOwner().getId().longValue() == profile.getId().longValue());
+    }
+    private boolean isProfileLeaseeOfLease(Profile profile, Lease lease) {
+        return profile.getId().longValue() == lease.getProfile().getId().longValue();
     }
 
     public void removeDangling() {
         Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
         List<Lease> leases = leaseRepository.findAll();
         for (Lease lease:leases) {
-            if (!lease.getIsApproved() && new Date(lease.getToDatetime()).before(aWeekAgo)){
+            if (!Boolean.TRUE.equals(lease.getIsApproved()) && new Date(lease.getToDatetime()).before(aWeekAgo)){
                 try {
                     leaseRepository.delete(lease);
                 }catch (Exception e){

@@ -6,17 +6,8 @@
     </button>
   </div>
   <div v-if="$store.state.loggedIn">
-    <button class="profileButtons" v-if="show" key="on" @click="show = false">
-      <font-awesome-icon icon="user" />
-    </button>
-    <button
-      id="profileOpenButton"
-      class="profileButtons"
-      v-else
-      key="off"
-      @click="show = true"
-    >
-      <font-awesome-icon icon="user" class="test" />
+    <button class="profileButtons" key="on" @click="show = !show">
+      <font-awesome-icon icon="user" class="userIcon" />
     </button>
     <transition name="bounce">
       <div class="dropdownMenu" v-if="show">
@@ -58,8 +49,13 @@
 
 <script>
 import storageService from "@/services/storageService";
+import { useToast } from "vue-toastification";
 
 export default {
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
   name: "ProfileComponent",
   data() {
     return {
@@ -74,9 +70,13 @@ export default {
       storageService.clearToken();
       this.$store.state.loggedIn = false;
       this.$store.state.loggedInUser = null;
-      this.$store.dispatch("RESET_NOTIFICATION");
+      this.$store.dispatch("RESET_COUNT_NOTIFICATION");
+      this.$store.dispatch("CLEAR_NOTIFICATIONS");
       this.show = false;
       this.$router.push({ path: "/" });
+      this.toast.info("Signed out", {
+        timeout: 2000,
+      });
     },
   },
   computed: {
@@ -139,6 +139,12 @@ export default {
   box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
 }
 
+.userIcon {
+  color: var(--navbar-icons);
+  height: 40px;
+  width: 40px;
+}
+
 /*Style profile button (buttons that come after login) */
 .profileButtons {
   display: block;
@@ -146,12 +152,11 @@ export default {
   width: 40px;
   border-radius: 50%;
   border: none;
-  background-color: #5eeb5b;
+  background-color: var(--background-color-header-nav-footer);
 }
 
-.profileButtons:hover,
-.profileButtons:focus {
-  background-color: DodgerBlue;
+.profileButtons:hover {
+  background-color: var(--background-color-header-nav-footer);
   transform: scale(1.2);
 }
 
@@ -179,7 +184,8 @@ export default {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: rgba(0, 0, 0, 0.6);
+  /*color: rgba(0, 0, 0, 0.6);*/
+  color: black;
   padding: 0.8rem 0 0.8rem 2rem;
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
@@ -187,8 +193,10 @@ export default {
 }
 
 .dropdownMenuLink:hover {
-  color: #17bf63;
-  background-color: rgba(79, 192, 141, 0.1);
+  /*color: #17bf63;*/
+  color: var(--navbar-icons);
+  /*background-color: rgba(79, 192, 141, 0.1);*/
+  background-color: #e1eeff;
   border-radius: 50px;
 }
 
@@ -200,11 +208,13 @@ export default {
 }
 
 .signOutIcon {
-  color: var(--main-color);
+  /*color: var(--main-color);*/
+  color: var(--navbar-icons);
 }
 
 .dropdownMenuIcons {
-  color: var(--main-color);
+  /*color: var(--main-color);*/
+  color: var(--navbar-icons);
   height: 25px;
   width: 25px;
 }
@@ -231,17 +241,17 @@ export default {
 
 /*Dropdown Menu Animation */
 .bounce-enter-active {
-  animation: bounce-in 0.5s;
+  animation: bounce-in 0.3s;
 }
 .bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
+  animation: bounce-in 0.2s reverse;
 }
 @keyframes bounce-in {
   0% {
-    transform: scale(0);
+    transform: scale(0.8);
   }
   50% {
-    transform: scale(1.25);
+    transform: scale(1.05);
   }
   100% {
     transform: scale(1);

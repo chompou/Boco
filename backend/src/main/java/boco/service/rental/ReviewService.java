@@ -3,7 +3,6 @@ package boco.service.rental;
 import boco.model.http.rental.ReviewResponse;
 import boco.model.profile.Profile;
 import boco.model.rental.Review;
-import boco.repository.profile.ProfileRepository;
 import boco.repository.rental.ReviewRepository;
 import boco.service.security.JwtUtil;
 import org.slf4j.Logger;
@@ -18,54 +17,53 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Service responsible for operations on reviews
+ */
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final ProfileRepository profileRepository;
+    private final JwtUtil jwtUtil;
+
+    Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
     @Autowired
-    private JwtUtil jwtUtil;
-
-    Logger logger = LoggerFactory.getLogger(ListingService.class);
-
-    @Autowired
-    public ReviewService(ReviewRepository reviewRepository, JwtUtil jwtUtil, ProfileRepository profileRepository) {
+    public ReviewService(ReviewRepository reviewRepository, JwtUtil jwtUtil) {
         this.reviewRepository = reviewRepository;
-        this.profileRepository = profileRepository;
         this.jwtUtil = jwtUtil;
-
     }
 
+    /** @return All reviews in database */
     public ResponseEntity<List<ReviewResponse>> getAllReviews(){
         return new ResponseEntity<>(convertReviews(reviewRepository.findAll()), HttpStatus.OK);
     }
 
-    public static List<ReviewResponse> convertReviews(List<Review> reviews){
-        List<ReviewResponse> reviewResponse = new ArrayList<>();
-        for (Review review :
-                reviews) {
-            reviewResponse.add(new ReviewResponse(review));
-        }
-        return reviewResponse;
-    }
-
-    public ResponseEntity<List<ReviewResponse>> getMyWrittenReviews(String token, int perPage, int page){
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()){
-            logger.debug("profileId=" + profile.get().getId() + " was not found.");
+    /**
+     * Gets reviews written by profile of authHeader
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param perPage Number of reviews to return per page
+     * @param page Page to return
+     * @return
+     */
+    public ResponseEntity<List<ReviewResponse>> getMyWrittenReviews(String authHeader, int perPage, int page){
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Long profileId = profile.get().getId();
-
         Pageable pageable = PageRequest.of(page, perPage);
-
-        List<Review> reviews = reviewRepository.getWhereWrittenByAuthor(profileId, pageable).getContent();
+        List<Review> reviews = reviewRepository.getWhereWrittenByAuthor(profile.getId(), pageable).getContent();
 
         return new ResponseEntity<>(convertReviews(reviews), HttpStatus.OK);
+    }
+
+    public static List<ReviewResponse> convertReviews(List<Review> reviews){
+        List<ReviewResponse> reviewResponse = new ArrayList<>();
+        for (Review review : reviews) {
+            reviewResponse.add(new ReviewResponse(review));
+        }
+        return reviewResponse;
     }
 }

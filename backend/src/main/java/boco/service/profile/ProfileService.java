@@ -2,14 +2,16 @@ package boco.service.profile;
 
 import boco.component.BocoHasher;
 import boco.model.http.profile.*;
-import boco.model.http.rental.ListingResponse;
+import boco.model.http.rental.ListingResultsResponse;
 import boco.model.http.rental.ReviewResponse;
+import boco.model.profile.PasswordCode;
 import boco.model.profile.Personal;
 import boco.model.profile.Professional;
 import boco.model.profile.Profile;
 import boco.model.rental.Lease;
 import boco.model.rental.Listing;
 import boco.model.rental.Review;
+import boco.repository.profile.PasswordCodeRepository;
 import boco.repository.profile.PersonalRepository;
 import boco.repository.profile.ProfessionalRepository;
 import boco.repository.profile.ProfileRepository;
@@ -39,6 +41,7 @@ public class ProfileService {
     private final LeaseRepository leaseRepository;
     private final ListingRepository listingRepository;
     private final ListingService listingService;
+    private final PasswordCodeRepository passwordCodeRepository;
 
 
     private final JwtUtil jwtUtil;
@@ -51,13 +54,14 @@ public class ProfileService {
                           ProfessionalRepository professionalRepository,
                           LeaseRepository leaseRepository,
                           JwtUtil jwtUtil, ListingRepository listingRepository,
-                          ListingService listingService) {
+                          ListingService listingService, PasswordCodeRepository passwordCodeRepository) {
         this.profileRepository = profileRepository;
         this.personalRepository = personalRepository;
         this.professionalRepository = professionalRepository;
         this.leaseRepository = leaseRepository;
         this.jwtUtil = jwtUtil;
         this.listingRepository = listingRepository;
+        this.passwordCodeRepository = passwordCodeRepository;
         this.listingService = listingService;
     }
 
@@ -100,26 +104,12 @@ public class ProfileService {
         return new ResponseEntity<>(profileResponse, HttpStatus.OK);
     }
 
-    public ResponseEntity<String> getEmail(Long id){
-        Optional<Profile> profile = profileRepository.findProfileById(id);
-
-        if (!profile.isPresent()) {
-            logger.debug("profile of token not found found.");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(profile.get().getEmail(), HttpStatus.OK);
-    }
-
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        if (!isProfileRequestValid(profileRequest)) {
-            logger.debug("Profile is invalid and could not be created: " + profileRequest);
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
         if (checkIfProfileEmailExists(profileRequest.getEmail()) != null){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -150,7 +140,7 @@ public class ProfileService {
         }
     }
 
-    public ResponseEntity<List<ListingResponse>> getProfileListings(Long profileId, int perPage, int page){
+    public ResponseEntity<ListingResultsResponse> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()){
@@ -166,11 +156,12 @@ public class ProfileService {
         }
 
         List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
-        return new ResponseEntity<>(ListingService.convertListings(listings), HttpStatus.OK);
+        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
+        return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
 
     }
 
-    public ResponseEntity<List<ReviewResponse>> getProfileReviews(Long profileId, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getReviewsAsOwner(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
         if (!profileData.isPresent()) {
@@ -195,17 +186,13 @@ public class ProfileService {
         return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Review>> getMyProfileReviews(String token, int perPage, int page) {
+    public ResponseEntity<List<ReviewResponse>> getReviewsAsLeasee(Long profileId, int perPage, int page) {
+       Optional<Profile> profileData = profileRepository.findProfileById(profileId);
 
-       String username = jwtUtil.extractUsername(token.substring(7));
-       Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()) {
+        if (!profileData.isPresent()) {
             logger.debug("profile of token not found found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-       Long profileId = profile.get().getId();
 
         List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
 
@@ -214,7 +201,6 @@ public class ProfileService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-
         List<Review> reviews = new ArrayList<>();
         for (int i = 0; i < leases.size(); i++) {
             Review newReview = leases.get(i).getLeaseeReview();
@@ -222,7 +208,7 @@ public class ProfileService {
         }
 
         List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
-        return new ResponseEntity<>(reviewsSublist, HttpStatus.OK);
+        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
     public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String token) {
@@ -237,12 +223,28 @@ public class ProfileService {
         // Setting the new data
         Profile profile = profileData.get();
         // Update all values, even null from request?
-        profile.setEmail(updateProfileRequest.getEmail());
-        profile.setDescription(updateProfileRequest.getDescription());
-        profile.setDisplayName(updateProfileRequest.getDisplayName());
-        profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
-        profile.setAddress(updateProfileRequest.getAddress());
-        profile.setTlf(updateProfileRequest.getTlf());
+        if(updateProfileRequest.getEmail()!=null && !updateProfileRequest.getEmail().isEmpty()){
+            profile.setEmail(updateProfileRequest.getEmail());
+        }
+        if (updateProfileRequest.getDescription()!=null && !updateProfileRequest.getEmail().isEmpty()){
+            profile.setDescription(updateProfileRequest.getDescription());
+        }
+        if (updateProfileRequest.getDisplayName()!=null && !updateProfileRequest.getDisplayName().isEmpty()){
+            profile.setDisplayName(updateProfileRequest.getDisplayName());
+        }
+        if (updateProfileRequest.getPasswordHash()!=null && !updateProfileRequest.getPasswordHash().isEmpty()){
+            profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
+        }
+        if (updateProfileRequest.getAddress()!=null && !updateProfileRequest.getAddress().isEmpty()){
+            profile.setAddress(updateProfileRequest.getAddress());
+        }
+        if (updateProfileRequest.getTlf()!=null && !updateProfileRequest.getTlf().isEmpty()){
+            profile.setTlf(updateProfileRequest.getTlf());
+        }
+        if (updateProfileRequest.getLocation()!=null && !updateProfileRequest.getLocation().isEmpty()){
+            profile.setLocation(updateProfileRequest.getLocation());
+        }
+
 
         Profile savedProfile = profileRepository.save(profile);
         logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
@@ -254,7 +256,6 @@ public class ProfileService {
         Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
 
         if (!profileData.isPresent()) {
-            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Profile profile = profileData.get();
@@ -309,25 +310,21 @@ public class ProfileService {
     }
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
-        if (checkIfProfileEmailExists(email) != null) {
-            if (updatePasswordRequest.getPasswordHash2().equals(updatePasswordRequest.getPasswordHash1())) {
-                Profile profile = checkIfProfileEmailExists(email).getBody();
-                profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash1()));
-                profileRepository.save(profile);
-                return new ResponseEntity<>(profile, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        if (updatePasswordRequest.getPasswordHash()== null || updatePasswordRequest.getPasswordHash().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (checkIfProfileEmailExists(email) == null) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        Profile profile = profileRepository.findProfileByEmail(email).get();
+        PasswordCode passwordCode = passwordCodeRepository.findPasswordCodeByProfile(profile).get();
+        if (updatePasswordRequest.getGeneratedCode().equals(passwordCode.getGeneratedCode())) {
+            profile.setPasswordHash(BocoHasher.encode(updatePasswordRequest.getPasswordHash()));
+            profileRepository.save(profile);
+            passwordCodeRepository.delete(passwordCode);
+            return new ResponseEntity<>(profile, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-
-    /**
-     * @param profileRequest ProfileRequest to be verified
-     * @return True if profile is valid, else false
-     */
-    private boolean isProfileRequestValid(ProfileRequest profileRequest) {
-        // TODO: IMPLEMENT
-        return true;
     }
 
     /**

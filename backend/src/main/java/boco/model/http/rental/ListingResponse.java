@@ -69,7 +69,9 @@ public class ListingResponse {
         this.categoryTypes = listing.getCategoryTypes();
         this.profileId = listing.getProfile().getId();
         try {
-            this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
+            if (listing.getImages().size() != 0) {
+                this.image = Base64.getEncoder().encodeToString(listing.getImages().get(0).getImage());
+            }
         }catch (Exception e){
             e.printStackTrace();
             System.out.println(e.getMessage());
