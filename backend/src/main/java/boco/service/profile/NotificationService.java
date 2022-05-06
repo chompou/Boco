@@ -135,6 +135,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setProfile(profile);
         notification.setMessage(message);
+        notification.setIsRead(false);
         notification.setUrl(url);
         return notification;
     }
@@ -177,6 +178,12 @@ public class NotificationService {
             String username = jwtUtil.extractUsername(token.substring(7));
             List<Notification> read = notificationRepository.findByProfileUsernameAndIsReadFalse(username);
             List<Notification> unread = notificationRepository.findByProfileUsernameAndIsReadTrue(username);
+            List<Notification> unreadNull = notificationRepository.findByProfileUsernameAndIsReadNull(username);
+            for (Notification n: unreadNull) {
+                n.setIsRead(false);
+                notificationRepository.save(n);
+            }
+            unread.addAll(unreadNull);
             MyNotificationsResponse response = new MyNotificationsResponse(convertNotifications(read), convertNotifications(unread));
             return ResponseEntity.ok(response);
 
@@ -219,6 +226,7 @@ public class NotificationService {
                         ownerNotification.setMessage("You have a lease tomorrow, remember to deliver and receive it");
                         ownerNotification.setProfile(lease.getOwner());
                         ownerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        ownerNotification.setIsRead(false);
                         addNewNotification(ownerNotification);
                     }catch (Exception ignored){}
                     try {
@@ -226,6 +234,7 @@ public class NotificationService {
                         customerNotification.setMessage("You have a lease tomorrow, remember to pick it up and give it back");
                         customerNotification.setProfile(lease.getProfile());
                         customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        customerNotification.setIsRead(false);
                         addNewNotification(customerNotification);
                     }catch (Exception ignored){}
                 }else if (from.before(tomorrow) && from.after(now)){
@@ -234,6 +243,7 @@ public class NotificationService {
                         ownerNotification.setMessage("You have a lease starting tomorrow, remember to deliver it");
                         ownerNotification.setProfile(lease.getOwner());
                         ownerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        ownerNotification.setIsRead(false);
                         addNewNotification(ownerNotification);
                     }catch (Exception ignored){}
                     try {
@@ -241,6 +251,7 @@ public class NotificationService {
                         customerNotification.setMessage("You have a lease starting tomorrow, remember to pick it up");
                         customerNotification.setProfile(lease.getProfile());
                         customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        customerNotification.setIsRead(false);
                         addNewNotification(customerNotification);
                     }catch (Exception ignored){}
                 }else if (to.before(tomorrow) && to.after(now)){
@@ -249,6 +260,7 @@ public class NotificationService {
                         ownerNotification.setMessage("You have a lease finishing tomorrow, remember to receive it");
                         ownerNotification.setProfile(lease.getOwner());
                         ownerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        ownerNotification.setIsRead(false);
                         addNewNotification(ownerNotification);
                     }catch (Exception ignored){}
                     try {
@@ -256,6 +268,7 @@ public class NotificationService {
                         customerNotification.setMessage("You have a lease finishing tomorrow, remember to give it back");
                         customerNotification.setProfile(lease.getProfile());
                         customerNotification.setUrl("not yet defined url: ref lease:" + lease.getId());
+                        customerNotification.setIsRead(false);
                         addNewNotification(customerNotification);
                     }catch (Exception ignored){}
                 }
