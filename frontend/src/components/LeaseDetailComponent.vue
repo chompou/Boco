@@ -103,7 +103,7 @@ export default {
             name: "newRating",
             params: {
               id: this.lease.id,
-              leasedIn: this.$store.state.loggedInUser != this.lease.ownerId,
+              owner: this.$store.state.loggedInUser == this.lease.ownerId,
             },
           });
           break;

@@ -22,6 +22,7 @@ import NProgress from "nprogress";
 import newPwdView from "@/views/newPwdView";
 import NotificationsPageView from "@/views/NotificationsPageView";
 import aboutView from "@/views/AboutView";
+import faq from "@/views/faqView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
 // const routerGuard = {
@@ -140,6 +141,11 @@ const routes = [
     name: "newRating",
     props: true,
     component: GiveRating,
+  },
+  {
+    path: "/FAQ",
+    name: "faq",
+    component: faq,
   },
 ];
 
