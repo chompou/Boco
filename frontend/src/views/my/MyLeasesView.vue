@@ -3,14 +3,20 @@
     <div class="lease-column-container">
       <h2>Owned</h2>
       <div class="filter-check-container">
-        <label>Past <input type="radio" name="personal" /></label>
-        <label>Current <input type="radio" name="personal" /></label>
-        <label>Upcoming <input type="radio" name="personal" /></label>
+        <label v-for="filter in filters" :key="filter">
+          {{ filter }}
+          <input
+            type="radio"
+            name="owned"
+            :value="filter"
+            v-model="ownedFilter"
+            @change="onFilterChange"
+        /></label>
       </div>
 
       <div class="lease-list-container">
         <lease-component
-          v-for="lease in owned"
+          v-for="lease in displayOwned"
           :key="lease"
           :lease="lease"
           @click="openOverlay(lease)"
@@ -21,14 +27,20 @@
     <div class="lease-column-container">
       <h2>Leased</h2>
       <div class="filter-check-container">
-        <label>Past <input type="radio" name="personal" /></label>
-        <label>Current <input type="radio" name="personal" /></label>
-        <label>Upcoming <input type="radio" name="personal" /></label>
+        <label v-for="filter in filters" :key="filter">
+          {{ filter }}
+          <input
+            type="radio"
+            name="leased"
+            :value="filter"
+            v-model="leasedFilter"
+            @change="onFilterChange"
+        /></label>
       </div>
 
       <div class="lease-list-container">
         <lease-component
-          v-for="lease in leased"
+          v-for="lease in displayLeased"
           :key="lease"
           :lease="lease"
           @click="openOverlay(lease)"
@@ -39,7 +51,7 @@
       <lease-detail-component
         v-if="showOverlay"
         :lease="selectedLease"
-        @close-overlay="showOverlay = false"
+        @close-overlay="closeOverlay"
       />
     </transition>
   </div>
@@ -54,28 +66,43 @@ export default {
 
   data() {
     return {
+      filters: ["All", "Past", "Current", "Upcoming"],
       showOverlay: false,
       selectedLease: null,
+      ownedFilter: null,
+      leasedFilter: null,
       owned: [],
       leased: [],
     };
   },
 
+  computed: {
+    displayOwned() {
+      return this.filterLeases(this.owned, this.ownedFilter);
+    },
+
+    displayLeased() {
+      return this.filterLeases(this.leased, this.leasedFilter);
+    },
+  },
+
   created() {
     window.addEventListener("keydown", (event) => {
       if (event.key == "Escape") {
-        this.showOverlay = false;
+        this.closeOverlay();
       }
     });
 
+    let sortBy = (lease) => new Date(lease.fromDatetime);
+
     apiService
       .getMyLeases(true)
-      .then((response) => (this.owned = response.data))
+      .then((response) => (this.owned = response.data.sort(sortBy)))
       .catch((error) => console.log(error));
 
     apiService
       .getMyLeases(false)
-      .then((response) => (this.leased = response.data))
+      .then((response) => (this.leased = response.data.sort(sortBy)))
       .catch((error) => console.log(error));
   },
 
@@ -87,10 +114,29 @@ export default {
       }
     },
 
-    getStatus(lease) {
-      if (!lease.isApproved) {
-        return "Pending Approval";
-      }
+    closeOverlay() {
+      this.showOverlay = false;
+    },
+
+    filterLeases(leases, filter) {
+      return leases.filter((lease) => {
+        switch (filter) {
+          case "Upcoming":
+            return Date.now() < new Date(lease.fromDatetime);
+
+          case "Current":
+            return (
+              new Date(lease.fromDatetime) < Date.now() &&
+              Date.now() < new Date(lease.toDatetime)
+            );
+
+          case "Past":
+            return new Date(lease.toDatetime) < Date.now();
+          default:
+            console.log("default sorting");
+            return true;
+        }
+      });
     },
   },
 };

@@ -11,7 +11,7 @@ export default {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   },
 
-  getStatus(lease) {
+  getStatus(lease, owner) {
     let now, from, to;
     now = Date.now();
     from = this.fromDate(lease);
@@ -23,12 +23,19 @@ export default {
     } else if (now < to) {
       if (!lease.ifApproved) return "Expired";
       if (!lease.isCompleted) return "In Progress";
+      if (owner && !lease.leaseeReview) return "Pending Review";
+      if (!owner && !(lease.itemReview || lease.ownerReview))
+        return "Pending Review";
       else return "Completed";
     } else if (to < now) {
       if (!lease.isApproved) return "Expired";
       if (!lease.isCompleted) return "Overdue";
+      if (owner && !lease.leaseeReview) return "Pending Review";
+      if (!owner && !(lease.itemReview || lease.ownerReview))
+        return "Pending Review";
       else return "Completed";
     }
+
     return null;
   },
 };
