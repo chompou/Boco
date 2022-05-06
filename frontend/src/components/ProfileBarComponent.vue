@@ -11,7 +11,7 @@
       </div>
       <p id="phone-number">Phone nr: {{ profile.tlf }}</p>
       <p id="email">Email: {{ profile.email }}</p>
-      <p id="dec">Description: {{ profile.description }}</p>
+      <p id="dec">Description: <br />{{ profile.description }}</p>
     </div>
     <div id="rating">
       <RatingComponent />

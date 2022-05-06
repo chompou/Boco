@@ -15,5 +15,6 @@ public interface LeaseRepository extends JpaRepository<Lease, Long> {
     List<Lease> getLeasesByProfile(Profile profile);
     List<Lease> getLeasesByListing_Id(Long listingId);
     List<Lease> getLeasesByIsApprovedIsTrueAndIsCompletedIsTrue();
+    List<Lease> getLeasesByListing_IdAndIsApprovedIsTrue(Long listingId);
     List<Lease> findAll();
 }

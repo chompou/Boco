@@ -110,6 +110,11 @@ public class AuthorizedController {
     @PutMapping("/lease")
     public ResponseEntity<LeaseResponse> updateLease(@RequestBody UpdateLeaseRequest updateLeaseRequest,
                                                      @RequestHeader(name="Authorization") String token) {
+        ResponseEntity<Boolean> leaseIsLegal = leaseService.checkIfUpdatingLeaseIsLegal(updateLeaseRequest, token);
+        if (!leaseIsLegal.getBody()){
+            return new ResponseEntity<>(leaseIsLegal.getStatusCode());
+        }
+
         if (updateLeaseRequest.getIsApproved()!= null){
             Notification notification = notificationService.approveLeaseNotification(updateLeaseRequest);
             notificationService.addNewNotification(notification);
