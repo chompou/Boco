@@ -68,12 +68,12 @@ export default {
       itemReview: {
         rating: 1,
         comment: "",
-        id: this.id,
+        leaseId: this.id,
       },
       ownerReview: {
         rating: 1,
         comment: "",
-        id: this.id,
+        leaseId: this.id,
       },
     };
   },
@@ -82,9 +82,11 @@ export default {
     onSubmit() {
       if (this.isOwner) {
         apiService.giveReview(this.ownerReview, "leasee");
+        this.$router.push("/my/leases");
       } else {
         apiService.giveReview(this.ownerReview, "owner");
         apiService.giveReview(this.itemReview, "item");
+        this.$router.push("/my/leases");
       }
     },
   },
