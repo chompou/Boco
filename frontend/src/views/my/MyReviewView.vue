@@ -19,10 +19,14 @@
     </div>
     <h2 class="headerr">Reviews</h2>
     <div class="review-list-container">
-      <div class="review-container" v-for="review in reviews" :key="review">
-        <b>{{ review.name }}</b>
+      <div
+        class="review-container"
+        v-for="review in reviews.slice().reverse()"
+        :key="review"
+      >
+        <b>{{ review.displayName }}</b>
         <rating-component :rating="review.rating" />
-        <p>{{ review.description }}</p>
+        <p>{{ review.comment }}</p>
       </div>
     </div>
   </div>
@@ -51,6 +55,14 @@ export default {
       this.ratingAsLease = this.myProfile.ratingAsLease;
       this.ratingListing = this.myProfile.ratingListing;
     });
+    apiService
+      .getReviews(
+        { profileId: this.$store.state.loggedInUser, reviewType: "owner" },
+        0,
+        20
+      )
+      .then((response) => (this.reviews = response.data))
+      .catch((error) => console.log(error));
   },
 };
 </script>
@@ -81,6 +93,9 @@ export default {
 }
 
 .review-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   border: 1px solid;
   border-radius: 15px;
   max-width: 45%;
