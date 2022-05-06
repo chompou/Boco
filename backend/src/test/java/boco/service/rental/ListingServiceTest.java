@@ -101,6 +101,8 @@ class ListingServiceTest {
                 .flatMap(Collection::stream).collect(Collectors.toList());
         pageSize = 5;
 
+
+
         Page<Listing> listingPage1 = new PageImpl<Listing>(listings1, PageRequest.ofSize(pageSize), listings1.size());
         Page<Listing> listingPage2 = new PageImpl<Listing>(listings2, PageRequest.ofSize(pageSize), listings2.size());
         Page<Listing> listingPage3 = new PageImpl<Listing>(listings3, PageRequest.ofSize(pageSize), listings3.size());
@@ -121,6 +123,23 @@ class ListingServiceTest {
 
         List<Lease> leases1 =new ArrayList<>(Arrays.asList(le1, le2, le3, le4));
         l1.setLeases(leases1);
+
+        CategoryType c1 = new CategoryType(1L, "Tool");
+        CategoryType c2 = new CategoryType(2L, "Car");
+        CategoryType c3 = new CategoryType(3L, "Toy");
+
+        l1.setCategoryTypes(Arrays.asList(c1));
+        l2.setCategoryTypes(Arrays.asList(c2));
+        l3.setCategoryTypes(Arrays.asList(c3));
+        l4.setCategoryTypes(Arrays.asList(c1));
+        l5.setCategoryTypes(Arrays.asList(c2));
+        l6.setCategoryTypes(Arrays.asList(c3));
+        l7.setCategoryTypes(Arrays.asList(c1, c2));
+        l8.setCategoryTypes(Arrays.asList(c1, c3));
+        l9.setCategoryTypes(Arrays.asList(c2,c3));
+        l10.setCategoryTypes(Arrays.asList(c1, c2, c3));
+        l11.setCategoryTypes(Arrays.asList(c1, c2, c3));
+        l12.setCategoryTypes(new ArrayList<>());
 
         Review r1 = new Review(4.0, "test");
         Review r2 = new Review(2.0, "Test2");
@@ -155,10 +174,13 @@ class ListingServiceTest {
 
         lenient()
                 .when(categoryTypeRepository.findCategoryTypeByNameEquals("Tool"))
-                .thenReturn(Optional.of(new CategoryType(1L, "Tool")));
+                .thenReturn(Optional.of(c1));
         lenient()
-                .when(categoryTypeRepository.findCategoryTypeByNameEquals("Car"))
+                .when(categoryTypeRepository.findCategoryTypeByNameEquals("Phone"))
                 .thenReturn(Optional.empty());
+        lenient()
+                .when(categoryTypeRepository.findCategoryTypeByNameEquals("Book"))
+                .thenReturn(Optional.of(new CategoryType(4L, "Book")));
         lenient()
                 .when(listingRepository.getListingByPriceRange(anyDouble(), anyDouble(), any()))
                 .thenReturn(listings5);
@@ -267,12 +289,29 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithCategory() {
-        //TODO add category
-        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "", "");
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, pageSize, "", "id:ASC", -1, -1, "Tool", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
         Assertions.assertEquals(5, listingResponses.size());
-        Assertions.assertEquals( "pencil", listingResponses.get(0).getName());
+        Assertions.assertEquals( "house", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(1).getName());
+        Assertions.assertEquals( "tree", listingResponses.get(2).getName());
+        Assertions.assertEquals( "bottle", listingResponses.get(3).getName());
+        Assertions.assertEquals( "cup", listingResponses.get(4).getName());
+    }
+
+    @Test
+    public void testGetListingsWithBadCategory() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, pageSize, "", "id:ASC", -1, -1, "Phone", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void testGetListingsWithUnusedCategory() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, pageSize, "", "id:ASC", -1, -1, "Book", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(0, listingResponses.size());
     }
 
     @Test
