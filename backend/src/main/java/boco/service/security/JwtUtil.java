@@ -20,7 +20,7 @@ import java.util.function.Function;
  */
 @Service
 public class JwtUtil {
-    private final String SECRET_KEY = "secret";
+    private final String SECRET_KEY = "HHG0cHFHaU0NtmFJkH40";
     private final ProfileRepository profileRepository;
 
     @Autowired
