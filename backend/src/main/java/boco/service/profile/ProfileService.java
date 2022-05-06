@@ -115,7 +115,12 @@ public class ProfileService {
         return new ResponseEntity<>(new PrivateProfileResponse(profile), HttpStatus.OK);
     }
 
-
+    /**
+     * Creates a new profile
+     *
+     * @param profileRequest Profile data
+     * @return The created profile
+     */
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
@@ -123,31 +128,36 @@ public class ProfileService {
         }
 
         if (checkIfProfileEmailExists(profileRequest.getEmail()) != null){
+            logger.warn("Profile could not be created. profile with email {} already exists"
+                    , profileRequest.getEmail());
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+
         if (checkIfProfileUsernameExists(profileRequest.getUsername()) != null){
+            logger.warn("Profile could not be created. profile with username {} already exists"
+                    , profileRequest.getUsername());
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
         try {
-            if (profileRequest.getIsPersonal()) {
+            if (Boolean.TRUE.equals(profileRequest.getIsPersonal())) {
                 Personal p = new Personal(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
                         profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Personal savedProfile = personalRepository.save(p);
-                logger.debug("Personal profile was saved: " + p);
+                logger.info("Personal profile was saved: {}", p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
                 Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
                         profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Professional savedProfile = professionalRepository.save(p);
-                logger.debug("Professional profile was saved: " + p);
+                logger.info("Professional profile was saved: {}", p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             }
 
         } catch (Exception e) {
-            logger.debug("Error when saving profile:\n" + e.getMessage());
+            logger.error("Error when saving profile: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
