@@ -5,4 +5,6 @@
 * Docker
 ## Project Initialization
 Open terminal in folder backend and run the command:
-`mvn spring-boot:run`
+```
+mvn spring-boot:run
+```
