@@ -104,16 +104,6 @@ public class ProfileService {
         return new ResponseEntity<>(profileResponse, HttpStatus.OK);
     }
 
-    public ResponseEntity<String> getEmail(Long id){
-        Optional<Profile> profile = profileRepository.findProfileById(id);
-
-        if (!profile.isPresent()) {
-            logger.debug("profile of token not found found.");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(profile.get().getEmail(), HttpStatus.OK);
-    }
-
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
