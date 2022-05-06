@@ -70,20 +70,20 @@ class ListingServiceTest {
     @BeforeEach
     public void setup() {
         Personal p1 = new Personal("los", "la@la.com", "city", "LA", "pass","US", "4:2", "12345678");
-        Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "4:", "12345678");
+        Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "4:5", "12345678");
         Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "6:3", "12345678");
         p1.setId(1L);
         p2.setId(2L);
         p3.setId(3L);
         List<Profile> profiles = new ArrayList<>(Arrays.asList(p1, p2, p3));
 
-        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1); l1.setId(1L);
-        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2); l2.setId(2L);
+        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1); l1.setId(1L); l1.setRating(1.0);
+        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2); l2.setId(2L);l2.setRating(4.0);
         Listing l3 = new Listing("penthouse", "penthouse", true, 150.0, "Month", p3); l3.setId(3L);
         List<Listing> listings1 = new ArrayList<>(Arrays.asList(l1, l2, l3));
 
-        Listing l4 = new Listing("bench", "bench",  true, 99.0, "Month", p1); l4.setId(4L);
-        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 51.0, "Month", p2); l5.setId(5L);
+        Listing l4 = new Listing("bench", "bench",  true, 99.0, "Month", p1); l4.setId(4L);l4.setRating(2.0);
+        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 51.0, "Month", p2); l5.setId(5L);l5.setRating(3.0);
         Listing l6 = new Listing("pencil", "pencil",  true, 150.0, "Month", p3); l6.setId(6L);
         listings2 = new ArrayList<>(Arrays.asList(l4, l5, l6));
 
@@ -281,7 +281,6 @@ class ListingServiceTest {
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
         Assertions.assertEquals(6, listingResponses.size());
-        //Assertions.assertEquals(5, listingResponses.size());
         Assertions.assertEquals( "tree", listingResponses.get(0).getName());
         Assertions.assertEquals( "bottle", listingResponses.get(1).getName());
         Assertions.assertEquals( "phone", listingResponses.get(2).getName());
@@ -300,6 +299,51 @@ class ListingServiceTest {
         Assertions.assertEquals( "bench", listingResponses.get(1).getName());
         Assertions.assertEquals( "bulldozer", listingResponses.get(2).getName());
         Assertions.assertEquals( "parking lot", listingResponses.get(3).getName());
+    }
+
+    @Test
+    public void testGetListingsByDistance() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "parking lot", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(1).getName());
+        Assertions.assertEquals( "house", listingResponses.get(2).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(3).getName());
+        Assertions.assertTrue(listingResponses.get(0).getDistance() <= listingResponses.get(1).getDistance());
+        Assertions.assertTrue(listingResponses.get(1).getDistance() <= listingResponses.get(2).getDistance());
+        Assertions.assertTrue(listingResponses.get(2).getDistance() <= listingResponses.get(3).getDistance());
+
+    }
+
+    @Test
+    public void testGetListingsByRating() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "rating:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "parking lot", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(1).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(2).getName());
+        Assertions.assertEquals( "house", listingResponses.get(3).getName());
+        Assertions.assertTrue(listingResponses.get(0).getRating() > listingResponses.get(1).getRating());
+        Assertions.assertTrue(listingResponses.get(1).getRating() > listingResponses.get(2).getRating());
+        Assertions.assertTrue(listingResponses.get(2).getRating() > listingResponses.get(3).getRating());
+    }
+
+    @Test
+    public void testGetListingsByLastChagned() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "lastChanged:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(1).getName());
+        Assertions.assertEquals( "parking lot", listingResponses.get(2).getName());
+        Assertions.assertEquals( "house", listingResponses.get(3).getName());
+
+
     }
 
     @Test
@@ -419,6 +463,31 @@ class ListingServiceTest {
         Mockito.verify(leaseRepository, Mockito.times(0)).saveAll(any());
         Mockito.verify(listingRepository, Mockito.times(0)).deleteById(any());
         Mockito.verify(imageRepository, Mockito.times(0)).saveAll(any());
+    }
+
+
+    @Test
+    public void deleteListingByListingSuccessfully(){
+        File file = new File("src/main/resources/testbilde2.png");
+        byte[] imageBytes = new byte[0];
+        try {
+            imageBytes = Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Image image = new Image();
+        image.setImage(imageBytes);
+
+        Profile profile = new Profile("test", "test@gmail.com", "JEg er en person", "pers123", "pass123", "klokkegata 99", "50:40", "31415926");
+        Listing listing = new Listing("test", "test1", true, 50.0, "hour", profile);
+        profile.setListings(Arrays.asList(listing));
+        image.setListing(listing);
+        listing.setImages(Arrays.asList(image));
+
+        service.deleteListing(listing);
+        Mockito.verify(leaseRepository, Mockito.times(1)).saveAll(any());
+        Mockito.verify(listingRepository, Mockito.times(1)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(1)).saveAll(any());
     }
 
 
