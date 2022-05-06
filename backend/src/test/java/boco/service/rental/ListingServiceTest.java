@@ -70,36 +70,38 @@ class ListingServiceTest {
     @BeforeEach
     public void setup() {
         Personal p1 = new Personal("los", "la@la.com", "city", "LA", "pass","US", "4:2", "12345678");
-        Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "4:", "12345678");
+        Personal p2 = new Personal("miami", "mia@mi.fl", "city", "FL", "pass","US", "4:5", "12345678");
         Personal p3 = new Personal("ny", "new@york.com", "city", "NY", "pass","US", "6:3", "12345678");
         p1.setId(1L);
         p2.setId(2L);
         p3.setId(3L);
         List<Profile> profiles = new ArrayList<>(Arrays.asList(p1, p2, p3));
 
-        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1); l1.setId(1L);
-        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2); l2.setId(2L);
+        Listing l1 = new Listing("house", "house", true, 100.0, "Month", p1); l1.setId(1L); l1.setRating(1.0);
+        Listing l2 = new Listing("parking lot", "parking lot", true, 50.0, "Month", p2); l2.setId(2L);l2.setRating(4.0);
         Listing l3 = new Listing("penthouse", "penthouse", true, 150.0, "Month", p3); l3.setId(3L);
         List<Listing> listings1 = new ArrayList<>(Arrays.asList(l1, l2, l3));
 
-        Listing l4 = new Listing("bench", "bench",  true, 99.0, "Month", p1); l4.setId(4L);
-        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 51.0, "Month", p2); l5.setId(5L);
+        Listing l4 = new Listing("bench", "bench good good",  true, 99.0, "Month", p1); l4.setId(4L);l4.setRating(2.0);
+        Listing l5 = new Listing("bulldozer", "bulldozer",  true, 51.0, "Month", p2); l5.setId(5L);l5.setRating(3.0);
         Listing l6 = new Listing("pencil", "pencil",  true, 150.0, "Month", p3); l6.setId(6L);
         listings2 = new ArrayList<>(Arrays.asList(l4, l5, l6));
 
         Listing l7 = new Listing("tree", "tree",  true, 200.0, "Month", p1); l7.setId(7L);
-        Listing l8 = new Listing("bottle", "bottle",  true, 250.0, "Month", p2); l8.setId(8L);
+        Listing l8 = new Listing("bottle", "bottle good",  true, 250.0, "Month", p2); l8.setId(8L);
         Listing l9 = new Listing("phone", "phone",  true, 300.0, "Month", p3); l9.setId(9L);
         List<Listing> listings3 = new ArrayList<>(Arrays.asList(l7, l8, l9));
 
         Listing l10 = new Listing("cup", "cup",  true, 400.0, "Month", p1); l10.setId(10L);
-        Listing l11 = new Listing("city", "city", true, 500.0, "Month", p2); l11.setId(11L);
+        Listing l11 = new Listing("city", "city good", true, 500.0, "Month", p2); l11.setId(11L);
         Listing l12 = new Listing("north", "north",  true, 1500.0, "Month", p3); l12.setId(12L);
         List<Listing> listings4 = new ArrayList<>(Arrays.asList(l10, l11, l12));
 
         List<Listing> listings5 = Stream.of(listings1, listings2, listings3, listings4)
                 .flatMap(Collection::stream).collect(Collectors.toList());
         pageSize = 5;
+
+
 
         Page<Listing> listingPage1 = new PageImpl<Listing>(listings1, PageRequest.ofSize(pageSize), listings1.size());
         Page<Listing> listingPage2 = new PageImpl<Listing>(listings2, PageRequest.ofSize(pageSize), listings2.size());
@@ -121,6 +123,23 @@ class ListingServiceTest {
 
         List<Lease> leases1 =new ArrayList<>(Arrays.asList(le1, le2, le3, le4));
         l1.setLeases(leases1);
+
+        CategoryType c1 = new CategoryType(1L, "Tool");
+        CategoryType c2 = new CategoryType(2L, "Car");
+        CategoryType c3 = new CategoryType(3L, "Toy");
+
+        l1.setCategoryTypes(Arrays.asList(c1));
+        l2.setCategoryTypes(Arrays.asList(c2));
+        l3.setCategoryTypes(Arrays.asList(c3));
+        l4.setCategoryTypes(Arrays.asList(c1));
+        l5.setCategoryTypes(Arrays.asList(c2));
+        l6.setCategoryTypes(Arrays.asList(c3));
+        l7.setCategoryTypes(Arrays.asList(c1, c2));
+        l8.setCategoryTypes(Arrays.asList(c1, c3));
+        l9.setCategoryTypes(Arrays.asList(c2,c3));
+        l10.setCategoryTypes(Arrays.asList(c1, c2, c3));
+        l11.setCategoryTypes(Arrays.asList(c1, c2, c3));
+        l12.setCategoryTypes(new ArrayList<>());
 
         Review r1 = new Review(4.0, "test");
         Review r2 = new Review(2.0, "Test2");
@@ -155,10 +174,13 @@ class ListingServiceTest {
 
         lenient()
                 .when(categoryTypeRepository.findCategoryTypeByNameEquals("Tool"))
-                .thenReturn(Optional.of(new CategoryType(1L, "Tool")));
+                .thenReturn(Optional.of(c1));
         lenient()
-                .when(categoryTypeRepository.findCategoryTypeByNameEquals("Car"))
+                .when(categoryTypeRepository.findCategoryTypeByNameEquals("Phone"))
                 .thenReturn(Optional.empty());
+        lenient()
+                .when(categoryTypeRepository.findCategoryTypeByNameEquals("Book"))
+                .thenReturn(Optional.of(new CategoryType(4L, "Book")));
         lenient()
                 .when(listingRepository.getListingByPriceRange(anyDouble(), anyDouble(), any()))
                 .thenReturn(listings5);
@@ -175,6 +197,9 @@ class ListingServiceTest {
         lenient()
                 .when(listingRepository.findById(eq(4L)))
                 .thenReturn(Optional.of(l3));
+        lenient()
+                .when(listingRepository.findById(eq(7L)))
+                .thenReturn(Optional.of(l7));
         lenient()
                 .when(jwtUtil.extractUsername(eq("1")))
                 .thenReturn("los");
@@ -247,7 +272,7 @@ class ListingServiceTest {
     }
 
     @Test
-    public void categoryDoesNotExist(){
+    public void testCategoryDoesNotExist(){
         ResponseEntity<ListingResultsResponse> response = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "Car", "");
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
@@ -264,12 +289,29 @@ class ListingServiceTest {
 
     @Test
     public void testGetListingsWithCategory() {
-        //TODO add category
-        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(1, pageSize, "", "id:ASC", -1, -1, "", "");
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, pageSize, "", "id:ASC", -1, -1, "Tool", "");
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
         Assertions.assertEquals(5, listingResponses.size());
-        Assertions.assertEquals( "pencil", listingResponses.get(0).getName());
+        Assertions.assertEquals( "house", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(1).getName());
+        Assertions.assertEquals( "tree", listingResponses.get(2).getName());
+        Assertions.assertEquals( "bottle", listingResponses.get(3).getName());
+        Assertions.assertEquals( "cup", listingResponses.get(4).getName());
+    }
+
+    @Test
+    public void testGetListingsWithBadCategory() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, pageSize, "", "id:ASC", -1, -1, "Phone", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void testGetListingsWithUnusedCategory() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, pageSize, "", "id:ASC", -1, -1, "Book", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(0, listingResponses.size());
     }
 
     @Test
@@ -278,7 +320,6 @@ class ListingServiceTest {
         Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
         Assertions.assertEquals(6, listingResponses.size());
-        //Assertions.assertEquals(5, listingResponses.size());
         Assertions.assertEquals( "tree", listingResponses.get(0).getName());
         Assertions.assertEquals( "bottle", listingResponses.get(1).getName());
         Assertions.assertEquals( "phone", listingResponses.get(2).getName());
@@ -297,6 +338,77 @@ class ListingServiceTest {
         Assertions.assertEquals( "bench", listingResponses.get(1).getName());
         Assertions.assertEquals( "bulldozer", listingResponses.get(2).getName());
         Assertions.assertEquals( "parking lot", listingResponses.get(3).getName());
+    }
+
+    @Test
+    public void testGetListingsByDistance() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "parking lot", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(1).getName());
+        Assertions.assertEquals( "house", listingResponses.get(2).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(3).getName());
+        Assertions.assertTrue(listingResponses.get(0).getDistance() <= listingResponses.get(1).getDistance());
+        Assertions.assertTrue(listingResponses.get(1).getDistance() <= listingResponses.get(2).getDistance());
+        Assertions.assertTrue(listingResponses.get(2).getDistance() <= listingResponses.get(3).getDistance());
+    }
+
+    @Test
+    public void testGetListingsByDistanceWithoutLocation() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance:DESC", 50.0, 100.0, "", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testGetListingsByBadSort() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance", 50.0, 100.0, "", "");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testGetListingsByDistanceWithBadLocation() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "distance:DESC", 50.0, 100.0, "", "hei:test");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testGetListingsByRating() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "rating:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "parking lot", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(1).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(2).getName());
+        Assertions.assertEquals( "house", listingResponses.get(3).getName());
+        Assertions.assertTrue(listingResponses.get(0).getRating() > listingResponses.get(1).getRating());
+        Assertions.assertTrue(listingResponses.get(1).getRating() > listingResponses.get(2).getRating());
+        Assertions.assertTrue(listingResponses.get(2).getRating() > listingResponses.get(3).getRating());
+    }
+
+    @Test
+    public void testGetListingsBySearch() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "parking", "rating:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(1, listingResponses.size());
+        Assertions.assertEquals( "parking lot", listingResponses.get(0).getName());
+    }
+
+    @Test
+    public void testGetListingsByLastChagned() {
+        ResponseEntity<ListingResultsResponse> responseEntity = service.getListings(0, 100, "", "lastChanged:DESC", 50.0, 100.0, "", "40:40");
+        Assertions.assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        List<ListingResponse> listingResponses = responseEntity.getBody().getListingResponses();
+        Assertions.assertEquals(4, listingResponses.size());
+        Assertions.assertEquals( "bulldozer", listingResponses.get(0).getName());
+        Assertions.assertEquals( "bench", listingResponses.get(1).getName());
+        Assertions.assertEquals( "parking lot", listingResponses.get(2).getName());
+        Assertions.assertEquals( "house", listingResponses.get(3).getName());
+
+
     }
 
     @Test
@@ -324,7 +436,7 @@ class ListingServiceTest {
     }
 
     @Test
-    public void pagenationWorks(){
+    public void testPagenationWorks(){
         ResponseEntity<List<ReviewResponse>> responseEntity = service.getListingReviews(1L, 2, 1);
         Assertions.assertEquals(1, responseEntity.getBody().size());
         Assertions.assertEquals(3.5, responseEntity.getBody().get(0).getRating());
@@ -343,21 +455,21 @@ class ListingServiceTest {
     }
 
     @Test
-    public void createListingInvalidProfile(){
+    public void testCreateListingInvalidProfile(){
         ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", true, 50.0, "hour", null, 1L);
         ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 1");
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
     }
 
     @Test
-    public void createListingInvalidToken(){
+    public void testCreateListingInvalidToken(){
         ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", true, 50.0, "hour", null, 2L);
         ResponseEntity<ListingResponse> responseEntity = service.createListing(listingRequest, null, "Bearer 2");
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
-    public void createListingSuccessfully(){
+    public void testCreateListingSuccessfully(){
         ListingRequest listingRequest = new ListingRequest("Motorbike", "Goes fast.", true, 50.0, "hour", new ArrayList<>(), 3L);
         Image image = new Image("iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAA1BMVEWsyPIniFeoAAAASElEQVR4nO3BgQAAAADDoPlTX+AIVQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDcaiAAFXD1ujAAAAAElFTkSuQmCC".getBytes(StandardCharsets.UTF_8));
         MultipartFile multipartFile = new MockMultipartFile("ImageFile", image.getImage());
@@ -369,7 +481,7 @@ class ListingServiceTest {
     }
 
     @Test
-    public void updateListingSuccessfully(){
+    public void testUpdateListingSuccessfully(){
         UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
         ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 1");
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -378,41 +490,72 @@ class ListingServiceTest {
     }
 
     @Test
-    public void updateListingInvalidToken(){
+    public void testUpdateListingInvalidToken(){
         UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
         ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 2");
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
-    public void updateListingInvalidProfile(){
+    public void testUpdateListingInvalidProfile(){
         UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
         ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 3");
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
-    @Test @Disabled
-    public void deleteListingSuccessfully(){
-        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(2L, "Bearer 1");
+    @Test
+    public void testDeleteListingSuccessfully(){
+        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(7L, "Bearer 1");
         Assertions.assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        //Mockito.verify(listingRepository, Mockito.times(1)).save(any());
         Mockito.verify(leaseRepository, Mockito.times(1)).saveAll(any());
-        //Assertions.assertEquals(1L, responseEntity.getBody().getId());
+        Mockito.verify(listingRepository, Mockito.times(1)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(1)).saveAll(any());
     }
 
-    @Test @Disabled
-    public void deleteListingInvalidToken(){
-        UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
-        ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 2");
+    @Test
+    public void testDeleteListingInvalidToken(){
+        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(1L, "Bearer 2");
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        Mockito.verify(leaseRepository, Mockito.times(0)).saveAll(any());
+        Mockito.verify(listingRepository, Mockito.times(0)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(0)).saveAll(any());
     }
 
-    @Test @Disabled
-    public void deleteListingInvalidProfile(){
-        UpdateListingRequest updateListingRequest = new UpdateListingRequest("house", true, 200.0, "day", 1L);
-        ResponseEntity<ListingResponse> responseEntity = service.updateListing(updateListingRequest, "Bearer 3");
+    @Test
+    public void testDeleteListingInvalidProfile(){
+        ResponseEntity<HttpStatus> responseEntity = service.deleteListing(2L, "Bearer 1");
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        Mockito.verify(leaseRepository, Mockito.times(0)).saveAll(any());
+        Mockito.verify(listingRepository, Mockito.times(0)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(0)).saveAll(any());
     }
+
+
+    @Test
+    public void testDeleteListingByListingSuccessfully(){
+        File file = new File("src/main/resources/testbilde2.png");
+        byte[] imageBytes = new byte[0];
+        try {
+            imageBytes = Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Image image = new Image();
+        image.setImage(imageBytes);
+
+        Profile profile = new Profile("test", "test@gmail.com", "JEg er en person", "pers123", "pass123", "klokkegata 99", "50:40", "31415926");
+        Listing listing = new Listing("test", "test1", true, 50.0, "hour", profile);
+        profile.setListings(Arrays.asList(listing));
+        image.setListing(listing);
+        listing.setImages(Arrays.asList(image));
+
+        service.deleteListing(listing);
+        Mockito.verify(leaseRepository, Mockito.times(1)).saveAll(any());
+        Mockito.verify(listingRepository, Mockito.times(1)).deleteById(any());
+        Mockito.verify(imageRepository, Mockito.times(1)).saveAll(any());
+    }
+
+
 
 
 

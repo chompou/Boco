@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for CategoryTypes
+ */
 @Service
 public class CategoryTypeService {
     private final CategoryTypeRepository categoryTypeRepository;
@@ -16,6 +19,7 @@ public class CategoryTypeService {
         this.categoryTypeRepository = categoryTypeRepository;
     }
 
+    /** @return All categories */
     public List<CategoryType> getAll(){
         return categoryTypeRepository.findAll();
     }
