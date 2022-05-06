@@ -65,6 +65,14 @@ public class ProfileService {
         this.listingService = listingService;
     }
 
+    /**
+     * Gets the public version of a profile. Sensitive information is excluded. Email and Tlf is only
+     * included if the profile of authHeader and the profile of profileId are contacts (has a lease together).
+     *
+     * @param profileId ID of profile to get
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The public version of profile
+     */
     public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String authHeader) {
         Long userId = null;
         if (authHeader != null){
@@ -91,17 +99,22 @@ public class ProfileService {
         return new ResponseEntity<>(publicProfile, HttpStatus.OK);
     }
 
-    public ResponseEntity<PrivateProfileResponse> getPrivateProfile(String token){
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()) {
-            logger.debug("profile of token not found found.");
+    /**
+     * Gets the private version of a profile. Sensitive information is included (but never password).
+     * The profile is retrieved from JWT token
+     *
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The private version of profile
+     */
+    public ResponseEntity<PrivateProfileResponse> getPrivateProfile(String authHeader){
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        PrivateProfileResponse profileResponse = new PrivateProfileResponse(profile.get());
-        return new ResponseEntity<>(profileResponse, HttpStatus.OK);
+        return new ResponseEntity<>(new PrivateProfileResponse(profile), HttpStatus.OK);
     }
+
 
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
