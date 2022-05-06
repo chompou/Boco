@@ -192,29 +192,45 @@ public class ProfileService {
         return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
     }
 
+    /**
+     * Gets the reviews given to a profile as the role of item owner in a lease
+     *
+     * @param profileId ID of the profile
+     * @param perPage Number of reviews per page
+     * @param page Page number
+     * @return List of reviews
+     */
     public ResponseEntity<List<ReviewResponse>> getReviewsAsOwner(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
-
-        if (!profileData.isPresent()) {
-            logger.debug("profileId=" + profileId + " was not found.");
+        if (profileData.isEmpty()) {
+            logger.debug("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Listing> listingsByProfile = profileData.get().getListings();
+        try {
+            List<Listing> listingsByProfile = profileData.get().getListings();
 
-        List<Lease> leasesFromProfile = new ArrayList<>();
-        for (int i = 0; i < listingsByProfile.size(); i++) {
-            leasesFromProfile.addAll(listingsByProfile.get(i).getLeases());
+            // Getting the leases for all listings of profile
+            List<Lease> leasesFromProfile = new ArrayList<>();
+            for (int i = 0; i < listingsByProfile.size(); i++) {
+                leasesFromProfile.addAll(listingsByProfile.get(i).getLeases());
+            }
+
+            // Get reviews for leases on listings of profile
+            List<Review> reviews = new ArrayList<>();
+            for (int i = 0; i < leasesFromProfile.size(); i++) {
+                Review newReview = leasesFromProfile.get(i).getOwnerReview();
+                if (newReview != null) reviews.add(newReview);
+            }
+
+            // Returning
+            List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
+            return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error("Error while getting reviews for profileId={} as owner", profileId);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        List<Review> reviews = new ArrayList<>();
-        for (int i = 0; i < leasesFromProfile.size(); i++) {
-            Review newReview = leasesFromProfile.get(i).getOwnerReview();
-            if (newReview != null) reviews.add(newReview);
-        }
-
-        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
-        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
     public ResponseEntity<List<ReviewResponse>> getReviewsAsLeasee(Long profileId, int perPage, int page) {
