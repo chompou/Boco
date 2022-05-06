@@ -25,7 +25,7 @@ export default {
       if (!lease.isApproved) return "Pending Approval";
       else return "Upcoming";
     } else if (now < to) {
-      if (!lease.ifApproved) return "Expired";
+      if (!lease.isApproved) return "Expired";
       if (!lease.isCompleted) return "In Progress";
       if (owner && !lease.leaseeReview) return "Pending Review";
       if (!owner && !(lease.itemReview || lease.ownerReview))
