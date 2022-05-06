@@ -44,6 +44,13 @@ export default {
     });
   },
 
+  giveReview(reviewRequest, reviewType) {
+    return apiClient.post("/my/lease/review", {
+      reviewRequest: reviewRequest,
+      reviewType: reviewType,
+    });
+  },
+
   getCategories() {
     return apiClient.get("/category");
   },
