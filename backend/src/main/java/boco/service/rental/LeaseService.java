@@ -140,7 +140,7 @@ public class LeaseService {
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
-            if (isLessThanDayBeforeLeaseStart(lease)) {
+            if (isLessThanDayBeforeLeaseStart(lease) && lease.getOwner().getId() != profile.getId()) {
                 logger.warn("There is less than 24 hours before the lease is set to start. " +
                         "Could not delete lease.");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -188,6 +188,13 @@ public class LeaseService {
     }
 
 
+    /**
+     * CHecks that the lease being updated exists, has the correct owner,
+     * and does not overlap with other approved leases.
+     * @param updateLeaseRequest The update request
+     * @param authHeader The authentication token
+     * @return boolean of if the update is legal
+     */
     public ResponseEntity<Boolean> checkIfUpdatingLeaseIsLegal(UpdateLeaseRequest updateLeaseRequest, String authHeader){
         Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
         if (profile == null){
@@ -217,6 +224,12 @@ public class LeaseService {
         return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 
+
+    /**
+     * Finds all leases that overlap with a given lease.
+     * @param lease The lease we are checking against
+     * @return all overlaping approved leases
+     */
     public List<Lease> getOverlappingLeases(Lease lease){
         List<Lease> leases = leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(lease.getListing().getId());
         return leases.stream()

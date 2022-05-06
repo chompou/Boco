@@ -6,16 +6,19 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity representing a password code.
+ */
 @Getter@Setter@NoArgsConstructor@AllArgsConstructor@Builder
 @Entity
 public class PasswordCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long id; //The id of the password code
     @OneToOne
-    Profile profile;
-    String generatedCode;
-    Timestamp timestamp;
+    Profile profile; // The profile the passwordcode is attached to
+    String generatedCode; // The code itself
+    Timestamp timestamp; // The time at which the password code was requested.
 
     public PasswordCode(Profile profile, String generatedCode){
         this.profile = profile;

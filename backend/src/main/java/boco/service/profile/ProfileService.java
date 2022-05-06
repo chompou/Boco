@@ -46,7 +46,7 @@ public class ProfileService {
 
     private final JwtUtil jwtUtil;
 
-    Logger logger = LoggerFactory.getLogger(ListingService.class);
+    Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
     @Autowired
     public ProfileService(ProfileRepository profileRepository,
@@ -65,45 +65,62 @@ public class ProfileService {
         this.listingService = listingService;
     }
 
-    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String token) {
+    /**
+     * Gets the public version of a profile. Sensitive information is excluded. Email and Tlf is only
+     * included if the profile of authHeader and the profile of profileId are contacts (has a lease together).
+     *
+     * @param profileId ID of profile to get
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The public version of profile
+     */
+    public ResponseEntity<PublicProfileResponse> getPublicProfile(Long profileId, String authHeader) {
         Long userId = null;
-        if (token != null){
-            String username = jwtUtil.extractUsername(token.substring(7));
-            Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-            if (!profile.isPresent()) {
-                logger.debug("profile of token not found.");
+        if (authHeader != null){
+            Profile authHeaderProfile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+            if (authHeaderProfile == null){
+                logger.warn("Profile of token not found");
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            userId = profile.get().getId();
+            userId = authHeaderProfile.getId();
         }
+
         var profileData = profileRepository.findById(profileId);
-        if (profileData.isPresent()) {
-            Profile profile = profileData.get();
-            PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
-
-            if (userId == null || !profileHasContactWithProfile(profileId, userId)){
-                publicProfile.setEmail(null);
-                publicProfile.setTlf(null);
-            }
-            return new ResponseEntity<>(publicProfile, HttpStatus.OK);
-        } else {
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} not found", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Profile profile = profileData.get();
+
+        PublicProfileResponse publicProfile = new PublicProfileResponse(profile);
+        if (userId == null || !profileHasContactWithProfile(profileId, userId)){
+            publicProfile.setEmail(null);
+            publicProfile.setTlf(null);
+        }
+        return new ResponseEntity<>(publicProfile, HttpStatus.OK);
     }
 
-    public ResponseEntity<PrivateProfileResponse> getPrivateProfile(String token){
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profile = profileRepository.findProfileByUsername(username);
-
-        if (!profile.isPresent()) {
-            logger.debug("profile of token not found found.");
+    /**
+     * Gets the private version of a profile. Sensitive information is included (but never password).
+     * The profile is retrieved from JWT token
+     *
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The private version of profile
+     */
+    public ResponseEntity<PrivateProfileResponse> getPrivateProfile(String authHeader){
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        PrivateProfileResponse profileResponse = new PrivateProfileResponse(profile.get());
-        return new ResponseEntity<>(profileResponse, HttpStatus.OK);
+        return new ResponseEntity<>(new PrivateProfileResponse(profile), HttpStatus.OK);
     }
 
+    /**
+     * Creates a new profile
+     *
+     * @param profileRequest Profile data
+     * @return The created profile
+     */
     public ResponseEntity<PrivateProfileResponse> createProfile(ProfileRequest profileRequest) {
         if (profileRequest == null) {
             logger.debug("Profile is null and could not be created");
@@ -111,99 +128,135 @@ public class ProfileService {
         }
 
         if (checkIfProfileEmailExists(profileRequest.getEmail()) != null){
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-        if (checkIfProfileUsernameExists(profileRequest.getUsername()) != null){
+            logger.warn("Profile could not be created. profile with email {} already exists"
+                    , profileRequest.getEmail());
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
+        if (checkIfProfileUsernameExists(profileRequest.getUsername()) != null){
+            logger.warn("Profile could not be created. profile with username {} already exists"
+                    , profileRequest.getUsername());
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // Saving the profile
         try {
-            if (profileRequest.getIsPersonal()) {
+            if (Boolean.TRUE.equals(profileRequest.getIsPersonal())) {
                 Personal p = new Personal(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
                         profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Personal savedProfile = personalRepository.save(p);
-                logger.debug("Personal profile was saved: " + p);
+                logger.info("Personal profile was saved: {}", p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             } else {
                 Professional p = new Professional(profileRequest.getUsername(), profileRequest.getEmail(),
                         profileRequest.getDescription(), profileRequest.getDisplayName(), profileRequest.getPasswordHash(),
                         profileRequest.getAddress(), profileRequest.getLocation(), profileRequest.getTlf());
                 Professional savedProfile = professionalRepository.save(p);
-                logger.debug("Professional profile was saved: " + p);
+                logger.info("Professional profile was saved: {}", p);
                 return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.CREATED);
             }
 
         } catch (Exception e) {
-            logger.debug("Error when saving profile:\n" + e.getMessage());
+            logger.error("Error when saving profile: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * Gets listings of a profile with profileId
+     *
+     * @param profileId ID of the profile
+     * @param perPage Number of listings to return per page
+     * @param page Page number
+     * @return List of listings
+     */
     public ResponseEntity<ListingResultsResponse> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
-        if (!profileData.isPresent()){
-            logger.debug("profileId=" + profileId + "was not found.");
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         List<Listing> listingsByProfile = profileData.get().getListings();
-
         if (listingsByProfile == null) {
-            logger.debug("listings is null for profileId=" + profileId);
+            logger.debug("listings is null for profileId={}", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
-        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
+        List<Listing> listings = new ArrayList<>(listingsByProfile)
+                .subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
+        ListingResultsResponse listingResultsResponse =
+                new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
         return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
-
     }
 
+    /**
+     * Gets the reviews given to a profile as the role of item owner in a lease
+     *
+     * @param profileId ID of the profile
+     * @param perPage Number of reviews per page
+     * @param page Page number
+     * @return List of reviews
+     */
     public ResponseEntity<List<ReviewResponse>> getReviewsAsOwner(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
-
-        if (!profileData.isPresent()) {
-            logger.debug("profileId=" + profileId + " was not found.");
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Listing> listingsByProfile = profileData.get().getListings();
+        try {
+            List<Listing> listingsByProfile = profileData.get().getListings();
 
-        List<Lease> leasesFromProfile = new ArrayList<>();
-        for (int i = 0; i < listingsByProfile.size(); i++) {
-            leasesFromProfile.addAll(listingsByProfile.get(i).getLeases());
+            // Getting the leases for all listings of profile
+            List<Lease> leasesFromProfile = new ArrayList<>();
+            for (int i = 0; i < listingsByProfile.size(); i++) {
+                leasesFromProfile.addAll(listingsByProfile.get(i).getLeases());
+            }
+
+            // Getting owner reviews for leases on listings of profile
+            List<Review> reviews = new ArrayList<>();
+            for (int i = 0; i < leasesFromProfile.size(); i++) {
+                Review newReview = leasesFromProfile.get(i).getOwnerReview();
+                if (newReview != null) reviews.add(newReview);
+            }
+
+            // Returning
+            List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
+            return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
+
+        } catch (Exception e) {
+            logger.error("Error while getting reviews for profileId={} as owner", profileId);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        List<Review> reviews = new ArrayList<>();
-        for (int i = 0; i < leasesFromProfile.size(); i++) {
-            Review newReview = leasesFromProfile.get(i).getOwnerReview();
-            if (newReview != null) reviews.add(newReview);
-        }
-
-        List<Review> reviewsSublist = reviews.subList(page*perPage, Math.min((page+1)*perPage, reviews.size()));
-        return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
+    /**
+     * Gets the reviews given to a profile as the role of leasee in a lease
+     *
+     * @param profileId ID of the profile
+     * @param perPage Number of reviews per page
+     * @param page Page number
+     * @return List of reviews
+     */
     public ResponseEntity<List<ReviewResponse>> getReviewsAsLeasee(Long profileId, int perPage, int page) {
-       Optional<Profile> profileData = profileRepository.findProfileById(profileId);
-
-        if (!profileData.isPresent()) {
-            logger.debug("profile of token not found found.");
+        Optional<Profile> profileData = profileRepository.findById(profileId);
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Lease> leases = leaseRepository.getLeasesByProfile_Id(profileId);
-
-        if (leases == null) {
-            logger.debug("leases is null");
+        List<Lease> profileLeases = leaseRepository.getLeasesByProfile_Id(profileId);
+        if (profileLeases == null) {
+            logger.warn("profileId={} has no leases", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         List<Review> reviews = new ArrayList<>();
-        for (int i = 0; i < leases.size(); i++) {
-            Review newReview = leases.get(i).getLeaseeReview();
+        for (int i = 0; i < profileLeases.size(); i++) {
+            Review newReview = profileLeases.get(i).getLeaseeReview();
             if (newReview != null) reviews.add(newReview);
         }
 
@@ -211,63 +264,79 @@ public class ProfileService {
         return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
-    public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-        if (!profileData.isPresent()){
-            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+    /**
+     * Updates a profile
+     *
+     * @param updateProfileRequest New profile data
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The updated profile
+     */
+    public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         // Setting the new data
-        Profile profile = profileData.get();
         // Update all values, even null from request?
-        if(updateProfileRequest.getEmail()!=null && !updateProfileRequest.getEmail().isEmpty()){
-            profile.setEmail(updateProfileRequest.getEmail());
-        }
-        if (updateProfileRequest.getDescription()!=null && !updateProfileRequest.getEmail().isEmpty()){
-            profile.setDescription(updateProfileRequest.getDescription());
-        }
-        if (updateProfileRequest.getDisplayName()!=null && !updateProfileRequest.getDisplayName().isEmpty()){
-            profile.setDisplayName(updateProfileRequest.getDisplayName());
-        }
-        if (updateProfileRequest.getPasswordHash()!=null && !updateProfileRequest.getPasswordHash().isEmpty()){
-            profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
-        }
-        if (updateProfileRequest.getAddress()!=null && !updateProfileRequest.getAddress().isEmpty()){
-            profile.setAddress(updateProfileRequest.getAddress());
-        }
-        if (updateProfileRequest.getTlf()!=null && !updateProfileRequest.getTlf().isEmpty()){
-            profile.setTlf(updateProfileRequest.getTlf());
-        }
-        if (updateProfileRequest.getLocation()!=null && !updateProfileRequest.getLocation().isEmpty()){
-            profile.setLocation(updateProfileRequest.getLocation());
-        }
+        try {
+            if (updateProfileRequest.getEmail() != null && !updateProfileRequest.getEmail().isEmpty()) {
+                profile.setEmail(updateProfileRequest.getEmail());
+            }
+            if (updateProfileRequest.getDescription() != null && !updateProfileRequest.getEmail().isEmpty()) {
+                profile.setDescription(updateProfileRequest.getDescription());
+            }
+            if (updateProfileRequest.getDisplayName() != null && !updateProfileRequest.getDisplayName().isEmpty()) {
+                profile.setDisplayName(updateProfileRequest.getDisplayName());
+            }
+            if (updateProfileRequest.getPasswordHash() != null && !updateProfileRequest.getPasswordHash().isEmpty()) {
+                profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
+            }
+            if (updateProfileRequest.getAddress() != null && !updateProfileRequest.getAddress().isEmpty()) {
+                profile.setAddress(updateProfileRequest.getAddress());
+            }
+            if (updateProfileRequest.getTlf() != null && !updateProfileRequest.getTlf().isEmpty()) {
+                profile.setTlf(updateProfileRequest.getTlf());
+            }
+            if (updateProfileRequest.getLocation() != null && !updateProfileRequest.getLocation().isEmpty()) {
+                profile.setLocation(updateProfileRequest.getLocation());
+            }
 
-
-        Profile savedProfile = profileRepository.save(profile);
-        logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
-        return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
+            Profile savedProfile = profileRepository.save(profile);
+            logger.info("profileId={} was updated to: {}", profile.getId(), savedProfile);
+            return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error when updating profile: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public ResponseEntity<PrivateProfileResponse> deactivateProfile(String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-        if (!profileData.isPresent()) {
+    /**
+     * Deactivates a profile
+     *
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The data of deactivated profile
+     */
+    public ResponseEntity<PrivateProfileResponse> deactivateProfile(String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Profile profile = profileData.get();
+
+        // Setting deactivated state to now
         profile.setDeactivated(Timestamp.valueOf(LocalDateTime.now()));
         Profile savedProfile = profileRepository.save(profile);
 
-        List<Listing> listings = listingRepository.getListingsByProfile(profileData.get());
-        for (int i =0; i<listings.size(); i++){
+        // Deactivating the listings of the profile
+        List<Listing> listings = listingRepository.getListingsByProfile(profile);
+        for (int i = 0; i < listings.size(); i++){
             listings.get(i).setIsActive(false);
             listingRepository.save(listings.get(i));
         }
 
+        // Deactivating pending leases
         List<Lease> leasesProfile = leaseRepository.getLeasesByProfile(profile);
         for (int i = 0; i<leasesProfile.size(); i++){
             if (leasesProfile.get(i).getIsApproved()== null){
@@ -275,6 +344,7 @@ public class ProfileService {
                 leaseRepository.save(leasesProfile.get(i));
             }
         }
+
         List<Lease> leasesOwner = leaseRepository.getLeasesByOwner(profile);
         for (int i = 0; i<leasesOwner.size(); i++){
             if (leasesOwner.get(i).getIsApproved()== null){
@@ -282,6 +352,8 @@ public class ProfileService {
                 leaseRepository.save(leasesOwner.get(i));
             }
         }
+
+        // Returning
         return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
     }
 
@@ -294,20 +366,7 @@ public class ProfileService {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    public ResponseEntity<Profile> checkIfProfileEmailExists(String email){
-        Optional<Profile> profileData = profileRepository.findProfileByEmail(email);
-        if (profileData.isPresent()){
-             return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
-        }
-        return null;
-    }
-    public ResponseEntity<Profile> checkIfProfileUsernameExists(String username){
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-        if (profileData.isPresent()){
-            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
-        }
-        return null;
-    }
+
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (updatePasswordRequest.getPasswordHash()== null || updatePasswordRequest.getPasswordHash().isEmpty()){
@@ -325,6 +384,21 @@ public class ProfileService {
             return new ResponseEntity<>(profile, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    public ResponseEntity<Profile> checkIfProfileEmailExists(String email){
+        Optional<Profile> profileData = profileRepository.findProfileByEmail(email);
+        if (profileData.isPresent()){
+             return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+        }
+        return null;
+    }
+    public ResponseEntity<Profile> checkIfProfileUsernameExists(String username){
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+        if (profileData.isPresent()){
+            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+        }
+        return null;
     }
 
     /**
