@@ -139,6 +139,7 @@ public class ProfileService {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
+        // Saving the profile
         try {
             if (Boolean.TRUE.equals(profileRequest.getIsPersonal())) {
                 Personal p = new Personal(profileRequest.getUsername(), profileRequest.getEmail(),
@@ -162,25 +163,33 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Gets listings of a profile with profileId
+     *
+     * @param profileId ID of the profile
+     * @param perPage Number of listings to return per page
+     * @param page Page number
+     * @return List of listings
+     */
     public ResponseEntity<ListingResultsResponse> getProfileListings(Long profileId, int perPage, int page){
         Optional<Profile> profileData = profileRepository.findById(profileId);
 
-        if (!profileData.isPresent()){
-            logger.debug("profileId=" + profileId + "was not found.");
+        if (profileData.isEmpty()) {
+            logger.warn("profileId={} was not found.", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         List<Listing> listingsByProfile = profileData.get().getListings();
-
         if (listingsByProfile == null) {
-            logger.debug("listings is null for profileId=" + profileId);
+            logger.debug("listings is null for profileId={}", profileId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<Listing> listings = new ArrayList<>(listingsByProfile).subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
-        ListingResultsResponse listingResultsResponse = new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
+        List<Listing> listings = new ArrayList<>(listingsByProfile)
+                .subList(page*perPage, Math.min((page+1)*perPage, listingsByProfile.size()));
+        ListingResultsResponse listingResultsResponse =
+                new ListingResultsResponse(ListingService.convertListings(listings), listingsByProfile.size());
         return new ResponseEntity<>(listingResultsResponse, HttpStatus.OK);
-
     }
 
     public ResponseEntity<List<ReviewResponse>> getReviewsAsOwner(Long profileId, int perPage, int page) {
