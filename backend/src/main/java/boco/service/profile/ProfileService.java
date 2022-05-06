@@ -233,6 +233,14 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Gets the reviews given to a profile as the role of leasee in a lease
+     *
+     * @param profileId ID of the profile
+     * @param perPage Number of reviews per page
+     * @param page Page number
+     * @return List of reviews
+     */
     public ResponseEntity<List<ReviewResponse>> getReviewsAsLeasee(Long profileId, int perPage, int page) {
         Optional<Profile> profileData = profileRepository.findById(profileId);
         if (profileData.isEmpty()) {
@@ -256,63 +264,79 @@ public class ProfileService {
         return new ResponseEntity<>(ReviewService.convertReviews(reviewsSublist), HttpStatus.OK);
     }
 
-    public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-        if (!profileData.isPresent()){
-            logger.debug("profileId=" + profileData.get().getId() + " was not found.");
+    /**
+     * Updates a profile
+     *
+     * @param updateProfileRequest New profile data
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The updated profile
+     */
+    public ResponseEntity<PrivateProfileResponse> updateProfile(UpdateProfileRequest updateProfileRequest, String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         // Setting the new data
-        Profile profile = profileData.get();
         // Update all values, even null from request?
-        if(updateProfileRequest.getEmail()!=null && !updateProfileRequest.getEmail().isEmpty()){
-            profile.setEmail(updateProfileRequest.getEmail());
-        }
-        if (updateProfileRequest.getDescription()!=null && !updateProfileRequest.getEmail().isEmpty()){
-            profile.setDescription(updateProfileRequest.getDescription());
-        }
-        if (updateProfileRequest.getDisplayName()!=null && !updateProfileRequest.getDisplayName().isEmpty()){
-            profile.setDisplayName(updateProfileRequest.getDisplayName());
-        }
-        if (updateProfileRequest.getPasswordHash()!=null && !updateProfileRequest.getPasswordHash().isEmpty()){
-            profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
-        }
-        if (updateProfileRequest.getAddress()!=null && !updateProfileRequest.getAddress().isEmpty()){
-            profile.setAddress(updateProfileRequest.getAddress());
-        }
-        if (updateProfileRequest.getTlf()!=null && !updateProfileRequest.getTlf().isEmpty()){
-            profile.setTlf(updateProfileRequest.getTlf());
-        }
-        if (updateProfileRequest.getLocation()!=null && !updateProfileRequest.getLocation().isEmpty()){
-            profile.setLocation(updateProfileRequest.getLocation());
-        }
+        try {
+            if (updateProfileRequest.getEmail() != null && !updateProfileRequest.getEmail().isEmpty()) {
+                profile.setEmail(updateProfileRequest.getEmail());
+            }
+            if (updateProfileRequest.getDescription() != null && !updateProfileRequest.getEmail().isEmpty()) {
+                profile.setDescription(updateProfileRequest.getDescription());
+            }
+            if (updateProfileRequest.getDisplayName() != null && !updateProfileRequest.getDisplayName().isEmpty()) {
+                profile.setDisplayName(updateProfileRequest.getDisplayName());
+            }
+            if (updateProfileRequest.getPasswordHash() != null && !updateProfileRequest.getPasswordHash().isEmpty()) {
+                profile.setPasswordHash(BocoHasher.encode(updateProfileRequest.getPasswordHash()));
+            }
+            if (updateProfileRequest.getAddress() != null && !updateProfileRequest.getAddress().isEmpty()) {
+                profile.setAddress(updateProfileRequest.getAddress());
+            }
+            if (updateProfileRequest.getTlf() != null && !updateProfileRequest.getTlf().isEmpty()) {
+                profile.setTlf(updateProfileRequest.getTlf());
+            }
+            if (updateProfileRequest.getLocation() != null && !updateProfileRequest.getLocation().isEmpty()) {
+                profile.setLocation(updateProfileRequest.getLocation());
+            }
 
-
-        Profile savedProfile = profileRepository.save(profile);
-        logger.debug("profileId=" + profileData.get().getId() + " was updated to:\n" + savedProfile);
-        return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
+            Profile savedProfile = profileRepository.save(profile);
+            logger.info("profileId={} was updated to: {}", profile.getId(), savedProfile);
+            return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error when updating profile: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public ResponseEntity<PrivateProfileResponse> deactivateProfile(String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-
-        if (!profileData.isPresent()) {
+    /**
+     * Deactivates a profile
+     *
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @return The data of deactivated profile
+     */
+    public ResponseEntity<PrivateProfileResponse> deactivateProfile(String authHeader) {
+        Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
+        if (profile == null){
+            logger.warn("Profile of token not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Profile profile = profileData.get();
+
+        // Setting deactivated state to now
         profile.setDeactivated(Timestamp.valueOf(LocalDateTime.now()));
         Profile savedProfile = profileRepository.save(profile);
 
-        List<Listing> listings = listingRepository.getListingsByProfile(profileData.get());
-        for (int i =0; i<listings.size(); i++){
+        // Deactivating the listings of the profile
+        List<Listing> listings = listingRepository.getListingsByProfile(profile);
+        for (int i = 0; i < listings.size(); i++){
             listings.get(i).setIsActive(false);
             listingRepository.save(listings.get(i));
         }
 
+        // Deactivating pending leases
         List<Lease> leasesProfile = leaseRepository.getLeasesByProfile(profile);
         for (int i = 0; i<leasesProfile.size(); i++){
             if (leasesProfile.get(i).getIsApproved()== null){
@@ -320,6 +344,7 @@ public class ProfileService {
                 leaseRepository.save(leasesProfile.get(i));
             }
         }
+
         List<Lease> leasesOwner = leaseRepository.getLeasesByOwner(profile);
         for (int i = 0; i<leasesOwner.size(); i++){
             if (leasesOwner.get(i).getIsApproved()== null){
@@ -327,6 +352,8 @@ public class ProfileService {
                 leaseRepository.save(leasesOwner.get(i));
             }
         }
+
+        // Returning
         return new ResponseEntity<>(new PrivateProfileResponse(savedProfile), HttpStatus.OK);
     }
 
@@ -339,20 +366,7 @@ public class ProfileService {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    public ResponseEntity<Profile> checkIfProfileEmailExists(String email){
-        Optional<Profile> profileData = profileRepository.findProfileByEmail(email);
-        if (profileData.isPresent()){
-             return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
-        }
-        return null;
-    }
-    public ResponseEntity<Profile> checkIfProfileUsernameExists(String username){
-        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
-        if (profileData.isPresent()){
-            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
-        }
-        return null;
-    }
+
 
     public ResponseEntity<Profile> changePassword(UpdatePasswordRequest updatePasswordRequest, String email){
         if (updatePasswordRequest.getPasswordHash()== null || updatePasswordRequest.getPasswordHash().isEmpty()){
@@ -370,6 +384,21 @@ public class ProfileService {
             return new ResponseEntity<>(profile, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    public ResponseEntity<Profile> checkIfProfileEmailExists(String email){
+        Optional<Profile> profileData = profileRepository.findProfileByEmail(email);
+        if (profileData.isPresent()){
+             return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+        }
+        return null;
+    }
+    public ResponseEntity<Profile> checkIfProfileUsernameExists(String username){
+        Optional<Profile> profileData = profileRepository.findProfileByUsername(username);
+        if (profileData.isPresent()){
+            return new ResponseEntity<>(profileData.get(), HttpStatus.OK);
+        }
+        return null;
     }
 
     /**
