@@ -108,9 +108,13 @@ export default {
           });
           break;
         default:
-          apiService
-            .deleteMyLease(this.lease.id)
-            .catch((error) => console.log(error));
+          apiService.deleteMyLease(this.lease.id).catch((error) => {
+            if (error.response.status == 422) {
+              console.log("forboden");
+            } else {
+              console.log(error);
+            }
+          });
       }
 
       this.$emit("close-overlay");

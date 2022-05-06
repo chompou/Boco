@@ -25,7 +25,7 @@
         <div class="mb-3">
           <BaseTextArea
             class="form-control textArea"
-            v-model="message"
+            v-model="issue"
             label="Issue"
             type="text"
           />
@@ -41,6 +41,7 @@ import BaseTextArea from "@/components/base/BaseTextArea";
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
 import { useToast } from "vue-toastification";
+import apiService from "@/services/apiService";
 
 export default {
   components: {
@@ -62,7 +63,7 @@ export default {
 
     const name = useField("name");
     const email = useField("email");
-    const message = useField("message");
+    const issue = useField("issue");
 
     const handleChange = (event) => {
       setFieldValue("email", event.target.value);
@@ -70,7 +71,7 @@ export default {
 
     //Handle submit, do something other than logging
     const submit = handleSubmit((values) => {
-      console.log("submit", values);
+      apiService.submitTicket(values).catch((error) => console.log(error));
       toast.info("Support ticket sent", {
         timeout: 2000,
       });
@@ -80,7 +81,7 @@ export default {
       submit,
       name: name.value,
       email: email.value,
-      message: message.value,
+      issue: issue.value,
       errors,
       handleChange,
       toast,
