@@ -23,7 +23,7 @@ export default {
   },
   created() {
     apiService
-      .getItems({ profileId: this.$store.state.loggedInUser }, 0, 15)
+      .getItems({ profileId: this.$store.state.loggedInUser }, 0, 500)
       .then((response) => {
         this.items = response.data.listingResponses;
         console.log(this.items);

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * This class defines endpoints for review operations
+ */
 @RestController
 @RequestMapping("/api/review")
 public class ReviewController {
@@ -45,13 +48,14 @@ public class ReviewController {
 
         if (listingId != null && profileId != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else if(reviewType == "item"){
+        } else if(reviewType.equals("item")){
             return this.listingService.getListingReviews(listingId, perPage, page);
-        } else if(reviewType == "owner"){
+        } else if(reviewType.equals("owner")){
             return this.profileService.getReviewsAsOwner(profileId, perPage, page);
-        } else if(reviewType == "leasee"){
+        } else if(reviewType.equals("leasee")){
             return this.profileService.getReviewsAsLeasee(profileId, perPage, page);
         }else{
+            System.out.println(reviewType);
             return reviewService.getAllReviews();
         }
     }
