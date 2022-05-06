@@ -151,7 +151,7 @@ public class LeaseService {
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
 
-            if (isLessThanDayBeforeLeaseStart(lease)) {
+            if (isLessThanDayBeforeLeaseStart(lease) && lease.getOwner().getId() != profile.getId()) {
                 logger.warn("There is less than 24 hours before the lease is set to start. " +
                         "Could not delete lease.");
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
