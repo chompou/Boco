@@ -116,6 +116,8 @@ export default {
 
     closeOverlay() {
       this.showOverlay = false;
+
+      this.$router.replace("/").then(() => this.$router.replace("/my/leases"));
     },
 
     filterLeases(leases, filter) {
