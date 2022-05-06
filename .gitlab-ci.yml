@@ -23,9 +23,8 @@ mvn-test:
     - apk add maven # Install maven
     - mvn test # Run tests
 
-# Vue tests does not currently pass... Remove comments when issue is resolved
-#vue-test:
-#    stage: test
-#    script:
-#      - cd frontend
-#      - npm run test:unit
+vue-test:
+    stage: test
+    script:
+      - cd frontend
+      - npm run test:unit
