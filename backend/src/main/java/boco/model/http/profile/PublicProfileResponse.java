@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-
-// Profile without passwordHash, address, rating statistics,
-
 /**
- * Profile entity without the fields: username, passwordHash, address, ratings, rentals, listings, notifications
+ * This class represents data of a profile available for everyone. Hence, the response will not include
+ * username, passwordHash, ratings, rentals, listings, notifications.
+ *
+ * The class is used to send a response from a REST controller when receiving a get profile HTTP request.
+ *
+ * See boco.model.profile.Profile class for documentation of the fields of this class.
  */
 @Getter @Setter @NoArgsConstructor
 public class PublicProfileResponse {
@@ -24,6 +26,11 @@ public class PublicProfileResponse {
     private String tlf;
     private Timestamp deactivated;
 
+    /**
+     * Constructs a public profile response based on a profile entity
+     *
+     * @param profile The profile entity
+     */
     public PublicProfileResponse(Profile profile) {
         this.id = profile.getId();
         this.email = profile.getEmail();

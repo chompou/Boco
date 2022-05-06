@@ -5,6 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * This class represents data of a lease. The class is used to send a response from a REST controller when
+ * receiving lease related requests.
+ *
+ * See boco.model.rental.Lease class for documentation of the fields of this class.
+ */
 @Getter @Setter @NoArgsConstructor
 public class LeaseResponse {
     private Long id;
@@ -31,11 +37,11 @@ public class LeaseResponse {
         if (lease.getOwnerReview() != null) this.ownerReview = new ReviewResponse(lease.getOwnerReview());
         if (lease.getLeaseeReview() != null) this.leaseeReview = new ReviewResponse(lease.getLeaseeReview());
         if (lease.getItemReview() != null) this.itemReview = new ReviewResponse(lease.getItemReview());
-        this.profileId = lease.getProfile().getId();
-        this.leaseeDisplayName = lease.getProfile().getDisplayName();
-        this.ownerId = lease.getOwner().getId();
-        this.ownerDisplayName = lease.getOwner().getDisplayName();
-        this.listingId = lease.getListing().getId();
-        this.itemName = lease.getListing().getName();
+        if (lease.getProfile() != null) this.profileId = lease.getProfile().getId();
+        if (lease.getProfile() != null) this.leaseeDisplayName = lease.getProfile().getDisplayName();
+        if (lease.getOwner() != null) this.ownerId = lease.getOwner().getId();
+        if (lease.getOwner() != null) this.ownerDisplayName = lease.getOwner().getDisplayName();
+        if (lease.getListing() != null) this.listingId = lease.getListing().getId();
+        if (lease.getListing() != null) this.itemName = lease.getListing().getName();
     }
 }

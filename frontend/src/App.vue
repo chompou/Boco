@@ -4,7 +4,7 @@
       <router-link to="/">
         <img id="logo" src="@/assets/mainLogo.png" alt="logo"
       /></router-link>
-      <div class="gridContainer">
+      <div class="header">
         <div>
           <NotificationBellComponent v-if="$store.state.loggedIn" />
         </div>
@@ -16,18 +16,18 @@
   </nav>
 
   <div id="routerViewWrap" class="container-fluid">
-    <router-view :key="$route.fullPath" />
+    <router-view />
   </div>
   <footer id="footer" class="container-fluid sticky">
     <div class="row text-center">
       <div class="col-sm-4 col-md-3 item">
-        <h4><a href="#">About us</a></h4>
+        <router-link to="/about"><h4>About us</h4></router-link>
       </div>
       <div class="col-sm-4 col-md-3 item">
         <router-link to="/support"><h4>Contact us</h4></router-link>
       </div>
       <div class="col-sm-4 col-md-3 item">
-        <h4><a href="#">F.A.Q</a></h4>
+        <router-link to="/FAQ"><h4>F.A.Q</h4></router-link>
       </div>
       <div class="col-md-3 item social">
         <p class="copyright">Borrow Community © 2022</p>
@@ -115,7 +115,7 @@ a {
 /* FOOTER style END */
 
 /* Profile icon and notification*/
-.gridContainer {
+.header {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 15px;

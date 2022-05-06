@@ -3,7 +3,7 @@
     <div class="ratingAndText">
       <h5>Rate user</h5>
       <star-rating
-        :rating="userRate"
+        :rating="ownerReview.rating"
         :animate="true"
         v-bind:max-rating="5"
         inactive-color="#d8d8d8"
@@ -17,16 +17,16 @@
     <div>
       <h5>Description for user</h5>
       <textarea
-        v-model="descriptionUser"
+        v-model="ownerReview.comment"
         placeholder="Description"
         class="description"
         name="description"
       ></textarea>
     </div>
-    <div class="ratingAndText" v-if="leasedIn">
+    <div class="ratingAndText" v-if="!owner">
       <h5>Rate item</h5>
       <star-rating
-        :rating="itemRate"
+        :rating="itemReview.rating"
         :animate="true"
         v-bind:max-rating="5"
         inactive-color="#d8d8d8"
@@ -37,18 +37,18 @@
       >
       </star-rating>
     </div>
-    <div v-if="leasedIn">
+    <div v-if="!owner">
       <h5>Description for item</h5>
       <textarea
-        v-model="descriptionItem"
+        v-model="itemReview.comment"
         placeholder="Description"
         class="description"
         name="description"
       ></textarea>
     </div>
     <div id="CreateButtons" class="element">
-      <button class="CreateButton" v-on:click="update">Submit</button>
-      <button id="Delete" class="CreateButton" v-on:click="dismiss">
+      <button class="CreateButton" @click="onSubmit">Submit</button>
+      <button id="Delete" class="CreateButton" @click="onDismiss">
         Dismiss
       </button>
     </div>
@@ -57,18 +57,42 @@
 
 <script>
 import StarRating from "vue-star-rating";
+import apiService from "@/services/apiService";
 export default {
+  props: ["id", "owner"],
+
   components: {
     StarRating,
   },
   data() {
     return {
-      leasedIn: true,
-      userRate: 0,
-      itemRate: 0,
-      descriptionUser: "",
-      descriptionItem: "",
+      itemReview: {
+        rating: 0,
+        comment: "",
+        leaseId: this.id,
+      },
+      ownerReview: {
+        rating: 0,
+        comment: "",
+        leaseId: this.id,
+      },
     };
+  },
+
+  methods: {
+    onSubmit() {
+      if (this.owner) {
+        apiService.giveReview(this.ownerReview, "leasee");
+      } else {
+        apiService.giveReview(this.itemReview, "owner");
+        apiService.giveReview(this.ownerReview, "owner");
+      }
+    },
+  },
+
+  created() {
+    console.log(this.id);
+    console.log(this.owner);
   },
 };
 </script>

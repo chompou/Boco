@@ -44,6 +44,9 @@
     <div id="buttons" class="button-container">
       <button class="boco-btn" @click="onSave">Save</button>
       <button id="reset-btn" class="boco-btn" @click="onReset">Reset</button>
+      <button id="deactivate-btn" class="boco-btn" @click="onDeactivate">
+        Deactivate account
+      </button>
     </div>
   </div>
 </template>
@@ -52,6 +55,7 @@
 import apiService from "@/services/apiService";
 import axios from "axios";
 import { useToast } from "vue-toastification";
+import storageService from "@/services/storageService";
 
 export default {
   setup() {
@@ -66,7 +70,7 @@ export default {
         address: null,
         tlf: null,
         description: null,
-        password: null,
+        passwordHash: null,
         location: null,
       },
       newPass: null,
@@ -78,6 +82,26 @@ export default {
     };
   },
   methods: {
+    onDeactivate() {
+      if (
+        confirm(
+          "Are you sure you want to deactivate your account? You will lose all access to this account. Data will be deleted in 90 days"
+        )
+      ) {
+        apiService.deleteAccount().then(() => {
+          storageService.clearToken();
+          this.$store.state.loggedIn = false;
+          this.$store.state.loggedInUser = null;
+          this.$store.dispatch("RESET_COUNT_NOTIFICATION");
+          this.$store.dispatch("CLEAR_NOTIFICATIONS");
+          this.show = false;
+          this.$router.push({ path: "/" });
+          this.toast.info("Your account has been deactivated", {
+            timeout: 2000,
+          });
+        });
+      }
+    },
     async getPoint() {
       console.log(this.profile.address);
       const { data } = await axios.get(
@@ -103,17 +127,30 @@ export default {
       apiService.updateMyProfile(this.profile);
     },
     onSave() {
-      if (this.newPass != this.confirmPass) {
-        return alert("Passwords do not match");
+      if (this.newPass !== this.confirmPass) {
+        return this.toast.error(
+          "Passwords do not match! Changes were not saved",
+          {
+            timeout: 3000,
+          }
+        );
       }
-
-      this.profile.password = this.newPass;
-      apiService
-        .updateMyProfile(this.profile)
-        .catch((error) => console.log(error));
-      this.toast.success("Changes were saved!", {
-        timeout: 2000,
-      });
+      if (this.newPass === null) {
+        apiService
+          .updateMyProfile(this.profile)
+          .catch((error) => console.log(error));
+        this.toast.success("Changes were saved!", {
+          timeout: 2000,
+        });
+      } else {
+        this.profile.passwordHash = this.newPass;
+        apiService
+          .updateMyProfile(this.profile)
+          .catch((error) => console.log(error));
+        this.toast.success("Changes were saved!", {
+          timeout: 2000,
+        });
+      }
     },
     onReset() {
       apiService
@@ -126,7 +163,10 @@ export default {
     },
   },
   created() {
-    this.fetchProfile();
+    apiService
+      .getMyProfile()
+      .then((response) => (this.profile = response.data))
+      .catch((error) => console.log(error));
     setTimeout(() => {
       this.getPoint();
     }, 1000);
@@ -160,6 +200,52 @@ export default {
 
 #reset-btn:hover {
   background-color: #ac0000;
+}
+
+#deactivate-btn {
+  background-color: black;
+}
+#deactivate-btn:hover {
+  animation: shake 0.5s;
+  animation-iteration-count: infinite;
+
+  background-color: #232323;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
 }
 
 #buttons {

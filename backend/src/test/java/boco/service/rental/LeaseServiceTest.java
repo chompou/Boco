@@ -318,22 +318,23 @@ class LeaseServiceTest {
     }
 
     @Test
-    public void updateLeaseReturnsStatusCode400() {
+    public void checkLeaseIsLegalReturns400WhenOwnerIsNotOwner() {
         // updater of lease is not the lease owner
         var req1 = new UpdateLeaseRequest(true,true,1L); // Owned by messi
         var req2 = new UpdateLeaseRequest(true,true,3L); // Owned by usr
 
-        var r1 = service.updateLease(req1, "Bearer usr");
-        var r2 = service.updateLease(req1, "Bearer si");
-        var r3 = service.updateLease(req2, "Bearer messi");
-        var r4 = service.updateLease(req2, "Bearer ron");
+        var r1 = service.checkIfUpdatingLeaseIsLegal(req1, "Bearer usr");
+        var r2 = service.checkIfUpdatingLeaseIsLegal(req1, "Bearer si");
+        var r3 = service.checkIfUpdatingLeaseIsLegal(req2, "Bearer messi");
+        var r4 = service.checkIfUpdatingLeaseIsLegal(req2, "Bearer ron");
 
         assertEquals(400, r1.getStatusCodeValue());
         assertEquals(400, r2.getStatusCodeValue());
         assertEquals(400, r3.getStatusCodeValue());
         assertEquals(400, r4.getStatusCodeValue());
-
     }
+
+
 
     @Test
     void createLease() {
