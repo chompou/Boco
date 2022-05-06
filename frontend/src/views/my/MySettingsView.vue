@@ -44,6 +44,9 @@
     <div id="buttons" class="button-container">
       <button class="boco-btn" @click="onSave">Save</button>
       <button id="reset-btn" class="boco-btn" @click="onReset">Reset</button>
+      <button id="deactivate-btn" class="boco-btn" @click="onDeactivate">
+        Deactivate account
+      </button>
     </div>
   </div>
 </template>
@@ -105,17 +108,30 @@ export default {
       apiService.updateMyProfile(this.profile);
     },
     onSave() {
-      if (this.newPass != this.confirmPass) {
-        return alert("Passwords do not match");
+      if (this.newPass !== this.confirmPass) {
+        return this.toast.error(
+          "Passwords do not match! Changes were not saved",
+          {
+            timeout: 3000,
+          }
+        );
       }
-
-      this.profile.password = this.newPass;
-      apiService
-        .updateMyProfile(this.profile)
-        .catch((error) => console.log(error));
-      this.toast.success("Changes were saved!", {
-        timeout: 2000,
-      });
+      if (this.newPass === null) {
+        apiService
+          .updateMyProfile(this.profile)
+          .catch((error) => console.log(error));
+        this.toast.success("Changes were saved!", {
+          timeout: 2000,
+        });
+      } else {
+        this.profile.password = this.newPass;
+        apiService
+          .updateMyProfile(this.profile)
+          .catch((error) => console.log(error));
+        this.toast.success("Changes were saved!", {
+          timeout: 2000,
+        });
+      }
     },
     onReset() {
       apiService
@@ -159,6 +175,13 @@ export default {
 
 #reset-btn:hover {
   background-color: #ac0000;
+}
+
+#deactivate-btn {
+  background-color: black;
+}
+#deactivate-btn:hover {
+  background-color: #232323;
 }
 
 #buttons {
