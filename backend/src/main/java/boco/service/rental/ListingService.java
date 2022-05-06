@@ -89,7 +89,7 @@ public class ListingService {
 
         // Sort
         if (sort.split(":").length != 2) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         String sortBy = sort.split(":")[0];
