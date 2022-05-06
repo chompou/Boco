@@ -15,7 +15,7 @@
       <div id="rating">
         <div id="items">
           <p id="ratingText">Rating:</p>
-          <RatingComponent :rating="profile.ratingAsLease" />
+          <RatingComponent :rating="myRating" />
         </div>
       </div>
     </div>
@@ -40,6 +40,7 @@ export default {
   data() {
     return {
       myProfile: null,
+      myRating: null,
       marker: false,
       myPosition: {
         lat: 40,
@@ -77,7 +78,8 @@ export default {
   created() {
     apiService.getMyProfile().then((response) => {
       this.myProfile = response.data;
-      console.log(this.myProfile);
+      console.log(this.myProfile.ratingAsOwner);
+      this.myRating = this.myProfile.ratingAsOwner;
     });
     setTimeout(() => {
       this.getPosition(this.profile.address);

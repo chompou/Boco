@@ -184,14 +184,11 @@ export default {
     getRating() {
       let sum = 0;
       let ant = 0;
-      console.log(this.reviews);
       for (let i = 0; i < this.reviews.length; i++) {
         sum += this.reviews[i].rating;
-        console.log(this.reviews[i].rating);
         ant += 1;
       }
       this.avgRating = sum / ant;
-      console.log(this.avgRating);
     },
   },
   created() {
