@@ -20,7 +20,7 @@ import java.util.List;
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Unique ID of the profile
+    private Long id; // Unique ID of the profile (primary key)
     @Column(unique = true)
     private String username; // Unique username
     @Column(unique = true)
