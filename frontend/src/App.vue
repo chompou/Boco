@@ -44,7 +44,6 @@ export default {
     ProfileDropDownComponent,
     NotificationBellComponent,
   },
-  methods: {},
 };
 </script>
 

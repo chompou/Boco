@@ -65,11 +65,6 @@ export default {
       return this.$store.state.loggedInUser == this.profile.id;
     },
   },
-  created() {
-    setTimeout(() => {
-      console.log(this.profile);
-    }, 1000);
-  },
 };
 </script>
 
