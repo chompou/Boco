@@ -1,28 +1,32 @@
 <template>
   <div class="container">
     <div class="rating-container">
-      <h2>Rating</h2>
+      <h2 class="headerr">Rating</h2>
       <div class="rating-box-container">
         <div class="items">
           <p class="ratingText">Lease out</p>
-          <RatingComponent :rating="5" />
+          <RatingComponent :rating="this.ratingAsLease" />
         </div>
         <div class="items">
           <p class="ratingText">Overall</p>
-          <RatingComponent :rating="3" />
+          <RatingComponent :rating="this.ratingAsOwner" />
         </div>
         <div class="items">
           <p class="ratingText">Lease in</p>
-          <RatingComponent :rating="0" />
+          <RatingComponent :rating="this.ratingListing" />
         </div>
       </div>
     </div>
-    <h2>Reviews</h2>
+    <h2 class="headerr">Reviews</h2>
     <div class="review-list-container">
-      <div class="review-container" v-for="review in reviews" :key="review">
-        <b>{{ review.name }}</b>
+      <div
+        class="review-container"
+        v-for="review in reviews.slice().reverse()"
+        :key="review"
+      >
+        <b>{{ review.displayName }}</b>
         <rating-component :rating="review.rating" />
-        <p>{{ review.description }}</p>
+        <p>{{ review.comment }}</p>
       </div>
     </div>
   </div>
@@ -30,16 +34,36 @@
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent.vue";
+import apiService from "@/services/apiService";
 export default {
   components: { RatingComponent },
 
   data() {
     return {
       reviews: [],
+      myProfile: null,
+      ratingAsOwner: null,
+      ratingAsLease: null,
+      ratingListing: null,
     };
   },
 
-  created() {},
+  created() {
+    apiService.getMyProfile().then((response) => {
+      this.myProfile = response.data;
+      this.ratingAsOwner = this.myProfile.ratingAsOwner;
+      this.ratingAsLease = this.myProfile.ratingAsLease;
+      this.ratingListing = this.myProfile.ratingListing;
+    });
+    apiService
+      .getReviews(
+        { profileId: this.$store.state.loggedInUser, reviewType: "owner" },
+        0,
+        20
+      )
+      .then((response) => (this.reviews = response.data))
+      .catch((error) => console.log(error));
+  },
 };
 </script>
 
@@ -48,6 +72,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 50px;
+}
+
+.headerr {
+  text-align: center;
 }
 
 .rating-box-container {
@@ -65,6 +93,9 @@ export default {
 }
 
 .review-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   border: 1px solid;
   border-radius: 15px;
   max-width: 45%;

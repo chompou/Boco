@@ -49,7 +49,7 @@
           <div id="About2">
             <div id="items">
               <p>Rating:</p>
-              <RatingComponent :rating="item.rating" />
+              <RatingComponent :rating="avgRating" />
             </div>
           </div>
         </div>
@@ -91,6 +91,7 @@ export default {
   },
   data() {
     return {
+      avgRating: 0,
       leaseOverlay: false,
       item: { id: null, profileId: null, price: 0, priceType: null },
       profile: { id: 0 },
@@ -150,7 +151,6 @@ export default {
       }
     },
     changeStatus(status) {
-      console.log(this.item);
       apiService
         .updateItem({
           listingId: this.id,
@@ -181,6 +181,15 @@ export default {
         return this.$router.push({ name: "login" });
       }
     },
+    getRating() {
+      let sum = 0;
+      let ant = 0;
+      for (let i = 0; i < this.reviews.length; i++) {
+        sum += this.reviews[i].rating;
+        ant += 1;
+      }
+      this.avgRating = sum / ant;
+    },
   },
   created() {
     apiService
@@ -206,9 +215,11 @@ export default {
       });
     apiService
       .getReviews({ listingId: this.id, reviewType: "item" }, 0, 15)
-      .then((response) => (this.reviews = response.data))
+      .then((response) => {
+        this.reviews = response.data;
+        this.getRating();
+      })
       .catch((error) => console.log(error));
-
     axios
       .get("https://picsum.photos/200/300")
       .then((response) => (this.url = response.request.responseURL));
