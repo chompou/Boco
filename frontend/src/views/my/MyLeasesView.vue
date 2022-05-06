@@ -93,7 +93,8 @@ export default {
       }
     });
 
-    let sortBy = (lease) => new Date(lease.fromDatetime);
+    let sortBy = (leaseA, leaseB) =>
+      new Date(leaseB.fromDatetime) - new Date(leaseA.fromDatetime);
 
     apiService
       .getMyLeases(true)
