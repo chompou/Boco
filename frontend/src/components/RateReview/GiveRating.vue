@@ -23,7 +23,7 @@
         name="description"
       ></textarea>
     </div>
-    <div class="ratingAndText" v-if="leasedIn">
+    <div class="ratingAndText" v-if="!owner">
       <h5>Rate item</h5>
       <star-rating
         :rating="itemReview.itemRate"
@@ -37,7 +37,7 @@
       >
       </star-rating>
     </div>
-    <div v-if="leasedIn">
+    <div v-if="!owner">
       <h5>Description for item</h5>
       <textarea
         v-model="itemReview.descriptionItem"
@@ -59,7 +59,7 @@
 import StarRating from "vue-star-rating";
 import apiService from "@/services/apiService";
 export default {
-  props: ["id", "leasedIn"],
+  props: ["id", "owner"],
 
   components: {
     StarRating,
@@ -88,6 +88,11 @@ export default {
         apiService.giveReview(this.ownerReview, "owner");
       }
     },
+  },
+
+  created() {
+    console.log(this.id);
+    console.log(this.owner);
   },
 };
 </script>
