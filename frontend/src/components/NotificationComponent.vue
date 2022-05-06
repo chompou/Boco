@@ -1,6 +1,6 @@
 <template>
-  <div class="notificationWrapper">
-    <div :id="id" class="left"></div>
+  <div id="test" class="notificationWrapper" :style="notificationWrapperStyle">
+    <div class="left" :style="leftDivStyle"></div>
     <div :id="id" class="notificationContent">{{ text }}</div>
   </div>
 </template>
@@ -11,13 +11,34 @@ export default {
   props: {
     text: String,
     id: Number,
+    width: Number,
+    height: Number,
+    leftDivBgColor: {
+      type: String,
+      default: "blue",
+    },
+  },
+  computed: {
+    notificationWrapperStyle() {
+      return {
+        width: `${this.width}px`,
+        height: `${this.height}px`,
+      };
+    },
+    leftDivStyle() {
+      return {
+        backgroundColor: this.leftDivBgColor,
+      };
+    },
   },
   mounted() {
-    addEventListener("click", (event) => {
+    document.getElementById(this.id).addEventListener("click", (event) => {
       let id = event.target.id;
       if (id !== null || id !== "") {
         if (!isNaN(id) && id !== "") {
-          apiService.removeNotificationAfterRead(id);
+          apiService.markNotificationAsRead([id]).catch((error) => {
+            console.log(error);
+          });
         }
       }
     });
@@ -27,8 +48,7 @@ export default {
 <style scoped>
 .notificationWrapper {
   display: flex;
-  width: 400px;
-  border-radius: 49px 50px 50px 49px;
+  border-radius: 20px 50px 50px 20px;
 }
 
 .notificationWrapper:hover {
@@ -37,8 +57,7 @@ export default {
 }
 
 .left {
-  width: 20px;
-  background-color: #0048ae;
+  width: 10px;
   border-radius: 50px 0 0 50px;
 }
 
