@@ -19,10 +19,14 @@
     </div>
     <h2>Reviews</h2>
     <div class="review-list-container">
-      <div class="review-container" v-for="review in reviews" :key="review">
-        <b>{{ review.name }}</b>
+      <div
+        class="review-container"
+        v-for="review in reviews.slice().reverse()"
+        :key="review"
+      >
+        <b>{{ review.displayName }}</b>
         <rating-component :rating="review.rating" />
-        <p>{{ review.description }}</p>
+        <p>{{ review.comment }}</p>
       </div>
     </div>
   </div>
@@ -30,6 +34,7 @@
 
 <script>
 import RatingComponent from "@/components/RateReview/RatingComponent.vue";
+import apiService from "@/services/apiService";
 export default {
   components: { RatingComponent },
 
@@ -39,7 +44,16 @@ export default {
     };
   },
 
-  created() {},
+  created() {
+    apiService
+      .getReviews(
+        { profileId: this.$store.state.loggedInUser, reviewType: "owner" },
+        0,
+        20
+      )
+      .then((response) => (this.reviews = response.data))
+      .catch((error) => console.log(error));
+  },
 };
 </script>
 
@@ -65,6 +79,9 @@ export default {
 }
 
 .review-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   border: 1px solid;
   border-radius: 15px;
   max-width: 45%;
