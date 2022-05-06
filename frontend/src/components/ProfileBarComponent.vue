@@ -11,6 +11,7 @@
       </div>
       <p id="phone-number">Phone nr: {{ profile.tlf }}</p>
       <p id="email">Email: {{ profile.email }}</p>
+      <p id="dec">Description: <br />{{ profile.description }}</p>
     </div>
     <div id="rating">
       <RatingComponent />
@@ -65,11 +66,6 @@ export default {
       return this.$store.state.loggedInUser == this.profile.id;
     },
   },
-  created() {
-    setTimeout(() => {
-      console.log(this.profile);
-    }, 1000);
-  },
 };
 </script>
 
@@ -80,7 +76,7 @@ export default {
   display: flex;
   font-size: 17px;
   width: 100%;
-  height: 200px;
+  min-height: 200px;
   padding: 10px 28px;
   background: var(--main-color);
   margin-top: 5px;

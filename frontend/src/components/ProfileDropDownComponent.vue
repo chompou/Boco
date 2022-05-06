@@ -6,7 +6,12 @@
     </button>
   </div>
   <div v-if="$store.state.loggedIn">
-    <button class="profileButtons" key="on" @click="show = !show">
+    <button
+      class="profileButtons"
+      key="on"
+      @click="toggle"
+      v-click-outside="close"
+    >
       <font-awesome-icon icon="user" class="userIcon" />
     </button>
     <transition name="bounce">
@@ -77,6 +82,12 @@ export default {
       this.toast.info("Signed out", {
         timeout: 2000,
       });
+    },
+    toggle() {
+      this.show = !this.show;
+    },
+    close() {
+      this.show = false;
     },
   },
   computed: {

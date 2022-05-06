@@ -1,5 +1,10 @@
 <template>
-  <button class="notificationButton" key="on" @click="show = !show">
+  <button
+    class="notificationButton"
+    key="on"
+    @click="toggle"
+    v-click-outside="close"
+  >
     <div class="notification" :style="notificationStyle">
       <div :width="size" :height="size">
         <font-awesome-icon icon="bell" class="bellIcon" />
@@ -126,6 +131,12 @@ export default {
       apiService.markNotificationAsRead(id).catch((error) => {
         console.log(error);
       });
+    },
+    toggle() {
+      this.show = !this.show;
+    },
+    close() {
+      this.show = false;
     },
   },
   props: {
