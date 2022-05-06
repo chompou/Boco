@@ -21,7 +21,7 @@
               {{ lease.leaseeDisplayName }}
             </a>
           </h4>
-          <h4>Price: {{ displayPrice }} kr</h4>
+          <h4>Price: {{ displayPrice }}</h4>
         </div>
 
         <div class="lease-info-list">
