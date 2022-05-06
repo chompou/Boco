@@ -3,7 +3,9 @@ package boco.controller.model;
 import boco.model.http.ContactRequest;
 import boco.service.profile.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,10 +20,11 @@ public class ContactController {
         this.emailService = emailService;
     }
 
-    @GetMapping("/contact")
-    public void sendContactMail(@RequestBody ContactRequest contactRequest){
+    @PostMapping("/contact")
+    public ResponseEntity<?> sendContactMail(@RequestBody ContactRequest contactRequest){
         emailService.sendContactFormFromUser(contactRequest.getEmail(),
                 contactRequest.getName(), contactRequest.getIssue());
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
