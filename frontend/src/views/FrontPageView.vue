@@ -185,7 +185,7 @@ export default {
   }
   5%,
   15% {
-    box-shadow: -1px -3px 5px #008b8b
+    box-shadow: -1px -3px 5px #7f7e7e;
   }
   40% {
     box-shadow: none;
