@@ -23,7 +23,7 @@
         name="description"
       ></textarea>
     </div>
-    <div class="ratingAndText" v-if="!owner">
+    <div class="ratingAndText" v-if="!own">
       <h5>Rate item</h5>
       <star-rating
         :rating="itemReview.rating"
@@ -37,7 +37,7 @@
       >
       </star-rating>
     </div>
-    <div v-if="!owner">
+    <div v-if="!own">
       <h5>Description for item</h5>
       <textarea
         v-model="itemReview.comment"
@@ -66,15 +66,16 @@ export default {
   },
   data() {
     return {
+      own: false,
       itemReview: {
-        rating: 0,
+        rating: 1,
         comment: "",
-        leaseId: this.id,
+        id: this.id,
       },
       ownerReview: {
-        rating: 0,
+        rating: 1,
         comment: "",
-        leaseId: this.id,
+        id: this.id,
       },
     };
   },
@@ -85,7 +86,6 @@ export default {
         apiService.giveReview(this.ownerReview, "leasee");
       } else {
         apiService.giveReview(this.itemReview, "owner");
-        apiService.giveReview(this.ownerReview, "owner");
       }
     },
   },
@@ -93,6 +93,11 @@ export default {
   created() {
     console.log(this.id);
     console.log(this.owner);
+    setTimeout(() => {
+      this.own = this.owner;
+      console.log(this.owner);
+      console.log(this.own);
+    }, 1000);
   },
 };
 </script>
