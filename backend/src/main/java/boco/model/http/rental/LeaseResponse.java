@@ -28,6 +28,10 @@ public class LeaseResponse {
     private Long listingId;
     private String itemName;
 
+    /**
+     * Creates a leaseResponse from a Lease
+     * @param lease The lease who's data is being returned
+     */
     public LeaseResponse(Lease lease) {
         this.id = lease.getId();
         this.isApproved = lease.getIsApproved();

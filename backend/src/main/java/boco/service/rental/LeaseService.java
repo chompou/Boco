@@ -36,11 +36,7 @@ public class LeaseService {
     private final ProfileRepository profileRepository;
     private final ReviewRepository reviewRepository;
     private final JwtUtil jwtUtil;
-
-    /**
-     * The Logger.
-     */
-    Logger logger = LoggerFactory.getLogger(LeaseService.class);
+    private Logger logger = LoggerFactory.getLogger(LeaseService.class);
 
     /**
      * Instantiates a new Lease service.
@@ -67,7 +63,8 @@ public class LeaseService {
      * by profile or leases on items (listings) where the profile is the leasee
      *
      * @param authHeader Authorization header. JWT token with "Bearer " prefix.
-     * @param isOwner    True: Get leases on items owned by profile.                False: Get leases on items (listings) where the profile is the leasee
+     * @param isOwner True: Get leases on items owned by profile.
+     *                False: Get leases on items (listings) where the profile is the leasee
      * @return List of lease responses
      */
     public ResponseEntity<List<LeaseResponse>> getMyLeases(String authHeader, Boolean isOwner) {
@@ -96,7 +93,7 @@ public class LeaseService {
      * Creates a lease based on leaseRequest fields and profile of authHeader
      *
      * @param leaseRequest Request containing fields for the lease to be created
-     * @param authHeader   Authorization header. JWT token with "Bearer " prefix.
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
      * @return The created lease
      */
     public ResponseEntity<LeaseResponse> createLease(LeaseRequest leaseRequest, String authHeader) {
@@ -130,7 +127,7 @@ public class LeaseService {
     /**
      * Deletes a lease
      *
-     * @param leaseId    ID of the lease to be deleted
+     * @param leaseId ID of the lease to be deleted
      * @param authHeader Authorization header. JWT token with "Bearer " prefix.
      * @return HTTP status of the deletion
      */
@@ -177,7 +174,7 @@ public class LeaseService {
      * Updates a lease
      *
      * @param updateLeaseRequest Request with new values of lease
-     * @param authHeader         Authorization header. JWT token with "Bearer " prefix.
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
      * @return The updated leases
      */
     public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String authHeader) {
@@ -202,12 +199,13 @@ public class LeaseService {
     }
 
 
+
     /**
-     * Check if updating lease is legal response entity.
-     *
-     * @param updateLeaseRequest the update lease request
-     * @param authHeader         the auth header
-     * @return the response entity
+     * CHecks that the lease being updated exists, has the correct owner,
+     * and does not overlap with other approved leases.
+     * @param updateLeaseRequest The update request
+     * @param authHeader The authentication token
+     * @return boolean of if the update is legal
      */
     public ResponseEntity<Boolean> checkIfUpdatingLeaseIsLegal(UpdateLeaseRequest updateLeaseRequest, String authHeader){
         Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
@@ -228,7 +226,7 @@ public class LeaseService {
             return new ResponseEntity<>(Boolean.FALSE, HttpStatus.BAD_REQUEST);
         }
 
-        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true) && !updateLeaseRequest.getIsCompleted()) {
+        if (updateLeaseRequest.getIsApproved() != null && updateLeaseRequest.getIsApproved().equals(true)) {
             List<Lease> leases = getOverlappingLeases(lease);
             if (leases.size() != 0) {
                 logger.warn("Lease overlaps with other leases");
@@ -238,11 +236,11 @@ public class LeaseService {
         return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 
+
     /**
-     * Get overlapping leases list.
-     *
-     * @param lease the lease
-     * @return the list
+     * Finds all leases that overlap with a given lease.
+     * @param lease The lease we are checking against
+     * @return all overlaping approved leases
      */
     public List<Lease> getOverlappingLeases(Lease lease){
         List<Lease> leases = leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(lease.getListing().getId());
@@ -256,8 +254,8 @@ public class LeaseService {
      * the item, owner of item or leasee is reviewed.
      *
      * @param reviewRequest Review to be added along. Also includes the leaseId to add review to
-     * @param reviewType    Type of review: owner/item/leasee
-     * @param authHeader    Authorization header. JWT token with "Bearer " prefix.
+     * @param reviewType Type of review: owner/item/leasee
+     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
      * @return The updated lease
      */
     public ResponseEntity<LeaseResponse> createLeaseReview(ReviewRequest reviewRequest, String reviewType, String authHeader) {

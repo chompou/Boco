@@ -10,6 +10,12 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.List;
 
+/**
+ * This class represents the data of a listing. The class is used to send a response from a REST controller when
+ * receiving listing related requests.
+ *
+ * See boco.model.rental.Listing class for documentation of the fields of this class.
+ */
 @Getter @Setter @NoArgsConstructor
 public class ListingResponse {
     private Long id;
@@ -27,6 +33,10 @@ public class ListingResponse {
     private String image;
     private Double distance;
 
+    /**
+     * Creates an listingResponse from a listing object
+     * @param listing the listing we are creating it from
+     */
     public ListingResponse(Listing listing) {
         this.id = listing.getId();
         this.name = listing.getName();
@@ -55,6 +65,11 @@ public class ListingResponse {
 
     }
 
+    /**
+     * Creates a listing response from a listing, with distance set.
+     * @param listing The listing response data is gotten from.
+     * @param distance The distance to be set
+     */
     public ListingResponse(Listing listing, double distance){
         this.id = listing.getId();
         this.name = listing.getName();
