@@ -20,6 +20,7 @@ import FrontPage from "../views/FrontPageView.vue";
 import GiveRating from "@/components/RateReview/GiveRating";
 import NProgress from "nprogress";
 import newPwdView from "@/views/newPwdView";
+import NotificationsPageView from "@/views/NotificationsPageView";
 NProgress.configure({ easing: "ease", speed: 500 });
 
 // const routerGuard = {
@@ -94,6 +95,11 @@ const routes = [
         name: "mySettings",
         component: MySettingsView,
       },
+      {
+        path: "notifications",
+        name: "notifications",
+        component: NotificationsPageView,
+      },
     ],
   },
   {
@@ -160,6 +166,7 @@ router.beforeEach(async function (to) {
       case "/my/leases":
       case "/my/reviews":
       case "/my/settings":
+      case "/my/notifications":
       case "/create":
       case "/edit":
         return { name: "login" };
