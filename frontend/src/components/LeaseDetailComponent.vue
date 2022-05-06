@@ -68,7 +68,7 @@ export default {
 
   data() {
     return {
-      remaining: 0,
+      remaining: null,
       item: {
         title: null,
         priceType: null,
@@ -108,9 +108,13 @@ export default {
           });
           break;
         default:
-          apiService
-            .deleteMyLease(this.lease.id)
-            .catch((error) => console.log(error));
+          apiService.deleteMyLease(this.lease.id).catch((error) => {
+            if (error.response.status == 422) {
+              console.log("forboden");
+            } else {
+              console.log(error);
+            }
+          });
       }
 
       this.$emit("close-overlay");
@@ -201,7 +205,7 @@ export default {
     remaining: {
       handler() {
         setTimeout(() => {
-          if (this.remaining > 0) {
+          if (this.remaining == null || this.remaining > 0) {
             this.remaining = new Date(this.lease.toDatetime) - Date.now();
           } else if (this.remaining < 0) {
             this.remaining = 0;

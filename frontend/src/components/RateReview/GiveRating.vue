@@ -23,7 +23,7 @@
         name="description"
       ></textarea>
     </div>
-    <div class="ratingAndText" v-if="!owner">
+    <div v-if="!isOwner" class="ratingAndText">
       <h5>Rate item</h5>
       <star-rating
         :rating="itemReview.rating"
@@ -37,7 +37,7 @@
       >
       </star-rating>
     </div>
-    <div v-if="!owner">
+    <div v-if="!isOwner">
       <h5>Description for item</h5>
       <textarea
         v-model="itemReview.comment"
@@ -46,12 +46,10 @@
         name="description"
       ></textarea>
     </div>
-    <div id="CreateButtons" class="element">
-      <button class="CreateButton" @click="onSubmit">Submit</button>
-      <button id="Delete" class="CreateButton" @click="onDismiss">
-        Dismiss
-      </button>
-    </div>
+  </div>
+  <div id="CreateButtons" class="element">
+    <button class="CreateButton" @click="onSubmit">Submit</button>
+    <button id="Delete" class="CreateButton" @click="onDismiss">Dismiss</button>
   </div>
 </template>
 
@@ -64,15 +62,16 @@ export default {
   components: {
     StarRating,
   },
+
   data() {
     return {
       itemReview: {
-        rating: 0,
+        rating: 1,
         comment: "",
         leaseId: this.id,
       },
       ownerReview: {
-        rating: 0,
+        rating: 1,
         comment: "",
         leaseId: this.id,
       },
@@ -81,17 +80,24 @@ export default {
 
   methods: {
     onSubmit() {
-      if (this.owner) {
+      if (this.isOwner) {
         apiService.giveReview(this.ownerReview, "leasee");
+        this.$router.push("/my/leases");
       } else {
-        apiService.giveReview(this.itemReview, "owner");
         apiService.giveReview(this.ownerReview, "owner");
+        apiService.giveReview(this.itemReview, "item");
+        this.$router.push("/my/leases");
       }
     },
   },
 
+  computed: {
+    isOwner() {
+      return this.owner == "true" ? true : false;
+    },
+  },
+
   created() {
-    console.log(this.id);
     console.log(this.owner);
   },
 };

@@ -84,6 +84,7 @@
             name="Category"
             v-model="filters.category"
           >
+            <option value="">All</option>
             <option
               v-for="category in categories"
               :key="category"

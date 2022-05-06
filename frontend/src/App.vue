@@ -1,9 +1,7 @@
 <template>
   <nav id="navbar" class="navbar sticky-top">
     <div class="container-fluid">
-      <router-link to="/">
-        <img id="logo" src="@/assets/mainLogo.png" alt="logo"
-      /></router-link>
+      <img id="logo" src="@/assets/mainLogo.png" alt="logo" @click="onLogo" />
       <div class="header">
         <div>
           <NotificationBellComponent v-if="$store.state.loggedIn" />
@@ -44,7 +42,15 @@ export default {
     ProfileDropDownComponent,
     NotificationBellComponent,
   },
-  methods: {},
+  methods: {
+    onLogo() {
+      if (window.location.pathname === "/") {
+        this.$router.go(0);
+      } else {
+        this.$router.push("/");
+      }
+    },
+  },
 };
 </script>
 
@@ -119,6 +125,10 @@ a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 15px;
+}
+
+#logo {
+  cursor: pointer;
 }
 
 #log-out-button {
