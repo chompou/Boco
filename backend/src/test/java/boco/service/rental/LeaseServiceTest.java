@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -45,9 +46,11 @@ class LeaseServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private JwtUtil jwtUtil;
+    private List<Lease> leases;
 
     @BeforeEach
     public void setup() {
+        leases = new ArrayList<>();
         Profile p1 = new Personal("messi", "leo@psg.fr", "x", "LEO", "x", "Argentina", "6:6", "12345678");
         p1.setId(1L);
         Optional<Profile> pd1 = Optional.of(p1);
@@ -81,26 +84,31 @@ class LeaseServiceTest {
                 Timestamp.valueOf("2030-12-01 10:00:00").getTime(),
                 p2, li1, p1);
         le1.setId(1L);
+        leases.add(le1);
         Lease le2 = new Lease(
                 Timestamp.valueOf("2031-07-01 10:00:00").getTime(),
                 Timestamp.valueOf("2031-12-01 10:00:00").getTime(),
                 p2, li1, p1);
         le2.setId(2L);
+        leases.add(le2);
         Lease le3 = new Lease(
                 Timestamp.valueOf("2032-07-01 10:00:00").getTime(),
                 Timestamp.valueOf("2032-12-01 10:00:00").getTime(),
                 p1, li2, p2);
         le3.setId(3L);
+        leases.add(le3);
         Lease le4 = new Lease(
                 Timestamp.valueOf("2033-07-01 10:00:00").getTime(),
                 Timestamp.valueOf("2033-12-01 10:00:00").getTime(),
                 p1, li2, p2);
         le4.setId(4L);
+        leases.add(le4);
         Lease le5 = new Lease(
                 Timestamp.valueOf("2034-07-01 10:00:00").getTime(),
                 Timestamp.valueOf("2034-12-01 10:00:00").getTime(),
                 p1, li2, p2);
         le5.setId(5L);
+        leases.add(le5);
 
         // SPECIAL CASES:
         // Lease which is completed
@@ -154,6 +162,7 @@ class LeaseServiceTest {
 
         // Any lease can be returned to avoid NullPointerException, le1 was chosen randomly
         lenient().when(leaseRepository.save(any())).thenReturn(le1);
+
     }
 
     @Test
@@ -320,7 +329,6 @@ class LeaseServiceTest {
 
     }
 
-
     @Test
     void createLease() {
         Date soon = new Date(new Date().getTime() + 1000*60*60*24);
@@ -364,21 +372,100 @@ class LeaseServiceTest {
     @Test
     void createLeaseReview() {
         ReviewRequest request = new ReviewRequest();
-        request.setLeaseId(1l);
+        request.setLeaseId(1L);
         request.setRating(5.0);
         request.setComment("Very good");
 
+        ReviewRequest request2 = new ReviewRequest();
+        request2.setLeaseId(1L);
+        request2.setRating(5.0);
+        request2.setComment("Very good");
 
         ResponseEntity response1 = service.createLeaseReview(request, "owner", "Bearer usr");
-        //ResponseEntity response2 = service.createLeaseReview(request, "leasee", "Bearer messi");
-        //ResponseEntity response3 = service.createLeaseReview(request, "item", "Bearer messi");
         assertTrue(response1.getStatusCode().is2xxSuccessful());
+        assertTrue(response1.getBody() instanceof LeaseResponse);
+        assertEquals(1L, ((LeaseResponse) response1.getBody()).getId());
+        assertNull(((LeaseResponse) response1.getBody()).getLeaseeReview());
+        assertNull(((LeaseResponse) response1.getBody()).getItemReview());
+        assertNotNull(((LeaseResponse) response1.getBody()).getOwnerReview());
 
+        ResponseEntity response2 = service.createLeaseReview(request2, "leasee", "Bearer messi");
+        assertTrue(response2.getStatusCode().is2xxSuccessful());
+        assertTrue(response2.getBody() instanceof LeaseResponse);
+        assertEquals(1L, ((LeaseResponse) response2.getBody()).getId());
+        assertNotNull(((LeaseResponse) response2.getBody()).getLeaseeReview());
+        assertNull(((LeaseResponse) response2.getBody()).getItemReview());
+        assertNotNull(((LeaseResponse) response2.getBody()).getOwnerReview());
 
+        ResponseEntity response3 = service.createLeaseReview(request, "item", "Bearer usr");
+        assertTrue(response3.getStatusCode().is2xxSuccessful());
+        assertTrue(response3.getBody() instanceof LeaseResponse);
+        assertEquals(1L, ((LeaseResponse) response3.getBody()).getId());
+        assertNotNull(((LeaseResponse) response3.getBody()).getLeaseeReview());
+        assertNotNull(((LeaseResponse) response3.getBody()).getItemReview());
+        assertNotNull(((LeaseResponse) response3.getBody()).getOwnerReview());
+    }
 
+    @Test
+    void createLeaseReviewNegativeResponseOnUserNotCorrectForLease() {
+        ReviewRequest request = new ReviewRequest();
+        request.setLeaseId(1L);
+        request.setRating(5.0);
+        request.setComment("Very good");
+
+        ReviewRequest request2 = new ReviewRequest();
+        request2.setLeaseId(1L);
+        request2.setRating(5.0);
+        request2.setComment("Very good");
+
+        ResponseEntity response1 = service.createLeaseReview(request, "owner", "Bearer messi");
+        assertTrue(response1.getStatusCode().isError());
+        assertFalse(response1.hasBody());
+
+        ResponseEntity response2 = service.createLeaseReview(request2, "leasee", "Bearer usr");
+        assertTrue(response2.getStatusCode().isError());
+        assertFalse(response2.hasBody());
+
+        ResponseEntity response3 = service.createLeaseReview(request, "item", "Bearer messi");
+        assertTrue(response3.getStatusCode().isError());
+        assertFalse(response3.hasBody());
     }
 
     @Test
     void removeDangling() {
+        leases = new ArrayList<>();
+        Date future = new Date(new Date().getTime() + 1000*60*60*24);
+        Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
+        Date[] dates = new Date[2];
+        dates[0] = aWeekAgo;
+        dates[1] = future;
+
+        for (int i = 0; i < 16; i++) {
+            Lease lease = new Lease();
+            lease.setId((long) i);
+            lease.setFromDatetime(dates[i%2].getTime());
+            lease.setToDatetime(lease.getFromDatetime() + 1000*60*60*24);
+            lease.setIsApproved((int) i/2%2 == 0);
+            lease.setIsCompleted((int) i/4%2 == 0);
+            leases.add(lease);
+        }
+        lenient().when(leaseRepository.findAll()).thenReturn(leases);
+        service.removeDangling();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
