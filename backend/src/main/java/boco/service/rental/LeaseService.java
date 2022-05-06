@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * The type Lease service.
+ */
 @Service
 public class LeaseService {
     private final LeaseRepository leaseRepository;
@@ -34,8 +37,20 @@ public class LeaseService {
     private final ReviewRepository reviewRepository;
     private final JwtUtil jwtUtil;
 
+    /**
+     * The Logger.
+     */
     Logger logger = LoggerFactory.getLogger(LeaseService.class);
 
+    /**
+     * Instantiates a new Lease service.
+     *
+     * @param leaseRepository   the lease repository
+     * @param listingRepository the listing repository
+     * @param profileRepository the profile repository
+     * @param reviewRepository  the review repository
+     * @param jwtUtil           the jwt util
+     */
     @Autowired
     public LeaseService(LeaseRepository leaseRepository, ListingRepository listingRepository,
                         ProfileRepository profileRepository, ReviewRepository reviewRepository,
@@ -52,8 +67,7 @@ public class LeaseService {
      * by profile or leases on items (listings) where the profile is the leasee
      *
      * @param authHeader Authorization header. JWT token with "Bearer " prefix.
-     * @param isOwner True: Get leases on items owned by profile.
-     *                False: Get leases on items (listings) where the profile is the leasee
+     * @param isOwner    True: Get leases on items owned by profile.                False: Get leases on items (listings) where the profile is the leasee
      * @return List of lease responses
      */
     public ResponseEntity<List<LeaseResponse>> getMyLeases(String authHeader, Boolean isOwner) {
@@ -82,7 +96,7 @@ public class LeaseService {
      * Creates a lease based on leaseRequest fields and profile of authHeader
      *
      * @param leaseRequest Request containing fields for the lease to be created
-     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param authHeader   Authorization header. JWT token with "Bearer " prefix.
      * @return The created lease
      */
     public ResponseEntity<LeaseResponse> createLease(LeaseRequest leaseRequest, String authHeader) {
@@ -116,7 +130,7 @@ public class LeaseService {
     /**
      * Deletes a lease
      *
-     * @param leaseId ID of the lease to be deleted
+     * @param leaseId    ID of the lease to be deleted
      * @param authHeader Authorization header. JWT token with "Bearer " prefix.
      * @return HTTP status of the deletion
      */
@@ -163,7 +177,7 @@ public class LeaseService {
      * Updates a lease
      *
      * @param updateLeaseRequest Request with new values of lease
-     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param authHeader         Authorization header. JWT token with "Bearer " prefix.
      * @return The updated leases
      */
     public ResponseEntity<LeaseResponse> updateLease(UpdateLeaseRequest updateLeaseRequest, String authHeader) {
@@ -188,6 +202,13 @@ public class LeaseService {
     }
 
 
+    /**
+     * Check if updating lease is legal response entity.
+     *
+     * @param updateLeaseRequest the update lease request
+     * @param authHeader         the auth header
+     * @return the response entity
+     */
     public ResponseEntity<Boolean> checkIfUpdatingLeaseIsLegal(UpdateLeaseRequest updateLeaseRequest, String authHeader){
         Profile profile = jwtUtil.extractProfileFromAuthHeader(authHeader);
         if (profile == null){
@@ -217,6 +238,12 @@ public class LeaseService {
         return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 
+    /**
+     * Get overlapping leases list.
+     *
+     * @param lease the lease
+     * @return the list
+     */
     public List<Lease> getOverlappingLeases(Lease lease){
         List<Lease> leases = leaseRepository.getLeasesByListing_IdAndIsApprovedIsTrue(lease.getListing().getId());
         return leases.stream()
@@ -229,8 +256,8 @@ public class LeaseService {
      * the item, owner of item or leasee is reviewed.
      *
      * @param reviewRequest Review to be added along. Also includes the leaseId to add review to
-     * @param reviewType Type of review: owner/item/leasee
-     * @param authHeader Authorization header. JWT token with "Bearer " prefix.
+     * @param reviewType    Type of review: owner/item/leasee
+     * @param authHeader    Authorization header. JWT token with "Bearer " prefix.
      * @return The updated lease
      */
     public ResponseEntity<LeaseResponse> createLeaseReview(ReviewRequest reviewRequest, String reviewType, String authHeader) {
@@ -299,6 +326,12 @@ public class LeaseService {
         return new ResponseEntity<>(new LeaseResponse(savedLease), HttpStatus.OK);
     }
 
+    /**
+     * Convert lease list.
+     *
+     * @param leases the leases
+     * @return the list
+     */
     public static List<LeaseResponse> convertLease(List<Lease> leases){
         List<LeaseResponse> leaseResponses = new ArrayList<>();
         for (Lease lease :
@@ -324,6 +357,9 @@ public class LeaseService {
         return profile.getId().longValue() == lease.getProfile().getId().longValue();
     }
 
+    /**
+     * Removes overdue leases that have not been approved, waits one week.
+     */
     public void removeDangling() {
         Date aWeekAgo = new Date(new Date().getTime() - (1000*60*60*24*7));
         List<Lease> leases = leaseRepository.findAll();
