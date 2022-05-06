@@ -2,17 +2,21 @@
   <div class="frontPageWrap container position-relative mt-2">
     <div class="mt-5">
       <router-link :to="{ name: 'items', query: { category: 'Tools' } }">
-        <font-awesome-icon icon="wrench" class="icon" title="TOOLS" />
+        <font-awesome-icon icon="wrench" class="icon countText" title="TOOLS" />
       </router-link>
       <router-link :to="{ name: 'items', query: { category: 'Electronics' } }">
-        <font-awesome-icon icon="plug" class="icon" title="ELECTRONICS" />
+        <font-awesome-icon
+          icon="plug"
+          class="icon countText"
+          title="ELECTRONICS"
+        />
       </router-link>
       <router-link
         :to="{ name: 'items', query: { category: 'Hobby/Entertainment' } }"
       >
         <font-awesome-icon
           icon="palette"
-          class="icon"
+          class="icon countText"
           title="HOBBY/ENTERTAINMENT"
         />
       </router-link>
@@ -21,37 +25,49 @@
       >
         <font-awesome-icon
           icon="guitar"
-          class="icon"
+          class="icon countText"
           title="MUSICAL INSTRUMENT"
         />
       </router-link>
       <router-link :to="{ name: 'items', query: { category: 'Vehicle' } }">
-        <font-awesome-icon icon="car" class="icon" title="VEHICLE" />
+        <font-awesome-icon icon="car" class="icon countText" title="VEHICLE" />
       </router-link>
       <router-link :to="{ name: 'items', query: { category: 'Sport/Hiking' } }">
         <font-awesome-icon
           icon="basketball"
-          class="icon"
+          class="icon countText"
           title="SPORT/HIKING"
         />
       </router-link>
       <router-link :to="{ name: 'items', query: { category: 'Interior' } }">
-        <font-awesome-icon icon="couch" class="icon" title="INTERIOR" />
+        <font-awesome-icon
+          icon="couch"
+          class="icon countText"
+          title="INTERIOR"
+        />
       </router-link>
       <router-link
         :to="{ name: 'items', query: { category: 'School/Office' } }"
       >
         <font-awesome-icon
           icon="graduation-cap"
-          class="icon"
+          class="icon countText"
           title="SCHOOL/OFFICE"
         />
       </router-link>
       <router-link :to="{ name: 'items', query: { category: 'Home/Garden' } }">
-        <font-awesome-icon icon="house" class="icon" title="HOME/GARDEN" />
+        <font-awesome-icon
+          icon="house"
+          class="icon countText"
+          title="HOME/GARDEN"
+        />
       </router-link>
       <router-link :to="{ name: 'items', query: { category: 'Fashion' } }">
-        <font-awesome-icon icon="shirt" class="icon" title="FASHION" />
+        <font-awesome-icon
+          icon="shirt"
+          class="icon countText"
+          title="FASHION"
+        />
       </router-link>
     </div>
     <div class="items">
@@ -143,6 +159,9 @@ export default {
 }
 
 .icon {
+  border-radius: 20px;
+  background: #ececec;
+  padding: 10px;
   color: var(--main-color);
   font-size: 2vw;
   margin-left: 40px;
@@ -152,5 +171,24 @@ export default {
 
 .icon:hover {
   color: gray;
+}
+
+.countText {
+  -webkit-animation-name: color2;
+  -webkit-animation-duration: 10s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-delay: 0s;
+}
+@-webkit-keyframes color2 {
+  0% {
+  }
+  5%,
+  15% {
+    box-shadow: -1px -3px 5px #008b8b
+  }
+  40% {
+    box-shadow: none;
+  }
 }
 </style>
